@@ -1,0 +1,103 @@
+/*==================================================
+    ANIMATIONS.CSS
+==================================================*/
+
+@keyframes cnFadeIn{
+
+    from{
+
+        opacity:0;
+
+    }
+
+    to{
+
+        opacity:1;
+
+    }
+
+}
+
+@keyframes cnSlideDown{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(-10px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+@keyframes cnSlideUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(15px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+@keyframes cnZoomIn{
+
+    from{
+
+        opacity:0;
+
+        transform:scale(.95);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:scale(1);
+
+    }
+
+}
+
+.cn-fade{
+
+    animation:cnFadeIn .3s ease;
+
+}
+
+.cn-slide-down{
+
+    animation:cnSlideDown .3s ease;
+
+}
+
+.cn-slide-up{
+
+    animation:cnSlideUp .3s ease;
+
+}
+
+.cn-zoom{
+
+    animation:cnZoomIn .25s ease;
+
+}

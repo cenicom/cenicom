@@ -1,0 +1,41 @@
+/*==================================================
+    SPACING.CSS
+==================================================*/
+
+/* Margin */
+
+.cn-m-0{margin:0;}
+
+.cn-m-1{margin:var(--cn-space-1);}
+.cn-m-2{margin:var(--cn-space-2);}
+.cn-m-3{margin:var(--cn-space-3);}
+.cn-m-4{margin:var(--cn-space-4);}
+.cn-m-5{margin:var(--cn-space-5);}
+.cn-m-6{margin:var(--cn-space-6);}
+
+/* Margin Top */
+
+.cn-mt-1{margin-top:var(--cn-space-1);}
+.cn-mt-2{margin-top:var(--cn-space-2);}
+.cn-mt-3{margin-top:var(--cn-space-3);}
+.cn-mt-4{margin-top:var(--cn-space-4);}
+.cn-mt-5{margin-top:var(--cn-space-5);}
+.cn-mt-6{margin-top:var(--cn-space-6);}
+
+/* Margin Bottom */
+
+.cn-mb-1{margin-bottom:var(--cn-space-1);}
+.cn-mb-2{margin-bottom:var(--cn-space-2);}
+.cn-mb-3{margin-bottom:var(--cn-space-3);}
+.cn-mb-4{margin-bottom:var(--cn-space-4);}
+.cn-mb-5{margin-bottom:var(--cn-space-5);}
+.cn-mb-6{margin-bottom:var(--cn-space-6);}
+
+/* Padding */
+
+.cn-p-1{padding:var(--cn-space-1);}
+.cn-p-2{padding:var(--cn-space-2);}
+.cn-p-3{padding:var(--cn-space-3);}
+.cn-p-4{padding:var(--cn-space-4);}
+.cn-p-5{padding:var(--cn-space-5);}
+.cn-p-6{padding:var(--cn-space-6);}

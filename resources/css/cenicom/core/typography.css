@@ -1,0 +1,172 @@
+/*==================================================
+    CENICOM ERP
+    TYPOGRAPHY.CSS
+==================================================*/
+
+/*==============================================
+= TITULOS
+==============================================*/
+
+.cn-title-1{
+
+    font-size:var(--cn-font-size-3xl);
+
+    font-weight:var(--cn-font-bold);
+
+    color:var(--cn-gray-900);
+
+    line-height:1.2;
+
+}
+
+.cn-title-2{
+
+    font-size:var(--cn-font-size-2xl);
+
+    font-weight:var(--cn-font-semibold);
+
+    color:var(--cn-gray-900);
+
+}
+
+.cn-title-3{
+
+    font-size:var(--cn-font-size-xl);
+
+    font-weight:var(--cn-font-semibold);
+
+}
+
+.cn-title-4{
+
+    font-size:var(--cn-font-size-lg);
+
+    font-weight:var(--cn-font-medium);
+
+}
+
+/*==============================================
+= SUBTITULOS
+==============================================*/
+
+.cn-subtitle{
+
+    font-size:var(--cn-font-size-md);
+
+    color:var(--cn-gray-500);
+
+    margin-top:var(--cn-space-1);
+
+}
+
+/*==============================================
+= TEXTO
+==============================================*/
+
+.cn-text{
+
+    font-size:var(--cn-font-size-md);
+
+}
+
+.cn-text-sm{
+
+    font-size:var(--cn-font-size-sm);
+
+}
+
+.cn-text-xs{
+
+    font-size:var(--cn-font-size-xs);
+
+}
+
+/*==============================================
+= PESOS
+==============================================*/
+
+.cn-light{
+
+    font-weight:var(--cn-font-light);
+
+}
+
+.cn-normal{
+
+    font-weight:var(--cn-font-normal);
+
+}
+
+.cn-medium{
+
+    font-weight:var(--cn-font-medium);
+
+}
+
+.cn-semibold{
+
+    font-weight:var(--cn-font-semibold);
+
+}
+
+.cn-bold{
+
+    font-weight:var(--cn-font-bold);
+
+}
+
+/*==============================================
+= ALINEACION
+==============================================*/
+
+.cn-text-left{
+
+    text-align:left;
+
+}
+
+.cn-text-center{
+
+    text-align:center;
+
+}
+
+.cn-text-right{
+
+    text-align:right;
+
+}
+
+/*==============================================
+= COLORES
+==============================================*/
+
+.cn-text-primary{
+
+    color:var(--cn-primary);
+
+}
+
+.cn-text-success{
+
+    color:var(--cn-success);
+
+}
+
+.cn-text-warning{
+
+    color:var(--cn-warning);
+
+}
+
+.cn-text-danger{
+
+    color:var(--cn-danger);
+
+}
+
+.cn-text-muted{
+
+    color:var(--cn-gray-500);
+
+}

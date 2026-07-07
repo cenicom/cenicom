@@ -1,0 +1,179 @@
+/*==================================================
+  CENICOM ERP
+  Design Tokens
+  Version : 1.0.0
+==================================================*/
+
+:root {
+
+    /*==============================================
+    COLORES PRINCIPALES
+    ==============================================*/
+
+    --cn-primary: #2563eb;
+    --cn-primary-hover: #1d4ed8;
+    --cn-primary-light: #dbeafe;
+
+    --cn-secondary: #64748b;
+    --cn-secondary-hover: #475569;
+
+    --cn-success: #16a34a;
+    --cn-success-light: #dcfce7;
+
+    --cn-warning: #d97706;
+    --cn-warning-light: #fef3c7;
+
+    --cn-danger: #dc2626;
+    --cn-danger-light: #fee2e2;
+
+    --cn-info: #0284c7;
+    --cn-info-light: #e0f2fe;
+
+    /*==============================================
+    ESCALA DE GRISES
+    ==============================================*/
+
+    --cn-white: #ffffff;
+
+    --cn-gray-50: #f8fafc;
+    --cn-gray-100: #f1f5f9;
+    --cn-gray-200: #e2e8f0;
+    --cn-gray-300: #cbd5e1;
+    --cn-gray-400: #94a3b8;
+    --cn-gray-500: #64748b;
+    --cn-gray-600: #475569;
+    --cn-gray-700: #334155;
+    --cn-gray-800: #1e293b;
+    --cn-gray-900: #0f172a;
+
+    --cn-black: #020617;
+
+    /*==============================================
+    FONDOS
+    ==============================================*/
+
+    --cn-body-bg: var(--cn-gray-100);
+
+    --cn-card-bg: var(--cn-white);
+
+    --cn-sidebar-bg: #172554;
+
+    --cn-topbar-bg: var(--cn-white);
+
+    --cn-footer-bg: var(--cn-white);
+
+    /*==============================================
+    TIPOGRAFÍA
+    ==============================================*/
+
+    --cn-font-family:
+        "Inter",
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+
+    --cn-font-size-xs: .75rem;
+    --cn-font-size-sm: .875rem;
+    --cn-font-size-md: 1rem;
+    --cn-font-size-lg: 1.125rem;
+    --cn-font-size-xl: 1.25rem;
+    --cn-font-size-2xl: 1.5rem;
+    --cn-font-size-3xl: 2rem;
+
+    --cn-font-light:300;
+    --cn-font-normal:400;
+    --cn-font-medium:500;
+    --cn-font-semibold:600;
+    --cn-font-bold:700;
+
+    --cn-line-height:1.5;
+
+    /*==============================================
+    ESPACIADO
+    ==============================================*/
+
+    --cn-space-0:0;
+    --cn-space-1:4px;
+    --cn-space-2:8px;
+    --cn-space-3:12px;
+    --cn-space-4:16px;
+    --cn-space-5:20px;
+    --cn-space-6:24px;
+    --cn-space-8:32px;
+    --cn-space-10:40px;
+    --cn-space-12:48px;
+
+    /*==============================================
+    BORDES
+    ==============================================*/
+
+    --cn-border-color:var(--cn-gray-200);
+
+    --cn-border-width:1px;
+
+    --cn-radius-xs:2px;
+    --cn-radius-sm:4px;
+    --cn-radius-md:8px;
+    --cn-radius-lg:12px;
+    --cn-radius-xl:16px;
+    --cn-radius-pill:999px;
+
+    /*==============================================
+    SOMBRAS
+    ==============================================*/
+
+    --cn-shadow-xs:0 1px 2px rgba(0,0,0,.04);
+
+    --cn-shadow-sm:0 2px 6px rgba(0,0,0,.06);
+
+    --cn-shadow-md:0 6px 16px rgba(0,0,0,.08);
+
+    --cn-shadow-lg:0 12px 32px rgba(0,0,0,.12);
+
+    /*==============================================
+    TRANSICIONES
+    ==============================================*/
+
+    --cn-transition-fast:.15s;
+
+    --cn-transition:.25s;
+
+    --cn-transition-slow:.4s;
+
+    /*==============================================
+    Z-INDEX
+    ==============================================*/
+
+    --cn-z-dropdown:1000;
+
+    --cn-z-sticky:1010;
+
+    --cn-z-fixed:1020;
+
+    --cn-z-modal:1050;
+
+    --cn-z-tooltip:1080;
+
+    /*==============================================
+    SIDEBAR
+    ==============================================*/
+
+    --cn-sidebar-width:270px;
+
+    --cn-sidebar-collapsed-width:80px;
+
+    /*==============================================
+    HEADER
+    ==============================================*/
+
+    --cn-header-height:70px;
+
+    /*==============================================
+    CONTENEDOR
+    ==============================================*/
+
+    --cn-container-max:1600px;
+
+}
