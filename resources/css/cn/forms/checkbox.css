@@ -1,0 +1,13 @@
+.cn-checkbox{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:.65rem;
+
+    cursor:pointer;
+
+    color:var(--cn-text);
+
+}

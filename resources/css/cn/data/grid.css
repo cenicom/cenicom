@@ -1,0 +1,49 @@
+/*======================================================
+    CN DATA GRID
+======================================================*/
+
+.cn-data-grid{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:1.5rem;
+
+}
+
+.cn-data-grid-toolbar{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:1rem;
+
+}
+
+.cn-data-grid-filters{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:1rem;
+
+}
+
+.cn-data-grid-content{
+
+    width:100%;
+
+    overflow-x:auto;
+
+}
+
+.cn-data-grid-pagination{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+}

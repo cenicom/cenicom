@@ -1,0 +1,63 @@
+/*==================================================
+    CN ALERT
+==================================================*/
+
+.cn-alert{
+
+    padding:1rem 1.25rem;
+
+    border-radius:var(--cn-radius-md);
+
+    border-left:5px solid;
+
+    margin-bottom:1rem;
+
+}
+
+.cn-alert strong{
+
+    display:block;
+
+    margin-bottom:.40rem;
+
+}
+
+.cn-alert-info{
+
+    background:#0F172A;
+
+    border-color:#3B82F6;
+
+    color:#E5E7EB;
+
+}
+
+.cn-alert-success{
+
+    background:#052E16;
+
+    border-color:#22C55E;
+
+    color:#DCFCE7;
+
+}
+
+.cn-alert-warning{
+
+    background:#451A03;
+
+    border-color:#F59E0B;
+
+    color:#FEF3C7;
+
+}
+
+.cn-alert-danger{
+
+    background:#450A0A;
+
+    border-color:#EF4444;
+
+    color:#FEE2E2;
+
+}

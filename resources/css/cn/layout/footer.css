@@ -1,0 +1,21 @@
+.cn-footer{
+
+    height:48px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:0 1.5rem;
+
+    background:#ffffff;
+
+    border-top:1px solid #E5E7EB;
+
+    color:#6B7280;
+
+    font-size:.875rem;
+
+}

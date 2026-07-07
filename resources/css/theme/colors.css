@@ -1,0 +1,31 @@
+:root{
+
+    /* Colores principales */
+
+    --cn-primary:#2563EB;
+    --cn-primary-hover:#1D4ED8;
+
+    /* Fondo */
+
+    --cn-body-bg:#111827;
+    --cn-surface:#1F2937;
+    --cn-surface-light:#374151;
+
+    /* Bordes */
+
+    --cn-border:#374151;
+
+    /* Texto */
+
+    --cn-text:#F9FAFB;
+    --cn-text-secondary:#D1D5DB;
+    --cn-text-muted:#9CA3AF;
+
+    /* Estados */
+
+    --cn-success:#10B981;
+    --cn-warning:#F59E0B;
+    --cn-danger:#EF4444;
+    --cn-info:#3B82F6;
+
+}

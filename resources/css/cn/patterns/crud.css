@@ -1,0 +1,102 @@
+/*======================================================
+    CN CRUD PATTERN
+======================================================*/
+
+.cn-crud{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:1.5rem;
+
+}
+
+.cn-crud-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+.cn-crud-header h2{
+
+    margin:0;
+
+    color:var(--cn-text);
+
+    font-size:1.6rem;
+
+    font-weight:700;
+
+}
+
+.cn-crud-header p{
+
+    margin:.35rem 0 0;
+
+    color:var(--cn-text-muted);
+
+}
+
+.cn-crud-toolbar{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:1rem;
+
+    flex-wrap:wrap;
+
+}
+
+.cn-crud-actions{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:1rem;
+
+    flex-wrap:wrap;
+
+}
+
+.cn-crud-filters{
+
+    display:flex;
+
+    gap:1rem;
+
+    flex-wrap:wrap;
+
+    align-items:end;
+
+}
+
+
+.cn-crud-content{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:1rem;
+
+}
+
+.cn-crud-footer{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+}

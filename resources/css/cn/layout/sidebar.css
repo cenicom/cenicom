@@ -1,0 +1,107 @@
+/* ==========================================================
+   SIDEBAR
+========================================================== */
+
+.cn-sidebar{
+
+    width:260px;
+
+    min-height:100vh;
+
+    background:#1F2937;
+
+    color:#fff;
+
+    display:flex;
+
+    flex-direction:column;
+
+    border-right:1px solid rgba(255,255,255,.08);
+
+}
+
+.cn-sidebar-header{
+
+    padding:22px;
+
+    font-size:.80rem;
+
+    font-weight:700;
+
+    letter-spacing:1px;
+
+    color:#9CA3AF;
+
+    border-bottom:1px solid rgba(255,255,255,.08);
+
+}
+
+.cn-sidebar-menu{
+
+    padding:10px 0;
+
+}
+
+.cn-sidebar-group{
+
+    padding:18px 22px 8px;
+
+    font-size:.72rem;
+
+    font-weight:700;
+
+    color:#6B7280;
+
+    text-transform:uppercase;
+
+}
+
+.cn-sidebar-item{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    padding:12px 22px;
+
+    color:#D1D5DB;
+
+    text-decoration:none;
+
+    transition:.20s;
+
+}
+
+.cn-sidebar-item:hover{
+
+    background:#374151;
+
+    color:#fff;
+
+}
+
+.cn-sidebar-item.active{
+
+    background:var(--cn-primary);
+
+    color:#fff;
+
+}
+
+.cn-sidebar-icon{
+
+    width:22px;
+
+    text-align:center;
+
+    font-size:1rem;
+
+}
+
+.cn-sidebar-text{
+
+    font-size:.95rem;
+
+}

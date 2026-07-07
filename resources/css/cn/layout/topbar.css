@@ -1,0 +1,101 @@
+.cn-topbar{
+
+    height:70px;
+
+    background:#ffffff;
+
+    border-bottom:1px solid #E5E7EB;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:0 1.25rem;
+
+    box-shadow:var(--shadow-sm);
+
+    position:sticky;
+
+    top:0;
+
+    z-index:1000;
+
+}
+
+.cn-topbar-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:1rem;
+
+}
+
+.cn-logo{
+
+    height:55px;
+
+    width:auto;
+
+    object-fit:contain;
+
+    margin-left:.5rem;
+
+}
+
+.cn-toggle{
+
+    width:42px;
+
+    height:42px;
+
+    border:none;
+
+    border-radius:8px;
+
+    background:transparent;
+
+}
+
+.cn-toggle:hover{
+
+    background:#F3F4F6;
+
+}
+
+.cn-topbar-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:.75rem;
+
+}
+
+.cn-icon{
+
+    width:40px;
+
+    height:40px;
+
+    border-radius:8px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    cursor:pointer;
+
+}
+
+.cn-icon:hover{
+
+    background:#F3F4F6;
+
+}

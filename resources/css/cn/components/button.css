@@ -1,0 +1,248 @@
+/*==================================================
+    CN UI Framework
+    Component : Button
+    Version   : 1.0.0
+==================================================*/
+
+/* Base */
+
+.cn-button{
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:.50rem;
+
+    padding:.65rem 1.20rem;
+
+    border:1px solid transparent;
+    border-radius:10px;
+
+    font-size:.90rem;
+    font-weight:600;
+    line-height:1;
+
+    cursor:pointer;
+    user-select:none;
+
+    text-decoration:none;
+
+    transition:
+        background-color .20s ease,
+        border-color .20s ease,
+        color .20s ease,
+        transform .15s ease,
+        box-shadow .20s ease;
+
+}
+
+/* Hover */
+
+.cn-button:hover{
+
+    transform:translateY(-1px);
+
+}
+
+/* Active */
+
+.cn-button:active{
+
+    transform:translateY(0);
+
+}
+
+/* Focus */
+
+.cn-button:focus-visible{
+
+    outline:none;
+
+    box-shadow:0 0 0 3px rgba(37,99,235,.30);
+
+}
+
+/* Disabled */
+
+.cn-button:disabled,
+.cn-button.disabled{
+
+    opacity:.60;
+
+    cursor:not-allowed;
+
+    pointer-events:none;
+
+}
+
+/*==================================================
+    Variantes
+==================================================*/
+
+/* Primary */
+
+.cn-button-primary{
+
+    background:var(--cn-primary);
+
+    color:#fff;
+
+    border-color:var(--cn-primary);
+
+}
+
+.cn-button-primary:hover{
+
+    background:var(--cn-primary-hover);
+
+    border-color:var(--cn-primary-hover);
+
+}
+
+/* Secondary */
+
+.cn-button-secondary{
+
+    background:var(--cn-surface);
+
+    color:var(--cn-text);
+
+    border-color:var(--cn-border);
+
+}
+
+.cn-button-secondary:hover{
+
+    background:var(--cn-surface-light);
+
+}
+
+/* Success */
+
+.cn-button-success{
+
+    background:var(--cn-success);
+
+    color:#fff;
+
+}
+
+.cn-button-success:hover{
+
+    filter:brightness(1.08);
+
+}
+
+/* Warning */
+
+.cn-button-warning{
+
+    background:var(--cn-warning);
+
+    color:#111827;
+
+}
+
+.cn-button-warning:hover{
+
+    filter:brightness(1.05);
+
+}
+
+/* Danger */
+
+.cn-button-danger{
+
+    background:var(--cn-danger);
+
+    color:#fff;
+
+}
+
+.cn-button-danger:hover{
+
+    filter:brightness(1.05);
+
+}
+
+/* Outline */
+
+.cn-button-outline{
+
+    background:transparent;
+
+    color:var(--cn-primary);
+
+    border-color:var(--cn-primary);
+
+}
+
+.cn-button-outline:hover{
+
+    background:rgba(37,99,235,.10);
+
+}
+
+/* Ghost */
+
+.cn-button-ghost{
+
+    background:transparent;
+
+    color:var(--cn-text);
+
+}
+
+.cn-button-ghost:hover{
+
+    background:rgba(255,255,255,.08);
+
+}
+
+/*==================================================
+    Tamaños
+==================================================*/
+
+.cn-button-sm{
+
+    padding:.45rem .80rem;
+
+    font-size:.80rem;
+
+}
+
+.cn-button-md{
+
+    padding:.65rem 1.20rem;
+
+    font-size:.90rem;
+
+}
+
+.cn-button-lg{
+
+    padding:.85rem 1.50rem;
+
+    font-size:1rem;
+
+}
+
+/*==================================================
+    Ancho completo
+==================================================*/
+
+.cn-button-block{
+
+    width:100%;
+
+}
+
+/*==================================================
+    Iconos
+==================================================*/
+
+.cn-button i{
+
+    font-size:.90rem;
+
+}

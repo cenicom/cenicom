@@ -1,0 +1,82 @@
+/*==================================================
+    CN UI Framework
+    Component : Card
+==================================================*/
+
+.cn-card{
+
+    background:var(--cn-surface);
+
+    border:1px solid var(--cn-border);
+
+    border-radius:12px;
+
+    overflow:hidden;
+
+    box-shadow:0 2px 8px rgba(0,0,0,.18);
+
+}
+
+.cn-card-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:1rem 1.25rem;
+
+    border-bottom:1px solid var(--cn-border);
+
+}
+
+.cn-card-title{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:.75rem;
+
+}
+
+.cn-card-title i{
+
+    color:var(--cn-primary);
+
+    font-size:1.15rem;
+
+}
+
+.cn-card-title h5{
+
+    margin:0;
+
+    color:var(--cn-text);
+
+    font-weight:600;
+
+}
+
+.cn-card-title small{
+
+    color:var(--cn-text-muted);
+
+}
+
+.cn-card-body{
+
+    padding:1.25rem;
+
+}
+
+.cn-card-footer{
+
+    padding:1rem 1.25rem;
+
+    border-top:1px solid var(--cn-border);
+
+    background:rgba(255,255,255,.03);
+
+}

@@ -1,0 +1,21 @@
+/* ==========================================================
+   TYPOGRAPHY
+========================================================== */
+
+html {
+
+    font-size:16px;
+
+}
+
+body{
+
+    font-family:'Inter',sans-serif;
+
+    color:var(--cds-text);
+
+    background:var(--cds-body-bg);
+
+    line-height:1.5;
+
+}
