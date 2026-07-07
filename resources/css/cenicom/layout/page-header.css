@@ -1,0 +1,77 @@
+/*==================================================
+    PAGE HEADER
+==================================================*/
+
+.cn-page-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:var(--cn-space-6);
+
+    margin-bottom:var(--cn-space-6);
+
+    padding-bottom:var(--cn-space-4);
+
+    border-bottom:1px solid var(--cn-border-color);
+
+}
+
+.cn-page-header__content{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:var(--cn-space-4);
+
+}
+
+.cn-page-header__icon{
+
+    width:60px;
+
+    height:60px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:var(--cn-radius-lg);
+
+    background:var(--cn-primary-light);
+
+    color:var(--cn-primary);
+
+    font-size:26px;
+
+}
+
+.cn-page-header__title{
+
+    margin:0;
+
+    font-size:var(--cn-font-size-2xl);
+
+}
+
+.cn-page-header__subtitle{
+
+    margin-top:6px;
+
+    color:var(--cn-gray-500);
+
+}
+
+.cn-page-header__actions{
+
+    display:flex;
+
+    gap:12px;
+
+}

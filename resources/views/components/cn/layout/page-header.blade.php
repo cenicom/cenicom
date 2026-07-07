@@ -1,20 +1,22 @@
+@props([
+    'title',
+    'subtitle' => null,
+    'icon' => null,
+])
+
 <div class="cn-page-header">
 
-    <div class="cn-page-header-left">
+    <div class="cn-page-header__content">
 
         @if($icon)
-
-            <div class="cn-page-icon">
-
+            <div class="cn-page-header__icon">
                 <i class="fas fa-{{ $icon }}"></i>
-
             </div>
-
         @endif
 
-        <div>
+        <div class="cn-page-header__text">
 
-            <h1 class="cn-page-title">
+            <h1 class="cn-page-header__title">
 
                 {{ $title }}
 
@@ -22,7 +24,7 @@
 
             @if($subtitle)
 
-                <p class="cn-page-subtitle">
+                <p class="cn-page-header__subtitle">
 
                     {{ $subtitle }}
 
@@ -36,7 +38,7 @@
 
     @isset($actions)
 
-        <div class="cn-page-actions">
+        <div class="cn-page-header__actions">
 
             {{ $actions }}
 
