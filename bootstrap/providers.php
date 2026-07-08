@@ -1,12 +1,13 @@
 <?php
 
 use App\Providers\AppServiceProvider;
-use App\Providers\CNFrameworkServiceProvider;
+//use App\Providers\CNFrameworkServiceProvider;
+use App\Providers\RepositoryServiceProvider;
 
 return [
 
     AppServiceProvider::class,
 
-    CNFrameworkServiceProvider::class,
+    RepositoryServiceProvider::class,
 
 ];

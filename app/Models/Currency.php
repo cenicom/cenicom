@@ -6,22 +6,25 @@ namespace App\Models;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
-//use Illuminate\Database\Eloquent\Concerns\HasUuids;
-//use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-//use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Core\Models\BaseModel;
+use App\Models\BaseModel;
 
 /**
  * Currency Model.
+ *
+ * Representa una moneda utilizada por el ERP.
  *
  * @property int $id
  * @property string $uuid
  * @property string $code
  * @property string $symbol
  * @property string $name
- * @property bool $status
+ * @property int $decimal_places
+ * @property string $decimal_separator
+ * @property string $thousands_separator
+ * @property string $symbol_position
  * @property bool $is_default
+ * @property bool $status
  */
 
 class Currency extends BaseModel
@@ -32,6 +35,14 @@ class Currency extends BaseModel
     public const SYMBOL_BEFORE = 'before';
 
     public const SYMBOL_AFTER = 'after';
+
+    public const STATUS_ACTIVE = true;
+
+    public const STATUS_INACTIVE = false;
+
+    public const DECIMAL_SEPARATOR = '.';
+
+    public const THOUSANDS_SEPARATOR = ',';
 
     /**
      * Nombre de la tabla.
@@ -90,8 +101,6 @@ class Currency extends BaseModel
         ];
     }
 
-    protected $hidden = [];
-
     /*
     |--------------------------------------------------------------------------
     | Query Scopes
@@ -112,6 +121,23 @@ class Currency extends BaseModel
     public function scopeByCode(Builder $query, string $code): Builder
     {
         return $query->where('code', strtoupper($code));
+    }
+
+    public function scopeActive(
+        Builder $query
+    ): Builder {
+        return $query->where('status', true);
+    }
+
+    public function scopeInactive(
+        Builder $query
+    ): Builder {
+        return $query->where('status', false);
+    }
+
+    public function isActive(): bool
+    {
+        return (bool) $this->status;
     }
 
     /*
@@ -162,6 +188,7 @@ class Currency extends BaseModel
     {
         return "{$this->symbol} {$this->code}";
     }
+
 
     /*
     |--------------------------------------------------------------------------

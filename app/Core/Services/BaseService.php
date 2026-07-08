@@ -5,67 +5,59 @@ declare(strict_types=1);
 namespace App\Core\Services;
 
 use App\Core\Contracts\RepositoryInterface;
+use App\Core\Contracts\ServiceInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * ==========================================================
- * CENICOM ERP
- * ==========================================================
- *
- * Servicio base para toda la lógica reutilizable
- * del sistema.
- *
- * @package App\Core\Services
- * @since 1.0.0
- */
-abstract class BaseService
+abstract class BaseService implements ServiceInterface
 {
-    /**
-     * Constructor.
-     */
     public function __construct(
         protected RepositoryInterface $repository
     ) {
     }
 
-    /**
-     * Obtiene un listado paginado.
-     */
     public function paginate(int $perPage = 15): LengthAwarePaginator
     {
         return $this->repository->paginate($perPage);
     }
 
-    /**
-     * Busca un registro por ID.
-     */
-    public function findById(int|string $id): ?Model
+    public function all(): Collection
     {
-        return $this->repository->findById($id);
+        return $this->repository->all();
     }
 
-    /**
-     * Crea un registro.
-     */
+    public function findById(
+        int|string $id,
+        array $columns = ['*']
+    ): ?Model {
+        return $this->repository->findById($id, $columns);
+    }
+
     public function create(array $attributes): Model
     {
         return $this->repository->create($attributes);
     }
 
-    /**
-     * Actualiza un registro.
-     */
-    public function update(Model $model, array $attributes): Model
-    {
-        return $this->repository->update($model, $attributes);
+    public function update(
+        int|string $id,
+        array $attributes
+    ): bool {
+        return $this->repository->update($id, $attributes);
     }
 
-    /**
-     * Elimina un registro.
-     */
-    public function delete(Model $model): bool
+    public function delete(int|string $id): bool
     {
-        return $this->repository->delete($model);
+        return $this->repository->delete($id);
+    }
+
+    public function restore(int|string $id): bool
+    {
+        return $this->repository->restore($id);
+    }
+
+    public function forceDelete(int|string $id): bool
+    {
+        return $this->repository->forceDelete($id);
     }
 }
