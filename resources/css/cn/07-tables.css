@@ -1,0 +1,93 @@
+/*==========================================================
+  TABLE
+==========================================================*/
+
+.cn-table-wrapper{
+
+    width:100%;
+}
+
+.cn-table-responsive{
+
+    overflow-x:auto;
+}
+
+.cn-table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    background:var(--cn-surface);
+}
+
+.cn-table thead{
+
+    background:var(--cn-primary);
+
+    color:white;
+}
+
+.cn-table th{
+
+    padding:.90rem;
+
+    text-align:left;
+
+    font-weight:600;
+}
+
+.cn-table td{
+
+    padding:.90rem;
+
+    border-bottom:1px solid var(--cn-border);
+}
+
+.cn-table tbody tr{
+
+    transition:var(--cn-transition);
+}
+
+.cn-table tbody tr:hover{
+
+    background:#F9FAFB;
+}
+
+/*==========================================================
+  ACTIONS
+==========================================================*/
+
+.cn-table-actions{
+
+    display:flex;
+
+    gap:.40rem;
+}
+
+/*==========================================================
+  EMPTY
+==========================================================*/
+
+.cn-empty{
+
+    padding:4rem 2rem;
+
+    text-align:center;
+
+    color:var(--cn-text-muted);
+}
+
+.cn-empty i{
+
+    font-size:3rem;
+
+    color:var(--cn-border);
+
+    margin-bottom:1rem;
+}
+
+.cn-empty h3{
+
+    margin-bottom:.50rem;
+}

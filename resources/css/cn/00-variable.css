@@ -1,0 +1,90 @@
+:root {
+
+    /* ======================================================
+       CENICOM ERP DESIGN SYSTEM
+       Version: 1.0
+    ====================================================== */
+
+    /*=========
+      COLORES
+    =========*/
+
+    --cn-primary: #1E3A8A;
+    --cn-primary-light: #2563EB;
+
+    --cn-success: #16A34A;
+    --cn-warning: #F59E0B;
+    --cn-danger: #DC2626;
+    --cn-info: #0EA5E9;
+
+    --cn-purple: #7C3AED;
+
+    --cn-white: #FFFFFF;
+
+    --cn-background: #F8FAFC;
+
+    --cn-surface: #FFFFFF;
+
+    --cn-border: #E5E7EB;
+
+    --cn-text: #1F2937;
+
+    --cn-text-muted: #6B7280;
+
+    /*=========
+      TIPOGRAFÍA
+    =========*/
+
+    --cn-font-family:
+        Inter,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+
+    --cn-font-size-xs: .75rem;
+    --cn-font-size-sm: .875rem;
+    --cn-font-size-md: 1rem;
+    --cn-font-size-lg: 1.25rem;
+    --cn-font-size-xl: 1.5rem;
+
+    /*=========
+      ESPACIADO
+    =========*/
+
+    --cn-space-xs: .25rem;
+    --cn-space-sm: .5rem;
+    --cn-space-md: 1rem;
+    --cn-space-lg: 1.5rem;
+    --cn-space-xl: 2rem;
+
+    /*=========
+      BORDES
+    =========*/
+
+    --cn-radius-sm: 4px;
+    --cn-radius-md: 8px;
+    --cn-radius-lg: 12px;
+
+    /*=========
+      SOMBRAS
+    =========*/
+
+    --cn-shadow-sm:
+        0 1px 2px rgba(0,0,0,.05);
+
+    --cn-shadow-md:
+        0 4px 8px rgba(0,0,0,.08);
+
+    --cn-shadow-lg:
+        0 10px 20px rgba(0,0,0,.12);
+
+    /*=========
+      TRANSICIONES
+    =========*/
+
+    --cn-transition:
+        all .25s ease;
+
+}

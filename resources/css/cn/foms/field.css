@@ -1,0 +1,43 @@
+/*==========================================================
+  FIELD
+==========================================================*/
+
+.cn-field{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:.40rem;
+
+}
+
+.cn-field__label{
+
+    font-weight:600;
+
+    color:var(--cn-text);
+
+}
+
+.cn-required{
+
+    color:var(--cn-danger);
+
+}
+
+.cn-field__help{
+
+    color:var(--cn-text-muted);
+
+    font-size:.85rem;
+
+}
+
+.cn-field__error{
+
+    color:var(--cn-danger);
+
+    font-size:.85rem;
+
+}

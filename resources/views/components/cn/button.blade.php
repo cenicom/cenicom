@@ -1,29 +1,27 @@
 @props([
-    'action' => null,
-    'label' => null,
-    'icon' => null,
-    'variant' => null,
-    'type' => null,
+    'type' => 'button',
+    'variant' => 'primary',
     'size' => 'md',
-    'href' => null,
-    'disabled' => false,
+    'icon' => null,
 ])
 
-@php
+<button
+    type="{{ $type }}"
+    {{ $attributes->merge([
+        'class' => "cn-btn cn-btn--{$variant} cn-btn--{$size}"
+    ]) }}
+>
 
-$config = $action
-    ? config("cn-actions.$action", [])
-    : [];
+    @if($icon)
 
-$label = $label ?? $config['label'] ?? '';
-$icon = $icon ?? $config['icon'] ?? null;
-$variant = $variant ?? $config['variant'] ?? 'primary';
-$type = $type ?? $config['type'] ?? 'button';
+        <i class="fas fa-{{ $icon }}"></i>
 
-$classes = collect([
-    'cn-btn',
-    "cn-btn-$variant",
-    "cn-btn-$size",
-])->implode(' ');
+    @endif
 
-@endphp
+    <span>
+
+        {{ $slot }}
+
+    </span>
+
+</button>
