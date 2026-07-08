@@ -1,25 +1,36 @@
 <?php
-class CurrencyRepository
+
+declare(strict_types=1);
+
+namespace App\Repositories;
+
+use App\Core\Repositories\BaseRepository;
+use App\Models\Currency;
+
+/**
+ * ==========================================================
+ * CENICOM ERP
+ * ==========================================================
+ *
+ * Repositorio de monedas.
+ *
+ * @package App\Repositories
+ * @since 1.0.0
+ */
+class CurrencyRepository extends BaseRepository
 {
-    public function paginate()
+    public function __construct(Currency $model)
     {
-        return Currency::paginate();
+        $this->model = $model;
     }
 
-    public function create(array $data)
+    /**
+     * Busca una moneda por código ISO.
+     */
+    public function findByCode(string $code): ?Currency
     {
-        return Currency::create($data);
-    }
-
-    public function update(Currency $currency,array $data)
-    {
-        $currency->update($data);
-
-        return $currency;
-    }
-
-    public function delete(Currency $currency)
-    {
-        return $currency->delete();
+        return $this->query()
+            ->where('code', strtoupper($code))
+            ->first();
     }
 }

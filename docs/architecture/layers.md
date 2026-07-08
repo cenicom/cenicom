@@ -1,0 +1,13 @@
+Controller
+      │
+      ▼
+Action
+      │
+      ▼
+Service
+      │
+      ▼
+Repository
+      │
+      ▼
+Model

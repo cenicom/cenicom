@@ -165,3 +165,29 @@ Tablas fáciles de leer.
 Navegación intuitiva.
 
 No competiremos por tener la interfaz "más llamativa", sino por ofrecer la experiencia más eficiente para el trabajo diario.
+
+CN Foundation
+
+Sprint 5.5
+⏳ CN Response
+
+Sprint 5.6
+⏳ BaseController
+
+Sprint 5.7
+⏳ BaseCrudController
+
+Sprint 5.8
+⏳ CurrencyController
+
+Sprint 5.9
+⏳ Currency Views
+
+Sprint 6.0
+⏳ Country
+
+Nuestra próxima misión
+
+Mi recomendación es que la siguiente sesión la dediquemos exclusivamente a un objetivo:
+
+Completar al 100 % el módulo Currency y declararlo como el módulo patrón oficial de CENICOM.

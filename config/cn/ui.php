@@ -1,35 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 return [
 
-    'theme' => 'default',
+    'theme' => 'cn',
 
     'sidebar' => [
 
-        'width' => 270,
-
-        'collapsed_width' => 80,
+        'collapsed' => false,
 
     ],
 
-    'navbar' => [
-
-        'height' => 64,
-
-    ],
-
-    'content' => [
-
-        'max_width' => '100%',
-
-    ],
-
-    'card' => [
-
-        'radius' => 'lg',
-
-        'shadow' => true,
-
-    ],
+    'animations' => true,
 
 ];
