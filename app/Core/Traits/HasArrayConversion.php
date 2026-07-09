@@ -7,7 +7,9 @@ namespace App\Core\Traits;
 trait HasArrayConversion
 {
     /**
-     * Convertir DTO a array.
+     * Convierte el DTO en un arreglo asociativo.
+     *
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {

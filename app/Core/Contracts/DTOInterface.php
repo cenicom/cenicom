@@ -7,12 +7,17 @@ namespace App\Core\Contracts;
 interface DTOInterface
 {
     /**
-     * Crear DTO desde un arreglo de datos.
+     * Crea una nueva instancia del DTO a partir de un arreglo.
+     *
+     * @param array<string, mixed> $data
      */
+    //public static function fromArray(array $data): static;
     public static function fromArray(array $data): static;
 
     /**
-     * Convertir DTO a arreglo.
+     * Convierte el DTO a un arreglo asociativo.
+     *
+     * @return array<string, mixed>
      */
     public function toArray(): array;
 

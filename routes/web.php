@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CountryController;
+use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrganizationController;
 use Illuminate\Support\Facades\Route;
@@ -35,5 +36,6 @@ Route::get('/cities/by-state/{state}', function ($stateId) {
 
 Route::resource('organizations', OrganizationController::class);
 
+Route::resource('currencies', CurrencyController::class);
 
 require __DIR__.'/cds.php';

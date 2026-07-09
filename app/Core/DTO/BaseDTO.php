@@ -14,10 +14,10 @@ abstract class BaseDTO implements DTOInterface, JsonSerializable
     use HasArrayConversion;
     use HasJsonConversion;
 
-    public static function fromArray(array $data): static
-    {
-        return new static(...$data);
-    }
+    /**
+     * Cada DTO conoce cómo construirse.
+     */
+    abstract public static function fromArray(array $data): static;
 
     public function jsonSerialize(): array
     {

@@ -3,7 +3,9 @@
 declare(strict_types=1);
 
 namespace App\Core\Actions;
+
 use Illuminate\Support\Facades\DB;
+use App\Core\Actions\Contracts\ActionInterface;
 
 /**
  * ==========================================================
@@ -17,13 +19,13 @@ use Illuminate\Support\Facades\DB;
  * @package App\Core\Actions
  * @since 1.0.0
  */
-abstract class BaseAction
+abstract class BaseAction implements ActionInterface
 {
-    //
+    /**
+     * Ejecuta una operación dentro de una transacción.
+     */
     protected function transaction(callable $callback): mixed
     {
-        return \Illuminate\Support\Facades\DB::transaction($callback);
+        return DB::transaction($callback);
     }
 }
-
-

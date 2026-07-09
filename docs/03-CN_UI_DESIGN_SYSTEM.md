@@ -191,3 +191,73 @@ Nuestra próxima misión
 Mi recomendación es que la siguiente sesión la dediquemos exclusivamente a un objetivo:
 
 Completar al 100 % el módulo Currency y declararlo como el módulo patrón oficial de CENICOM.
+
+CENICOM
+
+CN Design System
+
+01. Introducción
+
+02. Filosofía
+
+03. Colores
+
+04. Tipografía
+
+05. Iconografía
+
+06. Espaciado
+
+07. Grid
+
+08. Botones
+
+09. Formularios
+
+10. Tablas
+
+11. Tarjetas
+
+12. Alertas
+
+13. Modales
+
+14. Navegación
+
+15. Carga de archivos
+
+16. Dashboard
+
+17. Reportes
+
+18. Accesibilidad
+
+19. Animaciones
+
+20. Buenas prácticas
+
+Sprint 1
+✅ CN Button
+✅ CN Input
+✅ CN Select (Select2)
+✅ CN Textarea
+
+Sprint 2
+✅ CN File
+✅ CN Image
+✅ CN Avatar
+✅ CN Password
+
+Sprint 3
+✅ CN Table
+✅ CN Table Actions
+✅ CN Pagination
+
+Sprint 4
+✅ CN Alerts
+✅ CN Confirm
+✅ CN Toast
+✅ CN Modal
+
+Sprint 5
+✅ CN Design System

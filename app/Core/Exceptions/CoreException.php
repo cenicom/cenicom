@@ -20,6 +20,7 @@ abstract class CoreException extends RuntimeException implements ExceptionInterf
 
     protected bool $loggable = true;
 
+
     public function __construct(
         string $message = '',
         array $context = [],
@@ -27,7 +28,7 @@ abstract class CoreException extends RuntimeException implements ExceptionInterf
     ) {
         parent::__construct(
             message: $message,
-            code: 0,
+            code: $this->code,
             previous: $previous
         );
 
@@ -44,9 +45,17 @@ abstract class CoreException extends RuntimeException implements ExceptionInterf
         return $this->errorCode;
     }
 
+    public function getErrorCode(): string{
+        return $this->getErrorCode();
+    }
+
     public function httpStatus(): int
     {
         return $this->httpStatus;
+    }
+
+    public function gethHttpStatus(): int{
+        return $this->gethHttpStatus();
     }
 
     public function reportable(): bool
@@ -58,4 +67,18 @@ abstract class CoreException extends RuntimeException implements ExceptionInterf
     {
         return $this->loggable;
     }
+
+    public function toArray(): array
+    {
+        return [
+            'type' => static::class,
+            'error' => $this->errorCode(),
+            'message' => $this->getMessage(),
+            'http_status' => $this->httpStatus(),
+            'context' => $this->context(),
+            'reportable' => $this->reportable(),
+            'loggable' => $this->loggable(),
+        ];
+    }
+
 }

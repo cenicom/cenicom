@@ -10,6 +10,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class InvalidDTOException extends CoreException
 {
+    public function __construct(
+        string $message = 'Invalid DTO data.',
+        ?\Throwable $previous = null
+    ) {
+        parent::__construct($message, $previous);
+    }
     protected string $errorCode = ExceptionCode::INVALID_DTO->value;
 
     protected int $httpStatus = Response::HTTP_UNPROCESSABLE_ENTITY;

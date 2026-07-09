@@ -7,7 +7,9 @@ namespace App\Core\Traits;
 trait HasJsonConversion
 {
     /**
-     * Convertir DTO a JSON.
+     * Convierte el DTO a una cadena JSON.
+     *
+     * @throws JsonException
      */
     public function toJson(): string
     {

@@ -10,6 +10,9 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @template TModel of Model
+ */
 abstract class BaseService implements ServiceInterface
 {
     public function __construct(
@@ -34,6 +37,9 @@ abstract class BaseService implements ServiceInterface
         return $this->repository->findById($id, $columns);
     }
 
+    /**
+     * @return TModel
+     */
     public function create(array $attributes): Model
     {
         return $this->repository->create($attributes);

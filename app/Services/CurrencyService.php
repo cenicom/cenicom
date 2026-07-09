@@ -10,6 +10,7 @@ use App\Core\Services\BaseService;
 use App\Models\Currency;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use App\DTO\Currency\CurrencyCreateData;
 
 class CurrencyService extends BaseService implements CurrencyServiceInterface
 {
@@ -30,10 +31,11 @@ class CurrencyService extends BaseService implements CurrencyServiceInterface
     /**
      * Crea una moneda.
      */
-    public function create(array $attributes): Currency
+    public function create(CurrencyCreateData $dto): Currency
     {
-        /** @var Currency */
-        return DB::transaction(function () use ($attributes) {
+        return $this->transaction(function () use ($dto) {
+
+            $attributes = $dto->toArray();
 
             if (!empty($attributes['is_default'])) {
                 $this->removeDefaultCurrency();
@@ -84,8 +86,5 @@ class CurrencyService extends BaseService implements CurrencyServiceInterface
         }
     }
 
-    protected function transaction(callable $callback): mixed
-    {
-        return DB::transaction($callback);
-    }
+
 }
