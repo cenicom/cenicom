@@ -1,0 +1,38 @@
+.cn-input {
+
+    width: 100%;
+
+    padding: .75rem 1rem;
+
+    border: 1px solid var(--cn-border);
+
+    border-radius: var(--cn-radius-md);
+
+    background: var(--cn-surface);
+
+    color: var(--cn-text-primary);
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+
+}
+
+.cn-input:focus {
+
+    outline: none;
+
+    border-color: var(--cn-primary);
+
+    box-shadow: 0 0 0 .2rem rgb(from var(--cn-primary) r g b / .15);
+
+}
+
+.cn-input:disabled {
+
+    opacity: .6;
+
+    cursor: not-allowed;
+
+}
+

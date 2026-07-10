@@ -1,15 +1,2 @@
 /* Bootstrap */
 
-
-@import "./cn/00-variable.css";
-@import "./cn/01-base.css";
-@import "./cn/02-layout.css";
-@import "./cn/03-navigation.css";
-@import "./cn/04-components.css";
-@import "./cn/05-buttons.css";
-@import "./cn/06-forms.css";
-@import "./cn/07-tables.css";
-@import "./cn/08-alerts.css";
-@import "./cn/09-modal.css";
-@import "./cn/10-theme.css";
-@import "./cn/11-utilties.css";

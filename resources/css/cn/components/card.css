@@ -1,0 +1,23 @@
+.cn-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--cn-surface);
+    border: 1px solid var(--cn-border);
+    border-radius: var(--cn-radius-lg);
+    box-shadow: var(--cn-shadow-sm);
+    overflow: hidden;
+}
+
+.cn-card-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--cn-border);
+}
+
+.cn-card-body {
+    padding: 1.25rem;
+}
+
+.cn-card-footer {
+    padding: 1rem 1.25rem;
+    border-top: 1px solid var(--cn-border);
+}

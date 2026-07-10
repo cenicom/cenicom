@@ -261,3 +261,118 @@ Sprint 4
 
 Sprint 5
 ✅ CN Design System
+
+
+resources/css/cn/
+
+base/
+    variables.css
+    typography.css
+    spacing.css
+
+layout/
+    page.css
+    sidebar.css
+    topbar.css
+    footer.css
+
+components/
+    button.css
+    badge.css
+    card.css
+    alert.css
+    modal.css
+
+forms/
+    input.css
+    select.css
+    textarea.css
+    checkbox.css
+
+tables/
+    table.css
+    datatable.css
+    pagination.css
+
+utilities/
+    helpers.css
+
+
+resources/js/cn/
+
+core/
+    cn.js
+
+components/
+    modal.js
+    dropdown.js
+
+tables/
+    datatable.js
+    pagination.js
+
+forms/
+    select.js
+    validation.js
+
+alerts/
+    sweetalert.js
+
+helpers/
+    ajax.js
+    clipboard.js
+
+    CN UI Framework v1.0
+
+FASE 1
+├── page
+├── page-header
+├── page-title
+└── page-actions
+
+FASE 2
+├── card
+├── card-header
+├── card-body
+└── card-footer
+
+FASE 3
+├── button
+├── badge
+├── icon
+└── tooltip
+
+FASE 4
+├── table
+├── datatable
+├── table-actions
+├── pagination
+└── empty-state
+
+FASE 5
+├── input
+├── select
+├── textarea
+├── checkbox
+├── radio
+├── switch
+├── date
+└── password
+
+FASE 6
+├── modal
+├── alert
+├── toast
+└── confirm
+
+FASE 7
+├── dashboard widgets
+├── statistics
+├── charts
+└── timeline
+
+CN-0003  x-cn.button        🔨
+CN-0004  x-cn.badge         ⏳
+CN-0005  x-cn.icon          ⏳
+CN-0006  x-cn.table         ⏳
+CN-0007  x-cn.table-actions ⏳

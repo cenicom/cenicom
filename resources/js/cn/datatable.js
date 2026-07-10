@@ -1,9 +1,0 @@
-class CNDataTable {
-
-    constructor(selector){
-
-        ...
-
-    }
-
-}

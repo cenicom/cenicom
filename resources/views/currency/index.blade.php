@@ -1,240 +1,131 @@
 <x-layout.app>
 
-```
-<x-slot name="title">
-    Monedas
-</x-slot>
-
-<div class="cn-page">
-
-    <header class="cn-page-header">
-
-        <div class="cn-page-title">
-
-            <div class="cn-page-icon">
-                <i class="fas fa-coins"></i>
-            </div>
-
-            <div>
-                <h1>
-                    Monedas
-                </h1>
-
-                <p>
-                    Administración y configuración de monedas del sistema.
-                </p>
-            </div>
-
-        </div>
+    <x-slot name="title">
+        Monedas
+    </x-slot>
 
 
-        <div class="cn-page-actions">
+    <div class="cn-page">
 
-            <a href="{{ route('currencies.create') }}"
-               class="cn-btn cn-btn-primary">
 
-                <i class="fas fa-plus"></i>
+        <x-cn.page-header title="Monedas" description="Administración y configuración de monedas del sistema."
+            icon="coins">
+
+            <x-cn.button.create :href="route('currencies.create')">
+
                 Nueva moneda
 
-            </a>
+            </x-cn.button.create>
 
-        </div>
-
-    </header>
+        </x-cn.page-header>
 
 
-    <section class="cn-card">
 
-        <div class="cn-card-body">
-
-            <div class="table-responsive">
-
-                <table id="currency-table"
-                       class="table cn-table">
-
-                    <thead>
-
-                        <tr>
-
-                            <th>Código</th>
-
-                            <th>Nombre</th>
-
-                            <th>Símbolo</th>
-
-                            <th>Estado</th>
-
-                            <th class="text-center">
-                                Acciones
-                            </th>
-
-                        </tr>
-
-                    </thead>
+        <x-cn.card>
 
 
-                    <tbody>
+            <x-cn.table id="currency-table">
+
+
+                <thead>
+
+                    <tr>
+
+                        <th>Código</th>
+
+                        <th>Nombre</th>
+
+                        <th>Símbolo</th>
+
+                        <th>Estado</th>
+
+                        <th class="text-center">
+                            Acciones
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
 
                     @forelse($currencies as $currency)
-
                         <tr>
 
-                            <td>
-                                {{ $currency->code }}
-                            </td>
+                            <td>{{ $currency->code }}</td>
 
+                            <td>{{ $currency->name }}</td>
 
-                            <td>
-                                {{ $currency->name }}
-                            </td>
-
-
-                            <td>
-                                {{ $currency->symbol ?? '-' }}
-                            </td>
+                            <td>{{ $currency->symbol ?? '-' }}</td>
 
 
                             <td>
 
-                                @if($currency->status)
-
-                                    <span class="badge bg-success">
+                                @if ($currency->status)
+                                    <x-cn.badge variant="success">
                                         Activa
-                                    </span>
-
+                                    </x-cn.badge>
                                 @else
-
-                                    <span class="badge bg-secondary">
+                                    <x-cn.badge variant="secondary">
                                         Inactiva
-                                    </span>
-
+                                    </x-cn.badge>
                                 @endif
 
                             </td>
 
 
-                            <td class="text-center">
+                            <td>
 
-                                <a href="{{ route('currencies.show', $currency) }}"
-                                   class="btn btn-sm btn-info"
-                                   title="Ver detalle">
+                                <x-cn.button.show :href="route('currencies.show', $currency)" />
 
-                                    <i class="fas fa-eye"></i>
+                                <x-cn.button.edit :href="route('currencies.edit', $currency)" />
 
-                                </a>
-
-
-                                <a href="{{ route('currencies.edit', $currency) }}"
-                                   class="btn btn-sm btn-warning"
-                                   title="Editar">
-
-                                    <i class="fas fa-edit"></i>
-
-                                </a>
-
-
-                                <form action="{{ route('currencies.destroy', $currency) }}"
-                                      method="POST"
-                                      class="d-inline js-confirm-delete">
+                                <form action="{{ route('currencies.destroy', $currency) }}" method="POST">
 
                                     @csrf
 
                                     @method('DELETE')
 
-
-                                    <button type="submit"
-                                            class="btn btn-sm btn-danger"
-                                            title="Eliminar">
-
-                                        <i class="fas fa-trash"></i>
-
-                                    </button>
+                                    <x-cn.button.delete />
 
                                 </form>
 
                             </td>
 
+
                         </tr>
+
 
                     @empty
 
                         <tr>
 
-                            <td colspan="5"
-                                class="text-center">
+                            <td colspan="5">
 
-                                No existen monedas registradas.
+                                <x-cn.empty-state>
+                                    No existen monedas registradas.
+                                </x-cn.empty-state>
 
                             </td>
 
                         </tr>
-
                     @endforelse
 
-                    </tbody>
 
-                </table>
-
-            </div>
+                </tbody>
 
 
-            <div class="cn-pagination mt-3">
-
-                {{ $currencies->links() }}
-
-            </div>
+            </x-cn.table>
 
 
-        </div>
-
-    </section>
-
-</div>
+            {{ $currencies->links() }}
 
 
-@push('scripts')
-
-    <script>
-
-        document.querySelectorAll('.js-confirm-delete')
-            .forEach(form => {
-
-                form.addEventListener('submit', function(event) {
-
-                    event.preventDefault();
+        </x-cn.card>
 
 
-                    Swal.fire({
+    </div>
 
-                        title: '¿Eliminar moneda?',
-
-                        text: 'Esta acción modificará la información del sistema.',
-
-                        icon: 'warning',
-
-                        showCancelButton: true,
-
-                        confirmButtonText: 'Sí, eliminar',
-
-                        cancelButtonText: 'Cancelar'
-
-                    }).then((result) => {
-
-                        if (result.isConfirmed) {
-
-                            form.submit();
-
-                        }
-
-                    });
-
-                });
-
-            });
-
-    </script>
-
-@endpush
-```
 
 </x-layout.app>
