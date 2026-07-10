@@ -1,7 +1,7 @@
 <x-layout.app>
 
     <x-slot name="title">
-        Editar Moneda
+        Crear Moneda
     </x-slot>
 
     <div class="cn-page">
@@ -15,13 +15,11 @@
                 </div>
 
                 <div>
-
-                    <h1>Editar Moneda</h1>
+                    <h1>Nueva Moneda</h1>
 
                     <p>
-                        Actualice la información de la moneda.
+                        Registre una nueva moneda en el sistema.
                     </p>
-
                 </div>
 
             </div>
@@ -34,8 +32,8 @@
 
                 <x-cn.form
                     id="currency-form"
-                    :action="route('currencies.update', $currency)"
-                    method="PUT"
+                    :action="route('currencies.store')"
+                    method="POST"
                 >
 
                     @include('currencies._form')
@@ -46,7 +44,7 @@
 
                             <i class="fas fa-save"></i>
 
-                            Actualizar
+                            Guardar
 
                         </x-cn.button>
 
@@ -71,5 +69,43 @@
         </section>
 
     </div>
+
+    @push('scripts')
+
+        <script>
+
+            document
+                .getElementById('currency-form')
+                ?.addEventListener('submit', function (event) {
+
+                    event.preventDefault();
+
+                    Swal.fire({
+
+                        title: '¿Guardar moneda?',
+
+                        text: 'Revise la información antes de registrar.',
+
+                        icon: 'question',
+
+                        showCancelButton: true,
+
+                        confirmButtonText: 'Sí, guardar',
+
+                        cancelButtonText: 'Revisar nuevamente'
+
+                    }).then((result) => {
+
+                        if (result.isConfirmed) {
+                            this.submit();
+                        }
+
+                    });
+
+                });
+
+        </script>
+
+    @endpush
 
 </x-layout.app>

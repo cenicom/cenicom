@@ -14,50 +14,35 @@ use Illuminate\View\Component;
  * CN UI Framework
  * -----------------------------------------------------------------------------
  *
- * ID          : CN-FORMS-001
- * Componente  : x-cn.input
+ * ID          : CN-FORMS-006
+ * Componente  : x-cn.select
  * Categoría   : Forms
  * Versión     : 1.0.0
  * Estado      : Gold Standard
  *
  * Responsabilidad:
- * Componente base para campos HTML input.
- *
- * Extensiones:
- * - x-cn.email
- * - x-cn.password
- * - x-cn.number
- * - x-cn.search
+ * Campo especializado para selección de opciones.
  *
  * @package App\View\Components\Cn\Forms
  */
 
-class Input extends Component
+class Select extends Component
 {
     public function __construct(
         public string $name,
         public ?string $id = null,
-        public string $type = 'text',
         public mixed $value = null,
+        public array $options = [],
         public ?string $placeholder = null,
-        public ?string $autocomplete = null,
-        public ?string $inputmode = null,
-        public ?string $pattern = null,
         public bool $required = false,
-        public bool $readonly = false,
         public bool $disabled = false,
-        public bool $autofocus = false,
-        public ?string $min = null,
-        public ?string $max = null,
-        public ?string $step = null,
-        public ?int $minlength = null,
-        public ?int $maxlength = null,
+        public bool $multiple = false,
     ) {
         $this->id ??= $this->name;
     }
 
     public function render(): View|Closure|string
     {
-        return view('components.cn.forms.input');
+        return view('components.cn.forms.select');
     }
 }

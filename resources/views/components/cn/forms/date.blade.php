@@ -5,11 +5,11 @@
     :placeholder="$placeholder"
     :autocomplete="$autocomplete"
     :inputmode="$inputmode"
+    :min="$min"
+    :max="$max"
     :required="$required"
     :readonly="$readonly"
     :disabled="$disabled"
     :autofocus="$autofocus"
-    :minlength="$minlength"
-    :maxlength="$maxlength"
     {{ $attributes }}
 />

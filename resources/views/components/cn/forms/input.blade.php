@@ -1,33 +1,64 @@
 @php
-    $inputId = $id;
     $inputValue = old($name, $value);
+    $isInvalid = $errors->has($name);
 
-    $inputClass = $attributes->class(['cn-input', 'is-invalid' => $errors->has($name)]);
+    $inputAttributes = $attributes
+        ->merge([
+            'class' => 'cn-input',
+        ])
+        ->class([
+            'is-invalid' => $isInvalid,
+        ]);
 @endphp
 
 <input
-    id="{{ $inputId }}"
+    id="{{ $id }}"
     name="{{ $name }}"
     type="{{ $type }}"
     value="{{ $inputValue }}"
-    placeholder="{{ $placeholder }}"
-    autocomplete="{{ $autocomplete }}"
-    min="{{ $min }}"
-    max="{{ $max }}"
-    step="{{ $step }}"
-    minlength="{{ $minlength }}"
-    maxlength="{{ $maxlength }}"
-    $isInvalid = $errors->has($name);
-    aria-invalid="{{ $errors->has($name) ? 'true' : 'false' }}"
+
+    @if($placeholder)
+        placeholder="{{ $placeholder }}"
+    @endif
+
+    @if($autocomplete)
+        autocomplete="{{ $autocomplete }}"
+    @endif
+
+    @if($inputmode)
+        inputmode="{{ $inputmode }}"
+    @endif
+
+    @if($pattern)
+        pattern="{{ $pattern }}"
+    @endif
+
+    @if($min)
+        min="{{ $min }}"
+    @endif
+
+    @if($max)
+        max="{{ $max }}"
+    @endif
+
+    @if($step)
+        step="{{ $step }}"
+    @endif
+
+    @if($minlength)
+        minlength="{{ $minlength }}"
+    @endif
+
+    @if($maxlength)
+        maxlength="{{ $maxlength }}"
+    @endif
+
+    aria-invalid="{{ $isInvalid ? 'true' : 'false' }}"
+
     @required($required)
     @readonly($readonly)
     @disabled($disabled)
     @autofocus($autofocus)
 
-    $attributes = $attributes
-        ->except('class')
-        ->class([
-            'cn-input',
-            'is-invalid' => $isInvalid,
-    ]);
+    {{ $inputAttributes }}
 >

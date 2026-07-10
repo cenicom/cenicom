@@ -1,15 +1,14 @@
 <x-cn.input
     :name="$name"
     :id="$id"
+    type="search"
     :value="$value"
     :placeholder="$placeholder"
-    :autocomplete="$autocomplete"
-    :inputmode="$inputmode"
+    autocomplete="off"
+    spellcheck="false"
     :required="$required"
     :readonly="$readonly"
     :disabled="$disabled"
     :autofocus="$autofocus"
-    :minlength="$minlength"
-    :maxlength="$maxlength"
     {{ $attributes }}
 />

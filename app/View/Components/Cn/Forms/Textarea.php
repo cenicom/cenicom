@@ -14,50 +14,38 @@ use Illuminate\View\Component;
  * CN UI Framework
  * -----------------------------------------------------------------------------
  *
- * ID          : CN-FORMS-001
- * Componente  : x-cn.input
+ * ID          : CN-FORMS-007
+ * Componente  : x-cn.textarea
  * Categoría   : Forms
  * Versión     : 1.0.0
  * Estado      : Gold Standard
  *
  * Responsabilidad:
- * Componente base para campos HTML input.
- *
- * Extensiones:
- * - x-cn.email
- * - x-cn.password
- * - x-cn.number
- * - x-cn.search
+ * Campo especializado para captura de texto multilínea.
  *
  * @package App\View\Components\Cn\Forms
  */
 
-class Input extends Component
+class Textarea extends Component
 {
     public function __construct(
         public string $name,
         public ?string $id = null,
-        public string $type = 'text',
         public mixed $value = null,
         public ?string $placeholder = null,
-        public ?string $autocomplete = null,
-        public ?string $inputmode = null,
-        public ?string $pattern = null,
+        public int $rows = 4,
+        public ?int $maxlength = null,
+        public ?int $minlength = null,
         public bool $required = false,
         public bool $readonly = false,
         public bool $disabled = false,
         public bool $autofocus = false,
-        public ?string $min = null,
-        public ?string $max = null,
-        public ?string $step = null,
-        public ?int $minlength = null,
-        public ?int $maxlength = null,
     ) {
         $this->id ??= $this->name;
     }
 
     public function render(): View|Closure|string
     {
-        return view('components.cn.forms.input');
+        return view('components.cn.forms.textarea');
     }
 }

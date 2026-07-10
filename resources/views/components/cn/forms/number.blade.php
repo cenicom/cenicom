@@ -3,13 +3,14 @@
     :id="$id"
     :value="$value"
     :placeholder="$placeholder"
-    :autocomplete="$autocomplete"
+    :min="$min"
+    :max="$max"
+    :step="$step"
+    :pattern="$pattern"
     :inputmode="$inputmode"
     :required="$required"
     :readonly="$readonly"
     :disabled="$disabled"
     :autofocus="$autofocus"
-    :minlength="$minlength"
-    :maxlength="$maxlength"
     {{ $attributes }}
 />
