@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use App\Core\Contracts\CurrencyRepositoryInterface;
+use App\Contracts\CurrencyRepositoryInterface;
 use App\Core\Repositories\BaseRepository;
 use App\Models\Currency;
 
@@ -16,10 +16,10 @@ class CurrencyRepository extends BaseRepository implements CurrencyRepositoryInt
         parent::__construct($model);
     }
 
-    /**
+     /**
      * Obtiene la moneda predeterminada.
      */
-    public function findDefault(): ?Currency
+    public function default(): ?Currency
     {
         return $this->query()
             ->default()

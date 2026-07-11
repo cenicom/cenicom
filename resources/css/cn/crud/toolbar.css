@@ -1,0 +1,98 @@
+/* ==========================================================================
+   CENICOM ERP
+   CN UI Framework
+   Component: Toolbar
+   ========================================================================== */
+
+/* ==========================================================================
+   Toolbar
+   ========================================================================== */
+
+.cn-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+}
+
+/* ==========================================================================
+   Sections
+   ========================================================================== */
+
+.cn-toolbar__start,
+.cn-toolbar__center,
+.cn-toolbar__end {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.cn-toolbar__start {
+    justify-content: flex-start;
+}
+
+.cn-toolbar__center {
+    flex: 1;
+    justify-content: center;
+}
+
+.cn-toolbar__end {
+    justify-content: flex-end;
+    margin-left: auto;
+}
+
+/* ==========================================================================
+   Variants
+   ========================================================================== */
+
+.cn-toolbar--wrap {
+    flex-wrap: wrap;
+}
+
+.cn-toolbar--justify-start {
+    justify-content: flex-start;
+}
+
+.cn-toolbar--justify-center {
+    justify-content: center;
+}
+
+.cn-toolbar--justify-between {
+    justify-content: space-between;
+}
+
+.cn-toolbar--justify-end {
+    justify-content: flex-end;
+}
+
+.cn-toolbar--justify-around {
+    justify-content: space-around;
+}
+
+.cn-toolbar--justify-evenly {
+    justify-content: space-evenly;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+.cn-toolbar--responsive {
+    container-type: inline-size;
+}
+
+@media (max-width: 768px) {
+    .cn-toolbar--responsive {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .cn-toolbar--responsive .cn-toolbar__start,
+    .cn-toolbar--responsive .cn-toolbar__center,
+    .cn-toolbar--responsive .cn-toolbar__end {
+        width: 100%;
+        justify-content: flex-start;
+        margin-left: 0;
+    }
+}

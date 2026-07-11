@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Currency;
 
+use App\Models\Currency;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -34,7 +35,9 @@ class UpdateCurrencyRequest extends FormRequest
      */
     public function rules(): array
     {
+        /** @var \App\Models\Currency $currency */
         $currency = $this->route('currency');
+        /** @var Currency $currency */
 
         return [
             'code' => [
@@ -77,7 +80,10 @@ class UpdateCurrencyRequest extends FormRequest
 
             'symbol_position' => [
                 'required',
-                Rule::in(['before', 'after']),
+                Rule::in([
+                    Currency::SYMBOL_BEFORE,
+                    Currency::SYMBOL_AFTER,
+                ])
             ],
 
             'is_default' => [

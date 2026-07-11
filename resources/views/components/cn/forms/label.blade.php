@@ -1,15 +1,11 @@
-@php
-    $labelAttributes = $attributes->merge([
-        'class' => 'cn-label',
-    ]);
-@endphp
-
 <label
-    @if($for)
+    @isset($for)
         for="{{ $for }}"
-    @endif
+    @endisset
 
-    {{ $labelAttributes }}
+    {{ $attributes->class([
+        'cn-label',
+    ]) }}
 >
     {{ $slot }}
 

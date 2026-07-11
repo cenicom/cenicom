@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-
 use App\Core\Contracts\CurrencyRepositoryInterface;
 use App\Core\Contracts\CurrencyServiceInterface;
 use App\Core\Services\BaseService;
 use App\DTO\Currency\CurrencyCreateData;
-use Illuminate\Support\Facades\DB;
+use App\Models\Currency;
 use Illuminate\Validation\ValidationException;
 
 class CurrencyService extends BaseService implements CurrencyServiceInterface
@@ -23,22 +22,22 @@ class CurrencyService extends BaseService implements CurrencyServiceInterface
     /**
      * Obtiene la moneda predeterminada.
      */
-    public function findDefault(): ?Currency
+    public function default(): ?Currency
     {
         return $this->repository->default();
     }
 
     /**
-     * Crea una moneda.
+     * Crea una nueva moneda.
      */
     public function create(CurrencyCreateData $dto): Currency
     {
-        return $this->transaction(function () use ($dto) {
+        return $this->transaction(function () use ($dto): Currency {
 
             $attributes = $dto->toArray();
 
             if (!empty($attributes['is_default'])) {
-                $this->removeDefaultCurrency();
+                $this->clearDefaultCurrency();
             }
 
             /** @var Currency */
@@ -49,12 +48,14 @@ class CurrencyService extends BaseService implements CurrencyServiceInterface
     /**
      * Actualiza una moneda.
      */
-    public function update(Currency $currency, array $attributes): bool
-    {
-        return DB::transaction(function () use ($currency, $attributes) {
+    public function update(
+        Currency $currency,
+        array $attributes
+    ): bool {
+        return $this->transaction(function () use ($currency, $attributes): bool {
 
             if (!empty($attributes['is_default'])) {
-                $this->removeDefaultCurrency($currency->id);
+                $this->clearDefaultCurrency($currency->id);
             }
 
             return parent::update($currency, $attributes);
@@ -63,6 +64,8 @@ class CurrencyService extends BaseService implements CurrencyServiceInterface
 
     /**
      * Elimina una moneda.
+     *
+     * @throws ValidationException
      */
     public function delete(Currency $currency): bool
     {
@@ -75,16 +78,18 @@ class CurrencyService extends BaseService implements CurrencyServiceInterface
         return parent::delete($currency);
     }
 
-    private function removeDefaultCurrency(?int $exceptId = null): void
+    /**
+     * Quita la condición de moneda predeterminada
+     * de la moneda actual.
+     */
+    private function clearDefaultCurrency(?int $exceptId = null): void
     {
         $default = $this->repository->default();
 
-        if ($default && $default->id !== $exceptId) {
+        if ($default !== null && $default->id !== $exceptId) {
             $this->repository->update($default, [
                 'is_default' => false,
             ]);
         }
     }
-
-
 }

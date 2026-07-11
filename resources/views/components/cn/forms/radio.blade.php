@@ -2,13 +2,10 @@
     $selected = old($name, $checked ? $value : null);
     $isInvalid = $errors->has($name);
 
-    $radioAttributes = $attributes
-        ->merge([
-            'class' => 'cn-radio',
-        ])
-        ->class([
-            'is-invalid' => $isInvalid,
-        ]);
+    $radioAttributes = $attributes->class([
+        'cn-radio',
+        'is-invalid' => $isInvalid,
+    ]);
 @endphp
 
 <input

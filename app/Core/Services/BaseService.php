@@ -11,10 +11,17 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Servicio base para todos los módulos del ERP.
+ * ==========================================================
+ * CENICOM ERP
+ * ==========================================================
  *
- * Encapsula las operaciones CRUD comunes delegándolas
+ * Servicio base para todos los módulos del sistema.
+ *
+ * Centraliza las operaciones CRUD comunes delegándolas
  * al repositorio correspondiente.
+ *
+ * @package App\Core\Services
+ * @since 1.0.0
  */
 abstract class BaseService implements ServiceInterface
 {
@@ -23,16 +30,25 @@ abstract class BaseService implements ServiceInterface
     ) {
     }
 
+    /**
+     * Obtiene un listado paginado.
+     */
     public function paginate(int $perPage = 15): LengthAwarePaginator
     {
         return $this->repository->paginate($perPage);
     }
 
+    /**
+     * Obtiene todos los registros.
+     */
     public function all(): Collection
     {
         return $this->repository->all();
     }
 
+    /**
+     * Busca un registro por su identificador.
+     */
     public function findById(
         int|string $id,
         array $columns = ['*']
@@ -40,11 +56,17 @@ abstract class BaseService implements ServiceInterface
         return $this->repository->findById($id, $columns);
     }
 
+    /**
+     * Crea un registro.
+     */
     public function create(array $attributes): Model
     {
         return $this->repository->create($attributes);
     }
 
+    /**
+     * Actualiza un registro.
+     */
     public function update(
         int|string $id,
         array $attributes
@@ -52,26 +74,41 @@ abstract class BaseService implements ServiceInterface
         return $this->repository->update($id, $attributes);
     }
 
+    /**
+     * Elimina un registro.
+     */
     public function delete(int|string $id): bool
     {
         return $this->repository->delete($id);
     }
 
+    /**
+     * Restaura un registro eliminado.
+     */
     public function restore(int|string $id): bool
     {
         return $this->repository->restore($id);
     }
 
+    /**
+     * Elimina definitivamente un registro.
+     */
     public function forceDelete(int|string $id): bool
     {
         return $this->repository->forceDelete($id);
     }
 
+    /**
+     * Verifica si un registro existe.
+     */
     public function exists(int|string $id): bool
     {
         return $this->repository->exists($id);
     }
 
+    /**
+     * Obtiene la cantidad total de registros.
+     */
     public function count(): int
     {
         return $this->repository->count();

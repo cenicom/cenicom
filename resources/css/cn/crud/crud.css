@@ -1,0 +1,14 @@
+.cn-crud {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.cn-crud__content {
+    display: flex;
+    flex-direction: column;
+}
+
+.cn-crud__footer {
+    margin-top: 1rem;
+}

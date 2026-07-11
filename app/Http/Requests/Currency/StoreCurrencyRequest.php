@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Currency;
 
+use App\Models\Currency;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -30,7 +31,7 @@ class StoreCurrencyRequest extends FormRequest
     }
 
     /**
-     * Reglas de validación.
+     * @return array<string, mixed>
      */
     public function rules(): array
     {
@@ -40,7 +41,7 @@ class StoreCurrencyRequest extends FormRequest
                 'string',
                 'size:3',
                 'alpha',
-                Rule::unique('currencies', 'code'),
+                Rule::unique(Currency::class, 'code')
             ],
 
             'symbol' => [
@@ -75,7 +76,10 @@ class StoreCurrencyRequest extends FormRequest
 
             'symbol_position' => [
                 'required',
-                'in:before,after',
+                Rule::in([
+                    Currency::SYMBOL_BEFORE,
+                    Currency::SYMBOL_AFTER,
+                ])
             ],
 
             'is_default' => [
@@ -100,8 +104,9 @@ class StoreCurrencyRequest extends FormRequest
             'decimal_separator' => trim((string) $this->decimal_separator),
             'thousands_separator' => trim((string) $this->thousands_separator),
             'symbol_position' => strtolower(trim((string) $this->symbol_position)),
-            'is_default' => $this->boolean('is_default'),
-            'status' => $this->boolean('status'),
+            'status' => $this->has('status')
+                ? $this->boolean('status')
+                : true,
         ]);
     }
 
@@ -133,5 +138,10 @@ class StoreCurrencyRequest extends FormRequest
             'code.size' => 'El código debe tener exactamente 3 caracteres.',
             'symbol_position.in' => 'La posición del símbolo es inválida.',
         ];
+    }
+
+    private function normalize(?string $value): string
+    {
+        return trim((string) $value);
     }
 }

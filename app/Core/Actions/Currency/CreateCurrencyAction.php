@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Core\Actions\Currency;
 
-use App\Contracts\CurrencyServiceInterface;
+
 use App\Core\Actions\BaseAction;
+use App\Core\Contracts\CurrencyServiceInterface;
 use App\Models\Currency;
 
 class CreateCurrencyAction extends BaseAction

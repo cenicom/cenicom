@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Core\Actions\Currency;
 
-use App\Contracts\CurrencyServiceInterface;
+
 use App\Core\Actions\BaseAction;
+use App\Core\Contracts\CurrencyServiceInterface;
 use App\Models\Currency;
 
 class DeleteCurrencyAction extends BaseAction
@@ -21,7 +22,7 @@ class DeleteCurrencyAction extends BaseAction
     public function execute(Currency $currency): bool
     {
         return $this->transaction(
-            fn (): bool => $this->service->delete($currency->getKey())
+            fn(): bool => $this->service->delete($currency)
         );
     }
 }

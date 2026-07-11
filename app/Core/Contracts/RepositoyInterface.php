@@ -29,7 +29,8 @@ interface RepositoryInterface
     ): ?Model;
 
     /**
-     * Busca un registro por su llave primaria.
+     * Busca un registro por su llave primaria
+     * o lanza una excepción si no existe.
      */
     public function findOrFail(
         int|string $id,
@@ -60,12 +61,12 @@ interface RepositoryInterface
     public function restore(int|string $id): bool;
 
     /**
-     * Fuerza el Borrado de un registro por su llave primaria.
+     * Elimina definitivamente un registro.
      */
     public function forceDelete(int|string $id): bool;
 
     /**
-     * Busca un registro si existe por su llave primaria.
+     * Verifica si existe un registro por su llave primaria.
      */
     public function exists(int|string $id): bool;
 

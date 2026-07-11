@@ -1,13 +1,11 @@
 <?php
 
-use App\Http\Controllers\CountryController;
+//use App\Http\Controllers\CountryController;
 use App\Http\Controllers\CurrencyController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\OrganizationController;
+//use App\Http\Controllers\DashboardController;
+//use App\Http\Controllers\OrganizationController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', DashboardController::class)
-    ->name('dashboard');
 
 Route::prefix('cds')->group(function () {
 
@@ -19,7 +17,7 @@ Route::prefix('cds')->group(function () {
 
 });
 
-Route::resource('countries', CountryController::class);
+//Route::resource('countries', CountryController::class);
 Route::get('/states/by-country/{country}', function ($countryId) {
     return \App\Models\State::where('country_id', $countryId)
         ->orderBy('name')
@@ -34,7 +32,7 @@ Route::get('/cities/by-state/{state}', function ($stateId) {
         ->get();
 });
 
-Route::resource('organizations', OrganizationController::class);
+//Route::resource('organizations', OrganizationController::class);
 
 Route::resource('currencies', CurrencyController::class);
 

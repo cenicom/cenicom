@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\Actions;
 
-use App\Core\Contracts\ActionInterface;
+
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\DB;
  * @package App\Core\Actions
  * @since 1.0.0
  */
-abstract class BaseAction implements ActionInterface
+abstract class BaseAction
 {
     /**
      * Ejecuta una operación dentro de una transacción.

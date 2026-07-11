@@ -5,6 +5,7 @@
     :checked="$checked"
     :required="$required"
     :disabled="$disabled"
-    class="cn-switch"
-    {{ $attributes }}
+    {{ $attributes->class([
+        'cn-switch',
+    ]) }}
 />

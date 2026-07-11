@@ -4,24 +4,32 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+/**
+ * ==========================================================
+ * CENICOM ERP
+ * ==========================================================
+ *
+ * Modelo base del sistema.
+ *
+ * Centraliza el comportamiento común de todas las
+ * entidades del ERP.
+ *
+ * @package App\Models
+ * @since 1.0.0
+ */
 abstract class BaseModel extends Model
 {
     use HasFactory;
     use SoftDeletes;
     use HasUuid;
 
-
     /**
-     * Los atributos protegidos contra asignación masiva.
-     */
-    protected $guarded = [];
-
-    /**
-     * Conversión automática de tipos.
+     * Conversión automática de atributos.
      */
     protected function casts(): array
     {

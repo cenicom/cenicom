@@ -2,39 +2,45 @@
     $selected = old($name, $value);
     $isInvalid = $errors->has($name);
 
-    $selectAttributes = $attributes
-        ->merge([
-            'class' => 'cn-select',
-        ])
-        ->class([
-            'is-invalid' => $isInvalid,
-        ]);
+    $selectAttributes = $attributes->class([
+        'cn-select',
+        'is-invalid' => $isInvalid,
+    ]);
 @endphp
 
 <select
     id="{{ $id }}"
-    name="{{ $multiple ? $name.'[]' : $name }}"
+    name="{{ $multiple ? $name . '[]' : $name }}"
+    aria-invalid="{{ $isInvalid ? 'true' : 'false' }}"
     @multiple($multiple)
     @required($required)
     @disabled($disabled)
     {{ $selectAttributes }}
 >
 
-@if($placeholder)
-    <option value="">
-        {{ $placeholder }}
-    </option>
-@endif
+    @if($placeholder)
+        <option
+            value=""
+            @if($required) disabled @endif
+            @selected(empty($selected))
+        >
+            {{ $placeholder }}
+        </option>
+    @endif
 
-@foreach($options as $key => $label)
+    @foreach($options as $key => $label)
 
-<option
-    value="{{ $key }}"
-    @selected($selected == $key)
->
-    {{ $label }}
-</option>
+        <option
+            value="{{ $key }}"
+            @selected(
+                $multiple
+                    ? in_array($key, (array) $selected, true)
+                    : $selected == $key
+            )
+        >
+            {{ $label }}
+        </option>
 
-@endforeach
+    @endforeach
 
 </select>

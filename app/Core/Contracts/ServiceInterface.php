@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\Contracts;
 
+use App\Models\Currency;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -22,11 +23,11 @@ interface ServiceInterface
     public function create(array $attributes): Model;
 
     public function update(
-        int|string $id,
+        Currency $currency,
         array $attributes
     ): bool;
 
-    public function delete(int|string $id): bool;
+    public function delete(Currency $currency): bool;
 
     public function restore(int|string $id): bool;
 

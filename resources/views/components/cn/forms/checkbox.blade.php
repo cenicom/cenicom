@@ -2,13 +2,10 @@
     $isChecked = old($name, $checked);
     $isInvalid = $errors->has($name);
 
-    $checkboxAttributes = $attributes
-        ->merge([
-            'class' => 'cn-checkbox',
-        ])
-        ->class([
-            'is-invalid' => $isInvalid,
-        ]);
+    $checkboxAttributes = $attributes->class([
+        'cn-checkbox',
+        'is-invalid' => $isInvalid,
+    ]);
 @endphp
 
 <input

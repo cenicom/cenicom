@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Contracts\CurrencyServiceInterface;
+
 use App\Core\Actions\Currency\CreateCurrencyAction;
 use App\Core\Actions\Currency\DeleteCurrencyAction;
 use App\Core\Actions\Currency\UpdateCurrencyAction;
+use App\Core\Contracts\CurrencyServiceInterface;
 use App\Core\Http\Controllers\BaseCrudController;
 use App\Http\Requests\Currency\StoreCurrencyRequest;
 use App\Http\Requests\Currency\UpdateCurrencyRequest;
@@ -26,7 +27,7 @@ class CurrencyController extends BaseCrudController
         parent::__construct($service);
     }
 
-    public function index()
+    public function index(): View
     {
         return view('currency.index', [
             'currencies' => $this->service->paginate(),
@@ -77,6 +78,7 @@ class CurrencyController extends BaseCrudController
             ->route('currencies.index')
             ->with('success', 'Moneda actualizada correctamente.');
     }
+
     public function destroy(Currency $currency): RedirectResponse
     {
         $this->deleteAction->execute($currency);

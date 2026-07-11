@@ -1,10 +1,12 @@
 <div
-    @if($id)
+    @isset($id)
         id="{{ $id }}"
-    @endif
+    @endisset
 
-    {{ $attributes->merge([
-        'class' => 'cn-field',
+    data-cn="field"
+
+    {{ $attributes->class([
+        'cn-field',
     ]) }}
 >
     {{ $slot }}

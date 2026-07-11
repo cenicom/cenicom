@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\BaseModel;
 
 /**
- * Currency Model.
+ * ==========================================================
+ * CENICOM ERP
+ * ==========================================================
  *
  * Representa una moneda utilizada por el ERP.
  *
@@ -26,10 +26,8 @@ use App\Models\BaseModel;
  * @property bool $is_default
  * @property bool $status
  */
-
 class Currency extends BaseModel
 {
-    //use HasUuids;
     //use SoftDeletes;
 
     public const SYMBOL_BEFORE = 'before';
@@ -39,6 +37,8 @@ class Currency extends BaseModel
     public const STATUS_ACTIVE = true;
 
     public const STATUS_INACTIVE = false;
+
+    public const DEFAULT_DECIMAL_PLACES = 2;
 
     public const DECIMAL_SEPARATOR = '.';
 
@@ -65,7 +65,7 @@ class Currency extends BaseModel
     public $incrementing = true;
 
     /**
-     * Asignación masiva.
+     * Campos permitidos para asignación masiva.
      */
     protected $fillable = [
         'uuid',
@@ -90,13 +90,9 @@ class Currency extends BaseModel
     {
         return [
             'status' => 'boolean',
-
             'is_default' => 'boolean',
-
             'created_at' => 'datetime',
-
             'updated_at' => 'datetime',
-
             'deleted_at' => 'datetime',
         ];
     }
@@ -107,50 +103,75 @@ class Currency extends BaseModel
     |--------------------------------------------------------------------------
     */
 
+    /**
+     * Filtra la moneda predeterminada.
+     */
     public function scopeDefault(Builder $query): Builder
     {
         return $query->where('is_default', true);
     }
 
+    /**
+     * Ordena monedas por nombre y código.
+     */
     public function scopeOrdered(Builder $query): Builder
     {
-        return $query->orderBy('name')
+        return $query
+            ->orderBy('name')
             ->orderBy('code');
     }
 
-    public function scopeByCode(Builder $query, string $code): Builder
-    {
+    /**
+     * Busca moneda por código ISO.
+     */
+    public function scopeByCode(
+        Builder $query,
+        string $code
+    ): Builder {
         return $query->where('code', strtoupper($code));
     }
 
-    public function scopeActive(
-        Builder $query
-    ): Builder {
+    /**
+     * Filtra monedas activas.
+     */
+    public function scopeActive(Builder $query): Builder
+    {
         return $query->where('status', true);
     }
 
-    public function scopeInactive(
-        Builder $query
-    ): Builder {
+    /**
+     * Filtra monedas inactivas.
+     */
+    public function scopeInactive(Builder $query): Builder
+    {
         return $query->where('status', false);
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Domain Helpers
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Determina si la moneda está activa.
+     */
     public function isActive(): bool
     {
         return (bool) $this->status;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Helpers
-    |--------------------------------------------------------------------------
-    */
-
+    /**
+     * Determina si es la moneda predeterminada.
+     */
     public function isDefault(): bool
     {
         return (bool) $this->is_default;
     }
 
+    /**
+     * Obtiene el nombre descriptivo.
+     */
     public function displayName(): string
     {
         return sprintf(
@@ -160,6 +181,9 @@ class Currency extends BaseModel
         );
     }
 
+    /**
+     * Genera un ejemplo de formato monetario.
+     */
     public function formatExample(): string
     {
         $number = number_format(
@@ -174,21 +198,29 @@ class Currency extends BaseModel
             : "{$number}{$this->symbol}";
     }
 
+    /**
+     * Define la llave usada en rutas.
+     */
     public function getRouteKeyName(): string
     {
         return 'uuid';
     }
 
+    /**
+     * Representación como texto.
+     */
     public function __toString(): string
     {
         return $this->displayName();
     }
 
+    /**
+     * Obtiene símbolo y código.
+     */
     public function formattedSymbol(): string
     {
         return "{$this->symbol} {$this->code}";
     }
-
 
     /*
     |--------------------------------------------------------------------------
