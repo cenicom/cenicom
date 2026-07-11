@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Contracts;
+namespace App\Core\Contracts;
 
 use App\Core\Contracts\ServiceInterface;
 use App\Models\Currency;

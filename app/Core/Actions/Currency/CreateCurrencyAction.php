@@ -4,22 +4,25 @@ declare(strict_types=1);
 
 namespace App\Core\Actions\Currency;
 
+use App\Contracts\CurrencyServiceInterface;
 use App\Core\Actions\BaseAction;
-use App\Core\Contracts\ServiceInterface;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Currency;
 
 class CreateCurrencyAction extends BaseAction
 {
     public function __construct(
-        protected ServiceInterface $service
+        protected CurrencyServiceInterface $service
     ) {
     }
 
+    /**
+     * Crea una nueva moneda.
+     */
     public function execute(
-        array $data
-    ): Model {
+        array $attributes
+    ): Currency {
         return $this->transaction(
-            fn () => $this->service->create($data)
+            fn (): Currency => $this->service->create($attributes)
         );
     }
 }

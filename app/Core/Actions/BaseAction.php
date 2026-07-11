@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Core\Actions;
 
+use App\Core\Contracts\ActionInterface;
 use Illuminate\Support\Facades\DB;
-use App\Core\Actions\Contracts\ActionInterface;
 
 /**
  * ==========================================================

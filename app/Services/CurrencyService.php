@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Contracts\CurrencyRepositoryInterface;
-use App\Contracts\CurrencyServiceInterface;
+
+use App\Core\Contracts\CurrencyRepositoryInterface;
+use App\Core\Contracts\CurrencyServiceInterface;
 use App\Core\Services\BaseService;
-use App\Models\Currency;
+use App\DTO\Currency\CurrencyCreateData;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use App\DTO\Currency\CurrencyCreateData;
 
 class CurrencyService extends BaseService implements CurrencyServiceInterface
 {

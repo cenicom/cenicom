@@ -124,3 +124,21 @@
     flex-direction:column;
     width:100%;
 }
+/* ==========================================================================
+   DISPLAY
+   ========================================================================== */
+
+.cn-display {
+
+    display: flex;
+    align-items: center;
+    min-height: 42px;
+    width: 100%;
+    padding: .625rem .875rem;
+    border: 1px solid var(--cn-border-color);
+    border-radius: var(--cn-radius);
+    background-color: var(--cn-surface);
+    color: var(--cn-text-color);
+    line-height: 1.5;
+    word-break: break-word;
+}

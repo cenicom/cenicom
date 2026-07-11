@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
+use App\Core\Contracts\CurrencyRepositoryInterface;
 use App\Core\Repositories\BaseRepository;
 use App\Models\Currency;
-use App\Contracts\CurrencyRepositoryInterface;
 
-class CurrencyRepository extends BaseRepository
-    implements CurrencyRepositoryInterface
+class CurrencyRepository extends BaseRepository implements CurrencyRepositoryInterface
 {
-    public function __construct(Currency $model)
-    {
+    public function __construct(
+        Currency $model
+    ) {
         parent::__construct($model);
     }
 
@@ -21,17 +21,17 @@ class CurrencyRepository extends BaseRepository
      */
     public function findDefault(): ?Currency
     {
-         return $this->query()
+        return $this->query()
             ->default()
             ->first();
     }
 
     /**
-     * Busca por código ISO.
+     * Busca una moneda por código ISO.
      */
     public function findByCode(string $code): ?Currency
     {
-       return $this->query()
+        return $this->query()
             ->byCode($code)
             ->first();
     }

@@ -4,89 +4,85 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Contracts\CurrencyServiceInterface;
 use App\Core\Actions\Currency\CreateCurrencyAction;
 use App\Core\Actions\Currency\DeleteCurrencyAction;
 use App\Core\Actions\Currency\UpdateCurrencyAction;
-use App\Core\Contracts\ServiceInterface;
 use App\Core\Http\Controllers\BaseCrudController;
-//use App\Http\Requests\CurrencyStoreRequest;
-use Illuminate\Database\Eloquent\Model;
-//use App\Http\Requests\CurrencyUpdateRequest;
-use Illuminate\Contracts\View\View;
 use App\Http\Requests\Currency\StoreCurrencyRequest;
 use App\Http\Requests\Currency\UpdateCurrencyRequest;
+use App\Models\Currency;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class CurrencyController extends BaseCrudController
 {
     public function __construct(
-        ServiceInterface $service,
+        CurrencyServiceInterface $service,
         protected CreateCurrencyAction $createAction,
         protected UpdateCurrencyAction $updateAction,
-        protected DeleteCurrencyAction $deleteAction
+        protected DeleteCurrencyAction $deleteAction,
     ) {
         parent::__construct($service);
     }
 
-    public function index(): View
+    public function index()
     {
-        return view(
-            'currency.index',
-            [
-                'currencies' => $this->service->paginate()
-            ]
-        );
+        return view('currency.index', [
+            'currencies' => $this->service->paginate(),
+        ]);
     }
 
     public function create(): View
     {
-        return view(
-            'currency.create'
-        );
+        return view('currency.create');
     }
 
-    public function store(
-        StoreCurrencyRequest $request
-    ): Model {
-        return $this->createAction->execute(
+    public function store(StoreCurrencyRequest $request): RedirectResponse
+    {
+        $this->createAction->execute(
             $request->validated()
         );
+
+        return redirect()
+            ->route('currencies.index')
+            ->with('success', 'Moneda creada correctamente.');
     }
 
-    public function show(
-        int|string $id
-    ): View {
-        return view(
-            'currency.show',
-            [
-                'currency' => $this->service->findById($id)
-            ]
-        );
+    public function show(Currency $currency): View
+    {
+        return view('currency.show', [
+            'currency' => $currency,
+        ]);
     }
 
-    public function edit(
-        int|string $id
-    ): View {
-        return view(
-            'currency.edit',
-            [
-                'currency' => $this->service->findById($id)
-            ]
-        );
+    public function edit(Currency $currency): View
+    {
+        return view('currency.edit', [
+            'currency' => $currency,
+        ]);
     }
 
     public function update(
         UpdateCurrencyRequest $request,
-        int|string $id
-    ): bool {
-        return $this->updateAction->execute(
-            $id,
+        Currency $currency
+    ): RedirectResponse {
+
+        $this->updateAction->execute(
+            $currency,
             $request->validated()
         );
-    }
 
-    public function destroy(
-        int|string $id
-    ): bool {
-        return $this->deleteAction->execute($id);
+        return redirect()
+            ->route('currencies.index')
+            ->with('success', 'Moneda actualizada correctamente.');
+    }
+    public function destroy(Currency $currency): RedirectResponse
+    {
+        $this->deleteAction->execute($currency);
+
+        return redirect()
+            ->route('currencies.index')
+            ->with('success', 'Moneda eliminada correctamente.');
     }
 }

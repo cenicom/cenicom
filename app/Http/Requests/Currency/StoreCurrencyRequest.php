@@ -5,7 +5,20 @@ declare(strict_types=1);
 namespace App\Http\Requests\Currency;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
+/**
+ * -----------------------------------------------------------------------------
+ * CENICOM ERP
+ * -----------------------------------------------------------------------------
+ *
+ * Módulo      : Currency
+ * Componente  : StoreCurrencyRequest
+ * Versión     : 1.0.0
+ *
+ * Responsabilidad:
+ * Validar y normalizar los datos necesarios para crear una moneda.
+ */
 class StoreCurrencyRequest extends FormRequest
 {
     /**
@@ -26,7 +39,8 @@ class StoreCurrencyRequest extends FormRequest
                 'required',
                 'string',
                 'size:3',
-                'unique:currencies,code',
+                'alpha',
+                Rule::unique('currencies', 'code'),
             ],
 
             'symbol' => [
@@ -80,9 +94,12 @@ class StoreCurrencyRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $this->merge([
-            'code' => strtoupper((string) $this->code),
+            'code' => strtoupper(trim((string) $this->code)),
             'name' => trim((string) $this->name),
             'symbol' => trim((string) $this->symbol),
+            'decimal_separator' => trim((string) $this->decimal_separator),
+            'thousands_separator' => trim((string) $this->thousands_separator),
+            'symbol_position' => strtolower(trim((string) $this->symbol_position)),
             'is_default' => $this->boolean('is_default'),
             'status' => $this->boolean('status'),
         ]);

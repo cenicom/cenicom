@@ -11,7 +11,10 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @template TModel of Model
+ * Servicio base para todos los módulos del ERP.
+ *
+ * Encapsula las operaciones CRUD comunes delegándolas
+ * al repositorio correspondiente.
  */
 abstract class BaseService implements ServiceInterface
 {
@@ -37,9 +40,6 @@ abstract class BaseService implements ServiceInterface
         return $this->repository->findById($id, $columns);
     }
 
-    /**
-     * @return TModel
-     */
     public function create(array $attributes): Model
     {
         return $this->repository->create($attributes);
@@ -65,5 +65,15 @@ abstract class BaseService implements ServiceInterface
     public function forceDelete(int|string $id): bool
     {
         return $this->repository->forceDelete($id);
+    }
+
+    public function exists(int|string $id): bool
+    {
+        return $this->repository->exists($id);
+    }
+
+    public function count(): int
+    {
+        return $this->repository->count();
     }
 }

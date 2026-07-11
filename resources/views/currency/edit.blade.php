@@ -32,11 +32,7 @@
 
             <div class="cn-card-body">
 
-                <x-cn.form
-                    id="currency-form"
-                    :action="route('currencies.update', $currency)"
-                    method="PUT"
-                >
+                <x-cn.form id="currency-form" :action="route('currencies.update', $currency)" method="PUT">
 
                     @include('currencies._form')
 
@@ -50,11 +46,7 @@
 
                         </x-cn.button>
 
-                        <x-cn.button
-                            :href="route('currencies.index')"
-                            variant="secondary"
-                            class="js-confirm-back"
-                        >
+                        <x-cn.button :href="route('currencies.index')" variant="secondary" class="js-confirm-back">
 
                             <i class="fas fa-arrow-left"></i>
 
