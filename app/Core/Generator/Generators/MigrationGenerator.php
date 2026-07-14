@@ -57,19 +57,17 @@ final class MigrationGenerator extends BaseGenerator
             'columns' => $columns,
         ];
 
-        $content = $this->render(
-            self::STUB,
-            $variables,
-        );
-
         $path = $module->migrationPath();
 
-        $this->write(
+        $this->generateFile(
+            self::STUB,
             $path,
-            $content,
+            $variables,
         );
 
         return (new GeneratorResult())
             ->addCreated($path);
     }
+
+
 }

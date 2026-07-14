@@ -30,11 +30,14 @@ use App\Core\Generator\Support\StubManager;
  */
 final class RequestGenerator extends BaseGenerator
 {
-
     public function __construct(
-        protected StubManager $stubManager,
-        protected FileWriter $fileWriter
+        StubManager $stubManager,
+        FileWriter $fileWriter
     ) {
+        parent::__construct(
+            $stubManager,
+            $fileWriter,
+        );
     }
 
 
@@ -74,21 +77,21 @@ final class RequestGenerator extends BaseGenerator
         ModuleData $module
     ): string {
 
-        $content = $this->stubManager->render(
+        $path = $module->requestPath()
+            . DIRECTORY_SEPARATOR
+            . $module->storeRequestClass()
+            . '.php';
+
+        $this->generateFile(
             'requests/store',
-            [
-                'namespace' => $this->resolveNamespace($module),
-                'className' => "Store{$module->name()}Request",
-                'rules' => $this->resolveRules($module),
-            ]
+            $path,
+            $this->buildVariables(
+                $module,
+                $module->storeRequestClass()
+            )
         );
 
-
-        return $this->writeRequest(
-            $module,
-            "Store{$module->name()}Request.php",
-            $content
-        );
+        return $path;
     }
 
 
@@ -99,21 +102,43 @@ final class RequestGenerator extends BaseGenerator
         ModuleData $module
     ): string {
 
-        $content = $this->stubManager->render(
+        $path = $module->requestPath()
+            . DIRECTORY_SEPARATOR
+            . $module->updateRequestClass()
+            . '.php';
+
+        $this->generateFile(
             'requests/update',
-            [
-                'namespace' => $this->resolveNamespace($module),
-                'className' => "Update{$module->name()}Request.php",
-                'rules' => $this->resolveRules($module),
-            ]
+            $path,
+            $this->buildVariables(
+                $module,
+                $module->updateRequestClass()
+            )
         );
 
+        return $path;
+    }
 
-        return $this->writeRequest(
-            $module,
-            "Update{$module->name()}Request.php",
-            $content
-        );
+       /**
+    * Construye las variables utilizadas por los stubs.
+    *
+    * @return array<string,string>
+    */
+
+    private function buildVariables(
+        ModuleData $module,
+        string $class
+    ): array {
+
+        return [
+
+            'namespace' => $module->requestNamespace(),
+
+            'className' => $class,
+
+            'rules' => $this->resolveRules($module),
+
+        ];
     }
 
 
@@ -153,27 +178,4 @@ final class RequestGenerator extends BaseGenerator
         return $module->requestNamespace();
     }
 
-
-    /**
-     * Escribe archivo generado.
-     */
-    private function writeRequest(
-        ModuleData $module,
-        string $filename,
-        string $content
-    ): string {
-
-        $path = base_path(
-            "app/Http/Requests/{$module->name()}/{$filename}"
-        );
-
-
-        $this->fileWriter->write(
-            $path,
-            $content
-        );
-
-
-        return $path;
-    }
 }

@@ -61,4 +61,30 @@ abstract class BaseGenerator implements GeneratorInterface
             $variables
         );
     }
+
+    /**
+     * Genera un archivo a partir de un stub.
+     *
+     * Centraliza el flujo de renderizado y escritura para
+     * todos los generadores del CN Generator.
+     *
+     * @param string $stub Nombre del stub.
+     * @param string $path Ruta destino.
+     * @param array<string,mixed> $variables Variables del stub.
+     */
+    protected function generateFile(
+        string $stub,
+        string $path,
+        array $variables
+    ): void {
+        $content = $this->render(
+            $stub,
+            $variables
+        );
+
+        $this->write(
+            $path,
+            $content
+        );
+    }
 }

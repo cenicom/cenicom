@@ -7,7 +7,7 @@ namespace App\Core\Generator\Generators;
 
 use App\Core\Generator\BaseGenerator;
 use App\Core\Generator\DTO\ModuleData;
-use App\Core\Generator\GeneratorResult;
+use App\Core\Generator\Results\GeneratorResult;
 
 /**
  * ==========================================================
@@ -25,7 +25,6 @@ use App\Core\Generator\GeneratorResult;
  */
 final class ModelGenerator extends BaseGenerator
 {
-
     public function supports(ModuleData $module): bool
     {
         return true;
@@ -36,14 +35,10 @@ final class ModelGenerator extends BaseGenerator
      */
     public function generate(ModuleData $module): GeneratorResult
     {
-        $content = $this->stubManager->render(
+        $this->generateFile(
             'model.stub',
-            $this->buildVariables($module)
-        );
-
-        $this->fileWriter->write(
             $module->modelPath(),
-            $content
+            $this->buildVariables($module)
         );
 
         return (new GeneratorResult())
@@ -61,21 +56,27 @@ final class ModelGenerator extends BaseGenerator
     {
         return [
 
-            'namespace'
-            => $module->modelNamespace(),
+            'namespace' => $module->modelNamespace(),
 
-            'class'
-            => $module->modelClass(),
+            'class' => $module->modelClass(),
 
-            'table'
-            => $module->table(),
+            'table' => $module->table(),
 
-            'fillable'
-            => '',
+            'fillable' => $this->buildFillable($module),
 
-            'casts'
-            => '',
+            'casts' => $this->buildCasts($module),
+
         ];
+    }
+
+    private function buildFillable(ModuleData $module): string
+    {
+        return '';
+    }
+
+    private function buildCasts(ModuleData $module): string
+    {
+        return '';
     }
 
 

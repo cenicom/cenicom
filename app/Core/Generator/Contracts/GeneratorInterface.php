@@ -11,11 +11,12 @@ use App\Core\Generator\Results\GeneratorResult;
 /**
  * Contrato base para todos los generadores del CN Generator.
  *
- * Cada implementación es responsable de generar un único tipo de
- * artefacto (modelo, controlador, vista, migración, etc.).
+ * Cada implementación genera un único tipo de artefacto
+ * (modelo, controlador, vista, migración, etc.).
  *
- * El ModuleGenerator utilizará este contrato para ejecutar los
- * generadores de forma desacoplada y extensible.
+ * El GeneratorManager (Corazón del CN Generator)
+ * utilizará este contrato para ejecutar los generadores
+ * de forma desacoplada y extensible.
  */
 interface GeneratorInterface
 {

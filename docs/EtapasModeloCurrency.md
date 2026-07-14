@@ -21,3 +21,6 @@ FASE 7
 
 FASE 8
 ✔ Replicar el patrón al resto de catálogos
+
+El siguiente puerto recomendado es RelationType, con el objetivo de completar la 
+trilogía de Smart Enums que sustentará la arquitectura del generador.

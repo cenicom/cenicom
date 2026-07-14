@@ -37,6 +37,7 @@ readonly class ModuleData
     private string $description;
 
 
+
     /*
     |--------------------------------------------------------------------------
     | 2️⃣ Namespaces
@@ -55,7 +56,15 @@ readonly class ModuleData
 
     private string $contractNamespace;
 
+    private string $policyNamespace;
 
+    private string $factoryNamespace;
+
+    private string $seederNamespace;
+
+    private string $testNamespace;
+
+    private string $observerNamespace;
     /*
     |--------------------------------------------------------------------------
     | 3️⃣ Clases generadas
@@ -78,6 +87,17 @@ readonly class ModuleData
 
     private string $updateRequestClass;
 
+    private string $policyClass;
+
+    private string $factoryClass;
+
+    private string $seederClass;
+
+    private string $featureTestClass;
+
+    private string $unitTestClass;
+
+    private string $observerClass;
 
     /*
     |--------------------------------------------------------------------------
@@ -101,7 +121,19 @@ readonly class ModuleData
 
     private string $routePath;
 
+    private string $policyPath;
 
+    private string $factoryPath;
+
+    private string $seederPath;
+
+    private string $featureTestPath;
+
+    private string $unitTestPath;
+
+    private string $observerPath;
+
+    private string $moduleManifestPath;
     /*
     |--------------------------------------------------------------------------
     | 5️⃣ Rutas y vistas
@@ -163,8 +195,13 @@ readonly class ModuleData
         string $repositoryNamespace,
         string $serviceNamespace,
         string $controllerNamespace,
+        string $policyNamespace,
         string $requestNamespace,
+        string $factoryNamespace,
         string $contractNamespace,
+        string $seederNamespace,
+        string $testNamespace,
+        string $observerNamespace,
 
         string $modelClass,
         string $repositoryClass,
@@ -172,17 +209,31 @@ readonly class ModuleData
         string $serviceClass,
         string $serviceInterface,
         string $controllerClass,
+        string $policyClass,
         string $storeRequestClass,
         string $updateRequestClass,
+        string $factoryClass,
+        string $seederClass,
+        string $featureTestClass,
+        string $unitTestClass,
+        string $observerClass,
+
 
         string $modelPath,
         string $migrationPath,
         string $repositoryPath,
         string $servicePath,
         string $controllerPath,
+        string $policyPath,
         string $requestPath,
+        string $factoryPath,
         string $viewPath,
         string $routePath,
+        string $seederPath,
+        string $featureTestPath,
+        string $unitTestPath,
+        string $observerPath,
+        string $moduleManifestPath,
 
         string $routePrefix,
         string $routeName,
@@ -254,7 +305,7 @@ readonly class ModuleData
 
     public function name(): string
     {
-        return $this->name();
+        return $this->name;
     }
 
     public function singular(): string
@@ -313,6 +364,31 @@ readonly class ModuleData
         return $this->contractNamespace;
     }
 
+    public function policyNamespace(): string
+    {
+        return $this->policyNamespace;
+    }
+
+    public function factoryNamespace(): string
+    {
+        return $this->factoryNamespace;
+    }
+
+    public function seederNamespace(): string
+    {
+        return $this->seederNamespace;
+    }
+
+    public function testNamespace(): string
+    {
+        return $this->testNamespace;
+    }
+
+    public function observerNamespace(): string
+    {
+        return $this->observerNamespace;
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Getters - Clases
@@ -357,6 +433,36 @@ readonly class ModuleData
     public function updateRequestClass(): string
     {
         return $this->updateRequestClass;
+    }
+
+    public function policyClass(): string
+    {
+        return $this->policyClass;
+    }
+
+    public function factoryClass(): string
+    {
+        return $this->factoryClass;
+    }
+
+    public function seederClass(): string
+    {
+        return $this->seederClass;
+    }
+
+    public function featureTestClass(): string
+    {
+        return $this->featureTestClass;
+    }
+
+    public function unitTestClass(): string
+    {
+        return $this->unitTestClass;
+    }
+
+    public function observerClass(): string
+    {
+        return $this->observerClass;
     }
 
     /*
@@ -405,6 +511,41 @@ readonly class ModuleData
         return $this->routePath;
     }
 
+    public function policyPath(): string
+    {
+        return $this->policyPath;
+    }
+
+    public function factoryPath(): string
+    {
+        return $this->factoryPath;
+    }
+
+    public function seederPath(): string
+    {
+        return $this->seederPath;
+    }
+
+    public function featureTestPath(): string
+    {
+        return $this->featureTestPath;
+    }
+
+    public function unitTestPath(): string
+    {
+        return $this->unitTestPath;
+    }
+
+    public function observerPath(): string
+    {
+        return $this->observerPath;
+    }
+
+    public function moduleManifestPath(): string
+    {
+        return $this->moduleManifestPath;
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Getters - Rutas y Vistas
@@ -437,7 +578,7 @@ readonly class ModuleData
      */
     public function fields(): array
     {
-        return $this->fields();
+        return $this->fields;
     }
 
     /*
@@ -498,37 +639,67 @@ readonly class ModuleData
 
     public function qualifiedRepository(): string
     {
-        return "{$this->modelNamespace()}\\{$this->modelClass()}";
+        return "{$this->repositoryNamespace()}\\{$this->repositoryClass()}";
     }
 
     public function qualifiedRepositoryInterface(): string
     {
-        return "{$this->modelNamespace()}\\{$this->modelClass()}";
+        return "{$this->repositoryInterface()}\\{$this->repositoryClass()}";
     }
 
     public function qualifiedService(): string
     {
-        return "{$this->modelNamespace()}\\{$this->modelClass()}";
+        return "{$this->serviceNamespace()}\\{$this->serviceClass()}";
     }
 
     public function qualifiedServiceInterface(): string
     {
-        return "{$this->modelNamespace()}\\{$this->modelClass()}";
+        return "{$this->serviceInterface()}\\{$this->serviceClass()}";
     }
 
     public function qualifiedController(): string
     {
-        return "{$this->modelNamespace()}\\{$this->modelClass()}";
+        return "{$this->controllerNamespace()}\\{$this->controllerClass()}";
     }
 
     public function qualifiedStoreRequest(): string
     {
-        return "{$this->modelNamespace()}\\{$this->modelClass()}";
+        return "{$this->requestNamespace()}\\{$this->storeRequestClass()}";
     }
 
     public function qualifiedUpdateRequest(): string
     {
-        return "{$this->modelNamespace()}\\{$this->modelClass()}";
+        return "{$this->requestNamespace()}\\{$this->updateRequestClass()}";
+    }
+
+    public function qualifiedPolicy(): string
+    {
+        return "{$this->policyNamespace()}\\{$this->policyClass()}";
+    }
+
+    public function qualifiedFactory(): string
+    {
+        return "{$this->factoryNamespace()}\\{$this->factoryClass()}";
+    }
+
+    public function qualifiedSeeder(): string
+    {
+        return "{$this->seederNamespace()}\\{$this->seederClass()}";
+    }
+
+    public function qualifiedFeatureTest(): string
+    {
+        return "{$this->testNamespace()}\\{$this->featureTestClass()}";
+    }
+
+    public function qualifiedUnitTest(): string
+    {
+        return "{$this->testNamespace()}\\{$this->unitTestClass()}";
+    }
+
+    public function qualifiedObserver(): string
+    {
+        return "{$this->observerNamespace()}\\{$this->observerClass()}";
     }
 
 
@@ -572,7 +743,7 @@ readonly class ModuleData
 
     public function viewDirectory(): string
     {
-        return "{$this->viewDirectory()}.index";
+         return $this->viewPrefix();
     }
 
     public function indexView(): string
@@ -582,17 +753,17 @@ readonly class ModuleData
 
     public function createView(): string
     {
-        return "{$this->viewDirectory()}.index";
+        return "{$this->viewDirectory()}.create";
     }
 
     public function editView(): string
     {
-        return "{$this->viewDirectory()}.index";
+        return "{$this->viewDirectory()}.edit";
     }
 
     public function showView(): string
     {
-        return "{$this->viewDirectory()}.index";
+        return "{$this->viewDirectory()}.show";
     }
 
     public function routeResource(): string
@@ -607,7 +778,7 @@ readonly class ModuleData
 
     public function routeCreate(): string
     {
-        return "{$this->routeCreate()}.index";
+        return "{$this->routeName()}.create";
     }
 
     public function routeEdit(): string
