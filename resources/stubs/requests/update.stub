@@ -6,33 +6,13 @@ namespace {{ namespace }};
 
 use Illuminate\Foundation\Http\FormRequest;
 
-/**
- * ==========================================================
- * CENICOM ERP
- * ==========================================================
- *
- * Request de actualización:
- *
- * {{ className }}
- *
- * Generado automáticamente por CN Generator.
- *
- * ==========================================================
- */
 final class {{ className }} extends FormRequest
 {
-    /**
-     * Determina si el usuario está autorizado.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-
-    /**
-     * Reglas de validación.
-     */
     public function rules(): array
     {
         return [

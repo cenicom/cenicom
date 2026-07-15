@@ -262,6 +262,11 @@ readonly class ModuleData
         $this->controllerNamespace = $controllerNamespace;
         $this->requestNamespace = $requestNamespace;
         $this->contractNamespace = $contractNamespace;
+        $this->policyNamespace = $policyNamespace;
+        $this->factoryNamespace = $factoryNamespace;
+        $this->seederNamespace = $seederNamespace;
+        $this->testNamespace = $testNamespace;
+        $this->observerNamespace = $observerNamespace;
 
         $this->modelClass = $modelClass;
         $this->repositoryClass = $repositoryClass;
@@ -271,6 +276,12 @@ readonly class ModuleData
         $this->controllerClass = $controllerClass;
         $this->storeRequestClass = $storeRequestClass;
         $this->updateRequestClass = $updateRequestClass;
+        $this->policyClass = $policyClass;
+        $this->factoryClass = $factoryClass;
+        $this->seederClass = $seederClass;
+        $this->featureTestClass = $featureTestClass;
+        $this->unitTestClass = $unitTestClass;
+        $this->observerClass = $observerClass;
 
         $this->modelPath = $modelPath;
         $this->migrationPath = $migrationPath;
@@ -280,6 +291,13 @@ readonly class ModuleData
         $this->requestPath = $requestPath;
         $this->viewPath = $viewPath;
         $this->routePath = $routePath;
+        $this->policyPath = $policyPath;
+        $this->factoryPath = $factoryPath;
+        $this->seederPath = $seederPath;
+        $this->featureTestPath = $featureTestPath;
+        $this->unitTestPath = $unitTestPath;
+        $this->observerPath = $observerPath;
+        $this->moduleManifestPath = $moduleManifestPath;
 
         $this->routePrefix = $routePrefix;
         $this->routeName = $routeName;
@@ -626,11 +644,12 @@ readonly class ModuleData
     {
         return $this->icon;
     }
+
     /*
-    |--------------------------------------------------------------------------
-    | Métodos qualified*
-    |--------------------------------------------------------------------------
-    */
+|--------------------------------------------------------------------------
+| Métodos qualified*
+|--------------------------------------------------------------------------
+*/
 
     public function qualifiedModel(): string
     {
@@ -644,7 +663,7 @@ readonly class ModuleData
 
     public function qualifiedRepositoryInterface(): string
     {
-        return "{$this->repositoryInterface()}\\{$this->repositoryClass()}";
+        return "{$this->contractNamespace()}\\{$this->repositoryInterface()}";
     }
 
     public function qualifiedService(): string
@@ -654,7 +673,7 @@ readonly class ModuleData
 
     public function qualifiedServiceInterface(): string
     {
-        return "{$this->serviceInterface()}\\{$this->serviceClass()}";
+        return "{$this->contractNamespace()}\\{$this->serviceInterface()}";
     }
 
     public function qualifiedController(): string
@@ -703,6 +722,8 @@ readonly class ModuleData
     }
 
 
+
+
     /*
     |--------------------------------------------------------------------------
     | Métodos filename*
@@ -716,22 +737,33 @@ readonly class ModuleData
 
     public function repositoryFilename(): string
     {
-        return "{$this->repositoryClass}.php";
+        return "{$this->repositoryClass()}.php";
     }
 
     public function serviceFilename(): string
     {
-        return "{$this->serviceClass}.php";
+        return "{$this->serviceClass()}.php";
     }
 
     public function controllerFilename(): string
     {
-        return "{$this->controllerClass}.php";
+        return "{$this->controllerClass()}.php";
     }
 
     public function migrationFilename(): string
     {
-        return "create_{$this->table()}_table.php";
+        return sprintf(
+            '%s_create_%s_table.php',
+            date('Y_m_d_His'),
+            $this->table
+        );
+    }
+
+    public function migrationFile(): string
+    {
+        return $this->migrationPath
+            . DIRECTORY_SEPARATOR
+            . $this->migrationFilename();
     }
 
 
@@ -743,7 +775,7 @@ readonly class ModuleData
 
     public function viewDirectory(): string
     {
-         return $this->viewPrefix();
+        return $this->viewPrefix();
     }
 
     public function indexView(): string
@@ -815,4 +847,57 @@ readonly class ModuleData
     {
         return $this->uuid();
     }
+    /**
+     * Variables disponibles para renderizado de stubs.
+     *
+     * @return array<string, string>
+     */
+    public function toStubVariables(): array
+    {
+        return [
+            // Identidad
+            'module' => $this->name,
+            'singular' => $this->singular,
+            'plural' => $this->plural,
+            'table' => $this->table,
+
+            // Modelo
+            'model' => $this->modelClass,
+            'modelNamespace' => $this->modelNamespace,
+
+            // Repository
+            'repository' => $this->repositoryClass,
+            'repositoryInterface' => $this->repositoryInterface,
+            'repositoryNamespace' => $this->repositoryNamespace,
+
+            // Service
+            'service' => $this->serviceClass,
+            'serviceInterface' => $this->serviceInterface,
+            'serviceNamespace' => $this->serviceNamespace,
+
+            // Controller
+            'controller' => $this->controllerClass,
+            'controllerNamespace' => $this->controllerNamespace,
+
+            // Requests
+            'storeRequest' => $this->storeRequestClass,
+            'updateRequest' => $this->updateRequestClass,
+            'requestNamespace' => $this->requestNamespace,
+
+            // Contract
+            'contractNamespace' => $this->contractNamespace,
+
+            // Rutas
+            'routePrefix' => $this->routePrefix,
+            'routeName' => $this->routeName,
+            'viewPrefix' => $this->viewPrefix,
+
+            // Componentes dinámicos
+            'constants' => '',
+            'relationships' => '',
+            'casts' => '',
+            'rules' => '',
+        ];
+    }
+
 }

@@ -1,0 +1,29 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use App\Core\Repositories\BaseRepository;
+use {{ contractNamespace }}\{{ repositoryInterface }};
+use {{ modelNamespace }}\{{ model }};
+
+/**
+ * ==========================================================
+ * CENICOM ERP
+ * ==========================================================
+ *
+ * Repositorio de {{ model }}.
+ *
+ * @package {{ namespace }}
+ */
+final class {{ repository }}
+    extends BaseRepository
+    implements {{ repositoryInterface }}
+{
+    public function __construct(
+        {{ model }} $model
+    ) {
+        parent::__construct($model);
+    }
+}

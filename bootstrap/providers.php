@@ -9,5 +9,6 @@ return [
     AppServiceProvider::class,
 
     RepositoryServiceProvider::class,
+    App\Providers\GeneratorServiceProvider::class,
 
 ];

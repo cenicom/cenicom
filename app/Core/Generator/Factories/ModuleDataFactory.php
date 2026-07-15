@@ -6,6 +6,7 @@ namespace App\Core\Generator\Factories;
 
 use App\Core\Generator\DTO\ModuleData;
 
+
 /**
  * ==========================================================
  * CENICOM ERP
@@ -42,6 +43,7 @@ final class ModuleDataFactory
 
         $options = $this->buildOptions($definition);
 
+
         return new ModuleData(
 
             /*
@@ -67,16 +69,16 @@ final class ModuleDataFactory
             */
 
             modelNamespace: $namespaces['modelNamespace'],
-
             repositoryNamespace: $namespaces['repositoryNamespace'],
-
             serviceNamespace: $namespaces['serviceNamespace'],
-
             controllerNamespace: $namespaces['controllerNamespace'],
-
+            policyNamespace: $namespaces['policyNamespace'],
             requestNamespace: $namespaces['requestNamespace'],
-
+            factoryNamespace: $namespaces['factoryNamespace'],
             contractNamespace: $namespaces['contractNamespace'],
+            seederNamespace: $namespaces['seederNamespace'],
+            testNamespace: $namespaces['testNamespace'],
+            observerNamespace: $namespaces['observerNamespace'],
 
             /*
             |--------------------------------------------------------------------------
@@ -95,10 +97,17 @@ final class ModuleDataFactory
             serviceInterface: $classes['serviceInterface'],
 
             controllerClass: $classes['controllerClass'],
+            policyClass: $classes['policyClass'],
 
             storeRequestClass: $classes['storeRequestClass'],
 
             updateRequestClass: $classes['updateRequestClass'],
+
+            factoryClass: $classes['factoryClass'],
+            seederClass: $classes['seederClass'],
+            featureTestClass: $classes['featureTestClass'],
+            unitTestClass: $classes['unitTestClass'],
+            observerClass: $classes['observerClass'],
 
             /*
             |--------------------------------------------------------------------------
@@ -122,6 +131,16 @@ final class ModuleDataFactory
 
             routePath: $paths['routePath'],
 
+            policyPath: $paths['policyPath'],
+            // requestPath: $paths['requestPath'],
+            factoryPath: $paths['factoryPath'],
+            //viewPath: $paths['viewPath'],
+            // routePath: $paths['routePath'],
+            seederPath: $paths['seederPath'],
+            featureTestPath: $paths['featureTestPath'],
+            unitTestPath: $paths['unitTestPath'],
+            observerPath: $paths['observerPath'],
+            moduleManifestPath: $paths['moduleManifestPath'],
             /*
             |--------------------------------------------------------------------------
             | Rutas
@@ -190,22 +209,39 @@ final class ModuleDataFactory
             'repositoryClass' => "{$name}Repository",
 
             'repositoryInterface'
-                => "{$name}RepositoryInterface",
+            => "{$name}RepositoryInterface",
 
             'serviceClass'
-                => "{$name}Service",
+            => "{$name}Service",
 
             'serviceInterface'
-                => "{$name}ServiceInterface",
+            => "{$name}ServiceInterface",
 
             'controllerClass'
-                => "{$name}Controller",
+            => "{$name}Controller",
 
             'storeRequestClass'
-                => "Store{$name}Request",
+            => "Store{$name}Request",
 
             'updateRequestClass'
-                => "Update{$name}Request",
+            => "Update{$name}Request",
+
+            'policyClass' => "{$name}Policy",
+
+            'factoryClass'
+            => "{$name}Factory",
+
+            'seederClass'
+            => "{$name}Seeder",
+
+            'featureTestClass'
+            => "{$name}FeatureTest",
+
+            'unitTestClass'
+            => "{$name}UnitTest",
+
+            'observerClass'
+            => "{$name}Observer",
         ];
     }
 
@@ -218,23 +254,24 @@ final class ModuleDataFactory
     {
         return [
 
-            'modelNamespace'
-                => 'App\\Models',
+            'modelNamespace' => 'App\\Models',
+            'repositoryNamespace' => 'App\\Core\\Repositories',
+            'serviceNamespace' => 'App\\Core\\Services',
+            'controllerNamespace' => 'App\\Http\\Controllers',
 
-            'repositoryNamespace'
-                => 'App\\Core\\Repositories',
+            'policyNamespace' => 'App\\Policies',
 
-            'serviceNamespace'
-                => 'App\\Core\\Services',
+            'requestNamespace' => "App\\Http\\Requests\\{$name}",
 
-            'controllerNamespace'
-                => 'App\\Http\\Controllers',
+            'factoryNamespace' => 'Database\\Factories',
 
-            'requestNamespace'
-                => "App\\Http\\Requests\\{$name}",
+            'contractNamespace' => 'App\\Core\\Contracts',
 
-            'contractNamespace'
-                => 'App\\Core\\Contracts',
+            'seederNamespace' => 'Database\\Seeders',
+
+            'testNamespace' => 'Tests\\Feature',
+
+            'observerNamespace' => 'App\\Observers',
         ];
     }
 
@@ -251,28 +288,49 @@ final class ModuleDataFactory
         return [
 
             'modelPath'
-                => app_path("Models/{$name}.php"),
+            => app_path("Models/{$name}.php"),
 
             'migrationPath'
-                => database_path('migrations'),
+            => database_path('migrations'),
 
             'repositoryPath'
-                => app_path("Core/Repositories/{$name}Repository.php"),
+            => app_path("Core/Repositories/{$name}Repository.php"),
 
             'servicePath'
-                => app_path("Core/Services/{$name}Service.php"),
+            => app_path("Core/Services/{$name}Service.php"),
 
             'controllerPath'
-                => app_path("Http/Controllers/{$name}Controller.php"),
+            => app_path("Http/Controllers/{$name}Controller.php"),
 
             'requestPath'
-                => app_path("Http/Requests/{$name}"),
+            => app_path("Http/Requests/{$name}"),
 
             'viewPath'
-                => resource_path("views/{$plural}"),
+            => resource_path("views/{$plural}"),
 
             'routePath'
-                => base_path('routes'),
+            => base_path('routes'),
+
+            'policyPath'
+            => app_path("Policies/{$name}Policy.php"),
+
+            'factoryPath'
+            => database_path("factories/{$name}Factory.php"),
+
+            'seederPath'
+            => database_path("seeders/{$name}Seeder.php"),
+
+            'featureTestPath'
+            => base_path("tests/Feature/{$name}FeatureTest.php"),
+
+            'unitTestPath'
+            => base_path("tests/Unit/{$name}UnitTest.php"),
+
+            'observerPath'
+            => app_path("Observers/{$name}Observer.php"),
+
+            'moduleManifestPath'
+            => base_path("modules/{$name}.json"), // o la ruta que hayas definido para el manifiesto
         ];
     }
 
@@ -288,28 +346,28 @@ final class ModuleDataFactory
         return [
 
             'timestamps'
-                => $definition['timestamps'] ?? true,
+            => $definition['timestamps'] ?? true,
 
             'softDeletes'
-                => $definition['softDeletes'] ?? false,
+            => $definition['softDeletes'] ?? false,
 
             'uuid'
-                => $definition['uuid'] ?? true,
+            => $definition['uuid'] ?? true,
 
             'api'
-                => $definition['api'] ?? false,
+            => $definition['api'] ?? false,
 
             'tests'
-                => $definition['tests'] ?? true,
+            => $definition['tests'] ?? true,
 
             'permissions'
-                => $definition['permissions'] ?? false,
+            => $definition['permissions'] ?? false,
 
             'menu'
-                => $definition['menu'] ?? true,
+            => $definition['menu'] ?? true,
 
             'icon'
-                => $definition['icon'] ?? null,
+            => $definition['icon'] ?? null,
         ];
     }
 }

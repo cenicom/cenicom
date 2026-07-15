@@ -52,22 +52,35 @@ final class MigrationGenerator extends BaseGenerator
 
         $variables = [
             'module' => $module->name(),
+
             'table' => $module->table(),
+
             'model' => $module->modelClass(),
-            'columns' => $columns,
+
+            'fields' => $columns,
+
+            'timestamps' => $module->timestamps()
+                ? '$table->timestamps();'
+                : '',
+
+            'softDeletes' => $module->softDeletes()
+                ? '$table->softDeletes();'
+                : '',
         ];
 
         $path = $module->migrationPath();
 
         $this->generateFile(
             self::STUB,
-            $path,
+            $module->migrationFile(),
             $variables,
         );
 
         return (new GeneratorResult())
             ->addCreated($path);
     }
+
+
 
 
 }

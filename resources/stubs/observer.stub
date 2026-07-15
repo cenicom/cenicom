@@ -1,0 +1,61 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use {{ modelNamespace }}\{{ model }};
+
+/**
+ * ==========================================================
+ * CENICOM ERP
+ * ==========================================================
+ *
+ * Observer del módulo {{ model }}.
+ *
+ * Gestiona los eventos del ciclo de vida del modelo.
+ *
+ * @package {{ namespace }}
+ */
+final class {{ observer }}
+{
+    public function creating({{ model }} ${{ variable }}): void
+    {
+        //
+    }
+
+    public function created({{ model }} ${{ variable }}): void
+    {
+        //
+    }
+
+    public function updating({{ model }} ${{ variable }}): void
+    {
+        //
+    }
+
+    public function updated({{ model }} ${{ variable }}): void
+    {
+        //
+    }
+
+    public function deleting({{ model }} ${{ variable }}): void
+    {
+        //
+    }
+
+    public function deleted({{ model }} ${{ variable }}): void
+    {
+        //
+    }
+
+    public function restoring({{ model }} ${{ variable }}): void
+    {
+        //
+    }
+
+    public function restored({{ model }} ${{ variable }}): void
+    {
+        //
+    }
+}

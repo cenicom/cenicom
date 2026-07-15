@@ -1,0 +1,64 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+{{ softDeletesImport }}
+
+/**
+ * ==========================================================
+ * CENICOM ERP
+ * ==========================================================
+ *
+ * {{ description }}
+ *
+ * @package {{ namespace }}
+ */
+final class {{ model }} extends Model
+{
+    use HasFactory{{ softDeletesTrait }};
+
+    /**
+     * Tabla asociada al modelo.
+     */
+    protected $table = '{{ table }}';
+
+    /**
+     * Atributos asignables masivamente.
+     *
+     * @var array<int,string>
+     */
+    protected $fillable = [
+        {{ fillable }}
+    ];
+
+    /**
+     * Conversión automática de atributos.
+     *
+     * @var array<string,string>
+     */
+    protected $casts = [
+        {{ casts }}
+    ];
+
+        {{ constants }}
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relaciones
+    |--------------------------------------------------------------------------
+    */
+
+        {{ relationships }}
+
+    /*
+    |--------------------------------------------------------------------------
+    | Scopes
+    |--------------------------------------------------------------------------
+    */
+
+        {{ scopes }}
+}

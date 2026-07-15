@@ -74,11 +74,9 @@ abstract class BaseService implements ServiceInterface
         return $this->repository->update($id, $attributes);
     }
 
-    /**
-     * Elimina un registro.
-     */
-    public function delete(int|string $id): bool
-    {
+    public function delete(
+        int|string $id
+    ): bool {
         return $this->repository->delete($id);
     }
 

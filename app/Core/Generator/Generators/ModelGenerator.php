@@ -55,10 +55,11 @@ final class ModelGenerator extends BaseGenerator
     private function buildVariables(ModuleData $module): array
     {
         return [
-
             'namespace' => $module->modelNamespace(),
 
-            'class' => $module->modelClass(),
+            'model' => $module->modelClass(),
+
+            'description' => $module->description(),
 
             'table' => $module->table(),
 
@@ -66,6 +67,15 @@ final class ModelGenerator extends BaseGenerator
 
             'casts' => $this->buildCasts($module),
 
+            'softDeletesImport' => '',
+
+            'softDeletesTrait' => '',
+
+            'constants' => '',
+
+            'relationships' => '',
+
+            'scopes' => '',
         ];
     }
 

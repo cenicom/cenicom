@@ -194,4 +194,21 @@ final class GeneratorResult
             'errors' => count($this->errors),
         ];
     }
+
+    public function isEmpty(): bool
+    {
+        return $this->summary() === [
+            'created' => 0,
+            'updated' => 0,
+            'skipped' => 0,
+            'warnings' => 0,
+            'errors' => 0,
+        ];
+    }
+
+    public function totalGenerated(): int
+    {
+        return count($this->created)
+            + count($this->updated);
+    }
 }

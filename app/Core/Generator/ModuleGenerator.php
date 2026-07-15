@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Core\Generator;
 
+
+
 use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\Results\GeneratorResult;
 
@@ -26,17 +28,32 @@ use App\Core\Generator\Results\GeneratorResult;
  */
 final readonly class ModuleGenerator
 {
+
+
+    private array $generators;
+
     public function __construct(
-        private GeneratorManager $generatorManager,
+        array $generators
     ) {
+        $this->generators = $generators;
     }
 
     /**
      * Genera un módulo completo.
      */
     public function generate(
-        ModuleData $module
-    ): GeneratorResult {
-        return $this->generatorManager->generate($module);
+    ModuleData $module
+): GeneratorResult
+{
+    $result = new GeneratorResult();
+
+    foreach ($this->generators as $generator) {
+
+        $generatorResult = $generator->generate($module);
+
+        $result->merge($generatorResult);
     }
+
+    return $result;
+}
 }

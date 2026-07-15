@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace {{ namespace }};
+namespace App\Http\Requests\Institution;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-final class {{ className }} extends FormRequest
+final class UpdateInstitutionRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -16,7 +16,7 @@ final class {{ className }} extends FormRequest
     public function rules(): array
     {
         return [
-            {{ rules }}
+            
         ];
     }
 }

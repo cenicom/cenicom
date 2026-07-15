@@ -1,0 +1,59 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use {{ modelNamespace }}\{{ model }};
+
+/**
+ * ==========================================================
+ * CENICOM ERP
+ * ==========================================================
+ *
+ * Contrato del repositorio de {{ model }}.
+ *
+ * Define las operaciones de acceso a datos del módulo.
+ *
+ * @package {{ namespace }}
+ */
+interface {{ repositoryInterface }}
+{
+    /**
+     * Obtiene todos los registros.
+     */
+    public function all();
+
+    /**
+     * Busca un registro por su identificador.
+     */
+    public function find(
+        int|string $id
+    ): ?{{ model }};
+
+    /**
+     * Crea un nuevo registro.
+     *
+     * @param array<string,mixed> $data
+     */
+    public function create(
+        array $data
+    ): {{ model }};
+
+    /**
+     * Actualiza un registro.
+     *
+     * @param array<string,mixed> $data
+     */
+    public function update(
+        {{ model }} $model,
+        array $data
+    ): bool;
+
+    /**
+     * Elimina un registro.
+     */
+    public function delete(
+        {{ model }} $model
+    ): bool;
+}

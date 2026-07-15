@@ -46,8 +46,14 @@ final class StubManager
      */
     private function resolvePath(string $stub): string
     {
+        $stub = ltrim($stub, '/\\');
+
+        if (!str_ends_with($stub, '.stub')) {
+            $stub .= '.stub';
+        }
+
         return base_path(
-            self::STUB_PATH . DIRECTORY_SEPARATOR . ltrim($stub, '/\\')
+            self::STUB_PATH . DIRECTORY_SEPARATOR . $stub
         );
     }
 
@@ -56,7 +62,7 @@ final class StubManager
      */
     private function load(string $path): string
     {
-        if (! is_file($path)) {
+        if (!is_file($path)) {
             throw new InvalidArgumentException(
                 sprintf('Stub [%s] no encontrado.', $path)
             );
@@ -83,8 +89,8 @@ final class StubManager
         array $variables
     ): string {
         foreach ($variables as $key => $value) {
-            $content = str_replace(
-                '{{ ' . $key . ' }}',
+            $content = preg_replace(
+                '/{{\s*' . preg_quote($key, '/') . '\s*}}/',
                 $value,
                 $content
             );

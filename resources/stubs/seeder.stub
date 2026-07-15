@@ -1,0 +1,31 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use Illuminate\Database\Seeder;
+use {{ modelNamespace }}\{{ model }};
+
+/**
+ * ==========================================================
+ * CENICOM ERP
+ * ==========================================================
+ *
+ * Seeder del módulo {{ model }}.
+ *
+ * @package {{ namespace }}
+ */
+final class {{ seeder }}
+    extends Seeder
+{
+    /**
+     * Ejecuta el seeder.
+     */
+    public function run(): void
+    {
+        {{ model }}::factory()
+            ->count(10)
+            ->create();
+    }
+}

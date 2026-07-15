@@ -1,0 +1,40 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use Illuminate\Database\Eloquent\Factories\Factory;
+use {{ modelNamespace }}\{{ model }};
+
+/**
+ * ==========================================================
+ * CENICOM ERP
+ * ==========================================================
+ *
+ * Factory del modelo {{ model }}.
+ *
+ * @extends Factory<{{ model }}>
+ */
+final class {{ factory }}
+    extends Factory
+{
+    /**
+     * Modelo asociado.
+     *
+     * @var class-string<{{ model }}>
+     */
+    protected $model = {{ model }}::class;
+
+    /**
+     * Define el estado por defecto del modelo.
+     *
+     * @return array<string,mixed>
+     */
+    public function definition(): array
+    {
+        return [
+
+        ];
+    }
+}

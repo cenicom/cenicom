@@ -1,0 +1,81 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Core\Services;
+
+use {{ contractNamespace }}\{{ serviceInterface }};
+use {{ contractNamespace }}\InstitutionRepositoryInterface;
+use {{ modelNamespace }}\{{ model }};
+
+/**
+ * ==========================================================
+ * CENICOM ERP
+ * ==========================================================
+ *
+ * Servicio del módulo {{ model }}.
+ *
+ * Centraliza la lógica de negocio y coordina las operaciones
+ * entre los controladores y el repositorio.
+ *
+ * @package App\Core\Services
+ */
+final readonly class {{ service }}
+    implements {{ serviceInterface }}
+{
+    public function __construct(
+        private InstitutionRepositoryInterface $repository,
+    ) {
+    }
+
+    /**
+     * Obtiene todos los registros.
+     */
+    public function all()
+    {
+        return $this->repository->all();
+    }
+
+    /**
+     * Busca un registro por su identificador.
+     */
+    public function find(
+        int|string $id
+    ): ?{{ model }}
+    {
+        return $this->repository->find($id);
+    }
+
+    /**
+     * Crea un nuevo registro.
+     *
+     * @param array<string,mixed> $data
+     */
+    public function create(
+        array $data
+    ): {{ model }}
+    {
+        return $this->repository->create($data);
+    }
+
+    /**
+     * Actualiza un registro.
+     *
+     * @param array<string,mixed> $data
+     */
+    public function update(
+        {{ model }} $model,
+        array $data
+    ): bool {
+        return $this->repository->update($model, $data);
+    }
+
+    /**
+     * Elimina un registro.
+     */
+    public function delete(
+        {{ model }} $model
+    ): bool {
+        return $this->repository->delete($model);
+    }
+}

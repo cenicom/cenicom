@@ -13,10 +13,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('{{ table }}', function (Blueprint $table): void {
-            {{ columns }}
-            {{ timestamps }}
-            {{ softDeletes }}
+        Schema::create('institutions', function (Blueprint $table) {
+
+            
+
+            $table->timestamps();
+
+            
         });
     }
 
@@ -25,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('{{ table }}');
+        Schema::dropIfExists('institutions');
     }
 };
