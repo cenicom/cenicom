@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace {{ namespace }};
+namespace [[ namespace ]];
 
 use Illuminate\Database\Seeder;
-use {{ modelNamespace }}\{{ model }};
+use [[ modelNamespace ]]\[[ model ]];
 
 /**
  * ==========================================================
  * CENICOM ERP
  * ==========================================================
  *
- * Seeder del módulo {{ model }}.
+ * Seeder del módulo [[ model ]].
  *
- * @package {{ namespace }}
+ * @package [[ namespace ]]
  */
-final class {{ seeder }}
+final class [[ seeder ]]
     extends Seeder
 {
     /**
@@ -24,7 +24,7 @@ final class {{ seeder }}
      */
     public function run(): void
     {
-        {{ model }}::factory()
+        [[ model ]]::factory()
             ->count(10)
             ->create();
     }

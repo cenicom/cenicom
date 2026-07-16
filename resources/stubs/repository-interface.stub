@@ -2,34 +2,30 @@
 
 declare(strict_types=1);
 
-namespace {{ namespace }};
+namespace [[ namespace ]];
 
-use {{ modelNamespace }}\{{ model }};
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use [[ qualifiedModel ]];
 
 /**
  * ==========================================================
  * CENICOM ERP
  * ==========================================================
  *
- * Contrato del repositorio de {{ model }}.
+ * Contrato del repositorio de [[ model ]].
  *
  * Define las operaciones de acceso a datos del módulo.
  *
- * @package {{ namespace }}
+ * @package [[ namespace ]]
  */
-interface {{ repositoryInterface }}
+interface [[ repositoryInterface ]]
 {
     /**
-     * Obtiene todos los registros.
+     * Obtiene el listado paginado.
      */
-    public function all();
-
-    /**
-     * Busca un registro por su identificador.
-     */
-    public function find(
-        int|string $id
-    ): ?{{ model }};
+    public function paginate(
+        int $perPage = 15
+    ): LengthAwarePaginator;
 
     /**
      * Crea un nuevo registro.
@@ -38,7 +34,7 @@ interface {{ repositoryInterface }}
      */
     public function create(
         array $data
-    ): {{ model }};
+    ): [[ model ]];
 
     /**
      * Actualiza un registro.
@@ -46,7 +42,7 @@ interface {{ repositoryInterface }}
      * @param array<string,mixed> $data
      */
     public function update(
-        {{ model }} $model,
+        [[ model ]] $[[ variable ]],
         array $data
     ): bool;
 
@@ -54,6 +50,6 @@ interface {{ repositoryInterface }}
      * Elimina un registro.
      */
     public function delete(
-        {{ model }} $model
+        [[ model ]] $[[ variable ]]
     ): bool;
 }

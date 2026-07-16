@@ -2,29 +2,27 @@
 
 declare(strict_types=1);
 
-namespace {{ namespace }};
+namespace [[ namespace ]];
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-{{ softDeletesImport }}
+[[ imports ]]
 
 /**
  * ==========================================================
  * CENICOM ERP
  * ==========================================================
  *
- * {{ description }}
+ * [[ description ]]
  *
- * @package {{ namespace }}
+ * @package [[ namespace ]]
  */
-final class {{ model }} extends Model
+final class [[ model ]] extends Model
 {
-    use HasFactory{{ softDeletesTrait }};
+[[ traits ]]
 
     /**
      * Tabla asociada al modelo.
      */
-    protected $table = '{{ table }}';
+    protected $table = '[[ table ]]';
 
     /**
      * Atributos asignables masivamente.
@@ -32,7 +30,7 @@ final class {{ model }} extends Model
      * @var array<int,string>
      */
     protected $fillable = [
-        {{ fillable }}
+        [[ fillable ]]
     ];
 
     /**
@@ -41,10 +39,10 @@ final class {{ model }} extends Model
      * @var array<string,string>
      */
     protected $casts = [
-        {{ casts }}
+        [[ casts ]]
     ];
 
-        {{ constants }}
+[[ constants ]]
 
     /*
     |--------------------------------------------------------------------------
@@ -52,7 +50,7 @@ final class {{ model }} extends Model
     |--------------------------------------------------------------------------
     */
 
-        {{ relationships }}
+[[ relationships ]]
 
     /*
     |--------------------------------------------------------------------------
@@ -60,5 +58,6 @@ final class {{ model }} extends Model
     |--------------------------------------------------------------------------
     */
 
-        {{ scopes }}
+[[ scopes ]]
+
 }

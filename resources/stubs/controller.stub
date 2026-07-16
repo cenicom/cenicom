@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace {{ namespace }};
+namespace [[ namespace ]];
 
 use App\Http\Controllers\Controller;
 
-use {{ contractNamespace }}\{{ serviceInterface }};
-use {{ requestNamespace }}\{{ storeRequest }};
-use {{ requestNamespace }}\{{ updateRequest }};
-use {{ modelNamespace }}\{{ model }};
+use [[ qualifiedService ]];
+use [[ qualifiedStoreRequest ]];
+use [[ qualifiedUpdateRequest ]];
+use [[ qualifiedModel ]];
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -19,33 +19,46 @@ use Illuminate\View\View;
  * CENICOM ERP
  * ==========================================================
  *
- * Controlador del módulo {{ model }}.
+ * Controlador del módulo [[ model ]].
  *
  * Gestiona las operaciones CRUD del módulo.
  *
- * @package {{ namespace }}
+ * @package [[ namespace ]]
  */
-final class {{ controller }} extends Controller
+final class [[ controller ]] extends Controller
 {
+    private const PER_PAGE = 15;
+
     public function __construct(
-        private readonly {{ serviceInterface }} $service,
+        private readonly [[ serviceInterface ]] $service,
     ) {
     }
 
+    /**
+        * Muestra el listado del recurso.
+        */
     public function index(): View
     {
-        return view('{{ view }}.index', [
-            '{{ pluralVariable }}' => $this->service->all(),
+        return view('[[ view ]].index', [
+            '[[ pluralVariable ]]' => $this->service->paginate(
+                perPage: self::PER_PAGE,
+            ),
         ]);
     }
 
+    /**
+        * Muestra el formulario de creación.
+        */
     public function create(): View
     {
-        return view('{{ view }}.create');
+        return view('[[ view ]].create');
     }
 
+    /**
+        * Almacena un nuevo recurso.
+        */
     public function store(
-        {{ storeRequest }} $request,
+        [[ storeRequest ]] $request,
     ): RedirectResponse {
 
         $this->service->create(
@@ -53,47 +66,63 @@ final class {{ controller }} extends Controller
         );
 
         return redirect()
-            ->route('{{ route }}.index')
-            ->with('success', '{{ singular }} creado correctamente.');
+            ->route('[[ route ]].index')
+            ->with('success', '[[ singular ]] creado correctamente.');
     }
 
+    /**
+        * Muestra un recurso específico.
+        */
     public function show(
-        {{ model }} ${{ variable }}
+        [[ model ]] $[[ variable ]]
     ): View {
 
-        return view('{{ view }}.show', compact('{{ variable }}'));
+        return view('[[ view ]].show', [
+            '[[ variable ]]' => $[[ variable ]],
+        ]);
     }
 
+    /**
+        * Edita un recurso específico.
+        */
     public function edit(
-        {{ model }} ${{ variable }}
+        [[ model ]] $[[ variable ]]
     ): View {
 
-        return view('{{ view }}.edit', compact('{{ variable }}'));
+        return view('[[ view ]].edit', [
+            '[[ variable ]]' => $[[ variable ]] ,
+        ]);
     }
 
+    /**
+    * Actualiza un recurso específico.
+    */
     public function update(
-        {{ updateRequest }} $request,
-        {{ model }} ${{ variable }}
+        [[ updateRequest ]] $request,
+        [[ model ]] $[[ variable ]]
     ): RedirectResponse {
 
         $this->service->update(
-            ${{ variable }},
+            $[[ variable ]],
             $request->validated()
         );
 
         return redirect()
-            ->route('{{ route }}.index')
-            ->with('success', '{{ singular }} actualizado correctamente.');
+            ->route('[[ route ]].index')
+            ->with('success', '[[ singular ]] actualizado correctamente.');
     }
 
+    /**
+    * Elimina el recurso específico.
+    */
     public function destroy(
-        {{ model }} ${{ variable }}
+        [[ model ]] $[[ variable ]]
     ): RedirectResponse {
 
-        $this->service->delete(${{ variable }});
+        $this->service->destroy($[[ variable ]]);
 
         return redirect()
-            ->route('{{ route }}.index')
-            ->with('success', '{{ singular }} eliminado correctamente.');
+            ->route('[[ route ]].index')
+            ->with('success', '[[ singular ]] eliminado correctamente.');
     }
 }

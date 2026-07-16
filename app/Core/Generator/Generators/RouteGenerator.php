@@ -84,8 +84,20 @@ final class RouteGenerator extends BaseGenerator
             'viewPrefix'
             => $module->viewPrefix(),
 
-            'modelClass'
+            'model'
             => $module->modelClass(),
+
+            'plural'
+            => $module->plural(),
+
+            'singular'
+            => $module->singular(),
+
+            'route'
+            => $module->routeName(),
+
+            'controller'
+            => $module->controllerClass(),
         ];
     }
 }

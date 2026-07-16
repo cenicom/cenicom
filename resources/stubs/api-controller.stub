@@ -1,0 +1,92 @@
+<?php
+
+declare(strict_types=1);
+
+namespace [[ namespace ]];
+
+use App\Http\Controllers\Controller;
+
+use [[ qualifiedService ]];
+use [[ qualifiedStoreRequest ]];
+use [[ qualifiedUpdateRequest ]];
+use [[ qualifiedModel ]];
+
+use Illuminate\Http\JsonResponse;
+
+/**
+ * ==========================================================
+ * CENICOM ERP
+ * ==========================================================
+ *
+ * API Controller de [[ model ]].
+ *
+ * Gestiona el CRUD mediante respuestas JSON.
+ *
+ * @package [[ namespace ]]
+ */
+final class [[ controller ]]
+    extends Controller
+{
+    public function __construct(
+        private readonly [[ serviceInterface ]] $service,
+    ) {
+    }
+
+    public function index(): JsonResponse
+    {
+        return response()->json(
+            $this->service->paginate()
+        );
+    }
+
+    public function store(
+        [[ storeRequest ]] $request
+    ): JsonResponse {
+
+        $model = $this->service->create(
+            $request->validated()
+        );
+
+        return response()->json(
+            $model,
+            201
+        );
+    }
+
+    public function show(
+        [[ model ]] $[[ variable ]]
+    ): JsonResponse {
+
+        return response()->json(
+            $[[ variable ]]
+        );
+    }
+
+    public function update(
+        [[ updateRequest ]] $request,
+        [[ model ]] $[[ variable ]]
+    ): JsonResponse {
+
+        $this->service->update(
+            $[[ variable ]],
+            $request->validated()
+        );
+
+        return response()->json(
+            $[[ variable ]]
+        );
+    }
+
+    public function destroy(
+        [[ model ]] $[[ variable ]]
+    ): JsonResponse {
+
+        $this->service->destroy(
+            $[[ variable ]]
+        );
+
+        return response()->json(
+            status: 204
+        );
+    }
+}

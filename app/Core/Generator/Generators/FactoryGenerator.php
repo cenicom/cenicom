@@ -71,22 +71,23 @@ final class FactoryGenerator extends BaseGenerator
         return [
 
             'namespace'
-                => $module->factoryNamespace(),
+            => $module->factoryNamespace(),
 
-            'class'
-                => $module->factoryClass(),
+            'factory'
+            => $module->factoryClass(),
 
             'modelNamespace'
-                => $module->modelNamespace(),
+            => $module->modelNamespace(),
 
-            'modelClass'
-                => $module->modelClass(),
+            'model'
+            => $module->modelClass(),
 
             'qualifiedModel'
-                => $module->qualifiedModel(),
+            => $module->qualifiedModel(),
 
-            'fields'
-                => $module->fields(),
+
         ];
     }
+
+
 }

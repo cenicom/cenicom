@@ -139,16 +139,40 @@ final class ViewGenerator extends BaseGenerator
         ModuleData $module
     ): array {
 
+        $model = lcfirst(
+            $module->modelClass()
+        );
+
+        $collection = $module->plural();
+
         return [
 
-            'modelClass'
-            => $module->modelClass(),
+            'title'
+            => $module->plural(),
+
+            'description'
+            => $module->description(),
+
+            'module'
+            => $module->routeName(),
 
             'singular'
             => $module->singular(),
 
             'plural'
             => $module->plural(),
+
+            'model'
+            => $model,
+
+            'collection'
+            => $this->camelPlural($collection),
+
+            'columns'
+            => count($module->fields()),
+
+            'modelClass'
+            => $module->modelClass(),
 
             'table'
             => $module->table(),
@@ -159,10 +183,24 @@ final class ViewGenerator extends BaseGenerator
             'viewPrefix'
             => $module->viewPrefix(),
 
-            'fields'
-            => $module->fields(),
+
         ];
     }
+
+    private function camelPlural(
+        string $value
+    ): string {
+
+        return lcfirst(
+            str_replace(
+                ' ',
+                '',
+                ucwords($value)
+            )
+        );
+    }
+
+
 
     /**
      * Escribe una vista Blade.

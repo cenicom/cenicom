@@ -41,25 +41,16 @@ abstract class BaseGenerator implements GeneratorInterface
      */
     abstract public function generate(ModuleData $module): GeneratorResult;
 
-
-    protected function write(
-        string $path,
-        string $content
-    ): void {
-        $this->fileWriter->write(
-            $path,
-            $content
-        );
-    }
-
     protected function render(
         string $stub,
         array $variables
     ): string {
-        return $this->stubManager->render(
+        $content = $this->stubManager->render(
             $stub,
             $variables
         );
+
+        return $content;
     }
 
     /**
@@ -76,13 +67,30 @@ abstract class BaseGenerator implements GeneratorInterface
         string $stub,
         string $path,
         array $variables
-    ): void {
+    ): bool {
+
+        if ($this->fileWriter->exists($path)) {
+            return false;
+        }
+
         $content = $this->render(
             $stub,
             $variables
         );
 
         $this->write(
+            $path,
+            $content
+        );
+
+        return true;
+    }
+
+    protected function write(
+        string $path,
+        string $content
+    ): void {
+        $this->fileWriter->write(
             $path,
             $content
         );

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace {{ namespace }};
+namespace [[ namespace ]];
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -12,11 +12,11 @@ use Tests\TestCase;
  * CENICOM ERP
  * ==========================================================
  *
- * Pruebas funcionales del módulo {{ model }}.
+ * Pruebas funcionales del módulo [[ model ]].
  *
- * @package {{ namespace }}
+ * @package [[ namespace ]]
  */
-final class {{ featureTest }}
+final class [[ featureTest ]]
     extends TestCase
 {
     use RefreshDatabase;
@@ -24,7 +24,7 @@ final class {{ featureTest }}
     public function test_index_page_can_be_displayed(): void
     {
         $response = $this->get(
-            route('{{ route }}.index')
+            route('[[ route ]].index')
         );
 
         $response->assertOk();
@@ -33,7 +33,7 @@ final class {{ featureTest }}
     public function test_create_page_can_be_displayed(): void
     {
         $response = $this->get(
-            route('{{ route }}.create')
+            route('[[ route ]].create')
         );
 
         $response->assertOk();

@@ -9,6 +9,7 @@ use App\Core\Generator\BaseGenerator;
 use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\Results\GeneratorResult;
 
+
 /**
  * ==========================================================
  * CENICOM ERP
@@ -25,6 +26,24 @@ use App\Core\Generator\Results\GeneratorResult;
  */
 final class ModelGenerator extends BaseGenerator
 {
+    private const STUB = 'model.stub';
+
+    private const NON_FILLABLE_FIELDS = [
+        'id',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'active' => 'boolean',
+            'price' => 'decimal:2',
+            'published_at' => 'datetime',
+        ];
+    }
+
     public function supports(ModuleData $module): bool
     {
         return true;
@@ -67,27 +86,435 @@ final class ModelGenerator extends BaseGenerator
 
             'casts' => $this->buildCasts($module),
 
-            'softDeletesImport' => '',
+            'imports' => $this->buildImports($module),
 
-            'softDeletesTrait' => '',
+            'traits' => $this->buildTraits($module),
 
-            'constants' => '',
+            'constants' => $this->buildConstants($module),
 
-            'relationships' => '',
+            'relationships' => $this->buildRelationships($module),
 
-            'scopes' => '',
+            'scopes' => $this->buildScopes($module),
         ];
     }
 
-    private function buildFillable(ModuleData $module): string
-    {
-        return '';
+    private function buildRelationships(
+        ModuleData $module
+    ): string {
+
+        $relationships = array_map(
+            fn(array $relationship): string =>
+            $this->buildRelationship($relationship),
+            $this->resolveRelationships($module)
+        );
+
+        return implode(
+            PHP_EOL . PHP_EOL,
+            array_filter($relationships)
+        );
     }
 
-    private function buildCasts(ModuleData $module): string
-    {
-        return '';
+    /**
+     * Construye el contenido de la propiedad $fillable.
+     */
+    private function buildFillable(
+        ModuleData $module
+    ): string {
+
+        $fillable = [];
+
+        foreach ($module->fields() as $field) {
+
+            $name = $field['name'];
+
+            if ($this->isFillable($name)) {
+                $fillable[] = sprintf(
+                    "        '%s',",
+                    $name
+                );
+            }
+        }
+
+        return implode(
+            PHP_EOL,
+            $fillable
+        );
     }
 
+    /**
+     * Determina si un campo puede formar parte de $fillable.
+     */
+    private function isFillable(
+        string $field
+    ): bool {
+
+        return !in_array(
+            $field,
+            self::NON_FILLABLE_FIELDS,
+            true
+        );
+    }
+
+    private function buildCasts(
+        ModuleData $module
+    ): string {
+
+        $casts = [];
+
+        foreach ($module->fields() as $field) {
+
+            $cast = $this->resolveCast($field);
+
+            if ($cast !== null) {
+
+                $casts[] = sprintf(
+                    "        '%s' => '%s',",
+                    $field['name'],
+                    $cast
+                );
+
+            }
+
+        }
+
+        return implode(
+            PHP_EOL,
+            $casts
+        );
+    }
+
+    private function resolveCast(
+        array $field
+    ): ?string {
+
+        return match ($field['type']) {
+
+            'boolean' => 'boolean',
+
+            'decimal' => 'decimal:2',
+
+            'date',
+            'datetime' => 'datetime',
+
+            default => null,
+        };
+    }
+
+    /**
+     * Construye el bloque de imports del modelo.
+     */
+    private function buildImports(
+        ModuleData $module
+    ): string {
+
+        $imports = array_unique(
+            $this->resolveImports($module)
+        );
+
+        sort($imports);
+
+        return implode(
+            PHP_EOL,
+            array_map(
+                static fn(string $import): string => sprintf(
+                    'use %s;',
+                    $import
+                ),
+                $imports
+            )
+        );
+    }
+
+    /**
+     * Resuelve los imports requeridos por el modelo.
+     *
+     * @return array<int, string>
+     */
+    private function resolveImports(
+        ModuleData $module
+    ): array {
+
+        $imports = [
+            'Illuminate\Database\Eloquent\Factories\HasFactory',
+            'Illuminate\Database\Eloquent\Model',
+        ];
+
+        if ($module->softDeletes()) {
+            $imports[] = 'Illuminate\Database\Eloquent\SoftDeletes';
+        }
+
+        if ($module->uuid()) {
+            $imports[] = 'Illuminate\Database\Eloquent\Concerns\HasUuids';
+        }
+
+        if (!empty($this->resolveRelationships($module))) {
+
+            $imports[] = 'Illuminate\Database\Eloquent\Relations\BelongsTo';
+            $imports[] = 'Illuminate\Database\Eloquent\Relations\HasOne';
+            $imports[] = 'Illuminate\Database\Eloquent\Relations\HasMany';
+            $imports[] = 'Illuminate\Database\Eloquent\Relations\BelongsToMany';
+        }
+
+        if (!empty($this->resolveScopes($module))) {
+
+            $imports[] =
+                'Illuminate\Database\Eloquent\Builder';
+        }
+
+        return $imports;
+    }
+
+    private function buildTraits(
+        ModuleData $module
+    ): string {
+
+        $traits = array_unique(
+            $this->resolveTraits($module)
+        );
+
+        sort($traits);
+
+        return implode(
+            PHP_EOL,
+            array_map(
+                static fn(string $trait): string => "    use {$trait};",
+                $traits
+            )
+        );
+    }
+
+    private function resolveTraits(
+        ModuleData $module
+    ): array {
+
+        $traits = [
+            'HasFactory',
+        ];
+
+        if ($module->softDeletes()) {
+            $traits[] = 'SoftDeletes';
+        }
+
+        if ($module->uuid()) {
+            $traits[] = 'HasUuids';
+        }
+
+        return $traits;
+    }
+
+    private function resolveConstants(
+        ModuleData $module
+    ): array {
+        return [
+            [
+                'name' => 'STATUS_ACTIVE',
+                'value' => "'active'",
+            ],
+            [
+                'name' => 'STATUS_INACTIVE',
+                'value' => "'inactive'",
+            ],
+        ];
+    }
+
+    private function buildConstants(
+        ModuleData $module
+    ): string {
+
+        $constants = $this->resolveConstants($module);
+
+        return implode(
+            PHP_EOL . PHP_EOL,
+            array_map(
+                static fn(array $constant): string => sprintf(
+                    '    public const %s = %s;',
+                    $constant['name'],
+                    $constant['value']
+                ),
+                $constants
+            )
+        );
+    }
+
+    /**
+     * Resuelve las relaciones declaradas para el módulo.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function resolveRelationships(
+        ModuleData $module
+    ): array {
+
+        if (!method_exists($module, 'relationships')) {
+            return [];
+        }
+
+        return $module->relationships();
+    }
+
+    /**
+     * Construye el método correspondiente a una relación Eloquent.
+     *
+     * @param array<string, mixed> $relationship
+     */
+    private function buildRelationship(
+        array $relationship
+    ): string {
+
+        return match ($relationship['type']) {
+
+            'belongsTo' => $this->buildBelongsTo($relationship),
+
+            'hasOne' => $this->buildHasOne($relationship),
+
+            'hasMany' => $this->buildHasMany($relationship),
+
+            'belongsToMany' => $this->buildBelongsToMany($relationship),
+
+            default => '',
+        };
+    }
+
+    /**
+     * Construye una relación BelongsTo.
+     *
+     * @param array<string, mixed> $relationship
+     */
+    private function buildBelongsTo(
+        array $relationship
+    ): string {
+
+        return sprintf(
+            <<<'PHP'
+    public function %s(): BelongsTo
+    {
+        return $this->belongsTo(%s::class);
+    }
+PHP,
+            $relationship['method'],
+            $relationship['model'],
+        );
+    }
+
+    /**
+     * Construye una relación HasOne.
+     *
+     * @param array<string, mixed> $relationship
+     */
+    private function buildHasOne(
+        array $relationship
+    ): string {
+
+        return sprintf(
+            <<<'PHP'
+    public function %s(): HasOne
+    {
+        return $this->hasOne(%s::class);
+    }
+PHP,
+            $relationship['method'],
+            $relationship['model'],
+        );
+    }
+
+    /**
+     * Construye una relación HasMany.
+     *
+     * @param array<string, mixed> $relationship
+     */
+    private function buildHasMany(
+        array $relationship
+    ): string {
+
+        return sprintf(
+            <<<'PHP'
+    public function %s(): HasMany
+    {
+        return $this->hasMany(%s::class);
+    }
+PHP,
+            $relationship['method'],
+            $relationship['model'],
+        );
+    }
+
+    /**
+     * Construye una relación BelongsToMany.
+     *
+     * @param array<string, mixed> $relationship
+     */
+    private function buildBelongsToMany(
+        array $relationship
+    ): string {
+
+        return sprintf(
+            <<<'PHP'
+    public function %s(): BelongsToMany
+    {
+        return $this->belongsToMany(%s::class);
+    }
+PHP,
+            $relationship['method'],
+            $relationship['model'],
+        );
+    }
+
+    /**
+     * Construye los scopes del modelo.
+     *
+     * @return string
+     */
+    private function buildScopes(
+        ModuleData $module
+    ): string {
+
+        $scopes = array_map(
+            fn(array $scope): string =>
+            $this->buildScope($scope),
+            $this->resolveScopes($module)
+        );
+
+        return implode(
+            PHP_EOL . PHP_EOL,
+            array_filter($scopes)
+        );
+    }
+
+    /**
+     * Resuelve los scopes definidos para el módulo.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function resolveScopes(
+        ModuleData $module
+    ): array {
+
+        if (!method_exists($module, 'scopes')) {
+            return [];
+        }
+
+        return $module->scopes();
+    }
+
+    /**
+     * Construye un scope Eloquent.
+     *
+     * @param array<string, mixed> $scope
+     */
+    private function buildScope(
+        array $scope
+    ): string {
+
+        return sprintf(
+            <<<'PHP'
+    public function scope%s(Builder $query): Builder
+    {
+        return $query->%s;
+    }
+PHP,
+            ucfirst($scope['name']),
+            $scope['body'],
+        );
+    }
 
 }

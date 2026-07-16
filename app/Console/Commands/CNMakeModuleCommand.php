@@ -6,7 +6,7 @@ namespace App\Console\Commands;
 
 use App\Core\Generator\Factories\ModuleDataFactory;
 use App\Core\Generator\Factories\ModuleDefinitionFactory;
-use App\Core\Generator\ModuleGenerator;
+use App\Core\Generator\Generators\ModuleGenerator;
 use App\Core\Generator\Results\GeneratorResult;
 use App\Core\Generator\Specifications\ModuleSpecification;
 use Illuminate\Console\Command;

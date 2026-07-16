@@ -121,6 +121,8 @@ final class ModuleDataFactory
 
             repositoryPath: $paths['repositoryPath'],
 
+            repositoryInterfacePath: $paths['repositoryInterfacePath'],
+
             servicePath: $paths['servicePath'],
 
             controllerPath: $paths['controllerPath'],
@@ -296,6 +298,9 @@ final class ModuleDataFactory
             'repositoryPath'
             => app_path("Core/Repositories/{$name}Repository.php"),
 
+            'repositoryInterfacePath'
+            => app_path("Core/Contracts/{$name}RepositoryInterface.php"),
+
             'servicePath'
             => app_path("Core/Services/{$name}Service.php"),
 
@@ -309,7 +314,9 @@ final class ModuleDataFactory
             => resource_path("views/{$plural}"),
 
             'routePath'
-            => base_path('routes'),
+            => base_path(
+                    "routes/modules/{$plural}.php"
+                ),
 
             'policyPath'
             => app_path("Policies/{$name}Policy.php"),

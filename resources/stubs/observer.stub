@@ -2,59 +2,59 @@
 
 declare(strict_types=1);
 
-namespace {{ namespace }};
+namespace [[ namespace ]];
 
-use {{ modelNamespace }}\{{ model }};
+use [[ modelNamespace ]]\[[ model ]];
 
 /**
  * ==========================================================
  * CENICOM ERP
  * ==========================================================
  *
- * Observer del módulo {{ model }}.
+ * Observer del módulo [[ model ]].
  *
  * Gestiona los eventos del ciclo de vida del modelo.
  *
- * @package {{ namespace }}
+ * @package [[ namespace ]]
  */
-final class {{ observer }}
+final class [[ observer ]]
 {
-    public function creating({{ model }} ${{ variable }}): void
+    public function creating([[ model ]] $[[ variable ]]): void
     {
         //
     }
 
-    public function created({{ model }} ${{ variable }}): void
+    public function created([[ model ]] $[[ variable ]]): void
     {
         //
     }
 
-    public function updating({{ model }} ${{ variable }}): void
+    public function updating([[ model ]] $[[ variable ]]): void
     {
         //
     }
 
-    public function updated({{ model }} ${{ variable }}): void
+    public function updated([[ model ]] $[[ variable ]]): void
     {
         //
     }
 
-    public function deleting({{ model }} ${{ variable }}): void
+    public function deleting([[ model ]] $[[ variable ]]): void
     {
         //
     }
 
-    public function deleted({{ model }} ${{ variable }}): void
+    public function deleted([[ model ]] $[[ variable ]]): void
     {
         //
     }
 
-    public function restoring({{ model }} ${{ variable }}): void
+    public function restoring([[ model ]] $[[ variable ]]): void
     {
         //
     }
 
-    public function restored({{ model }} ${{ variable }}): void
+    public function restored([[ model ]] $[[ variable ]]): void
     {
         //
     }

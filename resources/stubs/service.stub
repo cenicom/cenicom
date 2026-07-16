@@ -2,80 +2,79 @@
 
 declare(strict_types=1);
 
-namespace {{ namespace }};
+namespace [[ namespace ]];
 
-use {{ contractNamespace }}\{{ serviceInterface }};
-use {{ contractNamespace }}\{{ repositoryInterface }};
-use {{ modelNamespace }}\{{ model }};
+use [[ qualifiedModel ]];
+use [[ qualifiedRepositoryInterface ]];
+use [[ qualifiedServiceInterface ]];
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 /**
  * ==========================================================
  * CENICOM ERP
  * ==========================================================
  *
- * Servicio del módulo {{ model }}.
+ * Servicio del módulo [[ model ]].
  *
  * Centraliza la lógica de negocio y coordina las operaciones
- * entre los controladores y el repositorio.
+ * sobre el repositorio.
  *
- * @package {{ namespace }}
+ * @package [[ namespace ]]
  */
-final readonly class {{ service }}
-    implements {{ serviceInterface }}
+final readonly class [[ service ]]
+    implements [[ serviceInterface ]]
 {
+    /**
+     * Constructor.
+     */
     public function __construct(
-        private {{ repositoryInterface }} $repository,
+        private [[ repositoryInterface ]] $repository,
     ) {
     }
 
     /**
-     * Obtiene todos los registros.
+     * {@inheritDoc}
      */
-    public function all()
-    {
-        return $this->repository->all();
+    public function paginate(
+        int $perPage = 15
+    ): LengthAwarePaginator {
+
+        return $this->repository->paginate($perPage);
     }
 
     /**
-     * Busca un registro por su identificador.
-     */
-    public function find(
-        int|string $id
-    ): ?{{ model }}
-    {
-        return $this->repository->find($id);
-    }
-
-    /**
-     * Crea un nuevo registro.
-     *
-     * @param array<string,mixed> $data
+     * {@inheritDoc}
      */
     public function create(
         array $data
-    ): {{ model }}
-    {
+    ): [[ model ]] {
+
         return $this->repository->create($data);
     }
 
     /**
-     * Actualiza un registro.
-     *
-     * @param array<string,mixed> $data
+     * {@inheritDoc}
      */
     public function update(
-        {{ model }} $model,
+        [[ model ]] $[[ variable ]],
         array $data
     ): bool {
-        return $this->repository->update($model, $data);
+
+        return $this->repository->update(
+            $[[ variable ]],
+            $data
+        );
     }
 
     /**
-     * Elimina un registro.
+     * {@inheritDoc}
      */
-    public function delete(
-        {{ model }} $model
+    public function destroy(
+        [[ model ]] $[[ variable ]]
     ): bool {
-        return $this->repository->delete($model);
+
+        return $this->repository->delete(
+            $[[ variable ]]
+        );
     }
 }

@@ -1,0 +1,31 @@
+<?php
+
+declare(strict_types=1);
+
+namespace [[ namespace ]];
+
+/**
+ * ==========================================================
+ * CENICOM ERP
+ * ==========================================================
+ *
+ * Acción [[ action ]].
+ *
+ * Encapsula una operación específica del módulo.
+ *
+ * @package [[ namespace ]]
+ */
+final readonly class [[ action ]]
+{
+    /**
+     * Ejecuta la acción.
+     *
+     * @param array<string,mixed> $data
+     */
+    public function execute(
+        array $data = []
+    ): mixed {
+
+        //
+    }
+}

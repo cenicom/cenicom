@@ -36,11 +36,18 @@ final class ControllerGenerator extends BaseGenerator
      * Genera el controlador del módulo.
      */
     private const STUB = 'controller.stub';
+
     public function generate(
         ModuleData $module
     ): GeneratorResult {
 
         $path = $module->controllerPath();
+
+        $result = new GeneratorResult();
+
+        if ($this->fileWriter->exists($path)) {
+            return $result->addSkipped($path);
+        }
 
         $this->generateFile(
             self::STUB,
@@ -48,8 +55,7 @@ final class ControllerGenerator extends BaseGenerator
             $this->buildVariables($module)
         );
 
-        return (new GeneratorResult())
-            ->addCreated($path);
+        return $result->addCreated($path);
     }
 
     /**
@@ -66,10 +72,10 @@ final class ControllerGenerator extends BaseGenerator
             'namespace'
             => $module->controllerNamespace(),
 
-            'class'
+            'controller'
             => $module->controllerClass(),
 
-            'serviceNamespace'
+            'service'
             => $module->serviceNamespace(),
 
             'serviceClass'
@@ -96,14 +102,26 @@ final class ControllerGenerator extends BaseGenerator
             'qualifiedUpdateRequest'
             => $module->qualifiedUpdateRequest(),
 
-            'modelClass'
+            'model'
             => $module->modelClass(),
 
-            'routeName'
+            'route'
             => $module->routeName(),
 
-            'viewPrefix'
+            'view'
             => $module->viewPrefix(),
+
+            'qualifiedModel'
+            => $module->qualifiedModel(),
+
+            'variable'
+            => $module->variable(),
+
+            'pluralVariable'
+            => $module->pluralVariable(),
+
+            'singular'
+            => $module->singular(),
         ];
     }
 }

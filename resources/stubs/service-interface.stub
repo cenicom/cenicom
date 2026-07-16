@@ -2,34 +2,28 @@
 
 declare(strict_types=1);
 
-namespace {{ namespace }};
-
-use {{ modelNamespace }}\{{ model };
+namespace [[ namespace ]];
 
 /**
  * ==========================================================
  * CENICOM ERP
  * ==========================================================
  *
- * Contrato del servicio de {{ model }}.
+ * Contrato del servicio de [[ model ]].
  *
  * Define las operaciones de negocio del módulo.
  *
- * @package {{ namespace }}
+ * @package [[ namespace ]]
  */
-interface {{ serviceInterface }}
+interface [[ serviceInterface ]]
 {
     /**
-     * Obtiene todos los registros.
+     * Obtiene registros paginados.
      */
-    public function all();
+    public function paginate(
+        int $perPage = 15
+    ): \Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
-    /**
-     * Busca un registro por su identificador.
-     */
-    public function find(
-        int|string $id
-    ): ?{{ model }};
 
     /**
      * Crea un nuevo registro.
@@ -38,7 +32,8 @@ interface {{ serviceInterface }}
      */
     public function create(
         array $data
-    ): {{ model }};
+    ): [[ model ]];
+
 
     /**
      * Actualiza un registro.
@@ -46,14 +41,15 @@ interface {{ serviceInterface }}
      * @param array<string,mixed> $data
      */
     public function update(
-        {{ model }} $model,
+        [[ model ]] $[[ variable ]],
         array $data
     ): bool;
+
 
     /**
      * Elimina un registro.
      */
-    public function delete(
-        {{ model }} $model
+    public function destroy(
+        [[ model ]] $[[ variable ]]
     ): bool;
 }

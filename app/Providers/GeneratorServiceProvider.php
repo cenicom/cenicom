@@ -4,23 +4,25 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-
-use App\Core\Generator\ModuleGenerator;
-
-use App\Core\Generator\Generators\ModelGenerator;
-use App\Core\Generator\Generators\MigrationGenerator;
-use App\Core\Generator\Generators\RepositoryGenerator;
-use App\Core\Generator\Generators\ServiceGenerator;
-use App\Core\Generator\Generators\RequestGenerator;
 use App\Core\Generator\Generators\ControllerGenerator;
+use App\Core\Generator\Generators\MigrationGenerator;
+use App\Core\Generator\Generators\ModelGenerator;
+use App\Core\Generator\Generators\ModuleGenerator;
+use App\Core\Generator\Generators\RepositoryGenerator;
+use App\Core\Generator\Generators\RequestGenerator;
+use App\Core\Generator\Generators\ServiceGenerator;
+use App\Core\Generator\Support\StubManager;
+use Illuminate\Support\ServiceProvider;
 
 
 class GeneratorServiceProvider extends ServiceProvider
 {
-
     public function register(): void
     {
+        $this->app->singleton(StubManager::class, function ($app) {
+            return new StubManager();
+        });
+
 
         $this->app->bind(ModuleGenerator::class, function ($app) {
 
@@ -41,9 +43,7 @@ class GeneratorServiceProvider extends ServiceProvider
             ]);
 
         });
-
     }
-
 
     public function boot(): void
     {

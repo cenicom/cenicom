@@ -134,6 +134,15 @@ readonly class ModuleData
     private string $observerPath;
 
     private string $moduleManifestPath;
+
+    private string $repositoryInterfacePath;
+
+    private string $serviceInterfacePath;
+
+    private string $resourcePath;
+
+    private string $menuPath;
+
     /*
     |--------------------------------------------------------------------------
     | 5️⃣ Rutas y vistas
@@ -222,6 +231,7 @@ readonly class ModuleData
         string $modelPath,
         string $migrationPath,
         string $repositoryPath,
+        string $repositoryInterfacePath,
         string $servicePath,
         string $controllerPath,
         string $policyPath,
@@ -286,6 +296,7 @@ readonly class ModuleData
         $this->modelPath = $modelPath;
         $this->migrationPath = $migrationPath;
         $this->repositoryPath = $repositoryPath;
+        $this->repositoryInterfacePath = $repositoryInterfacePath;
         $this->servicePath = $servicePath;
         $this->controllerPath = $controllerPath;
         $this->requestPath = $requestPath;
@@ -483,6 +494,18 @@ readonly class ModuleData
         return $this->observerClass;
     }
 
+    public function variable(): string
+    {
+        return lcfirst($this->modelClass());
+    }
+
+    public function pluralVariable(): string
+    {
+        return lcfirst($this->plural());
+    }
+
+
+
     /*
 |--------------------------------------------------------------------------
 | Getters - Paths
@@ -562,6 +585,28 @@ readonly class ModuleData
     public function moduleManifestPath(): string
     {
         return $this->moduleManifestPath;
+    }
+
+    public function repositoryInterfacePath(): string
+    {
+        return $this->repositoryInterfacePath;
+    }
+
+    public function serviceInterfacePath(): string
+    {
+        return app_path(
+            "Core/Contracts/{$this->serviceInterface()}.php"
+        );
+    }
+
+    public function resourcePath(): string
+    {
+        return $this->resourcePath;
+    }
+
+    public function menuPath(): string
+    {
+        return $this->menuPath;
     }
 
     /*
@@ -650,10 +695,9 @@ readonly class ModuleData
 | Métodos qualified*
 |--------------------------------------------------------------------------
 */
-
     public function qualifiedModel(): string
     {
-        return "{$this->modelNamespace()}\\{$this->modelClass()}";
+        return $this->modelNamespace() . '\\' . $this->modelClass();
     }
 
     public function qualifiedRepository(): string
@@ -899,5 +943,7 @@ readonly class ModuleData
             'rules' => '',
         ];
     }
+
+
 
 }

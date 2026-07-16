@@ -2,29 +2,29 @@
 
 declare(strict_types=1);
 
-namespace {{ namespace }};
+namespace [[ namespace ]];
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use {{ modelNamespace }}\{{ model }};
+use [[ modelNamespace ]]\[[ model ]];
 
 /**
  * ==========================================================
  * CENICOM ERP
  * ==========================================================
  *
- * Factory del modelo {{ model }}.
+ * Factory del modelo [[ model ]].
  *
- * @extends Factory<{{ model }}>
+ * @extends Factory<[[ model ]]>
  */
-final class {{ factory }}
+final class [[ factory ]]
     extends Factory
 {
     /**
      * Modelo asociado.
      *
-     * @var class-string<{{ model }}>
+     * @var class-string<[[ model ]]>
      */
-    protected $model = {{ model }}::class;
+    protected $model = [[ model ]]::class;
 
     /**
      * Define el estado por defecto del modelo.

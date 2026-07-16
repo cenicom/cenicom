@@ -2,28 +2,79 @@
 
 declare(strict_types=1);
 
-namespace {{ namespace }};
+namespace [[ namespace ]];
 
-use App\Core\Repositories\BaseRepository;
-use {{ contractNamespace }}\{{ repositoryInterface }};
-use {{ modelNamespace }}\{{ model }};
+use [[ qualifiedModel ]];
+use [[ qualifiedRepositoryInterface ]];
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 /**
  * ==========================================================
  * CENICOM ERP
  * ==========================================================
  *
- * Repositorio de {{ model }}.
+ * Repositorio de [[ model ]].
  *
- * @package {{ namespace }}
+ * Encapsula el acceso a datos del modelo y centraliza
+ * todas las operaciones de persistencia.
+ *
+ * @package [[ namespace ]]
  */
-final class {{ repository }}
-    extends BaseRepository
-    implements {{ repositoryInterface }}
+final readonly class [[ repository ]]
+    implements [[ repositoryInterface ]]
 {
+    /**
+     * Constructor.
+     */
     public function __construct(
-        {{ model }} $model
+        private [[ model ]] $model,
     ) {
-        parent::__construct($model);
+    }
+
+    /**
+     * Obtiene el listado paginado.
+     */
+    public function paginate(
+        int $perPage = 15
+    ): LengthAwarePaginator {
+
+        return $this->model
+            ->latest()
+            ->paginate($perPage);
+    }
+
+    /**
+     * Crea un nuevo registro.
+     *
+     * @param array<string,mixed> $data
+     */
+    public function create(
+        array $data
+    ): [[ model ]] {
+
+        return $this->model->create($data);
+    }
+
+    /**
+     * Actualiza un registro.
+     *
+     * @param array<string,mixed> $data
+     */
+    public function update(
+        [[ model ]] $[[ variable ]],
+        array $data
+    ): bool {
+
+        return $[[ variable ]]->update($data);
+    }
+
+    /**
+     * Elimina un registro.
+     */
+    public function delete(
+        [[ model ]] $[[ variable ]]
+    ): bool {
+
+        return $[[ variable ]]->delete();
     }
 }

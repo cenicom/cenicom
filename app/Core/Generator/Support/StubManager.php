@@ -32,13 +32,22 @@ final class StubManager
      *
      * @param array<string, string> $variables
      */
-    public function render(string $stub, array $variables = []): string
-    {
+    public function render(
+        string $stub,
+        array $variables = []
+    ): string {
+
         $path = $this->resolvePath($stub);
 
         $content = $this->load($path);
 
-        return $this->replace($content, $variables);
+        $content = $this->replace(
+            $content,
+            $variables,
+            $stub
+        );
+
+        return $content;
     }
 
     /**
@@ -86,16 +95,49 @@ final class StubManager
      */
     private function replace(
         string $content,
-        array $variables
+        array $variables,
+        string $stub
     ): string {
+
         foreach ($variables as $key => $value) {
+
+            if (!is_scalar($value) && $value !== null) {
+                throw new InvalidArgumentException(
+                    sprintf(
+                        'La variable [%s] del stub debe ser escalar. Se recibió [%s].',
+                        $key,
+                        get_debug_type($value)
+                    )
+                );
+            }
+
             $content = preg_replace(
-                '/{{\s*' . preg_quote($key, '/') . '\s*}}/',
-                $value,
+                '/\[\[\s*' . preg_quote($key, '/') . '\s*\]\]/',
+                str_replace(
+                    '$',
+                    '\$',
+                    (string) $value
+                ),
                 $content
             );
         }
 
+        if (preg_match_all('/\[\[\s*(.*?)\s*\]\]/', $content, $matches)) {
+
+            $placeholders = array_unique($matches[1]);
+
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Stub [%s] contiene placeholders sin resolver: %s',
+                    $stub,
+                    implode(', ', $placeholders)
+                )
+            );
+        }
+
         return $content;
+
     }
+
+
 }

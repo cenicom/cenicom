@@ -24,6 +24,7 @@ use App\Core\Generator\Results\GeneratorResult;
  */
 final class RepositoryGenerator extends BaseGenerator
 {
+    private const STUB = 'repository.stub';
     /**
      * Determina si el generador aplica al módulo recibido.
      */
@@ -35,7 +36,7 @@ final class RepositoryGenerator extends BaseGenerator
     /**
      * Genera el repositorio del módulo.
      */
-    private const STUB = 'repository.stub';
+
     public function generate(
         ModuleData $module
     ): GeneratorResult {
@@ -66,20 +67,23 @@ final class RepositoryGenerator extends BaseGenerator
             'namespace'
             => $module->repositoryNamespace(),
 
-            'class'
-            => $module->repositoryClass(),
-
-            'interface'
-            => $module->repositoryInterface(),
-
-            'modelNamespace'
-            => $module->modelNamespace(),
-
-            'modelClass'
-            => $module->modelClass(),
-
             'qualifiedModel'
             => $module->qualifiedModel(),
+
+            'qualifiedRepositoryInterface'
+            => $module->qualifiedRepositoryInterface(),
+
+            'repositoryInterface'
+            => $module->repositoryInterface(),
+
+            'model'
+            => $module->modelClass(),
+
+            'repository'
+            => $module->repositoryClass(),
+
+            'variable'
+            => $module->variable(),
         ];
     }
 }

@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace {{ namespace }};
+namespace [[ namespace ]];
 
 use App\Models\User;
-use {{ modelNamespace }}\{{ model }};
+use [[ modelNamespace ]]\[[ model ]];
 
 /**
  * ==========================================================
  * CENICOM ERP
  * ==========================================================
  *
- * Política de autorización para {{ model }}.
+ * Política de autorización para [[ model ]].
  *
- * @package {{ namespace }}
+ * @package [[ namespace ]]
  */
-final class {{ policy }}
+final class [[ policy ]]
 {
     public function viewAny(User $user): bool
     {
@@ -25,7 +25,7 @@ final class {{ policy }}
 
     public function view(
         User $user,
-        {{ model }} ${{ variable }}
+        [[ model ]] $[[ variable ]]
     ): bool {
         return true;
     }
@@ -37,28 +37,28 @@ final class {{ policy }}
 
     public function update(
         User $user,
-        {{ model }} ${{ variable }}
+        [[ model ]] $[[ variable ]]
     ): bool {
         return true;
     }
 
     public function delete(
         User $user,
-        {{ model }} ${{ variable }}
+        [[ model ]] $[[ variable ]]
     ): bool {
         return true;
     }
 
     public function restore(
         User $user,
-        {{ model }} ${{ variable }}
+        [[ model ]] $[[ variable ]]
     ): bool {
         return true;
     }
 
     public function forceDelete(
         User $user,
-        {{ model }} ${{ variable }}
+        [[ model ]] $[[ variable ]]
     ): bool {
         return true;
     }

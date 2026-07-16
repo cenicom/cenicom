@@ -24,6 +24,8 @@ use App\Core\Generator\Results\GeneratorResult;
  */
 final class ServiceGenerator extends BaseGenerator
 {
+    private const STUB = 'service.stub';
+
     /**
      * Determina si el generador aplica al módulo recibido.
      */
@@ -35,7 +37,7 @@ final class ServiceGenerator extends BaseGenerator
     /**
      * Genera el servicio del módulo.
      */
-    private const STUB = 'service.stub';
+
     public function generate(
         ModuleData $module
     ): GeneratorResult {
@@ -66,26 +68,30 @@ final class ServiceGenerator extends BaseGenerator
             'namespace'
             => $module->serviceNamespace(),
 
-            'class'
+            'service'
             => $module->serviceClass(),
 
-            'interface'
+            'serviceInterface'
             => $module->serviceInterface(),
 
-            'repositoryNamespace'
-            => $module->repositoryNamespace(),
+            'qualifiedServiceInterface'
+            => $module->qualifiedServiceInterface(),
 
-            'repositoryClass'
-            => $module->repositoryClass(),
+            'qualifiedRepositoryInterface'
+            => $module->qualifiedRepositoryInterface(),
+
+            'qualifiedModel'
+            => $module->qualifiedModel(),
 
             'repositoryInterface'
             => $module->repositoryInterface(),
 
-            'qualifiedRepository'
-            => $module->qualifiedRepository(),
+            'model'
+            => $module->modelClass(),
 
-            'qualifiedRepositoryInterface'
-            => $module->qualifiedRepositoryInterface(),
+            'variable'
+            => $module->variable(),
+
         ];
     }
 }

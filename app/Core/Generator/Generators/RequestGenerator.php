@@ -119,11 +119,11 @@ final class RequestGenerator extends BaseGenerator
         return $path;
     }
 
-       /**
-    * Construye las variables utilizadas por los stubs.
-    *
-    * @return array<string,string>
-    */
+    /**
+     * Construye las variables utilizadas por los stubs.
+     *
+     * @return array<string,string>
+     */
 
     private function buildVariables(
         ModuleData $module,
@@ -137,6 +137,15 @@ final class RequestGenerator extends BaseGenerator
             'className' => $class,
 
             'rules' => $this->resolveRules($module),
+
+            'singular'
+            => $module->singular(),
+
+            'storeRequest'
+            => $module->storeRequestClass(),
+
+            'updateRequest'
+            => $module->updateRequestClass(),
 
         ];
     }
@@ -168,14 +177,5 @@ final class RequestGenerator extends BaseGenerator
     }
 
 
-    /**
-     * Determina namespace destino.
-     */
-    private function resolveNamespace(
-        ModuleData $module
-    ): string {
-
-        return $module->requestNamespace();
-    }
 
 }

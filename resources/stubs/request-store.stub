@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace {{ namespace }};
+namespace [[ namespace ]];
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -11,11 +11,11 @@ use Illuminate\Foundation\Http\FormRequest;
  * CENICOM ERP
  * ==========================================================
  *
- * Request para crear {{ model }}.
+ * Request para crear [[ model ]].
  *
- * @package {{ namespace }}
+ * @package [[ namespace ]]
  */
-final class {{ storeRequest }}
+final class [[ storeRequest ]]
     extends FormRequest
 {
     /**
@@ -35,7 +35,7 @@ final class {{ storeRequest }}
     {
         return [
 
-{{ validationRules }}
+[[ validationRules ]]
 
         ];
     }

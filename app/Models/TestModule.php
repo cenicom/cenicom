@@ -4,27 +4,28 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
 
 /**
  * ==========================================================
  * CENICOM ERP
  * ==========================================================
  *
- * Module Institution
+ * Module TestModule
  *
  * @package App\Models
  */
-final class Institution extends Model
+final class TestModule extends Model
 {
     use HasFactory;
+    use HasUuids;
 
     /**
      * Tabla asociada al modelo.
      */
-    protected $table = 'institutions';
+    protected $table = 'test_modules';
 
     /**
      * Atributos asignables masivamente.
@@ -44,7 +45,9 @@ final class Institution extends Model
         
     ];
 
-        
+    public const STATUS_ACTIVE = 'active';
+
+    public const STATUS_INACTIVE = 'inactive';
 
     /*
     |--------------------------------------------------------------------------
@@ -52,7 +55,7 @@ final class Institution extends Model
     |--------------------------------------------------------------------------
     */
 
-        
+
 
     /*
     |--------------------------------------------------------------------------
@@ -60,5 +63,6 @@ final class Institution extends Model
     |--------------------------------------------------------------------------
     */
 
-        
+
+
 }
