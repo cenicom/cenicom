@@ -15,174 +15,93 @@ use App\Core\Generator\Results\GeneratorResult;
  *
  * Genera automáticamente las vistas Blade de un módulo.
  *
- * Procesa los stubs correspondientes utilizando la información
- * contenida en ModuleData y persiste los resultados mediante
- * la infraestructura común del CN Generator.
- *
  * @package App\Core\Generator\Generators
  * @since 1.0.0
  */
 final class ViewGenerator extends BaseGenerator
 {
-    private const INDEX_STUB = 'views/index.stub';
-    private const CREATE_STUB = 'views/create.stub';
-    private const EDIT_STUB = 'views/edit.stub';
-    private const SHOW_STUB = 'views/show.stub';
-    private const FORM_STUB = 'views/_form.stub';
-    /**
-     * Determina si el generador aplica al módulo recibido.
-     */
-    public function supports(ModuleData $module): bool
-    {
+    private const VIEWS = [
+
+        'views/index.stub'  => 'index.blade.php',
+
+        'views/create.stub' => 'create.blade.php',
+
+        'views/edit.stub'   => 'edit.blade.php',
+
+        'views/show.stub'   => 'show.blade.php',
+
+        'views/_form.stub'  => '_form.blade.php',
+
+    ];
+
+    public function supports(
+        ModuleData $module
+    ): bool {
         return true;
     }
 
-    /**
-     * Genera todas las vistas del módulo.
-     */
     public function generate(
         ModuleData $module
     ): GeneratorResult {
 
         $result = new GeneratorResult();
 
-        foreach ([
-            $this->generateIndex($module),
-            $this->generateCreate($module),
-            $this->generateEdit($module),
-            $this->generateShow($module),
-            $this->generateForm($module),
-        ] as $file) {
+        foreach (self::VIEWS as $stub => $filename) {
 
-            $result->addCreated($file);
+            $path = $module->viewPath()
+                . DIRECTORY_SEPARATOR
+                . $filename;
+
+            $generated = $this->generateFile(
+                $stub,
+                $path,
+                $this->buildVariables($module)
+            );
+
+            $result->addGenerated(
+                $path,
+                $generated
+            );
+
         }
 
         return $result;
     }
 
     /**
-     * Genera index.blade.php
-     */
-    private function generateIndex(
-        ModuleData $module
-    ): string {
-
-        return $this->writeView(
-            $module,
-            self::INDEX_STUB,
-            'index.blade.php'
-        );
-    }
-
-    /**
-     * Genera create.blade.php
-     */
-    private function generateCreate(
-        ModuleData $module
-    ): string {
-
-        return $this->writeView(
-            $module,
-            self::CREATE_STUB,
-            'create.blade.php'
-        );
-    }
-
-    /**
-     * Genera edit.blade.php
-     */
-    private function generateEdit(
-        ModuleData $module
-    ): string {
-
-        return $this->writeView(
-            $module,
-            self::EDIT_STUB,
-            'edit.blade.php'
-        );
-    }
-
-    /**
-     * Genera show.blade.php
-     */
-    private function generateShow(
-        ModuleData $module
-    ): string {
-
-        return $this->writeView(
-            $module,
-            self::SHOW_STUB,
-            'show.blade.php'
-        );
-    }
-
-    /**
-     * Genera _form.blade.php
-     */
-    private function generateForm(
-        ModuleData $module
-    ): string {
-
-        return $this->writeView(
-            $module,
-            self::FORM_STUB,
-            '_form.blade.php'
-        );
-    }
-
-    /**
-     * Construye las variables utilizadas por los stubs.
-     *
-     * @return array<string, mixed>
+     * @return array<string,mixed>
      */
     private function buildVariables(
         ModuleData $module
     ): array {
 
-        $model = lcfirst(
-            $module->modelClass()
-        );
-
-        $collection = $module->plural();
-
         return [
 
-            'title'
-            => $module->plural(),
+            'title'       => $module->plural(),
 
-            'description'
-            => $module->description(),
+            'description' => $module->description(),
 
-            'module'
-            => $module->routeName(),
+            'model'       => lcfirst(
+                $module->modelClass()
+            ),
 
-            'singular'
-            => $module->singular(),
+            'modelClass'  => $module->modelClass(),
 
-            'plural'
-            => $module->plural(),
+            'singular'    => $module->singular(),
 
-            'model'
-            => $model,
+            'plural'      => $module->plural(),
 
-            'collection'
-            => $this->camelPlural($collection),
+            'collection'  => $this->camelPlural(
+                $module->plural()
+            ),
 
-            'columns'
-            => count($module->columns()),
+            'routeName'   => $module->routeName(),
 
-            'modelClass'
-            => $module->modelClass(),
+            'viewPrefix'  => $module->viewPrefix(),
 
-            'table'
-            => $module->table(),
+            'table'       => $module->table(),
 
-            'routeName'
-            => $module->routeName(),
-
-            'viewPrefix'
-            => $module->viewPrefix(),
-
+            'columns'     => $module->columns(),
 
         ];
     }
@@ -198,29 +117,5 @@ final class ViewGenerator extends BaseGenerator
                 ucwords($value)
             )
         );
-    }
-
-
-
-    /**
-     * Escribe una vista Blade.
-     */
-    private function writeView(
-        ModuleData $module,
-        string $stub,
-        string $filename
-    ): string {
-
-        $path = $module->viewPath()
-            . DIRECTORY_SEPARATOR
-            . $filename;
-
-        $this->generateFile(
-            $stub,
-            $path,
-            $this->buildVariables($module)
-        );
-
-        return $path;
     }
 }

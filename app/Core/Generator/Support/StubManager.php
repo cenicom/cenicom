@@ -91,7 +91,7 @@ final class StubManager
     /**
      * Reemplaza los placeholders del stub.
      *
-     * @param array<string, string> $variables
+     * @param array<string, scalar|null> $variables
      */
     private function replace(
         string $content,

@@ -35,15 +35,6 @@ final class ModelGenerator extends BaseGenerator
         'deleted_at',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'active' => 'boolean',
-            'price' => 'decimal:2',
-            'published_at' => 'datetime',
-        ];
-    }
-
     public function supports(ModuleData $module): bool
     {
         return true;
@@ -55,15 +46,20 @@ final class ModelGenerator extends BaseGenerator
     public function generate(ModuleData $module): GeneratorResult
     {
         $this->generateFile(
-            'model.stub',
+            self::STUB,
             $module->modelPath(),
             $this->buildVariables($module)
         );
 
-        return (new GeneratorResult())
-            ->addCreated(
-                $module->modelPath()
-            );
+        $result = new GeneratorResult();
+
+        if ($this->generateFile(...)) {
+            $result->addCreated(...);
+        } else {
+            $result->addSkipped(...);
+        }
+
+        return $result;
     }
 
     /**

@@ -44,14 +44,21 @@ final class ServiceGenerator extends BaseGenerator
 
         $path = $module->servicePath();
 
-        $this->generateFile(
-            self::STUB,
-            $path,
-            $this->buildVariables($module)
-        );
+        $result = new GeneratorResult();
 
-        return (new GeneratorResult())
-            ->addCreated($path);
+        if (
+            $this->generateFile(
+                self::STUB,
+                $path,
+                $this->buildVariables($module)
+            )
+        ) {
+            $result->addCreated($path);
+        } else {
+            $result->addSkipped($path);
+        }
+
+        return $result;
     }
 
     /**

@@ -47,7 +47,7 @@
                                         title="Eliminar [[ singular ]]"
                                         message="¿Está seguro de eliminar este registro?">
                                         <form
-                                            action="{{ route('[[ module ]].destroy', $[ [model ]]) }}"
+                                            action="{{ route('[[ module ]].destroy', $[[ model ]]) }}"
                                             method="POST">
                                             @csrf
                                             @method('DELETE')

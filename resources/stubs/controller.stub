@@ -36,8 +36,8 @@ final class [[ controller ]] extends Controller
     }
 
     /**
-        * Muestra el listado del recurso.
-        */
+    * Muestra el listado del recurso.
+    */
     public function index(): View
     {
         return view('[[ view ]].index', [

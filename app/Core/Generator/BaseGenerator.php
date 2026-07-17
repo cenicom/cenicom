@@ -45,12 +45,11 @@ abstract class BaseGenerator implements GeneratorInterface
         string $stub,
         array $variables
     ): string {
-        $content = $this->stubManager->render(
+
+        return $this->stubManager->render(
             $stub,
             $variables
         );
-
-        return $content;
     }
 
     /**

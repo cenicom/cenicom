@@ -211,4 +211,14 @@ final class GeneratorResult
         return count($this->created)
             + count($this->updated);
     }
+
+    public function addGenerated(
+        string $path,
+        bool $generated
+    ): self {
+
+        return $generated
+            ? $this->addCreated($path)
+            : $this->addSkipped($path);
+    }
 }

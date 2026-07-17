@@ -105,3 +105,6 @@ CENICOM ERP
 ├── CN Inventory
 │
 └── CN Support
+
+
+⚓ Buen descanso, Capitán y tripulación. Mañana continuaremos la construcción del CENICOM ERP con el mismo rumbo firme. 🚢

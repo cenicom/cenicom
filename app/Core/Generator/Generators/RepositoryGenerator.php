@@ -43,14 +43,21 @@ final class RepositoryGenerator extends BaseGenerator
 
         $path = $module->repositoryPath();
 
-        $this->generateFile(
-            self::STUB,
-            $path,
-            $this->buildVariables($module)
-        );
+        $result = new GeneratorResult();
 
-        return (new GeneratorResult())
-            ->addCreated($path);
+        if (
+            $this->generateFile(
+                self::STUB,
+                $path,
+                $this->buildVariables($module)
+            )
+        ) {
+            $result->addCreated($path);
+        } else {
+            $result->addSkipped($path);
+        }
+
+        return $result;
     }
 
     /**

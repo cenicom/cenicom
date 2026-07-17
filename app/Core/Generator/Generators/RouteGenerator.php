@@ -25,17 +25,12 @@ use App\Core\Generator\Results\GeneratorResult;
 final class RouteGenerator extends BaseGenerator
 {
     private const STUB = 'route.stub';
-    /**
-     * Determina si el generador aplica al módulo recibido.
-     */
+
     public function supports(ModuleData $module): bool
     {
         return true;
     }
 
-    /**
-     * Genera las rutas del módulo.
-     */
     /**
      * Genera las rutas del módulo.
      */
@@ -58,7 +53,7 @@ final class RouteGenerator extends BaseGenerator
     /**
      * Construye las variables utilizadas por el stub.
      *
-     * @return array<string, string>
+     * @return array<string,string>
      */
     private function buildVariables(
         ModuleData $module
@@ -67,37 +62,23 @@ final class RouteGenerator extends BaseGenerator
         return [
 
             'controllerNamespace'
-            => $module->controllerNamespace(),
-
-            'controllerClass'
-            => $module->controllerClass(),
-
-            'qualifiedController'
-            => $module->qualifiedController(),
-
-            'routePrefix'
-            => $module->routePrefix(),
-
-            'routeName'
-            => $module->routeName(),
-
-            'viewPrefix'
-            => $module->viewPrefix(),
-
-            'model'
-            => $module->modelClass(),
-
-            'plural'
-            => $module->plural(),
-
-            'singular'
-            => $module->singular(),
-
-            'route'
-            => $module->routeName(),
+                => $module->controllerNamespace(),
 
             'controller'
-            => $module->controllerClass(),
+                => $module->controllerClass(),
+
+            'qualifiedController'
+                => $module->qualifiedController(),
+
+            'routePrefix'
+                => $module->routePrefix(),
+
+            'route'
+                => $module->routeName(),
+
+            'viewPrefix'
+                => $module->viewPrefix(),
+
         ];
     }
 }

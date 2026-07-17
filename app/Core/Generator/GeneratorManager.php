@@ -29,10 +29,9 @@ use App\Core\Generator\Results\GeneratorResult;
  */
 final class GeneratorManager
 {
-
     /**
-     * @var iterable<GeneratorInterface>
-     */
+ * @param iterable<GeneratorInterface> $generators
+ */
     public function __construct(
         private readonly iterable $generators,
     ) {
@@ -41,7 +40,7 @@ final class GeneratorManager
     /**
      * Ejecuta todos los generadores compatibles con el módulo.
      */
-    public function generate(
+    public function execute(
         ModuleData $module
     ): GeneratorResult {
 
@@ -53,9 +52,24 @@ final class GeneratorManager
                 continue;
             }
 
-            $result->merge(
-                $generator->generate($module)
-            );
+            try {
+
+                $result->merge(
+                    $generator->generate($module)
+                );
+
+            } catch (\Throwable $exception) {
+
+                $result->addError(
+                    sprintf(
+                        '%s: %s',
+                        $generator::class,
+                        $exception->getMessage()
+                    )
+                );
+
+            }
+
         }
 
         return $result;

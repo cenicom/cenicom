@@ -21,7 +21,8 @@ use App\Core\Generator\Results\GeneratorResult;
 interface GeneratorInterface
 {
     /**
-     * Determina si el generador aplica al módulo recibido.
+     *  Ejecuta la generación del artefacto y devuelve
+        * el resultado completo de la operación.
      */
     public function supports(ModuleData $module): bool;
 

@@ -64,14 +64,21 @@ final class MigrationGenerator extends BaseGenerator
 
         $file = $module->migrationFile();
 
-        $this->generateFile(
-            self::STUB,
-            $file,
-            $variables,
-        );
+        $result = new GeneratorResult();
 
-        return (new GeneratorResult())
-            ->addCreated($file);
+        if (
+            $this->generateFile(
+                self::STUB,
+                $file,
+                $variables
+            )
+        ) {
+            $result->addCreated($file);
+        } else {
+            $result->addSkipped($file);
+        }
+
+        return $result;
     }
 
 

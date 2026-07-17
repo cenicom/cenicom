@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Core\Generator\Generators;
 
 use App\Core\Generator\BaseGenerator;
+use App\Core\Generator\DTO\ColumnDefinition;
 use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\Results\GeneratorResult;
 use App\Core\Generator\Support\FileWriter;
@@ -160,20 +161,75 @@ final class RequestGenerator extends BaseGenerator
 
         $rules = [];
 
-
-        foreach ($module->fields() as $field) {
+        foreach ($module->columns() as $column) {
 
             $rules[] = sprintf(
                 "            '%s' => ['required'],",
-                $field['name']
+                $column->name(),
+                $this->buildRule($column)
             );
         }
-
 
         return implode(
             PHP_EOL,
             $rules
         );
+    }
+
+    private function buildRule(
+        ColumnDefinition $column
+    ): string {
+
+        $rules = [];
+
+        if (! $column->nullable()) {
+            $rules[] = 'required';
+        }
+
+        switch ($column->type()) {
+
+            case 'string':
+                $rules[] = 'string';
+                $rules[] = 'max:255';
+                break;
+
+            case 'text':
+                $rules[] = 'string';
+                break;
+
+            case 'integer':
+                $rules[] = 'integer';
+                break;
+
+            case 'decimal':
+                $rules[] = 'numeric';
+                break;
+
+            case 'boolean':
+                $rules[] = 'boolean';
+                break;
+
+            case 'date':
+                $rules[] = 'date';
+                break;
+
+            case 'datetime':
+                $rules[] = 'date';
+                break;
+
+            case 'uuid':
+                $rules[] = 'uuid';
+                break;
+
+            case 'email':
+                $rules[] = 'email';
+                break;
+
+            default:
+                $rules[] = 'string';
+        }
+
+        return "['" . implode("', '", $rules) . "']";
     }
 
 

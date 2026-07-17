@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\Generator\Factories;
 
-use App\Core\Generator\DTO\ColumnDefinition;
 use App\Core\Generator\DTO\ModuleData;
-
 
 /**
  * ==========================================================
@@ -202,23 +200,6 @@ final class ModuleDataFactory
             menu: $options['menu'],
 
             icon: $options['icon'],
-        );
-    }
-
-    /**
-     * Convierte los campos del manifiesto en ColumnDefinition.
-     *
-     * @return array<int, ColumnDefinition>
-     */
-    private function buildColumns(
-        array $definition
-    ): array {
-
-        return array_map(
-            static fn(array $field): ColumnDefinition =>
-            ColumnDefinition::fromArray($field),
-
-            $definition['fields'] ?? []
         );
     }
 

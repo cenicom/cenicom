@@ -19,6 +19,52 @@ final class MigrationFieldProcessor
     private const FIELD_INDEX = 'index';
     private const FIELD_COMMENT = 'comment';
 
+    private const BUILDERS = [
+
+        'id' => 'buildId',
+
+        'uuid' => 'buildUuid',
+
+        'string' => 'buildString',
+
+        'char' => 'buildChar',
+
+        'text' => 'buildText',
+
+        'longText' => 'buildLongText',
+
+        'integer' => 'buildInteger',
+
+        'bigInteger' => 'buildBigInteger',
+
+        'unsignedInteger' => 'buildUnsignedInteger',
+
+        'unsignedBigInteger' => 'buildUnsignedBigInteger',
+
+        'boolean' => 'buildBoolean',
+
+        'decimal' => 'buildDecimal',
+
+        'double' => 'buildDouble',
+
+        'float' => 'buildFloat',
+
+        'date' => 'buildDate',
+
+        'datetime' => 'buildDateTime',
+
+        'timestamp' => 'buildTimestamp',
+
+        'time' => 'buildTime',
+
+        'json' => 'buildJson',
+
+        'enum' => 'buildEnum',
+
+        'foreignId' => 'buildForeignId',
+
+    ];
+
     /**
      * Procesa la colección de campos.
      *
@@ -45,25 +91,25 @@ final class MigrationFieldProcessor
         return $this->resolveColumn($field);
     }
 
-    private function resolveColumn(array $field): string
-    {
-        return match ($field['type']) {
-            'id' => $this->buildId(),
-            'string' => $this->buildString($field),
-            'text' => $this->buildText($field),
-            'integer' => $this->buildInteger($field),
-            'bigInteger' => $this->buildBigInteger($field),
-            'boolean' => $this->buildBoolean($field),
-            'decimal' => $this->buildDecimal($field),
-            'foreignId' => $this->buildForeignId($field),
+    private function resolveColumn(
+        array $field
+    ): string {
 
-            default => throw new InvalidArgumentException(
+        $builder = self::BUILDERS[$field['type']] ?? null;
+
+        if ($builder === null) {
+
+            throw new InvalidArgumentException(
                 sprintf(
                     'Tipo [%s] no soportado.',
                     $field['type']
                 )
-            ),
-        };
+            );
+
+        }
+
+        return $this->{$builder}($field);
+
     }
 
     /**
@@ -92,13 +138,26 @@ final class MigrationFieldProcessor
      */
     private function buildBigInteger(array $field): string
     {
+        return $this->buildSimpleColumn(
+            'bigInteger',
+            $field
+        );
+    }
+
+    private function buildSimpleColumn(
+        string $method,
+        array $field
+    ): string {
+
         $column = sprintf(
-            "            \$table->bigInteger('%s');",
+            "%s\$table->%s('%s')",
+            self::INDENT,
+            $method,
             $field['name']
         );
 
         return $this->appendModifiers(
-            rtrim($column, ';'),
+            $column,
             $field
         );
     }
@@ -110,13 +169,8 @@ final class MigrationFieldProcessor
      */
     private function buildBoolean(array $field): string
     {
-        $column = sprintf(
-            "            \$table->boolean('%s');",
-            $field['name']
-        );
-
-        return $this->appendModifiers(
-            rtrim($column, ';'),
+        return $this->buildSimpleColumn(
+            'boolean',
             $field
         );
     }
@@ -154,6 +208,25 @@ final class MigrationFieldProcessor
     }
 
     /**
+     * Genera una columna Uuid().
+     */
+    private function buildUuid(
+        array $field
+    ): string {
+
+        $column = sprintf(
+            "%s\$table->uuid('%s')",
+            self::INDENT,
+            $field['name']
+        );
+
+        return $this->appendModifiers(
+            $column,
+            $field
+        );
+    }
+
+    /**
      * Genera una columna string().
      *
      * @param array<string, mixed> $field
@@ -187,7 +260,8 @@ final class MigrationFieldProcessor
     private function buildText(array $field): string
     {
         $column = sprintf(
-            "            \$table->text('%s');",
+            "%s\$table->text('%s')",
+            self::INDENT,
             $field['name']
         );
 
@@ -206,29 +280,34 @@ final class MigrationFieldProcessor
         string $column,
         array $field
     ): string {
-        if (($field['nullable'] ?? false) === true) {
+        if (($field[self::FIELD_NULLABLE] ?? false) === true) {
             $column .= '->nullable()';
         }
 
-        if (array_key_exists('default', $field)) {
+        if (
+            array_key_exists(
+                self::FIELD_DEFAULT,
+                $field
+            )
+        ) {
             $column .= sprintf(
                 '->default(%s)',
-                $this->formatDefaultValue($field['default'])
+                $this->formatDefaultValue($field[self::FIELD_DEFAULT])
             );
         }
 
-        if (($field['unique'] ?? false) === true) {
+        if (($field[self::FIELD_UNIQUE] ?? false) === true) {
             $column .= '->unique()';
         }
 
-        if (($field['index'] ?? false) === true) {
+        if (($field[self::FIELD_INDEX] ?? false) === true) {
             $column .= '->index()';
         }
 
-        if (!empty($field['comment'])) {
+        if (!empty($field[self::FIELD_COMMENT])) {
             $column .= sprintf(
                 "->comment('%s')",
-                addslashes((string) $field['comment'])
+                addslashes((string) $field[self::FIELD_COMMENT])
             );
         }
 
@@ -317,4 +396,30 @@ final class MigrationFieldProcessor
 
         return $column;
     }
+
+    private function buildDate(array $field): string
+    {
+        return $this->buildSimpleColumn(
+            'date',
+            $field
+        );
+    }
+
+    private function buildFloat(array $field): string
+    {
+        return $this->buildSimpleColumn(
+            'float',
+            $field
+        );
+    }
+
+    private function buildJson(array $field): string
+    {
+        return $this->buildSimpleColumn(
+            'json',
+            $field
+        );
+    }
+
+
 }

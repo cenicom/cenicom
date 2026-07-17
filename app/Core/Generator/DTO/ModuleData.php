@@ -886,6 +886,16 @@ readonly class ModuleData
         return $this->uuid();
     }
 
+    public function relationships(): array
+    {
+        return [];
+    }
+
+    public function scopes(): array
+    {
+        return [];
+    }
+
     /**
      * Variables disponibles para renderizado de stubs.
      *
