@@ -9,6 +9,8 @@ use App\Core\Generator\Factories\ModuleDefinitionFactory;
 use App\Core\Generator\Generators\ModuleGenerator;
 use App\Core\Generator\Results\GeneratorResult;
 use App\Core\Generator\Specifications\ModuleSpecification;
+use App\Core\Generator\Support\ManifestGenerator;
+use App\Core\Generator\Support\ManifestLoader;
 use Illuminate\Console\Command;
 use Throwable;
 
@@ -47,6 +49,8 @@ final class CNMakeModuleCommand extends Command
     protected $description = 'Generate a complete CN module.';
 
     public function __construct(
+        private readonly ManifestLoader $manifestLoader,
+        private readonly ManifestGenerator $manifestGenerator,
         private readonly ModuleDefinitionFactory $definitionFactory,
         private readonly ModuleDataFactory $moduleDataFactory,
         private readonly ModuleGenerator $moduleGenerator,
@@ -59,10 +63,24 @@ final class CNMakeModuleCommand extends Command
      */
     public function handle(): int
     {
+
         try {
 
+            $moduleName = (string) $this->argument('name');
+
+            if (! $this->manifestLoader->exists($moduleName)) {
+
+                $this->manifestGenerator->generate($moduleName);
+
+                $this->info(
+                    "Manifest created: {$moduleName}.json"
+                );
+            }
+
+            $definition = $this->manifestLoader->load($moduleName);
+
             $specification = new ModuleSpecification(
-                $this->argument('name')
+                $definition
             );
 
             $definition = $this->definitionFactory->create(

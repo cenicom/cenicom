@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Core\Generator\DTO;
 
+use App\Core\Generator\DTO\ColumnDefinition;
+
 /**
  * ==========================================================
  * CENICOM ERP
@@ -35,8 +37,6 @@ readonly class ModuleData
     private string $table;
 
     private string $description;
-
-
 
     /*
     |--------------------------------------------------------------------------
@@ -160,11 +160,11 @@ readonly class ModuleData
     |--------------------------------------------------------------------------
     | 6️⃣ Campos
     |--------------------------------------------------------------------------
-    */
+
     /**
-     * @var array<int, array<string, mixed>>
+     * @var array<ColumnDefinition> $columns
      */
-    private array $fields;
+    private array $columns;
 
 
     /*
@@ -249,7 +249,7 @@ readonly class ModuleData
         string $routeName,
         string $viewPrefix,
 
-        array $fields,
+        array $columns,
 
         bool $timestamps,
         bool $softDeletes,
@@ -314,7 +314,7 @@ readonly class ModuleData
         $this->routeName = $routeName;
         $this->viewPrefix = $viewPrefix;
 
-        $this->fields = $fields;
+        $this->columns = $columns;
 
         $this->timestamps = $timestamps;
         $this->softDeletes = $softDeletes;
@@ -504,13 +504,11 @@ readonly class ModuleData
         return lcfirst($this->plural());
     }
 
-
-
     /*
-|--------------------------------------------------------------------------
-| Getters - Paths
-|--------------------------------------------------------------------------
-*/
+    |--------------------------------------------------------------------------
+    | Getters - Paths
+    |--------------------------------------------------------------------------
+    */
 
     public function modelPath(): string
     {
@@ -637,11 +635,11 @@ readonly class ModuleData
     */
 
     /**
-     * @return array<int, array<string, mixed>>
+     * @return array<ColumnDefinition>
      */
-    public function fields(): array
+    public function columns(): array
     {
-        return $this->fields;
+        return $this->columns;
     }
 
     /*
@@ -765,9 +763,6 @@ readonly class ModuleData
         return "{$this->observerNamespace()}\\{$this->observerClass()}";
     }
 
-
-
-
     /*
     |--------------------------------------------------------------------------
     | Métodos filename*
@@ -810,7 +805,6 @@ readonly class ModuleData
             . $this->migrationFilename();
     }
 
-
     /*
     |--------------------------------------------------------------------------
     | Métodos views/routes
@@ -824,7 +818,7 @@ readonly class ModuleData
 
     public function indexView(): string
     {
-        return "{$this->viewPrefix}.index";
+        return "{$this->viewPrefix()}.index";
     }
 
     public function createView(): string
@@ -891,6 +885,7 @@ readonly class ModuleData
     {
         return $this->uuid();
     }
+
     /**
      * Variables disponibles para renderizado de stubs.
      *

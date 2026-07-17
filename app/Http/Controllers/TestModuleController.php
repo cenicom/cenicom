@@ -6,7 +6,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 
-use App\Core\Services\TestModuleService;
+use App\Core\Contracts\TestModuleServiceInterface;
+
 use App\Http\Requests\TestModule\StoreTestModuleRequest;
 use App\Http\Requests\TestModule\UpdateTestModuleRequest;
 use App\Models\TestModule;

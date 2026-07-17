@@ -169,7 +169,7 @@ final class ViewGenerator extends BaseGenerator
             => $this->camelPlural($collection),
 
             'columns'
-            => count($module->fields()),
+            => count($module->columns()),
 
             'modelClass'
             => $module->modelClass(),

@@ -47,37 +47,31 @@ final class MigrationGenerator extends BaseGenerator
     public function generate(ModuleData $module): GeneratorResult
     {
         $columns = $this->fieldProcessor->process(
-            $module->fields()
+            $module->columns()
         );
 
-        $variables = [
-            'module' => $module->name(),
+        $variables = $module->toStubVariables();
 
-            'table' => $module->table(),
+        $variables['columns'] = $columns;
 
-            'model' => $module->modelClass(),
+        $variables['timestamps'] = $module->timestamps()
+            ? '$table->timestamps();'
+            : '';
 
-            'fields' => $columns,
+        $variables['softDeletes'] = $module->softDeletes()
+            ? '$table->softDeletes();'
+            : '';
 
-            'timestamps' => $module->timestamps()
-                ? '$table->timestamps();'
-                : '',
-
-            'softDeletes' => $module->softDeletes()
-                ? '$table->softDeletes();'
-                : '',
-        ];
-
-        $path = $module->migrationPath();
+        $file = $module->migrationFile();
 
         $this->generateFile(
             self::STUB,
-            $module->migrationFile(),
+            $file,
             $variables,
         );
 
         return (new GeneratorResult())
-            ->addCreated($path);
+            ->addCreated($file);
     }
 
 

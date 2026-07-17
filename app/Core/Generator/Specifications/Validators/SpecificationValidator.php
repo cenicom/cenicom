@@ -56,7 +56,7 @@ final class SpecificationValidator
             'table',
         ] as $field) {
 
-            if (empty($identity[$field])) {
+            if (! isset($identity[$field])) {
 
                 throw new InvalidSpecificationException(
                     "Missing identity.{$field}"

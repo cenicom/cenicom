@@ -8,7 +8,7 @@ namespace App\Core\Generator\Generators;
 use App\Core\Generator\BaseGenerator;
 use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\Results\GeneratorResult;
-
+use App\Core\Generator\DTO\ColumnDefinition;
 
 /**
  * ==========================================================
@@ -123,11 +123,12 @@ final class ModelGenerator extends BaseGenerator
 
         $fillable = [];
 
-        foreach ($module->fields() as $field) {
+        foreach ($module->columns() as $column) {
 
-            $name = $field['name'];
+            $name = $column->name();
 
             if ($this->isFillable($name)) {
+
                 $fillable[] = sprintf(
                     "        '%s',",
                     $name
@@ -161,15 +162,15 @@ final class ModelGenerator extends BaseGenerator
 
         $casts = [];
 
-        foreach ($module->fields() as $field) {
+        foreach ($module->columns() as $column) {
 
-            $cast = $this->resolveCast($field);
+            $cast = $this->resolveCast($column);
 
             if ($cast !== null) {
 
                 $casts[] = sprintf(
                     "        '%s' => '%s',",
-                    $field['name'],
+                    $column->name(),
                     $cast
                 );
 
@@ -184,10 +185,10 @@ final class ModelGenerator extends BaseGenerator
     }
 
     private function resolveCast(
-        array $field
+        ColumnDefinition $column
     ): ?string {
 
-        return match ($field['type']) {
+        return match ($column->type()) {
 
             'boolean' => 'boolean',
 

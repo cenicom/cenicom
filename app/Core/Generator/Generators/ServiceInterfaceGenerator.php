@@ -23,17 +23,27 @@ final class ServiceInterfaceGenerator extends BaseGenerator
         ModuleData $module
     ): GeneratorResult {
 
+        logger('=== ServiceInterfaceGenerator ejecutado ===');
+
         $path = $module->serviceInterfacePath();
 
-        $this->generateFile(
+        logger($path);
+
+        $created = $this->generateFile(
             self::STUB,
             $path,
             $this->buildVariables($module)
         );
 
+        $result = new GeneratorResult();
 
-        return (new GeneratorResult())
-            ->addCreated($path);
+        if ($created) {
+            $result->addCreated($path);
+        } else {
+            $result->addSkipped($path);
+        }
+
+        return $result;
     }
 
 
@@ -43,17 +53,11 @@ final class ServiceInterfaceGenerator extends BaseGenerator
 
         return [
 
-            'namespace'
-                => $module->contractNamespace(),
-
-            'serviceInterface'
-                => $module->serviceInterface(),
-
-            'model'
-                => $module->modelClass(),
-
-            'variable'
-                => $module->variable(),
+            'namespace' => $module->contractNamespace(),
+            'qualifiedModel' => $module->qualifiedModel(),
+            'serviceInterface' => $module->serviceInterface(),
+            'model' => $module->modelClass(),
+            'variable' => $module->variable(),
 
         ];
     }

@@ -9,8 +9,10 @@ use App\Core\Generator\Generators\MigrationGenerator;
 use App\Core\Generator\Generators\ModelGenerator;
 use App\Core\Generator\Generators\ModuleGenerator;
 use App\Core\Generator\Generators\RepositoryGenerator;
+use App\Core\Generator\Generators\RepositoryInterfaceGenerator;
 use App\Core\Generator\Generators\RequestGenerator;
 use App\Core\Generator\Generators\ServiceGenerator;
+use App\Core\Generator\Generators\ServiceInterfaceGenerator;
 use App\Core\Generator\Support\StubManager;
 use Illuminate\Support\ServiceProvider;
 
@@ -32,7 +34,11 @@ class GeneratorServiceProvider extends ServiceProvider
 
                 $app->make(ModelGenerator::class),
 
+                $app->make(RepositoryInterfaceGenerator::class),
+
                 $app->make(RepositoryGenerator::class),
+
+                $app->make(ServiceInterfaceGenerator::class),
 
                 $app->make(ServiceGenerator::class),
 

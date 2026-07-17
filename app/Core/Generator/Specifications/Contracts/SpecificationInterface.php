@@ -41,6 +41,8 @@ interface SpecificationInterface
      */
     public function relations(): array;
 
+    public function columns(): array;
+
     /**
      * Reglas de validación.
      *

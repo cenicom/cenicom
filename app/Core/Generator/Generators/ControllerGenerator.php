@@ -75,6 +75,9 @@ final class ControllerGenerator extends BaseGenerator
             'controller'
             => $module->controllerClass(),
 
+            'qualifiedServiceInterface'
+            => $module->qualifiedServiceInterface(),
+
             'service'
             => $module->serviceNamespace(),
 

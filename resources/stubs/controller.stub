@@ -6,7 +6,8 @@ namespace [[ namespace ]];
 
 use App\Http\Controllers\Controller;
 
-use [[ qualifiedService ]];
+use [[ qualifiedServiceInterface ]];
+
 use [[ qualifiedStoreRequest ]];
 use [[ qualifiedUpdateRequest ]];
 use [[ qualifiedModel ]];

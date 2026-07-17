@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\Generator\Factories;
 
+use App\Core\Generator\DTO\ColumnDefinition;
 use App\Core\Generator\DTO\ModuleData;
 
 
@@ -43,7 +44,6 @@ final class ModuleDataFactory
 
         $options = $this->buildOptions($definition);
 
-
         return new ModuleData(
 
             /*
@@ -69,15 +69,25 @@ final class ModuleDataFactory
             */
 
             modelNamespace: $namespaces['modelNamespace'],
+
             repositoryNamespace: $namespaces['repositoryNamespace'],
+
             serviceNamespace: $namespaces['serviceNamespace'],
+
             controllerNamespace: $namespaces['controllerNamespace'],
+
             policyNamespace: $namespaces['policyNamespace'],
+
             requestNamespace: $namespaces['requestNamespace'],
+
             factoryNamespace: $namespaces['factoryNamespace'],
+
             contractNamespace: $namespaces['contractNamespace'],
+
             seederNamespace: $namespaces['seederNamespace'],
+
             testNamespace: $namespaces['testNamespace'],
+
             observerNamespace: $namespaces['observerNamespace'],
 
             /*
@@ -97,6 +107,7 @@ final class ModuleDataFactory
             serviceInterface: $classes['serviceInterface'],
 
             controllerClass: $classes['controllerClass'],
+
             policyClass: $classes['policyClass'],
 
             storeRequestClass: $classes['storeRequestClass'],
@@ -104,9 +115,13 @@ final class ModuleDataFactory
             updateRequestClass: $classes['updateRequestClass'],
 
             factoryClass: $classes['factoryClass'],
+
             seederClass: $classes['seederClass'],
+
             featureTestClass: $classes['featureTestClass'],
+
             unitTestClass: $classes['unitTestClass'],
+
             observerClass: $classes['observerClass'],
 
             /*
@@ -134,14 +149,17 @@ final class ModuleDataFactory
             routePath: $paths['routePath'],
 
             policyPath: $paths['policyPath'],
-            // requestPath: $paths['requestPath'],
+
             factoryPath: $paths['factoryPath'],
-            //viewPath: $paths['viewPath'],
-            // routePath: $paths['routePath'],
+
             seederPath: $paths['seederPath'],
+
             featureTestPath: $paths['featureTestPath'],
+
             unitTestPath: $paths['unitTestPath'],
+
             observerPath: $paths['observerPath'],
+
             moduleManifestPath: $paths['moduleManifestPath'],
             /*
             |--------------------------------------------------------------------------
@@ -157,11 +175,11 @@ final class ModuleDataFactory
 
             /*
             |--------------------------------------------------------------------------
-            | Campos
+            | Columns
             |--------------------------------------------------------------------------
             */
 
-            fields: $definition['fields'],
+            columns: $definition['columns'],
 
             /*
             |--------------------------------------------------------------------------
@@ -184,6 +202,23 @@ final class ModuleDataFactory
             menu: $options['menu'],
 
             icon: $options['icon'],
+        );
+    }
+
+    /**
+     * Convierte los campos del manifiesto en ColumnDefinition.
+     *
+     * @return array<int, ColumnDefinition>
+     */
+    private function buildColumns(
+        array $definition
+    ): array {
+
+        return array_map(
+            static fn(array $field): ColumnDefinition =>
+            ColumnDefinition::fromArray($field),
+
+            $definition['fields'] ?? []
         );
     }
 
@@ -257,8 +292,11 @@ final class ModuleDataFactory
         return [
 
             'modelNamespace' => 'App\\Models',
+
             'repositoryNamespace' => 'App\\Core\\Repositories',
+
             'serviceNamespace' => 'App\\Core\\Services',
+
             'controllerNamespace' => 'App\\Http\\Controllers',
 
             'policyNamespace' => 'App\\Policies',
@@ -377,4 +415,5 @@ final class ModuleDataFactory
             => $definition['icon'] ?? null,
         ];
     }
+
 }

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Core\Generator\Specifications\Loaders;
 
+use App\Core\Generator\Specifications\ModuleSpecification;
 use App\Core\Generator\Specifications\Contracts\SpecificationInterface;
 use App\Core\Generator\Specifications\Exceptions\InvalidSpecificationException;
-use App\Core\Generator\Specifications\Specification;
 use App\Core\Generator\Specifications\Validators\SpecificationValidator;
 
 final readonly class PhpSpecificationLoader
@@ -37,9 +37,7 @@ final readonly class PhpSpecificationLoader
             $definition
         );
 
-        return new Specification(
-            $definition
-        );
+        return new ModuleSpecification($definition);
     }
 
     /**

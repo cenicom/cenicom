@@ -10,14 +10,14 @@ use App\Core\Generator\GeneratorRegistry;
 use App\Core\Generator\Generators\ControllerGenerator;
 use App\Core\Generator\Generators\MigrationGenerator;
 use App\Core\Generator\Generators\ModelGenerator;
+use App\Core\Generator\Generators\ModuleGenerator;
 use App\Core\Generator\Generators\RepositoryGenerator;
 use App\Core\Generator\Generators\RepositoryInterfaceGenerator;
 use App\Core\Generator\Generators\RequestGenerator;
 use App\Core\Generator\Generators\RouteGenerator;
 use App\Core\Generator\Generators\ServiceGenerator;
-//use App\Core\Generator\Generators\ServiceInterfaceGenerator;
+use App\Core\Generator\Generators\ServiceInterfaceGenerator;
 use App\Core\Generator\Generators\ViewGenerator;
-use App\Core\Generator\Generators\ModuleGenerator;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -73,7 +73,7 @@ final class CNGeneratorServiceProvider extends ServiceProvider
 
                     $app->make(RepositoryGenerator::class),
 
-                    //$app->make(ServiceInterfaceGenerator::class),
+                    $app->make(ServiceInterfaceGenerator::class),
 
                     $app->make(ServiceGenerator::class),
 

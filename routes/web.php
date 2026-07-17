@@ -7,14 +7,8 @@ use App\Http\Controllers\CurrencyController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::prefix('cds')->group(function () {
-
-    Route::get('/', function () {
-
-        return view('cds.index');
-
-    })->name('cds.index');
-
+Route::get('/', function () {
+    return view('welcome');
 });
 
 //Route::resource('countries', CountryController::class);

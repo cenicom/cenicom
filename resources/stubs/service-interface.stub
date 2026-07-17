@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace [[ namespace ]];
 
+use [[ qualifiedModel ]];
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 /**
  * ==========================================================
  * CENICOM ERP
@@ -22,7 +24,7 @@ interface [[ serviceInterface ]]
      */
     public function paginate(
         int $perPage = 15
-    ): \Illuminate\Contracts\Pagination\LengthAwarePaginator;
+    ): LengthAwarePaginator;
 
 
     /**

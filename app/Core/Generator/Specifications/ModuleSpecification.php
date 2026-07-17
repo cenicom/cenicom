@@ -8,103 +8,122 @@ use App\Core\Generator\Specifications\Contracts\SpecificationInterface;
 
 final class ModuleSpecification implements SpecificationInterface
 {
+    /**
+     * @param array<string,mixed> $definition
+     */
     public function __construct(
-        private readonly string $moduleName
+        private readonly array $definition
     ) {
     }
 
-
+    /**
+     * @return array<string,mixed>
+     */
     public function toArray(): array
     {
         return [
-            ...$this->identity(),
-            ...$this->database(),
+            'identity' => $this->identity(),
+            'database' => $this->database(),
             'fields' => $this->fields(),
+            'columns' => $this->columns(),
+            'relations' => $this->relations(),
+            'validation' => $this->validation(),
+            'permissions' => $this->permissions(),
+            'navigation' => $this->navigation(),
+            'generation' => $this->generation(),
+            'metadata' => $this->metadata(),
         ];
     }
 
-
+    /**
+     * @return array<string,mixed>
+     */
     public function identity(): array
     {
-        $singular = str($this->moduleName)->snake()->toString();
-        $plural = str($singular)->plural()->toString();
-
-        return [
-            'name' => $this->moduleName,
-            'singular' => $singular,
-            'plural' => $plural,
-            'table' => $plural,
-            'description' => "Module {$this->moduleName}",
-        ];
+        return $this->definition['identity'] ?? [];
     }
-
+    /**
+     * @return array<string,mixed>
+     */
     public function database(): array
     {
-        return [];
+        return $this->definition['database'] ?? [];
     }
 
-
+    /**
+     * @return array<int,array<string,mixed>>
+     */
     public function fields(): array
     {
-        return [];
+        return $this->definition['fields'] ?? [];
     }
 
+    /**
+     * @return array<int,array<string,mixed>>
+     */
+    public function columns(): array
+    {
+        return $this->definition['columns']
+            ?? $this->definition['fields']
+            ?? [];
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
 
     public function relations(): array
     {
-        return [];
+        return $this->definition['relations'] ?? [];
     }
 
+    /**
+     * @return array<string,mixed>
+     */
 
     public function validation(): array
     {
-        return [];
+        return $this->definition['validation'] ?? [];
     }
 
+    /**
+     * @return array<string,mixed>
+     */
 
     public function permissions(): array
     {
-        return [];
+        return $this->definition['permissions'] ?? [];
     }
 
+    /**
+     * @return array<string,mixed>
+     */
 
     public function navigation(): array
     {
-        return [];
+        return $this->definition['navigation'] ?? [];
     }
 
+    /**
+     * @return array<string,mixed>
+     */
 
     public function generation(): array
     {
-        $singular = str($this->moduleName)->snake()->toString();
-        $plural = str($singular)->plural()->toString();
-
-        return [
-            'routePrefix' => $plural,
-            'routeName' => $plural,
-            'viewPrefix' => $plural,
-
-            'timestamps' => true,
-            'softDeletes' => false,
-            'uuid' => true,
-            'api' => false,
-            'tests' => true,
-            'permissions' => true,
-            'menu' => true,
-            'icon' => 'bi-grid',
-        ];
+        return $this->definition['generation'] ?? [];
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function metadata(): array
     {
-        return [
-            'source' => 'artisan',
-        ];
+        return $this->definition['metadata'] ?? [];
     }
 
 
     public function version(): string
     {
-        return '1.0';
+        return $this->metadata()['version'] ?? '1.0';
     }
 }

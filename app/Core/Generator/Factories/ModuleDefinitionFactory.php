@@ -48,6 +48,8 @@ final class ModuleDefinitionFactory
     {
         return [
             'fields' => $specification->fields(),
+
+            'columns' => $specification->columns(),
         ];
     }
 
