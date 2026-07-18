@@ -108,10 +108,10 @@ final class ControllerGenerator extends BaseGenerator
             'model'
             => $module->modelClass(),
 
-            'route'
+            'routeName'
             => $module->routeName(),
 
-            'view'
+            'viewPrefix'
             => $module->viewPrefix(),
 
             'qualifiedModel'

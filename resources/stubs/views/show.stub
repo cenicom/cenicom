@@ -39,14 +39,14 @@
                 <x-cn.actions justify="between">
 
                     <x-cn.button
-                        :href="route('[[ module ]].edit', $[[ model ]])">
+                        :href="route('[[ routePrefix ]].edit', $[[ model ]])">
 
                         Actualizar
 
                     </x-cn.button>
 
                     <x-cn.button
-                        :href="route('[[ module ]].index')"
+                        :href="route('[[ routePrefix ]].index')"
                         variant="secondary">
 
                         Regresar

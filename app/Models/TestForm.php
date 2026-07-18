@@ -2,27 +2,28 @@
 
 declare(strict_types=1);
 
-namespace [[ namespace ]];
+namespace App\Models;
 
-[[ imports ]]
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * ==========================================================
  * CENICOM ERP
  * ==========================================================
  *
- * [[ description ]]
+ * Module TestForm
  *
- * @package [[ namespace ]]
+ * @package App\Models
  */
-final class [[ model ]] extends Model
+final class TestForm extends Model
 {
-[[ traits ]]
+    use HasFactory;
 
     /**
      * Tabla asociada al modelo.
      */
-    protected $table = '[[ table ]]';
+    protected $table = 'test_forms';
 
     /**
      * Atributos asignables masivamente.
@@ -30,7 +31,7 @@ final class [[ model ]] extends Model
      * @var array<int,string>
      */
     protected $fillable = [
-[[ fillable ]]
+
     ];
 
     /**
@@ -39,10 +40,12 @@ final class [[ model ]] extends Model
      * @var array<string,string>
      */
     protected $casts = [
-[[ casts ]]
+
     ];
 
-[[ constants ]]
+    public const STATUS_ACTIVE = 'active';
+
+    public const STATUS_INACTIVE = 'inactive';
 
     /*
     |--------------------------------------------------------------------------
@@ -50,7 +53,7 @@ final class [[ model ]] extends Model
     |--------------------------------------------------------------------------
     */
 
-[[ relationships ]]
+
 
     /*
     |--------------------------------------------------------------------------
@@ -58,6 +61,6 @@ final class [[ model ]] extends Model
     |--------------------------------------------------------------------------
     */
 
-[[ scopes ]]
+
 
 }

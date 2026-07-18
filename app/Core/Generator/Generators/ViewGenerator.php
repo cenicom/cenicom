@@ -6,7 +6,11 @@ namespace App\Core\Generator\Generators;
 
 use App\Core\Generator\BaseGenerator;
 use App\Core\Generator\DTO\ModuleData;
+use App\Core\Generator\Processors\FormFieldProcessor;
+use App\Core\Generator\Processors\ViewFieldProcessor;
 use App\Core\Generator\Results\GeneratorResult;
+use App\Core\Generator\Support\FileWriter;
+use App\Core\Generator\Support\StubManager;
 
 /**
  * ==========================================================
@@ -22,17 +26,29 @@ final class ViewGenerator extends BaseGenerator
 {
     private const VIEWS = [
 
-        'views/index.stub'  => 'index.blade.php',
+        'views/index.stub' => 'index.blade.php',
 
         'views/create.stub' => 'create.blade.php',
 
-        'views/edit.stub'   => 'edit.blade.php',
+        'views/edit.stub' => 'edit.blade.php',
 
-        'views/show.stub'   => 'show.blade.php',
+        'views/show.stub' => 'show.blade.php',
 
-        'views/_form.stub'  => '_form.blade.php',
+        'views/_form.stub' => '_form.blade.php',
 
     ];
+
+    public function __construct(
+        StubManager $stubManager,
+        FileWriter $fileWriter,
+        private readonly FormFieldProcessor $formFieldProcessor,
+        private readonly ViewFieldProcessor $viewFieldProcessor,
+    ) {
+        parent::__construct(
+            $stubManager,
+            $fileWriter,
+        );
+    }
 
     public function supports(
         ModuleData $module
@@ -75,33 +91,50 @@ final class ViewGenerator extends BaseGenerator
         ModuleData $module
     ): array {
 
+        $formFields = $this->formFieldProcessor->process(
+            $module->columns(),
+            $module->variable(),
+        );
+
         return [
 
-            'title'       => $module->plural(),
+            'title' => $module->plural(),
 
             'description' => $module->description(),
 
-            'model'       => lcfirst(
+            'model' => lcfirst(
                 $module->modelClass()
             ),
 
-            'modelClass'  => $module->modelClass(),
+            'modelClass' => $module->modelClass(),
 
-            'singular'    => $module->singular(),
+            'singular' => $module->singular(),
 
-            'plural'      => $module->plural(),
+            'plural' => $module->plural(),
 
-            'collection'  => $this->camelPlural(
+            'collection' => $this->camelPlural(
                 $module->plural()
             ),
 
-            'routeName'   => $module->routeName(),
+            'routePrefix' => $module->routePrefix(),
 
-            'viewPrefix'  => $module->viewPrefix(),
+            'routeName' => $module->routeName(),
 
-            'table'       => $module->table(),
+            'viewPrefix' => $module->viewPrefix(),
 
-            'columns'     => $module->columns(),
+            'table' => $module->table(),
+
+            'fields' => $module->columns(),
+
+            'columns' => $this->viewFieldProcessor->renderShow(
+                $module->columns(),
+                $module->variable()
+            ),
+
+            'columnCount' => count($module->columns()) + 1,
+
+            'form_fields' => $formFields,
+
 
         ];
     }

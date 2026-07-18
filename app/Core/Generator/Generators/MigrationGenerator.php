@@ -46,13 +46,23 @@ final class MigrationGenerator extends BaseGenerator
      */
     public function generate(ModuleData $module): GeneratorResult
     {
-        $columns = $this->fieldProcessor->process(
+        $columns = [];
+
+        if ($module->uuid()) {
+            $columns[] = "\$table->uuid('id')->primary();";
+        }
+
+        $fieldColumns = $this->fieldProcessor->process(
             $module->columns()
         );
 
+        if ($fieldColumns !== '') {
+            $columns[] = $fieldColumns;
+        }
+
         $variables = $module->toStubVariables();
 
-        $variables['columns'] = $columns;
+        $variables['columns'] = implode("\n\n", $columns);
 
         $variables['timestamps'] = $module->timestamps()
             ? '$table->timestamps();'
@@ -80,8 +90,6 @@ final class MigrationGenerator extends BaseGenerator
 
         return $result;
     }
-
-
 
 
 }

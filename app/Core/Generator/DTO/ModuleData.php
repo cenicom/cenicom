@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Core\Generator\DTO;
 
 use App\Core\Generator\DTO\ColumnDefinition;
+use Illuminate\Support\Str;
 
 /**
  * ==========================================================
@@ -162,7 +163,7 @@ readonly class ModuleData
     |--------------------------------------------------------------------------
 
     /**
-     * @var array<ColumnDefinition> $columns
+     * @param ColumnDefinition[] $columns
      */
     private array $columns;
 
@@ -251,6 +252,7 @@ readonly class ModuleData
 
         array $columns,
 
+
         bool $timestamps,
         bool $softDeletes,
         bool $uuid,
@@ -316,6 +318,7 @@ readonly class ModuleData
 
         $this->columns = $columns;
 
+
         $this->timestamps = $timestamps;
         $this->softDeletes = $softDeletes;
         $this->uuid = $uuid;
@@ -345,6 +348,11 @@ readonly class ModuleData
     public function plural(): string
     {
         return $this->plural;
+    }
+
+    public function variable(): string
+    {
+        return Str::camel($this->singular());
     }
 
     public function table(): string
@@ -494,10 +502,6 @@ readonly class ModuleData
         return $this->observerClass;
     }
 
-    public function variable(): string
-    {
-        return lcfirst($this->modelClass());
-    }
 
     public function pluralVariable(): string
     {
@@ -689,10 +693,10 @@ readonly class ModuleData
     }
 
     /*
-|--------------------------------------------------------------------------
-| Métodos qualified*
-|--------------------------------------------------------------------------
-*/
+    |--------------------------------------------------------------------------
+    | Métodos qualified*
+    |--------------------------------------------------------------------------
+    */
     public function qualifiedModel(): string
     {
         return $this->modelNamespace() . '\\' . $this->modelClass();
@@ -948,7 +952,20 @@ readonly class ModuleData
             'rules' => '',
         ];
     }
-
+    /*
+    *|--------------------------------------------------------------------------
+    * Variables de Stub
+    |--------------------------------------------------------------------------
+    */
+    // Variables universales disponibles para todos los stubs:
+    //
+    // module
+    // singular
+    // plural
+    // variable
+    // table
+    // model
+    // ...
 
 
 }

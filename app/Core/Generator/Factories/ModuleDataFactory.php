@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Core\Generator\Factories;
 
 use App\Core\Generator\DTO\ModuleData;
+use App\Core\Generator\DTO\ColumnDefinition;
 
 /**
  * ==========================================================
@@ -40,7 +41,9 @@ final class ModuleDataFactory
             $definition['plural']
         );
 
-        $options = $this->buildOptions($definition);
+        $options = $this->buildOptions(
+            $definition['generation'] ?? []
+        );
 
         return new ModuleData(
 
@@ -177,7 +180,9 @@ final class ModuleDataFactory
             |--------------------------------------------------------------------------
             */
 
-            columns: $definition['columns'],
+            columns: $this->buildColumns(
+                $definition['fields'] ?? []
+            ),
 
             /*
             |--------------------------------------------------------------------------
@@ -200,6 +205,22 @@ final class ModuleDataFactory
             menu: $options['menu'],
 
             icon: $options['icon'],
+
+
+        );
+    }
+
+    /**
+     * @param array<int,array<string,mixed>> $fields
+     *
+     * @return array<int,ColumnDefinition>
+     */
+    private function buildColumns(array $fields): array
+    {
+        return array_map(
+            static fn(array $field): ColumnDefinition =>
+            ColumnDefinition::fromArray($field),
+            $fields
         );
     }
 

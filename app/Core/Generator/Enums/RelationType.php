@@ -23,23 +23,17 @@ enum RelationType: string
 {
     /*
     |--------------------------------------------------------------------------
-    | Relaciones Uno a Uno
+    | Relaciones Laravel básicas
     |--------------------------------------------------------------------------
     */
 
-    case HAS_ONE = 'hasOne';
+    case BELONGS_TO = 'belongs_to';
 
-    case BELONGS_TO = 'belongsTo';
+    case HAS_ONE = 'has_one';
 
-    /*
-    |--------------------------------------------------------------------------
-    | Relaciones Uno a Muchos
-    |--------------------------------------------------------------------------
-    */
+    case HAS_MANY = 'has_many';
 
-    case HAS_MANY = 'hasMany';
-
-    case BELONGS_TO_MANY = 'belongsToMany';
+    case BELONGS_TO_MANY = 'belongs_to_many';
 
     /*
     |--------------------------------------------------------------------------
@@ -47,15 +41,15 @@ enum RelationType: string
     |--------------------------------------------------------------------------
     */
 
-    case MORPH_ONE = 'morphOne';
+    case MORPH_ONE = 'morph_one';
 
-    case MORPH_MANY = 'morphMany';
+    case MORPH_MANY = 'morph_many';
 
-    case MORPH_TO = 'morphTo';
+    case MORPH_TO = 'morph_to';
 
-    case MORPH_TO_MANY = 'morphToMany';
+    case MORPH_TO_MANY = 'morph_to_many';
 
-    case MORPHED_BY_MANY = 'morphedByMany';
+    case MORPHED_BY_MANY = 'morphed_by_many';
 
     /*
     |--------------------------------------------------------------------------
@@ -159,5 +153,49 @@ enum RelationType: string
             default => false,
         };
     }
+
+    public function isOneToOne(): bool
+    {
+        return match ($this) {
+            self::HAS_ONE,
+            self::BELONGS_TO,
+            self::MORPH_ONE => true,
+
+            default => false,
+        };
+    }
+
+
+    public function isOneToMany(): bool
+    {
+        return match ($this) {
+            self::HAS_MANY,
+            self::BELONGS_TO,
+            self::MORPH_MANY,
+            self::HAS_MANY_THROUGH => true,
+
+            default => false,
+        };
+    }
+
+
+    public function isManyToMany(): bool
+    {
+        return match ($this) {
+            self::BELONGS_TO_MANY,
+            self::MORPH_TO_MANY,
+            self::MORPHED_BY_MANY => true,
+
+            default => false,
+        };
+    }
+
+
+    public function isPolymorphic(): bool
+    {
+        return $this->isMorph();
+    }
+
+
 
 }

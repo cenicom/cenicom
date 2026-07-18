@@ -2,6 +2,7 @@
     <x-slot:title>
         [[ title ]]
     </x-slot:title>
+
     <div class="cn-page">
 
         <x-cn.crud title="[[ plural ]]" subtitle="[[ description ]] " >
@@ -10,12 +11,13 @@
             <x-slot:toolbar>
                 <x-cn.toolbar>
                     {{-- filtros dinámicos del módulo --}}
-                    <x-cn.filters :action="route('[[ module ]].index')">
+                    <x-cn.filters :action="route('[[ routePrefix ]].index')">
                         {{-- filtros personalizados --}}
                     </x-cn.filters>
-                    <x-cn.button.create :href="route('[[ module ]].create')" />
+                    <x-cn.button.create :href="route('[[ routePrefix ]].create')" />
                 </x-cn.toolbar>
             </x-slot:toolbar>
+
             {{-- Tabla principal --}}
             <x-cn.table>
                 <thead>
@@ -37,17 +39,17 @@
                                 <x-cn.crud.actions>
                                     {{-- show --}}
                                     <x-cn.button.show
-                                        :href="route('[[ module ]].show', $[[ model ]])" />
+                                        :href="route('[[ routePrefix ]].show', $[[ model ]])" />
                                     {{-- edit --}}
                                     <x-cn.button.edit
-                                        :href="route('[[ module ]].edit', $[[ model ]])" />
+                                        :href="route('[[ routePrefix ]].edit', $[[ model ]])" />
                                     {{-- delete --}}
                                     <x-cn.confirm
-                                        id="delete-[[ model ]]-{{ $[[model ]]->id  }}"
+                                        id="delete-[[ model ]]-{{ $[[ model ]]->id  }}"
                                         title="Eliminar [[ singular ]]"
                                         message="¿Está seguro de eliminar este registro?">
                                         <form
-                                            action="{{ route('[[ module ]].destroy', $[[ model ]]) }}"
+                                            action="{{ route('[[ routePrefix ]].destroy', $[[ model ]]) }}"
                                             method="POST">
                                             @csrf
                                             @method('DELETE')
@@ -61,7 +63,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="[[ columns ]]">
+                            <td colspan="[[ columnCount ]]">
                                 <x-cn.empty-state>
                                     No existen registros.
                                 </x-cn.empty-state>
@@ -70,10 +72,12 @@
                     @endforelse
                 </tbody>
             </x-cn.table>
+
             {{-- Footer --}}
             <x-slot:footer>
                 <x-cn.pagination :paginator="$[[ collection ]]" />
             </x-slot:footer>
+
         </x-cn.crud>
     </div>
 </x-layout.app>

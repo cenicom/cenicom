@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Core\Repositories;
 
-use App\Models\TestModule;
-use App\Core\Contracts\TestModuleRepositoryInterface;
+use App\Models\TestForm;
+use App\Core\Contracts\TestFormRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 /**
@@ -13,21 +13,21 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
  * CENICOM ERP
  * ==========================================================
  *
- * Repositorio de TestModule.
+ * Repositorio de TestForm.
  *
  * Encapsula el acceso a datos del modelo y centraliza
  * todas las operaciones de persistencia.
  *
  * @package App\Core\Repositories
  */
-final readonly class TestModuleRepository
-    implements TestModuleRepositoryInterface
+final readonly class TestFormRepository
+    implements TestFormRepositoryInterface
 {
     /**
      * Constructor.
      */
     public function __construct(
-        private TestModule $model,
+        private TestForm $model,
     ) {
     }
 
@@ -50,7 +50,7 @@ final readonly class TestModuleRepository
      */
     public function create(
         array $data
-    ): TestModule {
+    ): TestForm {
 
         return $this->model->create($data);
     }
@@ -61,20 +61,20 @@ final readonly class TestModuleRepository
      * @param array<string,mixed> $data
      */
     public function update(
-        TestModule $testModule,
+        TestForm $testForm,
         array $data
     ): bool {
 
-        return $testModule->update($data);
+        return $testForm->update($data);
     }
 
     /**
      * Elimina un registro.
      */
     public function delete(
-        TestModule $testModule
+        TestForm $testForm
     ): bool {
 
-        return $testModule->delete();
+        return $testForm->delete();
     }
 }

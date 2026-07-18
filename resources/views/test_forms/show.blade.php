@@ -1,7 +1,7 @@
 <x-layout.app>
 
     <x-slot:title>
-        Ver {{singular}}
+        Ver test_form
     </x-slot>
 
     <div class="cn-page">
@@ -13,7 +13,7 @@
                 <div>
 
                     <h1>
-                        Detalle de {{singular}}
+                        Detalle de test_form
                     </h1>
 
                     <p>
@@ -32,21 +32,21 @@
 
                 <x-cn.group columns="2">
 
-                    {{fields}}
+                    
 
                 </x-cn.group>
 
                 <x-cn.actions justify="between">
 
                     <x-cn.button
-                        :href="route('{{module}}.edit', ${{model}})">
+                        :href="route('test_forms.edit', $testForm)">
 
                         Actualizar
 
                     </x-cn.button>
 
                     <x-cn.button
-                        :href="route('{{module}}.index')"
+                        :href="route('test_forms.index')"
                         variant="secondary">
 
                         Regresar

@@ -1,6 +1,6 @@
 <x-layout.app>
     <x-slot:title>
-        {{ title }}
+        test_forms
     </x-slot:title>
 
 
@@ -14,7 +14,7 @@
                 <div>
 
                     <h1>
-                        Crear {{ singular }}
+                        Crear test_form
                     </h1>
 
                     <p>
@@ -34,10 +34,10 @@
             <div class="cn-card-body">
 
 
-                <x-cn.form id="{{ module }}-form" :action="route('{{ module }}.store')" method="POST">
+                <x-cn.form id="test_form-form" :action="route('test_forms.store')" method="POST">
 
 
-                    @include('{{ module }}._form')
+                    @include('test_forms._form')
 
                     {{-- Actions --}}
                     <x-cn.actions>
@@ -46,7 +46,7 @@
                             Guardar
                         </x-cn.button>
                         {{-- Regresar --}}
-                        <x-cn.button :href="route('{{ module }}.index')" variant="secondary">
+                        <x-cn.button :href="route('test_forms.index')" variant="secondary">
                             Regresar
                         </x-cn.button>
                     </x-cn.actions>

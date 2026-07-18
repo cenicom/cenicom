@@ -30,7 +30,7 @@ final class StubManager
     /**
      * Renderiza un stub.
      *
-     * @param array<string, string> $variables
+     * @param array<string, mixed> $variables
      */
     public function render(
         string $stub,
@@ -57,7 +57,7 @@ final class StubManager
     {
         $stub = ltrim($stub, '/\\');
 
-        if (!str_ends_with($stub, '.stub')) {
+        if (! str_ends_with($stub, '.stub')) {
             $stub .= '.stub';
         }
 
@@ -71,7 +71,8 @@ final class StubManager
      */
     private function load(string $path): string
     {
-        if (!is_file($path)) {
+
+        if (! is_file($path)) {
             throw new InvalidArgumentException(
                 sprintf('Stub [%s] no encontrado.', $path)
             );
@@ -91,7 +92,7 @@ final class StubManager
     /**
      * Reemplaza los placeholders del stub.
      *
-     * @param array<string, scalar|null> $variables
+     * @param array<string, mixed> $variables
      */
     private function replace(
         string $content,
@@ -101,7 +102,13 @@ final class StubManager
 
         foreach ($variables as $key => $value) {
 
-            if (!is_scalar($value) && $value !== null) {
+            if (is_array($value) || is_object($value)) {
+
+                continue;
+            }
+
+            if (! is_scalar($value) && $value !== null) {
+
                 throw new InvalidArgumentException(
                     sprintf(
                         'La variable [%s] del stub debe ser escalar. Se recibió [%s].',
@@ -122,6 +129,7 @@ final class StubManager
             );
         }
 
+
         if (preg_match_all('/\[\[\s*(.*?)\s*\]\]/', $content, $matches)) {
 
             $placeholders = array_unique($matches[1]);
@@ -135,8 +143,8 @@ final class StubManager
             );
         }
 
-        return $content;
 
+        return $content;
     }
 
 

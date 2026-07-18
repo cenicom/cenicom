@@ -49,7 +49,7 @@ final readonly class ModuleField
     public function __construct(
         private string $name,
         private string $label,
-        private string $type,
+        private FieldType $type,
 
         /*
         |--------------------------------------------------------------------------
@@ -85,7 +85,7 @@ final readonly class ModuleField
         |--------------------------------------------------------------------------
         */
 
-        private ?string $inputType = null,
+        private ?InputType $inputType = null,
         private ?string $placeholder = null,
         private ?string $help = null,
         private ?string $icon = null,
@@ -107,8 +107,7 @@ final readonly class ModuleField
         |--------------------------------------------------------------------------
         */
 
-        private bool $relationship = false,
-        private ?string $relationType = null,
+        private ?RelationType $relationType = null,
         private ?string $relatedModel = null,
         private ?string $foreignKey = null,
         private ?string $ownerKey = null,
@@ -291,7 +290,7 @@ final readonly class ModuleField
 
     public function relationship(): bool
     {
-        return $this->relationship;
+        return $this->relationType !== null;
     }
 
     public function relationType(): ?RelationType
@@ -927,7 +926,7 @@ final readonly class ModuleField
 
     public function hasRelationship(): bool
     {
-        return $this->relationship;
+        return $this->relationType !== null;
     }
 
     public function hasRelation(): bool
@@ -1344,7 +1343,37 @@ final readonly class ModuleField
         ];
     }
 
+    public function isSoftDeleteColumn(): bool
+    {
+        return $this->name === 'deleted_at';
+    }
 
+    public function isIdColumn(): bool
+    {
+        return $this->name === 'id';
+    }
+
+    public function isTimestampColumn(): bool
+    {
+        return in_array(
+            $this->name,
+            ['created_at', 'updated_at'],
+            true
+        );
+    }
+
+    public function isAuditColumn(): bool
+    {
+        return in_array(
+            $this->name,
+            [
+                'created_by',
+                'updated_by',
+                'deleted_by',
+            ],
+            true
+        );
+    }
 
 
 

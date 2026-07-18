@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace [[ namespace ]];
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 
-use [[ qualifiedServiceInterface ]];
+use App\Core\Contracts\TestFormServiceInterface;
 
-use [[ qualifiedStoreRequest ]];
+use App\Http\Requests\TestForm\StoreTestFormRequest;
 
-use [[ qualifiedUpdateRequest ]];
+use App\Http\Requests\TestForm\UpdateTestFormRequest;
 
-use [[ qualifiedModel ]];
+use App\Models\TestForm;
 
 use Illuminate\Http\RedirectResponse;
 
@@ -23,18 +23,18 @@ use Illuminate\View\View;
  * CENICOM ERP
  * ==========================================================
  *
- * Controlador del módulo [[ model ]].
+ * Controlador del módulo TestForm.
  *
  * Gestiona las operaciones CRUD del módulo.
  *
- * @package [[ namespace ]]
+ * @package App\Http\Controllers
  */
-final class [[ controller ]] extends Controller
+final class TestFormController extends Controller
 {
     private const PER_PAGE = 15;
 
     public function __construct(
-        private readonly [[ serviceInterface ]] $service,
+        private readonly TestFormServiceInterface $service,
     ) {
     }
 
@@ -43,8 +43,8 @@ final class [[ controller ]] extends Controller
     */
     public function index(): View
     {
-        return view('[[ viewPrefix ]].index', [
-            '[[ pluralVariable ]]' => $this->service->paginate(
+        return view('test_forms.index', [
+            'test_forms' => $this->service->paginate(
                 perPage: self::PER_PAGE,
             ),
         ]);
@@ -55,14 +55,14 @@ final class [[ controller ]] extends Controller
         */
     public function create(): View
     {
-        return view('[[ viewPrefix ]].create');
+        return view('test_forms.create');
     }
 
     /**
         * Almacena un nuevo recurso.
         */
     public function store(
-        [[ storeRequest ]] $request,
+        StoreTestFormRequest $request,
     ): RedirectResponse {
 
         $this->service->create(
@@ -70,19 +70,19 @@ final class [[ controller ]] extends Controller
         );
 
         return redirect()
-            ->route('[[ routeName ]].index')
-            ->with('success', '[[ singular ]] creado correctamente.');
+            ->route('test_forms.index')
+            ->with('success', 'test_form creado correctamente.');
     }
 
     /**
         * Muestra un recurso específico.
         */
     public function show(
-        [[ model ]] $[[ variable ]]
+        TestForm $testForm
     ): View {
 
-        return view('[[ viewPrefix ]].show', [
-            '[[ variable ]]' => $[[ variable ]],
+        return view('test_forms.show', [
+            'testForm' => $testForm,
         ]);
     }
 
@@ -90,11 +90,11 @@ final class [[ controller ]] extends Controller
         * Edita un recurso específico.
         */
     public function edit(
-        [[ model ]] $[[ variable ]]
+        TestForm $testForm
     ): View {
 
-        return view('[[ viewPrefix ]].edit', [
-            '[[ variable ]]' => $[[ variable ]] ,
+        return view('test_forms.edit', [
+            'testForm' => $testForm ,
         ]);
     }
 
@@ -102,31 +102,31 @@ final class [[ controller ]] extends Controller
     * Actualiza un recurso específico.
     */
     public function update(
-        [[ updateRequest ]] $request,
-        [[ model ]] $[[ variable ]]
+        UpdateTestFormRequest $request,
+        TestForm $testForm
     ): RedirectResponse {
 
         $this->service->update(
-            $[[ variable ]],
+            $testForm,
             $request->validated()
         );
 
         return redirect()
-            ->route('[[ routeName ]].index')
-            ->with('success', '[[ singular ]] actualizado correctamente.');
+            ->route('test_forms.index')
+            ->with('success', 'test_form actualizado correctamente.');
     }
 
     /**
     * Elimina el recurso específico.
     */
     public function destroy(
-        [[ model ]] $[[ variable ]]
+        TestForm $testForm
     ): RedirectResponse {
 
-        $this->service->destroy($[[ variable ]]);
+        $this->service->destroy($testForm);
 
         return redirect()
-            ->route('[[ routeName ]].index')
-            ->with('success', '[[ singular ]] eliminado correctamente.');
+            ->route('test_forms.index')
+            ->with('success', 'test_form eliminado correctamente.');
     }
 }

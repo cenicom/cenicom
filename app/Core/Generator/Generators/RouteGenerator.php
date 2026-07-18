@@ -61,23 +61,19 @@ final class RouteGenerator extends BaseGenerator
 
         return [
 
-            'controllerNamespace'
-                => $module->controllerNamespace(),
+            'controller' => $module->controllerClass(),
 
-            'controller'
-                => $module->controllerClass(),
+            'controllerClass' => $module->controllerClass(),
 
-            'qualifiedController'
-                => $module->qualifiedController(),
+            'qualifiedController' => $module->controllerNamespace()
+                . '\\'
+                . $module->controllerClass(),
 
-            'routePrefix'
-                => $module->routePrefix(),
+            'plural' => $module->plural(),
 
-            'route'
-                => $module->routeName(),
+            'singular' => $module->singular(),
 
-            'viewPrefix'
-                => $module->viewPrefix(),
+            'routeName' => $module->routeName(),
 
         ];
     }

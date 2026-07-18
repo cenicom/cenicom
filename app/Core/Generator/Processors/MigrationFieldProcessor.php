@@ -31,7 +31,7 @@ final class MigrationFieldProcessor
 
         'text' => 'buildText',
 
-        'longText' => 'buildLongText',
+        'longText' => 'buildTextarea',
 
         'integer' => 'buildInteger',
 
@@ -62,6 +62,8 @@ final class MigrationFieldProcessor
         'enum' => 'buildEnum',
 
         'foreignId' => 'buildForeignId',
+
+
 
     ];
 

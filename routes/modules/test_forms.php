@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-use [[ qualifiedController ]];
+use App\Http\Controllers\TestFormController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| [[ plural ]]
+| test_forms
 |--------------------------------------------------------------------------
 |
-| Rutas del módulo [[ singular ]].
+| Rutas del módulo test_form.
 |
 */
 
 Route::resource(
-    '[[ routeName ]]',
-    [[ controller ]]::class
+    'test_forms',
+    TestFormController::class
 );

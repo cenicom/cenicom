@@ -37,6 +37,7 @@ final class ModuleGenerator
         $result = new GeneratorResult();
 
         foreach ($this->generators as $generator) {
+
             if (! $generator->supports($module)) {
                 continue;
             }
