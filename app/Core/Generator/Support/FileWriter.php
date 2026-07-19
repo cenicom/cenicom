@@ -24,13 +24,6 @@ use RuntimeException;
 final class FileWriter
 {
     /**
-     * Crea una nueva instancia.
-     */
-    public function __construct()
-    {
-    }
-
-    /**
      * Escribe un archivo en disco.
      *
      * @throws RuntimeException

@@ -40,14 +40,21 @@ final class RouteGenerator extends BaseGenerator
 
         $path = $module->routePath();
 
-        $this->generateFile(
-            self::STUB,
-            $path,
-            $this->buildVariables($module)
-        );
+        $result = new GeneratorResult();
 
-        return (new GeneratorResult())
-            ->addCreated($path);
+        if (
+            $this->generateFile(
+                self::STUB,
+                $path,
+                $this->buildVariables($module)
+            )
+        ) {
+            $result->addCreated($path);
+        } else {
+            $result->addSkipped($path);
+        }
+
+        return $result;
     }
 
     /**
@@ -59,22 +66,20 @@ final class RouteGenerator extends BaseGenerator
         ModuleData $module
     ): array {
 
-        return [
+        return array_merge(
+            $this->defaultVariables($module),
+            [
 
-            'controller' => $module->controllerClass(),
+                'qualifiedController'
+                => $module->qualifiedController(),
 
-            'controllerClass' => $module->controllerClass(),
+                //'controllerClass'
+                //=> $module->controllerClass(),
 
-            'qualifiedController' => $module->controllerNamespace()
-                . '\\'
-                . $module->controllerClass(),
+                'pluralVariable'
+                => $module->pluralVariable(),
 
-            'plural' => $module->plural(),
-
-            'singular' => $module->singular(),
-
-            'routeName' => $module->routeName(),
-
-        ];
+            ]
+        );
     }
 }

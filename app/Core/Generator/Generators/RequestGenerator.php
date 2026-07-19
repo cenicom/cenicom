@@ -7,6 +7,7 @@ namespace App\Core\Generator\Generators;
 use App\Core\Generator\BaseGenerator;
 use App\Core\Generator\DTO\ColumnDefinition;
 use App\Core\Generator\DTO\ModuleData;
+use App\Core\Generator\Enums\FieldType;
 use App\Core\Generator\Results\GeneratorResult;
 use App\Core\Generator\Support\FileWriter;
 use App\Core\Generator\Support\StubManager;
@@ -55,52 +56,77 @@ final class RequestGenerator extends BaseGenerator
      */
     public function generate(ModuleData $module): GeneratorResult
     {
-        $files = [];
-
-        $files[] = $this->generateStoreRequest($module);
-
-        $files[] = $this->generateUpdateRequest($module);
-
         $result = new GeneratorResult();
 
-        foreach ($files as $file) {
-            $result->addCreated($file);
-        }
+        $this->generateStoreRequest($module, $result);
+
+        $this->generateUpdateRequest($module, $result);
 
         return $result;
     }
-
 
     /**
      * Genera StoreRequest.
      */
     private function generateStoreRequest(
-        ModuleData $module
-    ): string {
+        ModuleData $module,
+        GeneratorResult $result
+    ): void {
 
-        $path = $module->requestPath()
+        $file = $module->requestPath()
             . DIRECTORY_SEPARATOR
             . $module->storeRequestClass()
             . '.php';
 
-        $this->generateFile(
-            'requests/store',
-            $path,
-            $this->buildVariables(
-                $module,
-                $module->storeRequestClass()
+        if (
+            $this->generateFile(
+                'requests/store',
+                $file,
+                $this->buildVariables(
+                    $module,
+                    $module->storeRequestClass()
+                )
             )
-        );
-
-        return $path;
+        ) {
+            $result->addCreated($file);
+        } else {
+            $result->addSkipped($file);
+        }
     }
 
+    private function buildRules(ModuleData $module): string
+    {
+        $rules = [];
+
+        foreach ($module->columns() as $column) {
+
+            if (!$this->shouldGenerateRule($column)) {
+                continue;
+            }
+
+            $rules[] = sprintf(
+                "            '%s' => %s,",
+                $column->name(),
+                $this->buildRule($column)
+            );
+        }
+
+        return implode(PHP_EOL, $rules);
+    }
+
+    private function shouldGenerateRule(
+        ColumnDefinition $column
+    ): bool {
+
+        return $column->shouldAppearInForm();
+    }
 
     /**
      * Genera UpdateRequest.
      */
     private function generateUpdateRequest(
-        ModuleData $module
+        ModuleData $module,
+        GeneratorResult $result
     ): string {
 
         $path = $module->requestPath()
@@ -182,55 +208,88 @@ final class RequestGenerator extends BaseGenerator
 
         $rules = [];
 
-        if (! $column->nullable()) {
-            $rules[] = 'required';
+        $rules[] = $this->resolveRequiredRule($column);
+
+        $rules = array_merge(
+            $rules,
+            $this->resolveTypeRules($column)
+        );
+
+        if ($length = $this->resolveLengthRule($column)) {
+            $rules[] = $length;
         }
 
-        switch ($column->type()) {
-
-            case 'string':
-                $rules[] = 'string';
-                $rules[] = 'max:255';
-                break;
-
-            case 'text':
-                $rules[] = 'string';
-                break;
-
-            case 'integer':
-                $rules[] = 'integer';
-                break;
-
-            case 'decimal':
-                $rules[] = 'numeric';
-                break;
-
-            case 'boolean':
-                $rules[] = 'boolean';
-                break;
-
-            case 'date':
-                $rules[] = 'date';
-                break;
-
-            case 'datetime':
-                $rules[] = 'date';
-                break;
-
-            case 'uuid':
-                $rules[] = 'uuid';
-                break;
-
-            case 'email':
-                $rules[] = 'email';
-                break;
-
-            default:
-                $rules[] = 'string';
+        if ($foreign = $this->resolveForeignRule($column)) {
+            $rules[] = $foreign;
         }
 
         return "['" . implode("', '", $rules) . "']";
     }
+
+    private function resolveRequiredRule(
+        ColumnDefinition $column
+    ): string {
+
+        return $column->nullable()
+            ? 'nullable'
+            : 'required';
+    }
+
+    private function resolveLengthRule(
+        ColumnDefinition $column
+    ): ?string {
+
+        return $column->length() !== null
+            ? 'max:' . $column->length()
+            : null;
+    }
+
+    private function resolveTypeRules(
+        ColumnDefinition $column
+    ): array {
+
+        return match ($column->type()) {
+
+            FieldType::STRING => ['string'],
+
+            FieldType::TEXT => ['string'],
+
+            FieldType::INTEGER => ['integer'],
+
+            FieldType::DECIMAL => ['numeric'],
+
+            FieldType::BOOLEAN => ['boolean'],
+
+            FieldType::DATE => ['date'],
+
+            FieldType::DATETIME => ['date'],
+
+            FieldType::UUID => ['uuid'],
+
+            FieldType::EMAIL => ['email'],
+
+            default => ['string'],
+        };
+    }
+
+    private function resolveForeignRule(
+        ColumnDefinition $column
+    ): ?string {
+
+        if (!$column->isForeignKey()) {
+            return null;
+        }
+
+        return sprintf(
+            'exists:%s,%s',
+            $column->on(),
+            $column->references()
+        );
+    }
+
+
+
+
 
 
 

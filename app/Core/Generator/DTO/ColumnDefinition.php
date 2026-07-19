@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Core\Generator\DTO;
 
 use App\Core\Generator\Enums\FieldType;
+use App\Core\Generator\Enums\InputType;
 
 /**
  * ==========================================================
@@ -25,6 +26,7 @@ final readonly class ColumnDefinition
     public function __construct(
         private string $name,
         private FieldType $type,
+        private ?InputType $inputType = null,
         private ?int $length = null,
         private ?int $precision = null,
         private ?int $scale = null,
@@ -64,6 +66,11 @@ final readonly class ColumnDefinition
             type: FieldType::from(
                 (string) $definition['type']
             ),
+            inputType: isset($definition['inputType'])
+            ? InputType::from(
+                (string) $definition['inputType']
+            )
+            : null,
             length: isset($definition['length'])
             ? (int) $definition['length']
             : null,
@@ -218,5 +225,38 @@ final readonly class ColumnDefinition
         return false;
     }
 
+    public function inputType(): InputType
+    {
+        if ($this->inputType !== null) {
+            return $this->inputType;
+        }
+
+        return $this->type->defaultInputType();
+    }
+
+    public function hasDefault(): bool
+    {
+        return $this->default !== null;
+    }
+
+    public function hasComment(): bool
+    {
+        return $this->comment !== null;
+    }
+
+    public function hasLength(): bool
+    {
+        return $this->length !== null;
+    }
+
+    public function hasPrecision(): bool
+    {
+        return $this->precision !== null;
+    }
+
+    public function hasScale(): bool
+    {
+        return $this->scale !== null;
+    }
 
 }

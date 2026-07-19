@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\Generator\Processors;
 
+use App\Core\Generator\DTO\ColumnDefinition;
 use InvalidArgumentException;
 
 /**
@@ -34,9 +35,10 @@ final class FormFieldProcessor
     ];
 
     /**
-     * Procesa todos los campos del módulo.
-     *
-     * @param array<int,array<string,mixed>> $fields
+     * @param ColumnDefinition[] $fields
+     */
+    /**
+     * @param ColumnDefinition[] $fields
      */
     public function process(
         array $fields,
@@ -47,11 +49,14 @@ final class FormFieldProcessor
 
         foreach ($fields as $field) {
 
+            if (!$field->shouldAppearInForm()) {
+                continue;
+            }
+
             $components[] = $this->buildField(
                 $field,
                 $variable
             );
-
         }
 
         return implode(
@@ -60,18 +65,14 @@ final class FormFieldProcessor
         );
     }
 
-    /**
-     * Construye un componente Blade.
-     *
-     * @param array<string,mixed> $field
-     */
+
     private function buildField(
-        array $field,
+        ColumnDefinition $field,
         string $variable
     ): string {
 
         $builder = self::BUILDERS[
-            $field['type']
+            $field->type()->value
         ] ?? null;
 
         if ($builder === null) {
@@ -79,7 +80,7 @@ final class FormFieldProcessor
             throw new InvalidArgumentException(
                 sprintf(
                     'Tipo [%s] no soportado.',
-                    $field['type']
+                    $field->type()->value
                 )
             );
 
@@ -93,40 +94,24 @@ final class FormFieldProcessor
 
     //Helpers
 
-    /**
-     * Obtiene la etiqueta del campo.
-     *
-     * @param array<string,mixed> $field
-     */
-    private function label(
-        array $field
-    ): string {
 
-        if (! empty($field['label'])) {
-            return (string) $field['label'];
-        }
+    private function label(
+        ColumnDefinition $field
+    ): string {
 
         return ucfirst(
             str_replace(
                 '_',
                 ' ',
-                $field['name']
+                $field->name()
             )
         );
     }
 
-    /**
-     * Obtiene el placeholder del campo.
-     *
-     * @param array<string,mixed> $field
-     */
-    private function placeholder(
-        array $field
-    ): string {
 
-        if (! empty($field['placeholder'])) {
-            return (string) $field['placeholder'];
-        }
+    private function placeholder(
+        ColumnDefinition $field
+    ): string {
 
         return sprintf(
             'Ingrese %s',
@@ -134,128 +119,69 @@ final class FormFieldProcessor
         );
     }
 
-    /**
-     * Genera el valor Blade del componente.
-     *
-     * @param array<string,mixed> $field
-     */
+
     private function value(
-        array $field,
+        ColumnDefinition $field,
         string $variable
     ): string {
 
         return sprintf(
             "old('%s', \$%s->%s ?? '')",
-            $field['name'],
+            $field->name(),
             $variable,
-            $field['name']
+            $field->name()
         );
     }
 
-    /**
-     * Determina si el campo es obligatorio.
-     *
-     * @param array<string,mixed> $field
-     */
     private function isRequired(
-        array $field
+        ColumnDefinition $field
     ): bool {
 
-        return !(
-            $field['nullable']
-            ?? false
-        );
+        return !$field->nullable();
     }
 
-    /**
-     * Obtiene el texto de ayuda.
-     *
-     * @param array<string,mixed> $field
-     */
-    private function hint(
-        array $field
-    ): string {
-
-        return (string) (
-            $field['help']
-            ?? ''
-        );
-    }
-
-    /**
-     * Determina si el campo es solo lectura.
-     *
-     * @param array<string,mixed> $field
-     */
-    private function readonly(
-        array $field
-    ): bool {
-
-        return (bool) (
-            $field['readonly']
-            ?? false
-        );
-    }
-
-    /**
-     * Determina si el campo está deshabilitado.
-     *
-     * @param array<string,mixed> $field
-     */
-    private function disabled(
-        array $field
-    ): bool {
-
-        return (bool) (
-            $field['disabled']
-            ?? false
-        );
-    }
+    // Builders...
 
     /**
      * Número de columnas del campo.
      *
-     * @param array<string,mixed> $field
+     * @param ColumnDefinition $field
      */
-    private function columns(
-        array $field
-    ): int {
-
-        return (int) (
-            $field['columns']
-            ?? 1
-        );
-    }
-    // Builders...
 
     private function buildString(
-        array $field,
+        ColumnDefinition $field,
         string $variable
     ): string {
+
         $required = $this->isRequired($field)
             ? "\n    required"
             : '';
 
         return <<<BLADE
 <x-cn.input
-    name="{$field['name']}"
+    name="{$field->name()}"
     label="{$this->label($field)}"
     placeholder="{$this->placeholder($field)}"
     :value="{$this->value($field, $variable)}"
-    required="{$required}"
+    {$required}
 />
 BLADE;
 
     }
 
+    /**
+     * Número de columnas del campo.
+     *
+     * @param ColumnDefinition $field
+     */
     private function buildTextarea(
-        array $field,
+        ColumnDefinition $field,
         string $variable
     ): string {
 
         return <<<BLADE
 <x-cn.textarea
-    name="{$field['name']}"
+    name="{$field->name()}"
     label="{$this->label($field)}"
     placeholder="{$this->placeholder($field)}"
     :value="{$this->value($field, $variable)}"
@@ -264,15 +190,20 @@ BLADE;
 
     }
 
+    /**
+     * Número de columnas del campo.
+     *
+     * @param ColumnDefinition $field
+     */
     private function buildNumber(
-        array $field,
+        ColumnDefinition $field,
         string $variable
     ): string {
 
         return <<<BLADE
 <x-cn.input
     type="number"
-    name="{$field['name']}"
+    name="{$field->name()}"
     label="{$this->label($field)}"
     :value="{$this->value($field, $variable)}"
 />
@@ -280,8 +211,13 @@ BLADE;
 
     }
 
+    /**
+     * Número de columnas del campo.
+     *
+     * @param ColumnDefinition $field
+     */
     private function buildDecimal(
-        array $field,
+        ColumnDefinition $field,
         string $variable
     ): string {
 
@@ -289,7 +225,7 @@ BLADE;
 <x-cn.input
     type="number"
     step="0.01"
-    name="{$field['name']}"
+    name="{$field->name()}"
     label="{$this->label($field)}"
     :value="{$this->value($field, $variable)}"
 />
@@ -299,31 +235,42 @@ BLADE;
         //"scale": 4
         //    }
     }
+    /**
+     * Número de columnas del campo.
+     *
+     * @param ColumnDefinition $field
+     */
 
     private function buildCheckbox(
-        array $field,
+        ColumnDefinition $field,
         string $variable
     ): string {
 
         return <<<BLADE
 <x-cn.checkbox
-    name="{$field['name']}"
+    name="{$field->name()}"
     label="{$this->label($field)}"
-    :checked="old('{$field['name']}', \${$variable}->{$field['name']} ?? false)"
+    :checked="old('{$field->name()}', \${$variable}->{$field->name()} ?? false)"
 />
 BLADE;
 
     }
 
+    /**
+     * Número de columnas del campo.
+     *
+     * @param ColumnDefinition $field
+     */
+
     private function buildDate(
-        array $field,
+        ColumnDefinition $field,
         string $variable
     ): string {
 
         return <<<BLADE
 <x-cn.input
     type="date"
-    name="{$field['name']}"
+    name="{$field->name()}"
     label="{$this->label($field)}"
     :value="{$this->value($field, $variable)}"
 />
@@ -331,14 +278,19 @@ BLADE;
 
     }
 
+    /**
+     * Número de columnas del campo.
+     *
+     * @param ColumnDefinition $field
+     */
     private function buildSelect(
-        array $field,
+        ColumnDefinition $field,
         string $variable
     ): string {
 
         return <<<BLADE
 <x-cn.select
-    name="{$field['name']}"
+    name="{$field->name()}"
     label="{$this->label($field)}">
 
     {{-- Opciones generadas posteriormente --}}

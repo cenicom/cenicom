@@ -57,9 +57,9 @@ enum RelationType: string
     |--------------------------------------------------------------------------
     */
 
-    case HAS_ONE_THROUGH = 'hasOneThrough';
+    case HAS_ONE_THROUGH = 'has_One_Through';
 
-    case HAS_MANY_THROUGH = 'hasManyThrough';
+    case HAS_MANY_THROUGH = 'has_Many_Through';
 
     /*
     |--------------------------------------------------------------------------
@@ -194,6 +194,111 @@ enum RelationType: string
     public function isPolymorphic(): bool
     {
         return $this->isMorph();
+    }
+
+    public function requiresForeignKey(): bool
+    {
+        return match ($this) {
+
+            self::BELONGS_TO,
+
+            self::MORPH_TO
+
+            => true,
+
+            default
+
+            => false,
+        };
+    }
+    public function requiresPivotTable(): bool
+    {
+        return $this->requiresPivot();
+    }
+    public function requiresMorphColumns(): bool
+    {
+        return $this === self::MORPH_TO;
+    }
+    public function eloquentMethod(): string
+    {
+        return match ($this) {
+
+            self::BELONGS_TO
+            => 'belongsTo',
+
+            self::HAS_ONE
+            => 'hasOne',
+
+            self::HAS_MANY
+            => 'hasMany',
+
+            self::BELONGS_TO_MANY
+            => 'belongsToMany',
+
+            self::MORPH_ONE
+            => 'morphOne',
+
+            self::MORPH_MANY
+            => 'morphMany',
+
+            self::MORPH_TO
+            => 'morphTo',
+
+            self::MORPH_TO_MANY
+            => 'morphToMany',
+
+            self::MORPHED_BY_MANY
+            => 'morphedByMany',
+
+            self::HAS_ONE_THROUGH
+            => 'hasOneThrough',
+
+            self::HAS_MANY_THROUGH
+            => 'hasManyThrough',
+        };
+    }
+    public function returnsCollection(): bool
+    {
+        return $this->isMany();
+    }
+
+    public function inverse(): self
+    {
+        return match ($this) {
+
+            self::BELONGS_TO
+            => self::HAS_MANY,
+
+            self::HAS_ONE
+            => self::BELONGS_TO,
+
+            self::HAS_MANY
+            => self::BELONGS_TO,
+
+            self::BELONGS_TO_MANY
+            => self::BELONGS_TO_MANY,
+
+            self::MORPH_ONE
+            => self::MORPH_TO,
+
+            self::MORPH_MANY
+            => self::MORPH_TO,
+
+            self::MORPH_TO
+            => self::MORPH_MANY,
+
+            self::MORPH_TO_MANY
+            => self::MORPHED_BY_MANY,
+
+            self::MORPHED_BY_MANY
+            => self::MORPH_TO_MANY,
+
+            self::HAS_ONE_THROUGH
+            => self::BELONGS_TO,
+
+            self::HAS_MANY_THROUGH
+            => self::BELONGS_TO,
+        };
     }
 
 

@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Core\Generator\Factories;
 
-use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\DTO\ColumnDefinition;
+use App\Core\Generator\DTO\ModuleData;
+use Illuminate\Support\Str;
 
 /**
  * ==========================================================
@@ -139,6 +140,8 @@ final class ModuleDataFactory
 
             repositoryInterfacePath: $paths['repositoryInterfacePath'],
 
+            serviceInterfacePath: $paths['serviceInterfacePath'],
+
             servicePath: $paths['servicePath'],
 
             controllerPath: $paths['controllerPath'],
@@ -229,9 +232,7 @@ final class ModuleDataFactory
      */
     private function normalizeName(string $name): string
     {
-        return ucfirst(
-            str_replace('_', '', ucwords($name, '_'))
-        );
+        return Str::studly($name);
     }
 
     /**
@@ -341,6 +342,9 @@ final class ModuleDataFactory
             'repositoryInterfacePath'
             => app_path("Core/Contracts/{$name}RepositoryInterface.php"),
 
+            'serviceInterfacePath'
+            => app_path("Core/Contracts/{$name}ServiceInterface.php"),
+
             'servicePath'
             => app_path("Core/Services/{$name}Service.php"),
 
@@ -396,19 +400,19 @@ final class ModuleDataFactory
             => $definition['timestamps'] ?? true,
 
             'softDeletes'
-            => $definition['softDeletes'] ?? false,
+            => $definition['softDeletes'] ?? true,
 
             'uuid'
             => $definition['uuid'] ?? true,
 
             'api'
-            => $definition['api'] ?? false,
+            => $definition['api'] ?? true,
 
             'tests'
             => $definition['tests'] ?? true,
 
             'permissions'
-            => $definition['permissions'] ?? false,
+            => $definition['permissions'] ?? true,
 
             'menu'
             => $definition['menu'] ?? true,

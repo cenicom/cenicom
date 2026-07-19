@@ -102,19 +102,13 @@ final class ViewGenerator extends BaseGenerator
 
             'description' => $module->description(),
 
-            'model' => lcfirst(
-                $module->modelClass()
-            ),
+            'model' => $module->variable(),
 
             'modelClass' => $module->modelClass(),
 
             'singular' => $module->singular(),
 
             'plural' => $module->plural(),
-
-            'collection' => $this->camelPlural(
-                $module->plural()
-            ),
 
             'routePrefix' => $module->routePrefix(),
 
@@ -126,12 +120,31 @@ final class ViewGenerator extends BaseGenerator
 
             'fields' => $module->columns(),
 
-            'columns' => $this->viewFieldProcessor->renderShow(
+            'collection' => $module->pluralVariable(),
+
+            'tableHeaders'
+            => $this->viewFieldProcessor->renderHeaders(
+                    $module->columns()
+                ),
+
+            'tableColumns'
+            => $this->viewFieldProcessor->renderIndex(
+                    $module->columns(),
+                    $module->variable()
+                ),
+
+            'columns' => $this->viewFieldProcessor->renderColumns(
                 $module->columns(),
                 $module->variable()
             ),
 
-            'columnCount' => count($module->columns()) + 1,
+
+            'columnCount' => count(
+                array_filter(
+                    $module->columns(),
+                    fn($column) => $column->shouldAppearInTable()
+                )
+            ) + 1,
 
             'form_fields' => $formFields,
 
@@ -139,16 +152,4 @@ final class ViewGenerator extends BaseGenerator
         ];
     }
 
-    private function camelPlural(
-        string $value
-    ): string {
-
-        return lcfirst(
-            str_replace(
-                ' ',
-                '',
-                ucwords($value)
-            )
-        );
-    }
 }

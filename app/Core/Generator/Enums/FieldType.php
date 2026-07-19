@@ -76,6 +76,10 @@ enum FieldType: string
 
     case ENUM = 'enum';
 
+    case EMAIL = 'email';
+
+    //case PASSWORD = 'password';
+
     /*
     |--------------------------------------------------------------------------
     | Fecha y hora
@@ -135,7 +139,7 @@ enum FieldType: string
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 Bloque 1 — Clasificación Numérica
+    | 📦 Clasificación Numérica
     |--------------------------------------------------------------------------
     */
 
@@ -158,7 +162,7 @@ enum FieldType: string
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 Bloque 2 — Clasificación de Texto
+    | 📦 Clasificación de Texto
     |--------------------------------------------------------------------------
     */
     public function isText(): bool
@@ -180,7 +184,7 @@ enum FieldType: string
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 Bloque 3 — Fechas
+    | 📦 Fechas
     |--------------------------------------------------------------------------
     */
     public function isDate(): bool
@@ -200,7 +204,7 @@ enum FieldType: string
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 Bloque 4 — Booleanos
+    | 📦 Booleanos
     |--------------------------------------------------------------------------
     */
     public function isBoolean(): bool
@@ -210,7 +214,7 @@ enum FieldType: string
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 Bloque 5 — JSON
+    | 📦 JSON
     |--------------------------------------------------------------------------
     */
     public function isJson(): bool
@@ -225,7 +229,7 @@ enum FieldType: string
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 Bloque 6 — Identificadores
+    | 📦 Identificadores
     |--------------------------------------------------------------------------
     */
     public function isIdentifier(): bool
@@ -242,7 +246,7 @@ enum FieldType: string
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 Bloque 7 — Binarios
+    | 📦 Binarios
     |--------------------------------------------------------------------------
     */
     public function isBinary(): bool
@@ -252,7 +256,7 @@ enum FieldType: string
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 Bloque 8 — Geometría
+    | 📦 Geometría
     |--------------------------------------------------------------------------
     */
     public function isGeometry(): bool
@@ -267,23 +271,17 @@ enum FieldType: string
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 Bloque 9 — Enumeraciones
+    | 📦 Enumeraciones
     |--------------------------------------------------------------------------
     */
     public function isEnum(): bool
     {
-        return match ($this) {
-            self::IP_ADDRESS,
-            self::MAC_ADDRESS,
-            self::GEOMETRY,
-            self::POINT => true,
-            default => false,
-        };
+        return $this === self::ENUM;
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 Bloque 1 — migrationMethod()
+    | 📦 migrationMethod()
     |--------------------------------------------------------------------------
     */
     /**
@@ -296,7 +294,7 @@ enum FieldType: string
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 Bloque 2 — phpType()
+    | 📦 phpType()
     Este helper define el tipo PHP natural de cada FieldType.
     |--------------------------------------------------------------------------
     */
@@ -905,12 +903,20 @@ enum FieldType: string
                 */
 
             self::STRING,
-            self::CHAR,
+            self::CHAR
+            => InputType::TEXT,
+
             self::TEXT,
             self::MEDIUM_TEXT,
             self::LONG_TEXT
-            => InputType::TEXT,
+            => InputType::TEXTAREA,
 
+            self::JSON,
+            self::JSONB
+            => InputType::TEXTAREA,
+
+            self::ENUM
+            => InputType::SELECT,
 
                 /*
                 |--------------------------------------------------------------------------
@@ -921,13 +927,13 @@ enum FieldType: string
             self::INTEGER,
             self::BIG_INTEGER,
             self::SMALL_INTEGER,
-            self::TINY_INTEGER,
             self::MEDIUM_INTEGER,
+            self::TINY_INTEGER,
             self::DECIMAL,
             self::FLOAT,
-            self::DOUBLE
+            self::DOUBLE,
+            self::YEAR
             => InputType::NUMBER,
-
 
                 /*
                 |--------------------------------------------------------------------------
@@ -937,7 +943,6 @@ enum FieldType: string
 
             self::BOOLEAN
             => InputType::CHECKBOX,
-
 
                 /*
                 |--------------------------------------------------------------------------
@@ -957,28 +962,19 @@ enum FieldType: string
             self::TIMESTAMP_TZ
             => InputType::DATETIME_LOCAL,
 
-
                 /*
                 |--------------------------------------------------------------------------
                 | Identificadores
                 |--------------------------------------------------------------------------
                 */
 
+            self::ID,
+            self::FOREIGN_ID
+            => InputType::SELECT,
+
             self::UUID,
             self::ULID
-            => InputType::UUID,
-
-
-                /*
-                |--------------------------------------------------------------------------
-                | JSON
-                |--------------------------------------------------------------------------
-                */
-
-            self::JSON,
-            self::JSONB
-            => InputType::JSON,
-
+            => InputType::TEXT,
 
                 /*
                 |--------------------------------------------------------------------------
@@ -986,17 +982,11 @@ enum FieldType: string
                 |--------------------------------------------------------------------------
                 */
 
-            self::FOREIGN_ID
-            => InputType::SELECT,
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Casos sin componente específico
-            |--------------------------------------------------------------------------
-            */
-
-            default
+            self::IP_ADDRESS,
+            self::MAC_ADDRESS,
+            self::BINARY,
+            self::GEOMETRY,
+            self::POINT
             => InputType::TEXT,
         };
     }

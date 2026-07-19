@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Core\Generator\Processors;
 
-use InvalidArgumentException;
+use App\Core\Generator\DTO\ColumnDefinition;
+use App\Core\Generator\Enums\FieldType;
 
 /**
  * Procesa la definición de campos de un módulo para generar
@@ -68,49 +69,42 @@ final class MigrationFieldProcessor
     ];
 
     /**
-     * Procesa la colección de campos.
-     *
-     * @param array<int, array<string, mixed>> $fields
+     * @param ColumnDefinition[] $fields
      */
-    public function process(array $fields): string
-    {
-        $lines = [];
+    public function process(
+        array $fields
+    ): string {
+        $columns = [];
 
         foreach ($fields as $field) {
-            $lines[] = $this->buildColumn($field);
+
+            $columns[] = $this->buildColumn($field);
+
         }
 
-        return implode(PHP_EOL, $lines);
+        return implode(PHP_EOL . PHP_EOL, $columns);
     }
 
-    /**
-     * Construye la instrucción Blueprint correspondiente.
-     *
-     * @param array<string, mixed> $field
-     */
-    private function buildColumn(array $field): string
+    private function buildColumn(ColumnDefinition $field): string
     {
         return $this->resolveColumn($field);
     }
 
     private function resolveColumn(
-        array $field
+        ColumnDefinition $field
     ): string {
 
-        $builder = self::BUILDERS[$field['type']] ?? null;
+        return match ($field->type()) {
 
-        if ($builder === null) {
+            FieldType::STRING =>
+            "\$table->string('{$field->name()}');",
 
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Tipo [%s] no soportado.',
-                    $field['type']
-                )
-            );
+            FieldType::TEXT =>
+            "\$table->text('{$field->name()}');",
 
-        }
-
-        return $this->{$builder}($field);
+            default =>
+            "\$table->{$field->type()->migrationMethod()}('{$field->name()}');",
+        };
 
     }
 
@@ -422,6 +416,114 @@ final class MigrationFieldProcessor
             $field
         );
     }
+
+    private function buildBase(ColumnDefinition $field): string
+    {
+        return match ($field->type()) {
+
+            FieldType::STRING =>
+            sprintf(
+                "\$table->string('%s'%s)",
+                $field->name(),
+                $field->length() !== null
+                ? ', ' . $field->length()
+                : ''
+            ),
+
+            FieldType::TEXT =>
+            sprintf(
+                "\$table->text('%s')",
+                $field->name()
+            ),
+
+            FieldType::DECIMAL =>
+            sprintf(
+                "\$table->decimal('%s', %d, %d)",
+                $field->name(),
+                $field->precision() ?? 10,
+                $field->scale() ?? 2
+            ),
+
+        // demás tipos...
+        };
+    }
+
+    private function applyModifiers(
+        string $column,
+        ColumnDefinition $field
+    ): string {
+
+        if ($field->nullable()) {
+            $column .= '->nullable()';
+        }
+
+        if ($field->unsigned()) {
+            $column .= '->unsigned()';
+        }
+
+        if ($field->unique()) {
+            $column .= '->unique()';
+        }
+
+        if ($field->index()) {
+            $column .= '->index()';
+        }
+
+        if ($field->default() !== null) {
+
+            $default = var_export(
+                $field->default(),
+                true
+            );
+
+            $column .= "->default({$default})";
+        }
+
+        if ($field->comment() !== null) {
+
+            $column .= sprintf(
+                "->comment('%s')",
+                addslashes($field->comment())
+            );
+        }
+
+        return $column;
+    }
+
+    private function applyForeignKey(
+        string $column,
+        ColumnDefinition $field
+    ): string {
+
+        if (!$field->isForeignKey()) {
+            return $column;
+        }
+
+        return $column
+            . "->references('{$field->references()}')"
+            . "->on('{$field->on()}')";
+    }
+
+    public function build(
+        ColumnDefinition $field
+    ): string {
+
+        $column = $this->buildBase($field);
+
+        $column = $this->applyModifiers(
+            $column,
+            $field
+        );
+
+        $column = $this->applyForeignKey(
+            $column,
+            $field
+        );
+
+        return $column . ';';
+    }
+
+
 
 
 }

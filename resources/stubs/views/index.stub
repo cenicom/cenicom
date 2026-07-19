@@ -5,79 +5,117 @@
 
     <div class="cn-page">
 
-        <x-cn.crud title="[[ plural ]]" subtitle="[[ description ]] " >
+        <x-cn.crud
+            title="[[ plural ]]"
+            subtitle="[[ description ]]">
 
             {{-- Toolbar --}}
             <x-slot:toolbar>
                 <x-cn.toolbar>
-                    {{-- filtros dinámicos del módulo --}}
-                    <x-cn.filters :action="route('[[ routePrefix ]].index')">
+
+                    <x-cn.filters :action="route('[[ routeName ]].index')">
                         {{-- filtros personalizados --}}
                     </x-cn.filters>
-                    <x-cn.button.create :href="route('[[ routePrefix ]].create')" />
+
+                    <x-cn.button.create
+                        :href="route('[[ routeName ]].create')" />
+
                 </x-cn.toolbar>
             </x-slot:toolbar>
 
             {{-- Tabla principal --}}
             <x-cn.table>
+
                 <thead>
                     <tr>
-                        {{-- columnas del módulo --}}
+
+[[ tableHeaders ]]
+
                         <th class="text-center">
                             Acciones
                         </th>
+
                     </tr>
                 </thead>
+
                 <tbody>
-                    @forelse ($[[ collection ]]  as $[[ model ]])
+
+                    @forelse ($[[ collection ]] as $[[ model ]])
+
                         <tr>
-                            {{-- datos del módulo --}}
+
+[[ tableColumns ]]
+
                             <td class="text-center">
-                                {{-- acciones CRUD --}}
-                            </td>
-                            <td class="text-center">
+
                                 <x-cn.crud.actions>
-                                    {{-- show --}}
+
                                     <x-cn.button.show
-                                        :href="route('[[ routePrefix ]].show', $[[ model ]])" />
-                                    {{-- edit --}}
+                                        :href="route('[[ routeName ]].show', $[[ model ]])" />
+
                                     <x-cn.button.edit
-                                        :href="route('[[ routePrefix ]].edit', $[[ model ]])" />
-                                    {{-- delete --}}
+                                        :href="route('[[ routeName ]].edit', $[[ model ]])" />
+
                                     <x-cn.confirm
-                                        id="delete-[[ model ]]-{{ $[[ model ]]->id  }}"
+                                        id="delete-[[ model ]]-{{ $[[ model ]]->id }}"
                                         title="Eliminar [[ singular ]]"
                                         message="¿Está seguro de eliminar este registro?">
+
                                         <form
-                                            action="{{ route('[[ routePrefix ]].destroy', $[[ model ]]) }}"
+                                            action="{{ route('[[ routeName ]].destroy', $[[ model ]]) }}"
                                             method="POST">
+
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger">
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger">
+
                                                 Confirmar
+
                                             </button>
+
                                         </form>
+
                                     </x-cn.confirm>
+
                                 </x-cn.crud.actions>
+
                             </td>
+
                         </tr>
+
                     @empty
+
                         <tr>
+
                             <td colspan="[[ columnCount ]]">
+
                                 <x-cn.empty-state>
                                     No existen registros.
                                 </x-cn.empty-state>
+
                             </td>
+
                         </tr>
+
                     @endforelse
+
                 </tbody>
+
             </x-cn.table>
 
             {{-- Footer --}}
             <x-slot:footer>
-                <x-cn.pagination :paginator="$[[ collection ]]" />
+
+                <x-cn.pagination
+                    :paginator="$[[ collection ]]" />
+
             </x-slot:footer>
 
         </x-cn.crud>
+
     </div>
+
 </x-layout.app>

@@ -41,6 +41,11 @@ abstract class BaseGenerator implements GeneratorInterface
      */
     abstract public function generate(ModuleData $module): GeneratorResult;
 
+    /**
+     * Variables universales disponibles para cualquier stub.
+     *
+     *  @param array<string,mixed> $variables
+     */
     protected function render(
         string $stub,
         array $variables
@@ -92,6 +97,101 @@ abstract class BaseGenerator implements GeneratorInterface
         $this->fileWriter->write(
             $path,
             $content
+        );
+    }
+
+    protected function generateResult(
+        string $stub,
+        string $path,
+        array $variables
+    ): GeneratorResult {
+
+        $result = new GeneratorResult();
+
+        if ($this->generateFile($stub, $path, $variables)) {
+            $result->addCreated($path);
+        } else {
+            $result->addSkipped($path);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Variables base disponibles para todos los stubs.
+     *
+     * Estas variables representan información común del módulo
+     * utilizada por múltiples generadores.
+     *
+     * @return array<string,mixed>
+     */
+    protected function defaultVariables(
+        ModuleData $module
+    ): array {
+
+        return array_merge(
+            $module->toStubVariables(),
+            [
+
+                /*
+                |--------------------------------------------------------------------------
+                | Variables dinámicas de nombres
+                |--------------------------------------------------------------------------
+                */
+
+                'variable' => $module->variable(),
+
+                'pluralVariable' => $module->pluralVariable(),
+
+                /*
+                |--------------------------------------------------------------------------
+                | Modelo
+                |--------------------------------------------------------------------------
+                */
+
+                'modelClass' => $module->modelClass(),
+
+                'qualifiedModel' => $module->qualifiedModel(),
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Rutas
+                |--------------------------------------------------------------------------
+                */
+
+                'routeResource' => $module->routeResource(),
+
+                'routeIndex' => $module->routeIndex(),
+
+                'routeCreate' => $module->routeCreate(),
+
+                'routeEdit' => $module->routeEdit(),
+
+                'routeStore' => $module->routeStore(),
+
+                'routeUpdate' => $module->routeUpdate(),
+
+                'routeDestroy' => $module->routeDestroy(),
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Vistas
+                |--------------------------------------------------------------------------
+                */
+
+                'collection' => $module->pluralVariable(),
+
+                'indexView' => $module->indexView(),
+
+                'createView' => $module->createView(),
+
+                'editView' => $module->editView(),
+
+                'showView' => $module->showView(),
+
+            ]
         );
     }
 }

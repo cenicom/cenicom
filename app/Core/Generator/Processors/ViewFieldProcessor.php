@@ -82,7 +82,7 @@ final class ViewFieldProcessor
         };
     }
 
-    public function renderShow(
+    public function renderColumns(
         array $columns,
         string $variable
     ): string {
@@ -102,6 +102,58 @@ final class ViewFieldProcessor
         }
 
         return implode(PHP_EOL . PHP_EOL, $fields);
+    }
+
+     /**
+     * Genera los encabezados de la tabla Index.
+     *
+     * @param array<ColumnDefinition> $columns
+     */
+    public function renderHeaders(array $columns): string
+    {
+        $headers = [];
+
+        foreach ($columns as $column) {
+
+            if (! $column->shouldAppearInTable()) {
+                continue;
+            }
+
+            $headers[] = sprintf(
+                '<th>%s</th>',
+                ucfirst(str_replace('_', ' ', $column->name()))
+            );
+        }
+
+        return implode(PHP_EOL . str_repeat(' ', 24), $headers);
+    }
+
+    /**
+     * Genera las columnas del Index.
+     *
+     * @param array<ColumnDefinition> $columns
+     */
+    public function renderIndex(
+        array $columns,
+        string $variable
+    ): string {
+
+        $cells = [];
+
+        foreach ($columns as $column) {
+
+            if (! $column->shouldAppearInTable()) {
+                continue;
+            }
+
+            $cells[] = sprintf(
+                '<td>{{ $%s->%s }}</td>',
+                $variable,
+                $column->name()
+            );
+        }
+
+        return implode(PHP_EOL . str_repeat(' ', 28), $cells);
     }
 
     private function renderShowField(
@@ -128,43 +180,191 @@ BLADE;
         return !$column->shouldAppearInForm();
     }
 
-    private function renderInput(ColumnDefinition $column, string $variable): string
-    {
-        return '';
+    private function renderInput(
+        ColumnDefinition $column,
+        string $variable
+    ): string {
+
+        $label = str_replace(
+            '_',
+            ' ',
+            ucfirst($column->name())
+        );
+
+        $name = $column->name();
+
+        $type = $column->type()->inputType()->value;
+
+        return <<<BLADE
+<x-cn.input
+    name="{$name}"
+    label="{$label}"
+    type="{$type}"
+    :value="old('{$name}', \${$variable}->{$name} ?? '')"
+/>
+BLADE;
     }
 
-    private function renderPassword(ColumnDefinition $column, string $variable): string
-    {
-        return '';
+    private function renderPassword(
+        ColumnDefinition $column,
+        string $variable
+    ): string {
+
+        $label = str_replace(
+            '_',
+            ' ',
+            ucfirst($column->name())
+        );
+
+        $name = $column->name();
+
+        return <<<BLADE
+<x-cn.password
+    name="{$name}"
+    label="{$label}"
+/>
+BLADE;
     }
 
-    private function renderNumber(ColumnDefinition $column, string $variable): string
-    {
-        return '';
+    private function renderNumber(
+        ColumnDefinition $column,
+        string $variable
+    ): string {
+
+        $label = str_replace(
+            '_',
+            ' ',
+            ucfirst($column->name())
+        );
+
+        $name = $column->name();
+
+        $type = $column->type()->inputType()->value;
+
+        return <<<BLADE
+<x-cn.input
+    name="{$name}"
+    label="{$label}"
+    type="{$type}"
+    :value="old('{$name}', \${$variable}->{$name} ?? '')"
+/>
+BLADE;
     }
 
-    private function renderTextarea(ColumnDefinition $column, string $variable): string
-    {
-        return '';
+    private function renderTextarea(
+        ColumnDefinition $column,
+        string $variable
+    ): string {
+
+        $label = str_replace(
+            '_',
+            ' ',
+            ucfirst($column->name())
+        );
+
+        $name = $column->name();
+
+        return <<<BLADE
+<x-cn.textarea
+    name="{$name}"
+    label="{$label}"
+>
+{{ old('{$name}', \${$variable}->{$name} ?? '') }}
+</x-cn.textarea>
+BLADE;
     }
 
-    private function renderCheckbox(ColumnDefinition $column, string $variable): string
-    {
-        return '';
+    private function renderCheckbox(
+        ColumnDefinition $column,
+        string $variable
+    ): string {
+
+        $label = str_replace(
+            '_',
+            ' ',
+            ucfirst($column->name())
+        );
+
+        $name = $column->name();
+
+        return <<<BLADE
+<x-cn.checkbox
+    name="{$name}"
+    label="{$label}"
+    :checked="old('{$name}', \${$variable}->{$name} ?? false)"
+/>
+BLADE;
     }
 
-    private function renderSelect(ColumnDefinition $column, string $variable): string
-    {
-        return '';
+    private function renderSelect(
+        ColumnDefinition $column,
+        string $variable
+    ): string {
+
+        $label = str_replace(
+            '_',
+            ' ',
+            ucfirst($column->name())
+        );
+
+        $name = $column->name();
+
+        return <<<BLADE
+<x-cn.select
+    name="{$name}"
+    label="{$label}"
+    :options="\${$name}Options ?? []"
+    :selected="old('{$name}', \${$variable}->{$name} ?? '')"
+/>
+BLADE;
+    }
+    private function renderDate(
+        ColumnDefinition $column,
+        string $variable
+    ): string {
+
+        $label = str_replace(
+            '_',
+            ' ',
+            ucfirst($column->name())
+        );
+
+        $name = $column->name();
+
+        $type = $column->type()->inputType()->value;
+
+        return <<<BLADE
+<x-cn.input
+    name="{$name}"
+    label="{$label}"
+    type="{$type}"
+    :value="old('{$name}', \${$variable}->{$name} ?? '')"
+/>
+BLADE;
     }
 
-    private function renderDate(ColumnDefinition $column, string $variable): string
-    {
-        return '';
-    }
+    private function renderFile(
+        ColumnDefinition $column,
+        string $variable
+    ): string {
 
-    private function renderFile(ColumnDefinition $column, string $variable): string
-    {
-        return '';
+        $label = str_replace(
+            '_',
+            ' ',
+            ucfirst($column->name())
+        );
+
+        $name = $column->name();
+
+        $component = $column->type()->inputType() === InputType::IMAGE
+            ? 'image'
+            : 'file';
+
+        return <<<BLADE
+<x-cn.{$component}
+    name="{$name}"
+    label="{$label}"
+/>
+BLADE;
     }
 }

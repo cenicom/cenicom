@@ -583,9 +583,9 @@ enum InputType: string
             self::RADIO
             => 'radio',
 
-            self::FILE,
+            self::FILE => 'file',
             self::IMAGE
-            => 'file',
+            => 'image',
 
             self::DATE,
             self::TIME,
@@ -940,7 +940,11 @@ enum InputType: string
 
     public function requiresOptions(): bool
     {
-        return $this === self::SELECT;
+        return match ($this) {
+            self::SELECT,
+            self::RADIO => true,
+            default => false,
+        };
     }
 
     public function acceptsFiles(): bool
@@ -948,6 +952,9 @@ enum InputType: string
         return $this->isFile();
     }
 
-
+    public function bladeComponent(): string
+    {
+        return $this->componentName();
+    }
 
 }

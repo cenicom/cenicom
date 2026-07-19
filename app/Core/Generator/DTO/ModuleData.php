@@ -140,9 +140,7 @@ readonly class ModuleData
 
     private string $serviceInterfacePath;
 
-    private string $resourcePath;
 
-    private string $menuPath;
 
     /*
     |--------------------------------------------------------------------------
@@ -234,6 +232,7 @@ readonly class ModuleData
         string $repositoryPath,
         string $repositoryInterfacePath,
         string $servicePath,
+        string $serviceInterfacePath,
         string $controllerPath,
         string $policyPath,
         string $requestPath,
@@ -299,6 +298,7 @@ readonly class ModuleData
         $this->migrationPath = $migrationPath;
         $this->repositoryPath = $repositoryPath;
         $this->repositoryInterfacePath = $repositoryInterfacePath;
+        $this->serviceInterfacePath = $serviceInterfacePath;
         $this->servicePath = $servicePath;
         $this->controllerPath = $controllerPath;
         $this->requestPath = $requestPath;
@@ -505,7 +505,7 @@ readonly class ModuleData
 
     public function pluralVariable(): string
     {
-        return lcfirst($this->plural());
+        return Str::camel($this->plural());
     }
 
     /*
@@ -596,19 +596,7 @@ readonly class ModuleData
 
     public function serviceInterfacePath(): string
     {
-        return app_path(
-            "Core/Contracts/{$this->serviceInterface()}.php"
-        );
-    }
-
-    public function resourcePath(): string
-    {
-        return $this->resourcePath;
-    }
-
-    public function menuPath(): string
-    {
-        return $this->menuPath;
+        return $this->serviceInterfacePath;
     }
 
     /*
@@ -842,22 +830,22 @@ readonly class ModuleData
 
     public function routeResource(): string
     {
-        return $this->routePrefix;
+        return $this->routePrefix();
     }
 
     public function routeIndex(): string
     {
-        return "{$this->routeName}.index";
+        return $this->routeName() . '.index';
     }
 
     public function routeCreate(): string
     {
-        return "{$this->routeName()}.create";
+        return $this->routeName() . '.create';
     }
 
     public function routeEdit(): string
     {
-        return "{$this->routeName}.edit";
+        return $this->routeName() . '.edit';
     }
 
     public function routeStore(): string
@@ -888,16 +876,6 @@ readonly class ModuleData
     public function hasUuid(): bool
     {
         return $this->uuid();
-    }
-
-    public function relationships(): array
-    {
-        return [];
-    }
-
-    public function scopes(): array
-    {
-        return [];
     }
 
     /**

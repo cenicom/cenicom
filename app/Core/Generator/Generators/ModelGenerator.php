@@ -28,13 +28,6 @@ final class ModelGenerator extends BaseGenerator
 {
     private const STUB = 'model.stub';
 
-    private const NON_FILLABLE_FIELDS = [
-        'id',
-        'created_at',
-        'updated_at',
-        'deleted_at',
-    ];
-
     public function supports(ModuleData $module): bool
     {
         return true;
@@ -45,18 +38,20 @@ final class ModelGenerator extends BaseGenerator
      */
     public function generate(ModuleData $module): GeneratorResult
     {
-        $this->generateFile(
-            self::STUB,
-            $module->modelPath(),
-            $this->buildVariables($module)
-        );
+        $file = $module->modelPath();
 
         $result = new GeneratorResult();
 
-        if ($this->generateFile(...)) {
-            $result->addCreated(...);
+        if (
+            $this->generateFile(
+                self::STUB,
+                $file,
+                $this->buildVariables($module)
+            )
+        ) {
+            $result->addCreated($file);
         } else {
-            $result->addSkipped(...);
+            $result->addSkipped($file);
         }
 
         return $result;
@@ -113,44 +108,29 @@ final class ModelGenerator extends BaseGenerator
     /**
      * Construye el contenido de la propiedad $fillable.
      */
-    private function buildFillable(
-        ModuleData $module
-    ): string {
-
+    private function buildFillable(ModuleData $module): string
+    {
         $fillable = [];
 
         foreach ($module->columns() as $column) {
 
-            $name = $column->name();
-
-            if ($this->isFillable($name)) {
-
-                $fillable[] = sprintf(
-                    "        '%s',",
-                    $name
-                );
+            if (!$column->shouldBeFillable()) {
+                continue;
             }
+
+            $fillable[] = sprintf(
+                "        '%s',",
+                $column->name()
+            );
         }
 
-        return implode(
-            PHP_EOL,
-            $fillable
-        );
+        return implode(PHP_EOL, $fillable);
     }
 
     /**
      * Determina si un campo puede formar parte de $fillable.
      */
-    private function isFillable(
-        string $field
-    ): bool {
 
-        return !in_array(
-            $field,
-            self::NON_FILLABLE_FIELDS,
-            true
-        );
-    }
 
     private function buildCasts(
         ModuleData $module

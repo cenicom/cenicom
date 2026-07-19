@@ -45,15 +45,17 @@ final class ControllerGenerator extends BaseGenerator
 
         $result = new GeneratorResult();
 
-        if ($this->fileWriter->exists($path)) {
-            return $result->addSkipped($path);
+        if (
+            $this->generateFile(
+                self::STUB,
+                $path,
+                $this->buildVariables($module)
+            )
+        ) {
+            $result->addCreated($path);
+        } else {
+            $result->addSkipped($path);
         }
-
-        $this->generateFile(
-            self::STUB,
-            $path,
-            $this->buildVariables($module)
-        );
 
         return $result->addCreated($path);
     }
