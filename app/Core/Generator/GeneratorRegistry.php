@@ -32,10 +32,12 @@ final readonly class GeneratorRegistry
     /**
      * Devuelve todos los generadores registrados.
      *
-     * @return iterable<GeneratorInterface>
+     * @return array<GeneratorInterface>
      */
     public function all(): iterable
     {
         return $this->generators;
     }
+
+
 }

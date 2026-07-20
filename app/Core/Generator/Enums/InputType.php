@@ -44,7 +44,7 @@ enum InputType: string
 
     case HIDDEN = 'hidden';
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | Fechas
     |--------------------------------------------------------------------------
@@ -60,7 +60,7 @@ enum InputType: string
 
     case WEEK = 'week';
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | Selección
     |--------------------------------------------------------------------------
@@ -74,7 +74,7 @@ enum InputType: string
 
     case SWITCH = 'switch';
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | Texto
     |--------------------------------------------------------------------------
@@ -84,7 +84,7 @@ enum InputType: string
 
     case EDITOR = 'editor';
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | Archivos
     |--------------------------------------------------------------------------
@@ -94,7 +94,7 @@ enum InputType: string
 
     case IMAGE = 'image';
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | Especiales
     |--------------------------------------------------------------------------
@@ -112,11 +112,199 @@ enum InputType: string
 
     case CURRENCY = 'currency';
 
+    case MONEY = 'money';
+
     /*
     |--------------------------------------------------------------------------
-    | 📦 acceptsTextInput()
+    | Controles de texto
     |--------------------------------------------------------------------------
     */
+    private const TEXT_INPUTS = [
+
+        self::TEXT,
+        self::EMAIL,
+        self::PASSWORD,
+        self::TEL,
+        self::URL,
+        self::SEARCH,
+
+    ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Texto extendido
+    |--------------------------------------------------------------------------
+    */
+
+    private const TEXT_AREA_INPUTS = [
+
+        self::TEXTAREA,
+        self::EDITOR,
+        self::JSON,
+
+    ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Numéricos
+    |--------------------------------------------------------------------------
+    */
+    private const NUMERIC_INPUTS = [
+
+        self::NUMBER,
+        self::RANGE,
+        self::CURRENCY,
+        self::MONEY,
+
+    ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Fechas
+    |--------------------------------------------------------------------------
+    */
+
+    private const DATE_INPUTS = [
+
+        self::DATE,
+        self::TIME,
+        self::DATETIME_LOCAL,
+        self::MONTH,
+        self::WEEK,
+
+    ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Archivos
+    |--------------------------------------------------------------------------
+    */
+
+    private const FILE_INPUTS = [
+
+        self::FILE,
+        self::IMAGE,
+
+    ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Selección
+    |--------------------------------------------------------------------------
+    */
+
+    private const SELECTION_INPUTS = [
+
+        self::SELECT,
+        self::RADIO,
+        self::CHECKBOX,
+        self::SWITCH,
+
+    ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Booleanos
+    |--------------------------------------------------------------------------
+    */
+
+    private const BOOLEAN_INPUTS = [
+
+        self::CHECKBOX,
+        self::SWITCH,
+
+    ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Especiales
+    |--------------------------------------------------------------------------
+    */
+
+    private const SPECIAL_INPUTS = [
+
+        self::COLOR,
+        self::JSON,
+        self::UUID,
+        self::SLUG,
+        self::CURRENCY,
+
+    ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | Crear un método privado.
+    |--------------------------------------------------------------------------
+    */
+
+    private function supportsStandardRendering(): bool
+    {
+        return $this->isVisible();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Crear otro helper privado.
+    |--------------------------------------------------------------------------
+    */
+
+    private function supportsTextDecoration(): bool
+    {
+        return
+            $this->isText()
+            || $this->isDate()
+            || $this->isNumeric();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Crear otro helper.
+    |--------------------------------------------------------------------------
+    */
+
+    private function supportsInteractiveInput(): bool
+    {
+        return
+            !$this->isHidden();
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Crear helper para controles de texto.
+    |--------------------------------------------------------------------------
+    */
+
+    private function isEditableText(): bool
+    {
+        return
+            $this->isText()
+            || $this == self::EMAIL
+            || $this == self::PASSWORD
+            || $this == self::SEARCH
+            || $this == self::URL
+            || $this == self::TEL;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Crear otro helper.
+    |--------------------------------------------------------------------------
+    */
+
+    private function supportsNumericConfiguration(): bool
+    {
+        return
+            $this->isNumeric()
+            || $this->isDate();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | acceptsTextInput()
+    |--------------------------------------------------------------------------
+    */
+
     /**
      * Indica si el control acepta entrada textual.
      */
@@ -140,9 +328,11 @@ enum InputType: string
         };
     }
 
+
+
     /*
     |--------------------------------------------------------------------------
-    | 📦 acceptsNumericInput()
+    | acceptsNumericInput()
     |--------------------------------------------------------------------------
     */
     /**
@@ -150,19 +340,12 @@ enum InputType: string
      */
     public function acceptsNumericInput(): bool
     {
-        return match ($this) {
-
-            self::NUMBER,
-            self::RANGE,
-            self::CURRENCY => true,
-
-            default => false,
-        };
+        return in_array($this, self::NUMERIC_INPUTS, true);
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 acceptsDateInput()
+    | acceptsDateInput()
     |--------------------------------------------------------------------------
     */
     /**
@@ -170,21 +353,12 @@ enum InputType: string
      */
     public function acceptsDateInput(): bool
     {
-        return match ($this) {
-
-            self::DATE,
-            self::TIME,
-            self::MONTH,
-            self::WEEK,
-            self::DATETIME_LOCAL => true,
-
-            default => false,
-        };
+        return in_array($this, self::NUMERIC_INPUTS, true);
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 isSelection()
+    | isSelection()
     |--------------------------------------------------------------------------
     */
     /**
@@ -192,20 +366,12 @@ enum InputType: string
      */
     public function isSelection(): bool
     {
-        return match ($this) {
-
-            self::SELECT,
-            self::RADIO,
-            self::CHECKBOX,
-            self::SWITCH => true,
-
-            default => false,
-        };
+        return in_array($this, self::NUMERIC_INPUTS, true);
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 isBoolean()
+    | isBoolean()
     |--------------------------------------------------------------------------
     */
     /**
@@ -213,18 +379,12 @@ enum InputType: string
      */
     public function isBoolean(): bool
     {
-        return match ($this) {
-
-            self::CHECKBOX,
-            self::SWITCH => true,
-
-            default => false,
-        };
+        return in_array($this, self::NUMERIC_INPUTS, true);
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 acceptsFileInput()
+    | acceptsFileInput()
     |--------------------------------------------------------------------------
     */
     /**
@@ -232,18 +392,12 @@ enum InputType: string
      */
     public function acceptsFileInput(): bool
     {
-        return match ($this) {
-
-            self::FILE,
-            self::IMAGE => true,
-
-            default => false,
-        };
+        return in_array($this, self::NUMERIC_INPUTS, true);
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 isHidden()
+    | isHidden()
     |--------------------------------------------------------------------------
     */
     /**
@@ -264,7 +418,7 @@ enum InputType: string
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 isRichText()
+    | isRichText()
     |--------------------------------------------------------------------------
     */
     /**
@@ -277,7 +431,7 @@ enum InputType: string
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 isSpecial()
+    | isSpecial()
     |--------------------------------------------------------------------------
     */
     /**
@@ -285,21 +439,12 @@ enum InputType: string
      */
     public function isSpecial(): bool
     {
-        return match ($this) {
-
-            self::COLOR,
-            self::JSON,
-            self::UUID,
-            self::SLUG,
-            self::CURRENCY => true,
-
-            default => false,
-        };
+        return in_array($this, self::NUMERIC_INPUTS, true);
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 supportsUserInput()
+    | supportsUserInput()
     |--------------------------------------------------------------------------
     */
     /**
@@ -307,12 +452,12 @@ enum InputType: string
      */
     public function supportsUserInput(): bool
     {
-        return $this->isVisible();
+        return $this->supportsStandardRendering();
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 htmlType()
+    | htmlType()
             Aunque el enum ya almacena el valor HTML ($this->value),
             este método desacopla a los generadores del detalle de
             implementación.
@@ -329,7 +474,7 @@ enum InputType: string
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 supportsPlaceholder()
+    | supportsPlaceholder()
         No todos los controles admiten placeholder.
     |--------------------------------------------------------------------------
     */
@@ -338,29 +483,12 @@ enum InputType: string
      */
     public function supportsPlaceholder(): bool
     {
-        return match ($this) {
-
-            self::TEXT,
-            self::EMAIL,
-            self::PASSWORD,
-            self::NUMBER,
-            self::TEL,
-            self::URL,
-            self::SEARCH,
-            self::TEXTAREA,
-            self::DATE,
-            self::TIME,
-            self::DATETIME_LOCAL,
-            self::MONTH,
-            self::WEEK => true,
-
-            default => false,
-        };
+        return $this->supportsTextDecoration();
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 supportsReadonly()
+    | supportsReadonly()
     |--------------------------------------------------------------------------
     */
     /**
@@ -368,29 +496,12 @@ enum InputType: string
      */
     public function supportsReadonly(): bool
     {
-        return match ($this) {
-
-            self::TEXT,
-            self::EMAIL,
-            self::PASSWORD,
-            self::NUMBER,
-            self::TEL,
-            self::URL,
-            self::SEARCH,
-            self::DATE,
-            self::TIME,
-            self::DATETIME_LOCAL,
-            self::MONTH,
-            self::WEEK,
-            self::TEXTAREA => true,
-
-            default => false,
-        };
+        return $this->supportsTextDecoration();
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 supportsAutocomplete()
+    | supportsAutocomplete()
     |--------------------------------------------------------------------------
     */
     /**
@@ -398,22 +509,12 @@ enum InputType: string
      */
     public function supportsAutocomplete(): bool
     {
-        return match ($this) {
-
-            self::TEXT,
-            self::EMAIL,
-            self::PASSWORD,
-            self::TEL,
-            self::URL,
-            self::SEARCH => true,
-
-            default => false,
-        };
+        return $this->isEditableText();
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 supportsMultiple()
+    | supportsMultiple()
     |--------------------------------------------------------------------------
     */
     /**
@@ -432,7 +533,7 @@ enum InputType: string
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 supportsAccept()
+    | supportsAccept()
             El atributo accept es propio de controles de archivos.
     |--------------------------------------------------------------------------
     */
@@ -452,7 +553,7 @@ enum InputType: string
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 supportsMinMax()
+    | supportsMinMax()
             Agrupa el soporte para min y max.
     |--------------------------------------------------------------------------
     */
@@ -461,23 +562,12 @@ enum InputType: string
      */
     public function supportsMinMax(): bool
     {
-        return match ($this) {
-
-            self::NUMBER,
-            self::RANGE,
-            self::DATE,
-            self::TIME,
-            self::DATETIME_LOCAL,
-            self::MONTH,
-            self::WEEK => true,
-
-            default => false,
-        };
+        return $this->supportsNumericConfiguration();
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 supportsStep()
+    | supportsStep()
     |--------------------------------------------------------------------------
     */
     /**
@@ -485,21 +575,12 @@ enum InputType: string
      */
     public function supportsStep(): bool
     {
-        return match ($this) {
-
-            self::NUMBER,
-            self::RANGE,
-            self::DATE,
-            self::TIME,
-            self::DATETIME_LOCAL => true,
-
-            default => false,
-        };
+        return $this->supportsNumericConfiguration();
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 supportsPattern()
+    | supportsPattern()
     |--------------------------------------------------------------------------
     */
     /**
@@ -507,22 +588,12 @@ enum InputType: string
      */
     public function supportsPattern(): bool
     {
-        return match ($this) {
-
-            self::TEXT,
-            self::EMAIL,
-            self::PASSWORD,
-            self::TEL,
-            self::SEARCH,
-            self::URL => true,
-
-            default => false,
-        };
+        return $this->isEditableText();
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 supportsSpellcheck()
+    | supportsSpellcheck()
     |--------------------------------------------------------------------------
     */
     /**
@@ -530,19 +601,12 @@ enum InputType: string
      */
     public function supportsSpellcheck(): bool
     {
-        return match ($this) {
-
-            self::TEXT,
-            self::TEXTAREA,
-            self::EDITOR => true,
-
-            default => false,
-        };
+        return $this->isEditableText();
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 componentName()
+    | componentName()
             Recomiendo este nombre en lugar de bladeComponent().
             ¿Por qué?
             Porque devuelve un identificador lógico, no un componente
@@ -607,7 +671,7 @@ enum InputType: string
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 supportsFloatingLabel()
+    | supportsFloatingLabel()
     |--------------------------------------------------------------------------
     */
     /**
@@ -619,43 +683,16 @@ enum InputType: string
 
             self::CHECKBOX,
             self::RADIO,
-            self::SWITCH ,
+            self::SWITCH,
             self::HIDDEN => false,
 
             default => true,
-
         };
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 supportsHelpText()
-    |--------------------------------------------------------------------------
-    */
-    /**
-     * Indica si admite texto de ayuda.
-     */
-    public function supportsHelpText(): bool
-    {
-        return $this->isVisible();
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | 📦 supportsValidationFeedback()
-    |--------------------------------------------------------------------------
-    */
-    /**
-     * Indica si admite mensajes de validación.
-     */
-    public function supportsValidationFeedback(): bool
-    {
-        return $this->isVisible();
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | 📦 supportsPrefixSuffix()
+    | supportsPrefixSuffix()
     |--------------------------------------------------------------------------
     */
     /**
@@ -674,13 +711,12 @@ enum InputType: string
             self::CURRENCY => true,
 
             default => false,
-
         };
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 supportsIcon()
+    | supportsIcon()
     |--------------------------------------------------------------------------
     */
     /**
@@ -693,7 +729,7 @@ enum InputType: string
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 supportsMask()
+    | supportsMask()
     |--------------------------------------------------------------------------
     */
     /**
@@ -709,13 +745,12 @@ enum InputType: string
             self::SLUG => true,
 
             default => false,
-
         };
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 supportsClearButton()
+    | supportsClearButton()
     |--------------------------------------------------------------------------
     */
     /**
@@ -735,7 +770,6 @@ enum InputType: string
             self::DATETIME_LOCAL => true,
 
             default => false,
-
         };
     }
 
@@ -750,7 +784,7 @@ enum InputType: string
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 supportsLabel()
+    | supportsLabel()
     |--------------------------------------------------------------------------
     */
     /**
@@ -758,12 +792,12 @@ enum InputType: string
      */
     public function supportsLabel(): bool
     {
-        return $this->isVisible();
+        return $this->supportsStandardRendering();
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 supportsRequiredIndicator()
+    | supportsRequiredIndicator()
     |--------------------------------------------------------------------------
     */
     /**
@@ -776,7 +810,7 @@ enum InputType: string
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 supportsErrorMessage()
+    | supportsErrorMessage()
     |--------------------------------------------------------------------------
     */
     /**
@@ -784,25 +818,25 @@ enum InputType: string
      */
     public function supportsErrorMessage(): bool
     {
-        return $this !== self::HIDDEN;
+        return $this->supportsInteractiveInput();
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 supportsHint()
+    | supportsDescription()
     |--------------------------------------------------------------------------
     */
     /**
      * Indica si admite texto descriptivo o de ayuda.
      */
-    public function supportsHint(): bool
+    public function supportsDescription(): bool
     {
-        return $this->isVisible();
+        return $this->supportsStandardRendering();
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 supportsGridLayout()
+    | supportsGridLayout()
     |--------------------------------------------------------------------------
     */
     /**
@@ -810,12 +844,12 @@ enum InputType: string
      */
     public function supportsGridLayout(): bool
     {
-        return $this->isVisible();
+        return $this->supportsStandardRendering();
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 supportsAutoFocus()
+    | supportsAutoFocus()
     |--------------------------------------------------------------------------
     */
     /**
@@ -823,28 +857,12 @@ enum InputType: string
      */
     public function supportsAutoFocus(): bool
     {
-        return match ($this) {
-
-            self::TEXT,
-            self::EMAIL,
-            self::PASSWORD,
-            self::NUMBER,
-            self::TEL,
-            self::URL,
-            self::SEARCH,
-            self::TEXTAREA,
-            self::DATE,
-            self::TIME,
-            self::DATETIME_LOCAL => true,
-
-            default => false,
-
-        };
+        return $this->supportsTextDecoration();
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 supportsTabIndex()
+    | supportsTabIndex()
     |--------------------------------------------------------------------------
     */
     /**
@@ -852,12 +870,12 @@ enum InputType: string
      */
     public function supportsTabIndex(): bool
     {
-        return $this->isVisible();
+        return $this->supportsInteractiveInput();
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 supportsLiveValidation()
+    | supportsLiveValidation()
     |--------------------------------------------------------------------------
     */
     /**
@@ -865,18 +883,12 @@ enum InputType: string
      */
     public function supportsLiveValidation(): bool
     {
-        return match ($this) {
-
-            self::HIDDEN => false,
-
-            default => true,
-
-        };
+        return $this->supportsInteractiveInput();
     }
 
     /*
     |--------------------------------------------------------------------------
-    | 📦 supportsModelBinding()
+    | supportsModelBinding()
     |--------------------------------------------------------------------------
     */
     /**
@@ -884,7 +896,7 @@ enum InputType: string
      */
     public function supportsModelBinding(): bool
     {
-        return $this->isVisible();
+        return $this->supportsStandardRendering();
     }
 
     /*
@@ -897,9 +909,8 @@ enum InputType: string
      */
     public function supportsStatePersistence(): bool
     {
-        return $this->isVisible();
+        return $this->supportsStandardRendering();
     }
-
 
     public function isText(): bool
     {
@@ -911,31 +922,18 @@ enum InputType: string
 
     public function isNumeric(): bool
     {
-        return in_array($this, [
-            self::NUMBER,
-            self::RANGE,
-            self::CURRENCY,
-        ], true);
+        return in_array($this, self::NUMERIC_INPUTS, true);
     }
 
 
     public function isDate(): bool
     {
-        return in_array($this, [
-            self::DATE,
-            self::TIME,
-            self::DATETIME_LOCAL,
-            self::MONTH,
-            self::WEEK,
-        ], true);
+        return in_array($this, self::NUMERIC_INPUTS, true);
     }
 
     public function isFile(): bool
     {
-        return in_array($this, [
-            self::FILE,
-            self::IMAGE,
-        ]);
+        return in_array($this, self::NUMERIC_INPUTS, true);
     }
 
     public function requiresOptions(): bool
@@ -952,9 +950,43 @@ enum InputType: string
         return $this->isFile();
     }
 
-    public function bladeComponent(): string
+    public function bladeComponentName(): string
     {
         return $this->componentName();
     }
 
+    public function bladeComponentTag(): string
+    {
+        return 'x-cn.' . $this->bladeComponentName();
+    }
+
+    public function defaultAttributes(): array {}
+
+    public function defaultCssClass(): string {}
+
+    public function defaultIcon(): string {}
+
+    public function defaultPlaceholder(): string {}
+
+    public function supportsOldValue(): bool
+    {
+        return !$this->isHidden();
+    }
+
+    public function defaultBladeBinding(): string {}
+
+    public function defaultValidationRule(): string {}
+
+    public function preferredColumnWidth(): string {}
+
+    public function generatorMetadata(): array
+    {
+        return [
+            'component'    => $this->componentName(),
+            'placeholder'  => $this->defaultPlaceholder(),
+            'icon'         => $this->defaultIcon(),
+            'attributes'   => $this->defaultAttributes(),
+            'validation'   => $this->defaultValidationRule(),
+        ];
+    }
 }

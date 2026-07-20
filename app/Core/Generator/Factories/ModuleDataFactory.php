@@ -46,6 +46,12 @@ final class ModuleDataFactory
             $definition['generation'] ?? []
         );
 
+        $route = $definition['routing'] ?? [];
+
+        $routing = $this->buildRouting(
+            $route
+        );
+
         return new ModuleData(
 
             /*
@@ -56,13 +62,15 @@ final class ModuleDataFactory
 
             name: $name,
 
-            singular: $definition['singular'],
+            singular: $definition['singular'] ?? Str::snake($name),
 
-            plural: $definition['plural'],
+            plural: $definition['plural'] ?? Str::plural(Str::snake($name)),
 
-            table: $definition['table'],
+            table: $definition['table'] ?? Str::snake(
+                Str::plural($name)
+            ),
 
-            description: $definition['description'],
+            description: $definition['description'] ?? '',
 
             /*
             |--------------------------------------------------------------------------
@@ -176,6 +184,8 @@ final class ModuleDataFactory
             routeName: $definition['routeName'],
 
             viewPrefix: $definition['viewPrefix'],
+
+
 
             /*
             |--------------------------------------------------------------------------
@@ -359,8 +369,8 @@ final class ModuleDataFactory
 
             'routePath'
             => base_path(
-                    "routes/modules/{$plural}.php"
-                ),
+                "routes/modules/{$plural}.php"
+            ),
 
             'policyPath'
             => app_path("Policies/{$name}Policy.php"),
@@ -422,4 +432,27 @@ final class ModuleDataFactory
         ];
     }
 
+    private function buildRouting(
+        array $routing
+    ): array {
+        return [
+
+            'routeMiddleware'
+            => $routing['middleware']
+                ?? ['auth', 'verified'],
+
+            'routePrefix'
+            => $routing['prefix']
+                ?? '',
+
+            'routeNamePrefix'
+            => $routing['namePrefix']
+                ?? '',
+
+            'resourceRoutes'
+            => $routing['resource']
+                ?? true,
+
+        ];
+    }
 }

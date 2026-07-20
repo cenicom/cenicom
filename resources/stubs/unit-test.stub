@@ -1,0 +1,45 @@
+<?php
+
+declare(strict_types=1);
+
+namespace [[ namespace ]];
+
+use PHPUnit\Framework\TestCase;
+use [[ qualifiedModel ]];
+
+/**
+ * ==========================================================
+ * CENICOM ERP
+ * ==========================================================
+ *
+ * Prueba unitaria del módulo [[ model ]].
+ *
+ * @package [[ namespace ]]
+ * @since 1.0.0
+ */
+final class [[ unitTest ]]
+    extends TestCase
+{
+    /**
+     * Verifica que el modelo pueda instanciarse.
+     */
+    public function test_can_create_model_instance(): void
+    {
+        $model = new [[ model ]]();
+
+        $this->assertInstanceOf(
+            [[ model ]]::class,
+            $model
+        );
+    }
+
+    /**
+     * Verifica que la clase del modelo exista.
+     */
+    public function test_model_class_exists(): void
+    {
+        $this->assertTrue(
+            class_exists([[ model ]]::class)
+        );
+    }
+}

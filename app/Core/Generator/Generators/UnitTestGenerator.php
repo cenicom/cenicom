@@ -13,7 +13,7 @@ use App\Core\Generator\Results\GeneratorResult;
  * CENICOM ERP
  * ==========================================================
  *
- * Genera automáticamente el Observer de un módulo.
+ * Genera automáticamente la prueba Unit de un módulo.
  *
  * Procesa el stub correspondiente utilizando la información
  * contenida en ModuleData y persiste el resultado mediante
@@ -22,7 +22,7 @@ use App\Core\Generator\Results\GeneratorResult;
  * @package App\Core\Generator\Generators
  * @since 1.0.0
  */
-final class ObserverGenerator extends BaseGenerator
+final class UnitTestGenerator extends BaseGenerator
 {
     /**
      * Determina si el generador aplica al módulo recibido.
@@ -32,37 +32,33 @@ final class ObserverGenerator extends BaseGenerator
         return true;
     }
 
-
     /**
-     * Genera el Observer del módulo.
+     * Genera la prueba Unit del módulo.
      */
     public function generate(
         ModuleData $module
     ): GeneratorResult {
 
         $content = $this->render(
-            'observer.stub',
+            'unit-test.stub',
             $this->buildVariables($module)
         );
 
-
         $this->write(
-            $module->observerPath(),
+            $module->unitTestPath(),
             $content
         );
 
-
         return (new GeneratorResult())
             ->addCreated(
-                $module->observerPath()
+                $module->unitTestPath()
             );
     }
-
 
     /**
      * Construye las variables utilizadas por el stub.
      *
-     * @return array<string, string>
+     * @return array<string,mixed>
      */
     private function buildVariables(
         ModuleData $module
@@ -71,22 +67,17 @@ final class ObserverGenerator extends BaseGenerator
         return [
 
             'namespace'
-            => $module->observerNamespace(),
+                => $module->testNamespace(),
 
-            'observer'
-            => $module->observerClass(),
-
-            'modelNamespace'
-            => $module->modelNamespace(),
+            'unitTest'
+                => $module->unitTestClass(),
 
             'model'
-            => $module->modelClass(),
+                => $module->modelClass(),
 
             'qualifiedModel'
-            => $module->qualifiedModel(),
+                => $module->qualifiedModel(),
 
-            'variable'
-            => lcfirst($module->modelClass()),
         ];
     }
 }

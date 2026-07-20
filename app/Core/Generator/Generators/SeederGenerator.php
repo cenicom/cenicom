@@ -70,26 +70,30 @@ final class SeederGenerator extends BaseGenerator
 
         return [
 
+            'seeder' => $module->seederClass(),
+
+            'model'  => $module->modelClass(),
+
             'namespace'
-                => $module->seederNamespace(),
+            => $module->seederNamespace(),
 
             'class'
-                => $module->seederClass(),
+            => $module->seederClass(),
 
             'modelNamespace'
-                => $module->modelNamespace(),
+            => $module->modelNamespace(),
 
             'modelClass'
-                => $module->modelClass(),
+            => $module->modelClass(),
 
             'factoryClass'
-                => $module->factoryClass(),
+            => $module->factoryClass(),
 
             'qualifiedModel'
-                => $module->qualifiedModel(),
+            => $module->qualifiedModel(),
 
             'qualifiedFactory'
-                => $module->qualifiedFactory(),
+            => $module->qualifiedFactory(),
         ];
     }
 }

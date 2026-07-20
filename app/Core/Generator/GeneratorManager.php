@@ -18,60 +18,94 @@ use App\Core\Generator\Results\GeneratorResult;
  * Orquesta la ejecución de todos los generadores registrados
  * para producir automáticamente un módulo completo.
  *
- * El GeneratorManager no conoce implementaciones concretas;
- * únicamente trabaja mediante el contrato GeneratorInterface.
+ * Responsabilidades:
  *
- * Esto permite incorporar nuevos generadores sin modificar
- * este componente.
+ * - Registrar generadores
+ * - Ejecutarlos
+ * - Consolidar resultados
+ * - Finalizar la generación cuando un generador indique
+ *   que no puede continuar.
  *
- * @package App\Core\Generator
- * @since 1.0.0
+ * No conoce:
+ *
+ * - Stubs
+ * - FileWriter
+ * - PathResolver
+ * - NamespaceResolver
+ * - Implementaciones concretas
+ *
+ * @author CENICOM
  */
 final class GeneratorManager
 {
     /**
- * @param iterable<GeneratorInterface> $generators
- */
+     * Generadores registrados.
+     *
+     * @var array<GeneratorInterface>
+     */
+    private array $generators;
+
+    /**
+     * Constructor.
+     *
+     * @param iterable<GeneratorInterface> $generators
+     */
     public function __construct(
-        private readonly iterable $generators,
+        iterable $generators = [],
     ) {
+        $this->generators = is_array($generators)
+            ? $generators
+            : iterator_to_array($generators, false);
     }
 
     /**
-     * Ejecuta todos los generadores compatibles con el módulo.
+     * Registra un generador.
      */
-    public function execute(
-        ModuleData $module
+    public function register(
+        GeneratorInterface $generator,
+    ): self {
+        $this->generators[] = $generator;
+
+        return $this;
+    }
+
+    /**
+     * Ejecuta todos los generadores registrados.
+     */
+    public function generate(
+        ModuleData $module,
     ): GeneratorResult {
 
         $result = new GeneratorResult();
 
         foreach ($this->generators as $generator) {
 
-            if (! $generator->supports($module)) {
-                continue;
+            $current = $this->executeGenerator(
+                $generator,
+                $module,
+            );
+
+            $result->merge($current);
+
+            if ($current->hasErrors()) {
+                break;
             }
-
-            try {
-
-                $result->merge(
-                    $generator->generate($module)
-                );
-
-            } catch (\Throwable $exception) {
-
-                $result->addError(
-                    sprintf(
-                        '%s: %s',
-                        $generator::class,
-                        $exception->getMessage()
-                    )
-                );
-
-            }
-
         }
 
         return $result;
+    }
+
+    /**
+     * Ejecuta un único generador.
+     */
+    private function executeGenerator(
+        GeneratorInterface $generator,
+        ModuleData $module,
+    ): GeneratorResult {
+        return $generator->generate($module);
+    }
+
+    public function registered(): array{
+        return [];
     }
 }

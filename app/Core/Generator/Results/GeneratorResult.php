@@ -221,4 +221,52 @@ final class GeneratorResult
             ? $this->addCreated($path)
             : $this->addSkipped($path);
     }
+
+    public function createdCount(): int
+    {
+        return count($this->created);
+    }
+
+    public function updatedCount(): int
+    {
+        return count($this->updated);
+    }
+
+    public function skippedCount(): int
+    {
+        return count($this->skipped);
+    }
+
+    public function warningCount(): int
+    {
+        return count($this->warnings);
+    }
+
+    public function errorCount(): int
+    {
+        return count($this->errors);
+    }
+
+    public function hasCreatedFiles(): bool
+    {
+        return $this->createdCount() > 0;
+    }
+
+    public function hasUpdatedFiles(): bool
+    {
+        return $this->updatedCount() > 0;
+    }
+
+    public function hasSkippedFiles(): bool
+    {
+        return $this->skippedCount() > 0;
+    }
+
+    public function totalOperations(): int
+    {
+        return
+            $this->createdCount()
+            + $this->updatedCount()
+            + $this->skippedCount();
+    }
 }

@@ -12,84 +12,428 @@ use App\Core\Generator\Enums\InputType;
  * CENICOM ERP
  * ==========================================================
  *
- * Representa la definición de una columna de base de datos.
+ * Value Object que representa la definición completa de un
+ * campo de un módulo del CN Generator.
  *
- * Contiene toda la información necesaria para que el
- * MigrationGenerator construya automáticamente el esquema
- * de una tabla.
+ * Centraliza toda la información necesaria para generar
+ * automáticamente:
+ *
+ * - Migraciones
+ * - Modelos
+ * - Formularios
+ * - Validaciones
+ * - Tablas
+ * - Requests
+ * - Resources
+ * - API
+ *
+ * Esta clase constituye el núcleo semántico del sistema de
+ * generación automática de código.
  *
  * @package App\Core\Generator\DTO
- * @since 1.0.0
+ * @since 2.0.0
  */
 final readonly class ColumnDefinition
 {
-    public function __construct(
-        private string $name,
-        private FieldType $type,
-        private ?InputType $inputType = null,
-        private ?int $length = null,
-        private ?int $precision = null,
-        private ?int $scale = null,
-        private bool $nullable = false,
-        private mixed $default = null,
-        private bool $unique = false,
-        private bool $index = false,
-        private bool $unsigned = false,
-        private ?string $references = null,
-        private ?string $on = null,
-        private ?string $comment = null,
+    /*
+    |--------------------------------------------------------------------------
+    | Identidad
+    |--------------------------------------------------------------------------
+    */
 
+    private string $name;
+
+    private FieldType $type;
+
+    private ?InputType $inputType;
+
+    /*
+    |--------------------------------------------------------------------------
+    | Definición física
+    |--------------------------------------------------------------------------
+    */
+
+    private ?int $length;
+
+    private ?int $precision;
+
+    private ?int $scale;
+
+    private bool $nullable;
+
+    private mixed $default;
+
+    private bool $unsigned;
+
+    /*
+    |--------------------------------------------------------------------------
+    | Restricciones
+    |--------------------------------------------------------------------------
+    */
+
+    private bool $unique;
+
+    private bool $index;
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relaciones
+    |--------------------------------------------------------------------------
+    */
+
+    private ?string $references;
+
+    private ?string $on;
+
+    /**
+     * false              -> sin constrained
+     * true               -> ->constrained()
+     * 'users'            -> ->constrained('users')
+     */
+    private bool|string $constrained;
+
+    private bool $cascadeOnDelete;
+
+    private bool $cascadeOnUpdate;
+
+    private bool $restrictOnDelete;
+
+    private bool $nullOnDelete;
+
+    /*
+    |--------------------------------------------------------------------------
+    | Tipos especiales
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * @var array<int,string>
+     */
+    private array $enumValues;
+
+    /*
+    |--------------------------------------------------------------------------
+    | Metadata
+    |--------------------------------------------------------------------------
+    */
+
+    private ?string $comment;
+
+    private ?string $after;
+
+    private bool $first;
+
+    /**
+     * Constructor.
+     */
+    public function __construct(
+        string $name,
+        FieldType $type,
+        ?InputType $inputType = null,
+
+        ?int $length = null,
+        ?int $precision = null,
+        ?int $scale = null,
+
+        bool $nullable = false,
+        mixed $default = null,
+        bool $unsigned = false,
+
+        bool $unique = false,
+        bool $index = false,
+
+        ?string $references = null,
+        ?string $on = null,
+        bool|string $constrained = false,
+        bool $cascadeOnDelete = false,
+        bool $cascadeOnUpdate = false,
+        bool $restrictOnDelete = false,
+        bool $nullOnDelete = false,
+
+        array $enumValues = [],
+
+        ?string $comment = null,
+        ?string $after = null,
+        bool $first = false,
     ) {
+        $this->name = $name;
+        $this->type = $type;
+        $this->inputType = $inputType;
+
+        $this->length = $length;
+        $this->precision = $precision;
+        $this->scale = $scale;
+
+        $this->nullable = $nullable;
+        $this->default = $default;
+        $this->unsigned = $unsigned;
+
+        $this->unique = $unique;
+        $this->index = $index;
+
+        $this->references = $references;
+        $this->on = $on;
+        $this->constrained = $constrained;
+        $this->cascadeOnDelete = $cascadeOnDelete;
+        $this->cascadeOnUpdate = $cascadeOnUpdate;
+        $this->restrictOnDelete = $restrictOnDelete;
+        $this->nullOnDelete = $nullOnDelete;
+
+        $this->enumValues = $enumValues;
+
+        $this->comment = $comment;
+        $this->after = $after;
+        $this->first = $first;
     }
 
     /**
-     * Construye una ColumnDefinition a partir de un arreglo.
+     * Construye una instancia desde un arreglo.
      *
      * @param array<string,mixed> $definition
      */
-    public static function fromArray(array $definition): self
-    {
-        if (!isset($definition['name'])) {
+    public static function fromArray(
+        array $definition
+    ): self {
+
+        self::validateDefinition($definition);
+
+        return new self(
+
+            /*
+            |--------------------------------------------------------------------------
+            | Identidad
+            |--------------------------------------------------------------------------
+            */
+
+            name: (string) $definition['name'],
+
+            type: FieldType::from(
+                (string) $definition['type']
+            ),
+
+            inputType: isset($definition['inputType'])
+                ? InputType::from(
+                    (string) $definition['inputType']
+                )
+                : null,
+
+            /*
+            |--------------------------------------------------------------------------
+            | Definición física
+            |--------------------------------------------------------------------------
+            */
+
+            length: isset($definition['length'])
+                ? (int) $definition['length']
+                : null,
+
+            precision: isset($definition['precision'])
+                ? (int) $definition['precision']
+                : null,
+
+            scale: isset($definition['scale'])
+                ? (int) $definition['scale']
+                : null,
+
+            nullable: (bool) (
+                $definition['nullable'] ?? false
+            ),
+
+            default: $definition['default'] ?? null,
+
+            unsigned: (bool) (
+                $definition['unsigned'] ?? false
+            ),
+
+            /*
+            |--------------------------------------------------------------------------
+            | Restricciones
+            |--------------------------------------------------------------------------
+            */
+
+            unique: (bool) (
+                $definition['unique'] ?? false
+            ),
+
+            index: (bool) (
+                $definition['index'] ?? false
+            ),
+
+            /*
+            |--------------------------------------------------------------------------
+            | Relaciones
+            |--------------------------------------------------------------------------
+            */
+
+            references: $definition['references'] ?? null,
+
+            on: $definition['on'] ?? null,
+
+            constrained: $definition['constrained'] ?? false,
+
+            cascadeOnDelete: (bool) (
+                $definition['cascadeOnDelete'] ?? false
+            ),
+
+            cascadeOnUpdate: (bool) (
+                $definition['cascadeOnUpdate'] ?? false
+            ),
+
+            restrictOnDelete: (bool) (
+                $definition['restrictOnDelete'] ?? false
+            ),
+
+            nullOnDelete: (bool) (
+                $definition['nullOnDelete'] ?? false
+            ),
+
+            /*
+            |--------------------------------------------------------------------------
+            | Tipos especiales
+            |--------------------------------------------------------------------------
+            */
+
+            enumValues: $definition['enumValues'] ?? [],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Metadata
+            |--------------------------------------------------------------------------
+            */
+
+            comment: $definition['comment'] ?? null,
+
+            after: $definition['after'] ?? null,
+
+            first: (bool) (
+                $definition['first'] ?? false
+            ),
+        );
+    }
+
+    /**
+     * Valida la definición del campo.
+     *
+     * @param array<string,mixed> $definition
+     */
+    private static function validateDefinition(
+        array $definition
+    ): void {
+
+        if (! isset($definition['name'])) {
             throw new \InvalidArgumentException(
                 'The column definition requires the "name" attribute.'
             );
         }
 
-        if (!isset($definition['type'])) {
+        if (! isset($definition['type'])) {
             throw new \InvalidArgumentException(
                 'The column definition requires the "type" attribute.'
             );
         }
 
-        return new self(
-            name: (string) $definition['name'],
-            type: FieldType::from(
-                (string) $definition['type']
-            ),
-            inputType: isset($definition['inputType'])
-            ? InputType::from(
-                (string) $definition['inputType']
-            )
-            : null,
-            length: isset($definition['length'])
-            ? (int) $definition['length']
-            : null,
-            precision: isset($definition['precision'])
-            ? (int) $definition['precision']
-            : null,
-            scale: isset($definition['scale'])
-            ? (int) $definition['scale']
-            : null,
-            nullable: (bool) ($definition['nullable'] ?? false),
-            default: $definition['default'] ?? null,
-            unique: (bool) ($definition['unique'] ?? false),
-            index: (bool) ($definition['index'] ?? false),
-            unsigned: (bool) ($definition['unsigned'] ?? false),
-            references: $definition['references'] ?? null,
-            on: $definition['on'] ?? null,
-            comment: $definition['comment'] ?? null,
+        $type = FieldType::from(
+            (string) $definition['type']
         );
+
+        /*
+        |--------------------------------------------------------------------------
+        | ENUM
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $type === FieldType::ENUM
+            && empty($definition['enumValues'])
+        ) {
+            throw new \InvalidArgumentException(
+                'ENUM fields require the "enumValues" attribute.'
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Precision / Scale
+        |--------------------------------------------------------------------------
+        */
+
+        if (isset($definition['precision'])) {
+
+            if ((int) $definition['precision'] <= 0) {
+
+                throw new \InvalidArgumentException(
+                    'Precision must be greater than zero.'
+                );
+            }
+        }
+
+        if (
+            isset($definition['precision'])
+            && isset($definition['scale'])
+        ) {
+
+            if (
+                (int) $definition['scale']
+                >
+                (int) $definition['precision']
+            ) {
+
+                throw new \InvalidArgumentException(
+                    'Scale cannot be greater than precision.'
+                );
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Foreign Key
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            isset($definition['references'])
+            && ! isset($definition['on'])
+        ) {
+
+            throw new \InvalidArgumentException(
+                'Foreign keys require the "on" attribute.'
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Delete rules
+        |--------------------------------------------------------------------------
+        */
+
+        $deleteRules = 0;
+
+        foreach (
+            [
+                'cascadeOnDelete',
+                'restrictOnDelete',
+                'nullOnDelete',
+            ] as $rule
+        ) {
+
+            if (! empty($definition[$rule])) {
+                $deleteRules++;
+            }
+        }
+
+        if ($deleteRules > 1) {
+
+            throw new \InvalidArgumentException(
+                'Only one delete rule may be specified.'
+            );
+        }
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Identidad
+    |--------------------------------------------------------------------------
+    */
 
     public function name(): string
     {
@@ -100,6 +444,18 @@ final readonly class ColumnDefinition
     {
         return $this->type;
     }
+
+    public function inputType(): InputType
+    {
+        return $this->inputType
+            ?? $this->type->defaultInputType();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Definición física
+    |--------------------------------------------------------------------------
+    */
 
     public function length(): ?int
     {
@@ -126,6 +482,17 @@ final readonly class ColumnDefinition
         return $this->default;
     }
 
+    public function unsigned(): bool
+    {
+        return $this->unsigned;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Restricciones
+    |--------------------------------------------------------------------------
+    */
+
     public function unique(): bool
     {
         return $this->unique;
@@ -136,10 +503,11 @@ final readonly class ColumnDefinition
         return $this->index;
     }
 
-    public function unsigned(): bool
-    {
-        return $this->unsigned;
-    }
+    /*
+    |--------------------------------------------------------------------------
+    | Relaciones
+    |--------------------------------------------------------------------------
+    */
 
     public function references(): ?string
     {
@@ -151,12 +519,75 @@ final readonly class ColumnDefinition
         return $this->on;
     }
 
+    public function constrained(): bool|string
+    {
+        return $this->constrained;
+    }
+
+    public function cascadeOnDelete(): bool
+    {
+        return $this->cascadeOnDelete;
+    }
+
+    public function cascadeOnUpdate(): bool
+    {
+        return $this->cascadeOnUpdate;
+    }
+
+    public function restrictOnDelete(): bool
+    {
+        return $this->restrictOnDelete;
+    }
+
+    public function nullOnDelete(): bool
+    {
+        return $this->nullOnDelete;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Tipos especiales
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * @return array<int,string>
+     */
+    public function enumValues(): array
+    {
+        return $this->enumValues;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Metadata
+    |--------------------------------------------------------------------------
+    */
+
     public function comment(): ?string
     {
         return $this->comment;
     }
 
-    //Helpers
+    public function after(): ?string
+    {
+        return $this->after;
+    }
+
+    public function first(): bool
+    {
+        return $this->first;
+    }
+
+        /*
+    |--------------------------------------------------------------------------
+    | Helpers - Identificación
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Determina si la columna representa la llave primaria.
+     */
     public function isPrimaryKey(): bool
     {
         return match ($this->type) {
@@ -168,20 +599,33 @@ final readonly class ColumnDefinition
             default => $this->name === 'id',
         };
     }
+
+    /**
+     * Determina si corresponde a un timestamp estándar.
+     */
     public function isTimestamp(): bool
     {
         return in_array(
             $this->name,
-            ['created_at', 'updated_at'],
+            [
+                'created_at',
+                'updated_at',
+            ],
             true
         );
     }
 
+    /**
+     * Determina si representa la columna de SoftDeletes.
+     */
     public function isSoftDelete(): bool
     {
         return $this->name === 'deleted_at';
     }
 
+    /**
+     * Determina si representa una llave foránea.
+     */
     public function isForeignKey(): bool
     {
         return
@@ -189,6 +633,41 @@ final readonly class ColumnDefinition
             || $this->references !== null;
     }
 
+    /**
+     * Determina si el campo posee longitud.
+     */
+    public function isVariableLength(): bool
+    {
+        return $this->supportsLength();
+    }
+
+    /**
+     * Determina si el campo maneja precisión decimal.
+     */
+    public function isDecimal(): bool
+    {
+        return $this->type === FieldType::DECIMAL;
+    }
+
+    /**
+     * Determina si el campo corresponde a un ENUM.
+     */
+    public function isEnum(): bool
+    {
+        return $this->type === FieldType::ENUM;
+    }
+
+    /**
+     * Determina si el campo corresponde a JSON.
+     */
+    public function isJson(): bool
+    {
+        return $this->type === FieldType::JSON;
+    }
+
+    /**
+     * Determina si el campo se genera automáticamente.
+     */
     public function isAutoGenerated(): bool
     {
         return
@@ -197,66 +676,395 @@ final readonly class ColumnDefinition
             || $this->isSoftDelete();
     }
 
-    public function shouldAppearInForm(): bool
+    /**
+     * Determina si la columna posee una regla ON DELETE.
+     */
+    public function hasDeleteRule(): bool
     {
-        return !$this->isAutoGenerated();
+        return
+            $this->cascadeOnDelete
+            || $this->restrictOnDelete
+            || $this->nullOnDelete;
     }
 
+    /**
+     * Determina si la columna posee una regla ON UPDATE.
+     */
+    public function hasUpdateRule(): bool
+    {
+        return $this->cascadeOnUpdate;
+    }
+
+    /**
+     * Determina si el campo admite restricciones de llave foránea.
+     */
+    public function supportsForeignKey(): bool
+    {
+        return $this->type === FieldType::FOREIGN_ID;
+    }
+
+        /*
+    |--------------------------------------------------------------------------
+    | Helpers - Participación en Generadores
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Determina si el campo debe ser fillable.
+     */
+    public function shouldBeFillable(): bool
+    {
+        return ! $this->isAutoGenerated();
+    }
+
+    /**
+     * Determina si debe aparecer en formularios.
+     */
+    public function shouldAppearInForm(): bool
+    {
+        return ! $this->isAutoGenerated();
+    }
+
+    /**
+     * Determina si debe aparecer en tablas.
+     */
     public function shouldAppearInTable(): bool
     {
-        return !(
+        return ! (
             $this->isPrimaryKey()
-            || $this->isSoftDelete()
             || $this->isTimestamp()
+            || $this->isSoftDelete()
         );
     }
 
-    public function shouldBeFillable(): bool
+    /**
+     * Determina si debe aparecer en la vista de detalle.
+     */
+    public function shouldAppearInShow(): bool
     {
-        return !$this->isAutoGenerated();
+        return ! $this->isSoftDelete();
     }
 
+    /**
+     * Determina si debe participar en las reglas
+     * de validación.
+     */
+    public function shouldGenerateValidation(): bool
+    {
+        return ! $this->isAutoGenerated();
+    }
+
+    /**
+     * Determina si debe incluirse en los Resources API.
+     */
+    public function shouldAppearInResource(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Determina si debe incluirse en la generación
+     * automática de filtros.
+     */
+    public function shouldGenerateFilter(): bool
+    {
+        return ! (
+            $this->isPrimaryKey()
+            || $this->isSoftDelete()
+        );
+    }
+
+    /**
+     * Determina si debe permitir ordenamiento.
+     */
+    public function shouldBeSortable(): bool
+    {
+        return ! (
+            $this->isJson()
+            || $this->isSoftDelete()
+        );
+    }
+
+    /**
+     * Determina si debe permitir búsquedas.
+     */
+    public function shouldBeSearchable(): bool
+    {
+        return ! (
+            $this->isJson()
+            || $this->isSoftDelete()
+        );
+    }
+
+    /**
+     * Determina si el campo debe ocultarse
+     * automáticamente.
+     */
     public function shouldBeHidden(): bool
     {
-        // En futuras versiones ocultará automáticamente:
-        // password
-        // remember_token
-        // api_token
         return false;
     }
 
-    public function inputType(): InputType
+    /**
+     * Determina si el campo debe incluirse
+     * en exportaciones.
+     */
+    public function shouldExport(): bool
     {
-        if ($this->inputType !== null) {
-            return $this->inputType;
-        }
-
-        return $this->type->defaultInputType();
+        return ! $this->isSoftDelete();
     }
 
-    public function hasDefault(): bool
+    /**
+     * Determina si el campo puede editarse
+     * después de la creación.
+     */
+    public function shouldBeEditable(): bool
     {
-        return $this->default !== null;
+        return ! $this->isPrimaryKey();
     }
 
-    public function hasComment(): bool
+    /**
+     * Determina si el campo puede utilizarse
+     * en filtros avanzados.
+     */
+    public function shouldAllowBulkOperations(): bool
     {
-        return $this->comment !== null;
+        return ! $this->isPrimaryKey();
     }
 
+        /*
+    |--------------------------------------------------------------------------
+    | Helpers - Estado
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Determina si el campo define un InputType explícito.
+     */
+    public function hasInputType(): bool
+    {
+        return $this->inputType !== null;
+    }
+
+    /**
+     * Determina si el campo posee longitud.
+     */
     public function hasLength(): bool
     {
         return $this->length !== null;
     }
 
+    /**
+     * Determina si el campo posee precisión.
+     */
     public function hasPrecision(): bool
     {
         return $this->precision !== null;
     }
 
+    /**
+     * Determina si el campo posee escala.
+     */
     public function hasScale(): bool
     {
         return $this->scale !== null;
     }
+
+    /**
+     * Determina si el campo posee un valor por defecto.
+     */
+    public function hasDefault(): bool
+    {
+        return $this->default !== null;
+    }
+
+    /**
+     * Determina si el campo posee comentario.
+     */
+    public function hasComment(): bool
+    {
+        return $this->comment !== null;
+    }
+
+    /**
+     * Determina si el campo posee referencia.
+     */
+    public function hasReference(): bool
+    {
+        return $this->references !== null;
+    }
+
+    /**
+     * Determina si posee tabla relacionada.
+     */
+    public function hasTableReference(): bool
+    {
+        return $this->on !== null;
+    }
+
+    /**
+     * Determina si utiliza constrained().
+     */
+    public function hasConstraint(): bool
+    {
+        return $this->constrained !== false;
+    }
+
+    /**
+     * Determina si posee valores ENUM.
+     */
+    public function hasEnumValues(): bool
+    {
+        return $this->enumValues !== [];
+    }
+
+    /**
+     * Determina si el campo posee metadata "after".
+     */
+    public function hasAfter(): bool
+    {
+        return $this->after !== null;
+    }
+
+    /**
+     * Determina si el campo debe ubicarse primero.
+     */
+    public function isFirstColumn(): bool
+    {
+        return $this->first;
+    }
+
+    /**
+     * Determina si posee alguna restricción.
+     */
+    public function hasConstraints(): bool
+    {
+        return
+            $this->unique
+            || $this->index
+            || $this->isForeignKey();
+    }
+
+    /**
+     * Determina si posee modificadores Blueprint.
+     */
+    public function hasModifiers(): bool
+    {
+        return
+            $this->nullable
+            || $this->unsigned
+            || $this->hasDefault()
+            || $this->unique
+            || $this->index
+            || $this->hasComment();
+    }
+
+        /*
+    |--------------------------------------------------------------------------
+    | Helpers - Capacidades
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Determina si el tipo soporta longitud.
+     */
+    public function supportsLength(): bool
+    {
+        return $this->type->supportsLength();
+    }
+
+    /**
+     * Determina si el tipo soporta precisión.
+     */
+    public function supportsPrecision(): bool
+    {
+        return $this->type->supportsPrecision();
+    }
+
+    /**
+     * Determina si el tipo soporta escala.
+     */
+    public function supportsScale(): bool
+    {
+        return $this->type->supportsScale();
+    }
+
+    /**
+     * Determina si el tipo soporta unsigned.
+     */
+    public function supportsUnsigned(): bool
+    {
+        return $this->type->supportsUnsigned();
+    }
+
+    /**
+     * Determina si el tipo soporta valores por defecto.
+     */
+    public function supportsDefault(): bool
+    {
+        return $this->type->supportsDefault();
+    }
+
+    /**
+     * Determina si el tipo soporta comentarios.
+     */
+    public function supportsComment(): bool
+    {
+        return $this->type->supportsComment();
+    }
+
+    /**
+     * Determina si el tipo soporta índices.
+     */
+    public function supportsIndex(): bool
+    {
+        return $this->type->supportsIndex();
+    }
+
+    /**
+     * Determina si el tipo soporta UNIQUE.
+     */
+    public function supportsUnique(): bool
+    {
+        return $this->type->supportsUnique();
+    }
+        /*
+    |--------------------------------------------------------------------------
+    | Delegaciones hacia FieldType
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Método Blueprint utilizado por las migraciones.
+     */
+    public function migrationMethod(): string
+    {
+        return $this->type->migrationMethod();
+    }
+
+    /**
+     * Tipo PHP asociado.
+     */
+    public function phpType(): string
+    {
+        return $this->type->phpType();
+    }
+
+    /**
+     * Cast Eloquent recomendado.
+     */
+    public function cast(): ?string
+    {
+        return $this->type->cast();
+    }
+
+    /**
+     * Tipo de input por defecto.
+     */
+    public function defaultInputType(): InputType
+    {
+        return $this->type->defaultInputType();
+    }
+
 
 }

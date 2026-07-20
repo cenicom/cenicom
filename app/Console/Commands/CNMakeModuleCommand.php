@@ -72,7 +72,7 @@ final class CNMakeModuleCommand extends Command
 
                 $this->manifestGenerator->generate($moduleName);
 
-                $this->info(
+                $this->components->info(
                     "Manifest created: {$moduleName}.json"
                 );
             }
@@ -143,7 +143,7 @@ final class CNMakeModuleCommand extends Command
 
         if ($result->hasErrors()) {
 
-            $this->error(
+            $this->components->error(
                 "Module {$module} generated with errors."
             );
 
@@ -157,11 +157,11 @@ final class CNMakeModuleCommand extends Command
         if ($result->hasWarnings()) {
 
             foreach ($result->warnings() as $warning) {
-                $this->warn($warning);
+                $this->components->warn($warning);
             }
         }
 
-        $this->info(
+        $this->components->info(
             "Module {$module} generated successfully."
         );
 

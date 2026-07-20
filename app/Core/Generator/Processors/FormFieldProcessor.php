@@ -71,9 +71,7 @@ final class FormFieldProcessor
         string $variable
     ): string {
 
-        $builder = self::BUILDERS[
-            $field->type()->value
-        ] ?? null;
+        $builder = self::BUILDERS[$field->type()->value] ?? null;
 
         if ($builder === null) {
 
@@ -83,7 +81,6 @@ final class FormFieldProcessor
                     $field->type()->value
                 )
             );
-
         }
 
         return $this->{$builder}(
@@ -153,20 +150,10 @@ final class FormFieldProcessor
         string $variable
     ): string {
 
-        $required = $this->isRequired($field)
-            ? "\n    required"
-            : '';
-
-        return <<<BLADE
-<x-cn.input
-    name="{$field->name()}"
-    label="{$this->label($field)}"
-    placeholder="{$this->placeholder($field)}"
-    :value="{$this->value($field, $variable)}"
-    {$required}
-/>
-BLADE;
-
+        return $this->buildInput(
+            $field,
+            $variable
+        );
     }
 
     /**
@@ -184,10 +171,9 @@ BLADE;
     name="{$field->name()}"
     label="{$this->label($field)}"
     placeholder="{$this->placeholder($field)}"
-    :value="{$this->value($field, $variable)}"
+    :value="{$this->value($field,$variable)}"
 />
 BLADE;
-
     }
 
     /**
@@ -200,15 +186,13 @@ BLADE;
         string $variable
     ): string {
 
-        return <<<BLADE
-<x-cn.input
-    type="number"
-    name="{$field->name()}"
-    label="{$this->label($field)}"
-    :value="{$this->value($field, $variable)}"
-/>
-BLADE;
-
+        return $this->buildInput(
+            $field,
+            $variable,
+            [
+                'type' => 'number',
+            ]
+        );
     }
 
     /**
@@ -224,17 +208,20 @@ BLADE;
         return <<<BLADE
 <x-cn.input
     type="number"
-    step="0.01"
+    step="0.0001"
     name="{$field->name()}"
     label="{$this->label($field)}"
-    :value="{$this->value($field, $variable)}"
+    :value="{$this->value($field,$variable)}"
 />
 BLADE;
-        //tpdo -> {
-        //"precision": 10,
-        //"scale": 4
-        //    }
+        if ($field->scale() !== null) {
+
+            $step = '0.' .
+                str_repeat('0', $field->scale() - 1) .
+                '1';
+        }
     }
+
     /**
      * Número de columnas del campo.
      *
@@ -253,7 +240,6 @@ BLADE;
     :checked="old('{$field->name()}', \${$variable}->{$field->name()} ?? false)"
 />
 BLADE;
-
     }
 
     /**
@@ -267,15 +253,13 @@ BLADE;
         string $variable
     ): string {
 
-        return <<<BLADE
-<x-cn.input
-    type="date"
-    name="{$field->name()}"
-    label="{$this->label($field)}"
-    :value="{$this->value($field, $variable)}"
-/>
-BLADE;
-
+        return $this->buildInput(
+            $field,
+            $variable,
+            [
+                'type' => 'date',
+            ]
+        );
     }
 
     /**
@@ -297,10 +281,56 @@ BLADE;
 
 </x-cn.select>
 BLADE;
-
     }
 
+    private function buildInput(
+        ColumnDefinition $field,
+        string $variable,
+        array $attributes = []
+    ): string {
 
+        $attributes = array_merge([
+            'name' => $field->name(),
+            'label' => $this->label($field),
+            ':value' => $this->value($field, $variable),
+            'placeholder' => $this->placeholder($field),
+        ], $attributes);
 
+        if ($this->isRequired($field)) {
+            $attributes['required'] = null;
+        }
 
+        return $this->component(
+            'x-cn.input',
+            $attributes
+        );
+    }
+
+    private function component(
+        string $component,
+        array $attributes
+    ): string {
+
+        $lines = [];
+
+        foreach ($attributes as $name => $value) {
+
+            if ($value === null) {
+                $lines[] = "    {$name}";
+                continue;
+            }
+
+            $lines[] = sprintf(
+                '    %s="%s"',
+                $name,
+                $value
+            );
+        }
+
+        return sprintf(
+            "<%s\n%s\n/>",
+            $component,
+            implode(PHP_EOL, $lines)
+        );
+    }
 }

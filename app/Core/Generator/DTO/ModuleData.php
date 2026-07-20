@@ -39,6 +39,12 @@ readonly class ModuleData
 
     private string $description;
 
+    private array $routeMiddleware;
+
+    private ?string $routeNamePrefix;
+
+    private bool $resourceRoutes;
+
     /*
     |--------------------------------------------------------------------------
     | 2️⃣ Namespaces
@@ -66,6 +72,10 @@ readonly class ModuleData
     private string $testNamespace;
 
     private string $observerNamespace;
+
+    private string $featureTestNamespace;
+
+    private string $unitTestNamespace;
     /*
     |--------------------------------------------------------------------------
     | 3️⃣ Clases generadas
@@ -139,7 +149,6 @@ readonly class ModuleData
     private string $repositoryInterfacePath;
 
     private string $serviceInterfacePath;
-
 
 
     /*
@@ -365,6 +374,21 @@ readonly class ModuleData
         return $this->description;
     }
 
+    public function routeMiddleware(): array
+    {
+        return $this->routeMiddleware;
+    }
+
+    public function routeNamePrefix(): string
+    {
+        return $this->routeNamePrefix;
+    }
+
+    public function resourceRoutes(): bool
+    {
+        return $this->resourceRoutes;
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Getters - Namespaces
@@ -425,6 +449,17 @@ readonly class ModuleData
     {
         return $this->observerNamespace;
     }
+
+    public function featureTestNamespace(): string
+    {
+        return $this->featureTestNamespace;
+    }
+    public function unitTestNamespace(): string
+    {
+        return $this->unitTestNamespace;
+    }
+
+
 
     /*
     |--------------------------------------------------------------------------
@@ -944,6 +979,8 @@ readonly class ModuleData
     // table
     // model
     // ...
-
-
+    public function resourceUri(): string
+    {
+        return Str::kebab($this->plural());
+    }
 }

@@ -14,7 +14,7 @@ use RuntimeException;
  *
  * Carga los manifiestos de módulos del CN Generator.
  *
- * Responsable únicamente de localizar, leer y convertir
+ * Responsable únicamente de localizar, leer, validar y convertir
  * el archivo JSON de definición del módulo.
  *
  * @package App\Core\Generator\Support
@@ -56,8 +56,8 @@ final readonly class ManifestLoader
         }
 
         try {
-            /** @var array<string,mixed> */
-            return json_decode(
+            /** @var array<string,mixed> $manifest */
+            $manifest = json_decode(
                 $contents,
                 true,
                 512,
@@ -65,10 +65,12 @@ final readonly class ManifestLoader
             );
         } catch (JsonException $exception) {
             throw new RuntimeException(
-                "Invalid manifest JSON: {$file}",
+                "Invalid JSON manifest: {$file}",
                 previous: $exception
             );
         }
+
+        return $this->validate($manifest);
     }
 
     /**
@@ -89,5 +91,36 @@ final readonly class ManifestLoader
         return base_path(
             "{$this->manifestPath}/{$module}.json"
         );
+    }
+
+    /**
+     * Valida y normaliza el manifiesto.
+     *
+     * @param array<string,mixed> $manifest
+     *
+     * @return array<string,mixed>
+     */
+    private function validate(array $manifest): array
+    {
+        if (! isset($manifest['identity'])) {
+            throw new RuntimeException(
+                'Manifest requires the "identity" section.'
+            );
+        }
+
+        if (! isset($manifest['generation'])) {
+            throw new RuntimeException(
+                'Manifest requires the "generation" section.'
+            );
+        }
+
+        $manifest['fields'] ??= [];
+        $manifest['relations'] ??= [];
+        $manifest['validation'] ??= [];
+        $manifest['permissions'] ??= [];
+        $manifest['navigation'] ??= [];
+        $manifest['metadata'] ??= [];
+
+        return $manifest;
     }
 }

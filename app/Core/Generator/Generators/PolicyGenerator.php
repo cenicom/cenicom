@@ -68,19 +68,22 @@ final class PolicyGenerator extends BaseGenerator
         return [
 
             'namespace'
-                => $module->policyNamespace(),
+            => $module->policyNamespace(),
 
-            'class'
-                => $module->policyClass(),
+            'policy'
+            => $module->policyClass(),
 
             'modelNamespace'
-                => $module->modelNamespace(),
+            => $module->modelNamespace(),
 
-            'modelClass'
-                => $module->modelClass(),
+            'model'
+            => $module->modelClass(),
 
             'qualifiedModel'
-                => $module->qualifiedModel(),
+            => $module->qualifiedModel(),
+
+            'variable'
+            => lcfirst($module->modelClass()),
         ];
     }
 }

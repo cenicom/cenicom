@@ -26,8 +26,7 @@ final class ModuleGenerator
      */
     public function __construct(
         private readonly iterable $generators,
-    ) {
-    }
+    ) {}
 
     /**
      * Ejecuta los generadores compatibles con el módulo.
@@ -44,9 +43,7 @@ final class ModuleGenerator
 
             $generatorResult = $generator->generate($module);
 
-            if ($generatorResult instanceof GeneratorResult) {
-                $result->merge($generatorResult);
-            }
+            $result->merge($generatorResult);
         }
 
         return $result;

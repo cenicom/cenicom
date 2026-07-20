@@ -13,7 +13,7 @@ use App\Core\Generator\Results\GeneratorResult;
  * CENICOM ERP
  * ==========================================================
  *
- * Genera automáticamente el Observer de un módulo.
+ * Genera automáticamente la prueba Feature de un módulo.
  *
  * Procesa el stub correspondiente utilizando la información
  * contenida en ModuleData y persiste el resultado mediante
@@ -22,7 +22,7 @@ use App\Core\Generator\Results\GeneratorResult;
  * @package App\Core\Generator\Generators
  * @since 1.0.0
  */
-final class ObserverGenerator extends BaseGenerator
+final class FeatureTestGenerator extends BaseGenerator
 {
     /**
      * Determina si el generador aplica al módulo recibido.
@@ -32,37 +32,33 @@ final class ObserverGenerator extends BaseGenerator
         return true;
     }
 
-
     /**
-     * Genera el Observer del módulo.
+     * Genera la prueba Feature del módulo.
      */
     public function generate(
         ModuleData $module
     ): GeneratorResult {
 
         $content = $this->render(
-            'observer.stub',
+            'feature-test.stub',
             $this->buildVariables($module)
         );
 
-
         $this->write(
-            $module->observerPath(),
+            $module->featureTestPath(),
             $content
         );
 
-
         return (new GeneratorResult())
             ->addCreated(
-                $module->observerPath()
+                $module->featureTestPath()
             );
     }
-
 
     /**
      * Construye las variables utilizadas por el stub.
      *
-     * @return array<string, string>
+     * @return array<string,mixed>
      */
     private function buildVariables(
         ModuleData $module
@@ -71,22 +67,23 @@ final class ObserverGenerator extends BaseGenerator
         return [
 
             'namespace'
-            => $module->observerNamespace(),
+                => $module->testNamespace(),
 
-            'observer'
-            => $module->observerClass(),
-
-            'modelNamespace'
-            => $module->modelNamespace(),
+            'featureTest'
+                => $module->featureTestClass(),
 
             'model'
-            => $module->modelClass(),
+                => $module->modelClass(),
 
             'qualifiedModel'
-            => $module->qualifiedModel(),
+                => $module->qualifiedModel(),
 
-            'variable'
-            => lcfirst($module->modelClass()),
+            'route'
+                => $module->routeName(),
+
+            'viewPrefix'
+                => $module->viewPrefix(),
+
         ];
     }
 }
