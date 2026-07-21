@@ -7,6 +7,8 @@ namespace App\Core\Generator\Presentation\Presenters;
 use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\Presentation\Contracts\PresentationInterface;
 use App\Core\Generator\Presentation\DTO\ComponentMetadata;
+use App\Core\Generator\Presentation\DTO\InputPresentation;
+
 
 /**
  * ==========================================================
@@ -57,7 +59,7 @@ final readonly class FormPresenter implements PresentationInterface
     /**
      * Obtiene la colección de componentes del formulario.
      *
-     * @return array<int, ComponentMetadata>
+     * @return array<int, InputPresentation>
      */
     public function fields(): array
     {
@@ -79,7 +81,7 @@ final readonly class FormPresenter implements PresentationInterface
     /**
      * Obtiene el formulario organizado por filas.
      *
-     * @return array<int,array<int,ComponentMetadata>>
+     * @return array<int,array<int,InputPresentation>>
      */
     public function rows(): array
     {
@@ -91,8 +93,8 @@ final readonly class FormPresenter implements PresentationInterface
     /**
      * Organiza los componentes por filas Bootstrap.
      *
-     * @param array<int,ComponentMetadata> $fields
-     * @return array<int,array<int,ComponentMetadata>>
+     * @param array<int,InputPresentation> $fields
+     * @return array<int,array<int,InputPresentation>>
      */
     private function buildRows(array $fields): array
     {

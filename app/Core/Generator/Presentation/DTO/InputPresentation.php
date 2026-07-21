@@ -18,6 +18,10 @@ final readonly class InputPresentation
 
         public string $label,
 
+        public readonly string $type,
+
+         public readonly string $placeholder,
+
         public ComponentMetadata $component,
 
         public bool $required,

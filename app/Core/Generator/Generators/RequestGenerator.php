@@ -59,6 +59,7 @@ final class RequestGenerator extends BaseGenerator
      */
     public function generate(ModuleData $module): GeneratorResult
     {
+
         $result = new GeneratorResult();
 
         $this->generateStoreRequest($module, $result);
@@ -75,6 +76,7 @@ final class RequestGenerator extends BaseGenerator
         ModuleData $module,
         GeneratorResult $result
     ): void {
+
 
         $file = $module->requestPath()
             . DIRECTORY_SEPARATOR

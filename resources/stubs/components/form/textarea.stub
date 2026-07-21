@@ -1,0 +1,15 @@
+
+
+{{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     textarea.stub
+========================================================== --}}
+
+<div class="[[ column_class ]]">
+    <x-cn.textarea
+        name="[[ name ]]"
+        label="[[ label ]]"
+        placeholder="[[ placeholder ]]"
+    />
+</div>

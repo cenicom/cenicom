@@ -203,43 +203,20 @@ abstract class BaseGenerator implements GeneratorInterface
      * @return array<string,mixed>
      */
     protected function buildPresentationVariables(
-        ModuleData $module
+        ModuleData $module,
     ): array {
 
-        $form = $this->presentationFactory
-            ->form($module)
-            ->metadata();
+        $form = $this->presentationFactory->form($module);
 
-        $table = $this->presentationFactory
-            ->table($module)
-            ->metadata();
+        $table = $this->presentationFactory->table($module);
 
         return [
 
-            /*
-        |--------------------------------------------------------------------------
-        | Formulario
-        |--------------------------------------------------------------------------
-        */
+            'form_fields'   => $form->fields(),
+            'form_rows'     => $form->rows(),
+            'form_sections' => $form->sections(),
 
-            'form_fields' => $form['fields'],
-
-            'form_rows' => $form['rows'],
-
-            'form_sections' => $form['sections'],
-
-
-            /*
-        |--------------------------------------------------------------------------
-        | Tabla
-        |--------------------------------------------------------------------------
-        */
-
-            'table_columns' => $table['columns'],
-
-            'table_labels' => $table['labels'],
-
-            'table_names' => $table['names'],
+            'table_columns' => $table->columns(),
 
         ];
     }

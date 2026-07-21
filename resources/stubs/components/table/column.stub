@@ -1,0 +1,14 @@
+{{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     column.stub
+========================================================== --}}
+
+<th
+    @class([
+        '[[ css_class ]]',
+        'text-[[ alignment ]]',
+    ])
+>
+    [[ label ]]
+</th>

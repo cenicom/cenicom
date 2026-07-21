@@ -39,26 +39,34 @@ final readonly class ColumnPresenter implements PresentationInterface
      * Genera la representación del campo.
      */
     public function present(): InputPresentation
-    {
-        return new InputPresentation(
+{
+    $component =
+        $this->buildComponent();
 
-            name: $this->column->name(),
+    return new InputPresentation(
 
-            label: $this->buildLabel(),
+        name: $this->column->name(),
 
-            component: $this->buildComponent(),
+        label: $this->buildLabel(),
 
-            required: $this->isRequired(),
+        type: $this->column->type()->value,
 
-            readonly: $this->isReadonly(),
+        placeholder: $component->placeholder,
 
-            disabled: $this->isDisabled(),
+        component: $component,
 
-            default: $this->column->default(),
+        required: $this->isRequired(),
 
-            columnClass: $field['columnClass'] ?? 'col-md-6'
-        );
-    }
+        readonly: $this->isReadonly(),
+
+        disabled: $this->isDisabled(),
+
+        default: $this->column->default(),
+
+        columnClass: $component->columnClass,
+
+    );
+}
 
     /*
     |--------------------------------------------------------------------------

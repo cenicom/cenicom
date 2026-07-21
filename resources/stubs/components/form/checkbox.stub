@@ -1,0 +1,14 @@
+
+
+{{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     checkbox.stub
+========================================================== --}}
+
+<div class="[[ column_class ]]">
+    <x-cn.checkbox
+        name="[[ name ]]"
+        label="[[ label ]]"
+    />
+</div>

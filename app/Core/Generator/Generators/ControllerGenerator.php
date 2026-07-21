@@ -24,6 +24,9 @@ use App\Core\Generator\Results\GeneratorResult;
  */
 final class ControllerGenerator extends BaseGenerator
 {
+
+    private const STUB = 'controller.stub';
+
     /**
      * Determina si el generador aplica al módulo recibido.
      */
@@ -35,8 +38,6 @@ final class ControllerGenerator extends BaseGenerator
     /**
      * Genera el controlador del módulo.
      */
-    private const STUB = 'controller.stub';
-
     public function generate(
         ModuleData $module
     ): GeneratorResult {
@@ -57,7 +58,7 @@ final class ControllerGenerator extends BaseGenerator
             $result->addSkipped($path);
         }
 
-        return $result->addCreated($path);
+        return $result;
     }
 
     /**
