@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace [[ namespace ]];
 
 use App\Models\User;
+
 use [[ modelNamespace ]]\[[ model ]];
 
 /**

@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Core\Generator\Processors;
 
 use App\Core\Generator\DTO\ColumnDefinition;
+use App\Core\Generator\Enums\InputType;
+use App\Core\Generator\Presentation\DTO\ComponentMetadata;
+use App\Core\Generator\Presentation\InputPresentation;
 use InvalidArgumentException;
 
 /**
@@ -16,27 +19,34 @@ final class FormFieldProcessor
     /**
      * Relación tipo de dato → método constructor.
      */
-    private const BUILDERS = [
+    private const RENDERERS = [
 
-        'string' => 'buildString',
+        InputType::TEXT->value      => 'buildString',
 
-        'text' => 'buildTextarea',
+        InputType::TEXTAREA->value  => 'buildTextarea',
 
-        'integer' => 'buildNumber',
+        InputType::NUMBER->value    => 'buildNumber',
 
-        'boolean' => 'buildCheckbox',
+        InputType::CHECKBOX->value  => 'buildCheckbox',
 
-        'decimal' => 'buildDecimal',
+        InputType::DATE->value      => 'buildDate',
 
-        'date' => 'buildDate',
-
-        'foreignId' => 'buildSelect',
+        InputType::SELECT->value    => 'buildSelect',
 
     ];
 
-    /**
-     * @param ColumnDefinition[] $fields
-     */
+    public function __construct(
+        private readonly InputPresentation $presentation,
+    ) {}
+
+    private function metadata(
+        ColumnDefinition $field
+    ): ComponentMetadata {
+        return $this->presentation->for(
+            $field->inputType()
+        );
+    }
+
     /**
      * @param ColumnDefinition[] $fields
      */
@@ -44,6 +54,7 @@ final class FormFieldProcessor
         array $fields,
         string $variable
     ): string {
+
 
         $components = [];
 
@@ -71,20 +82,23 @@ final class FormFieldProcessor
         string $variable
     ): string {
 
-        $builder = self::BUILDERS[$field->type()->value] ?? null;
+        $metadata = $this->metadata($field);
+
+        $builder = self::RENDERERS[$field->inputtype()->value] ?? null;
 
         if ($builder === null) {
 
             throw new InvalidArgumentException(
                 sprintf(
-                    'Tipo [%s] no soportado.',
-                    $field->type()->value
+                    'No existe un renderer registrado para el InputType [%s].',
+                    $field->inputType()->value
                 )
             );
         }
 
         return $this->{$builder}(
             $field,
+            $metadata,
             $variable
         );
     }
@@ -147,11 +161,13 @@ final class FormFieldProcessor
 
     private function buildString(
         ColumnDefinition $field,
+        ComponentMetadata $metadata,
         string $variable
     ): string {
 
         return $this->buildInput(
             $field,
+            $metadata,
             $variable
         );
     }
@@ -163,17 +179,27 @@ final class FormFieldProcessor
      */
     private function buildTextarea(
         ColumnDefinition $field,
+        ComponentMetadata $metadata,
         string $variable
     ): string {
 
-        return <<<BLADE
-<x-cn.textarea
-    name="{$field->name()}"
-    label="{$this->label($field)}"
-    placeholder="{$this->placeholder($field)}"
-    :value="{$this->value($field,$variable)}"
-/>
-BLADE;
+        return $this->component(
+            $metadata->blade(),
+            [
+
+                'name' => $field->name(),
+
+                'label' => $this->label($field),
+
+                'placeholder' => sprintf(
+                    $metadata->placeholder,
+                    strtolower($this->label($field))
+                ),
+
+                ':value' => $this->value($field, $variable),
+
+            ]
+        );
     }
 
     /**
@@ -183,15 +209,24 @@ BLADE;
      */
     private function buildNumber(
         ColumnDefinition $field,
+        ComponentMetadata $metadata,
         string $variable
     ): string {
 
         return $this->buildInput(
+
             $field,
+
+            $metadata,
+
             $variable,
+
             [
+
                 'type' => 'number',
+
             ]
+
         );
     }
 
@@ -202,24 +237,36 @@ BLADE;
      */
     private function buildDecimal(
         ColumnDefinition $field,
+        ComponentMetadata $metadata,
         string $variable
     ): string {
 
-        return <<<BLADE
-<x-cn.input
-    type="number"
-    step="0.0001"
-    name="{$field->name()}"
-    label="{$this->label($field)}"
-    :value="{$this->value($field,$variable)}"
-/>
-BLADE;
+        $step = '0.01';
+
         if ($field->scale() !== null) {
 
-            $step = '0.' .
-                str_repeat('0', $field->scale() - 1) .
-                '1';
+            $step = '0.'
+                . str_repeat('0', $field->scale() - 1)
+                . '1';
         }
+
+        return $this->buildInput(
+
+            $field,
+
+            $metadata,
+
+            $variable,
+
+            [
+
+                'type' => 'number',
+
+                'step' => $step,
+
+            ]
+
+        );
     }
 
     /**
@@ -230,16 +277,27 @@ BLADE;
 
     private function buildCheckbox(
         ColumnDefinition $field,
+        ComponentMetadata $metadata,
         string $variable
     ): string {
 
-        return <<<BLADE
-<x-cn.checkbox
-    name="{$field->name()}"
-    label="{$this->label($field)}"
-    :checked="old('{$field->name()}', \${$variable}->{$field->name()} ?? false)"
-/>
-BLADE;
+        return $this->component(
+            $metadata->blade(),
+            [
+
+                'name' => $field->name(),
+
+                'label' => $this->label($field),
+
+                ':checked' => sprintf(
+                    "old('%s', \$%s->%s ?? false)",
+                    $field->name(),
+                    $variable,
+                    $field->name()
+                ),
+
+            ]
+        );
     }
 
     /**
@@ -250,15 +308,24 @@ BLADE;
 
     private function buildDate(
         ColumnDefinition $field,
+        ComponentMetadata $metadata,
         string $variable
     ): string {
 
         return $this->buildInput(
+
             $field,
+
+            $metadata,
+
             $variable,
+
             [
+
                 'type' => 'date',
+
             ]
+
         );
     }
 
@@ -269,40 +336,65 @@ BLADE;
      */
     private function buildSelect(
         ColumnDefinition $field,
+        ComponentMetadata $metadata,
         string $variable
     ): string {
 
-        return <<<BLADE
-<x-cn.select
-    name="{$field->name()}"
-    label="{$this->label($field)}">
-
-    {{-- Opciones generadas posteriormente --}}
-
-</x-cn.select>
-BLADE;
+        return sprintf(
+            "<%s\n    name=\"%s\"\n    label=\"%s\">\n\n    {{-- Opciones generadas posteriormente --}}\n\n</%s>",
+            $metadata->blade(),
+            $field->name(),
+            $this->label($field),
+            $metadata->blade()
+        );
     }
 
     private function buildInput(
         ColumnDefinition $field,
+        ComponentMetadata $metadata,
         string $variable,
         array $attributes = []
     ): string {
 
-        $attributes = array_merge([
-            'name' => $field->name(),
-            'label' => $this->label($field),
-            ':value' => $this->value($field, $variable),
-            'placeholder' => $this->placeholder($field),
-        ], $attributes);
+        $attributes = array_merge(
+
+            $metadata->attributes,
+
+            [
+
+                'name' => $field->name(),
+
+                'label' => $this->label($field),
+
+                ':value' => $this->value($field, $variable),
+
+            ],
+
+            $attributes
+
+        );
+
+        if (
+            $metadata->placeholder !== ''
+            && $field->inputType()->supportsPlaceholder()
+        ) {
+            $attributes['placeholder'] = sprintf(
+                $metadata->placeholder,
+                strtolower($this->label($field))
+            );
+        }
 
         if ($this->isRequired($field)) {
+
             $attributes['required'] = null;
         }
 
         return $this->component(
-            'x-cn.input',
+
+            $metadata->blade(),
+
             $attributes
+
         );
     }
 
@@ -316,7 +408,12 @@ BLADE;
         foreach ($attributes as $name => $value) {
 
             if ($value === null) {
+
                 $lines[] = "    {$name}";
+                continue;
+            }
+
+            if ($value === '') {
                 continue;
             }
 

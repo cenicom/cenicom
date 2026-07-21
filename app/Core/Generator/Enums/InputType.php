@@ -21,6 +21,11 @@ namespace App\Core\Generator\Enums;
 
 enum InputType: string
 {
+    public const SEARCH = 'bi bi-search';
+
+    public const EMAIL = 'bi bi-envelope';
+
+    public const CALENDAR = 'bi bi-calendar';
 
     /*
     |--------------------------------------------------------------------------
@@ -220,7 +225,6 @@ enum InputType: string
     | Especiales
     |--------------------------------------------------------------------------
     */
-
     private const SPECIAL_INPUTS = [
 
         self::COLOR,
@@ -353,7 +357,7 @@ enum InputType: string
      */
     public function acceptsDateInput(): bool
     {
-        return in_array($this, self::NUMERIC_INPUTS, true);
+        return in_array($this, self::DATE_INPUTS, true);
     }
 
     /*
@@ -366,7 +370,7 @@ enum InputType: string
      */
     public function isSelection(): bool
     {
-        return in_array($this, self::NUMERIC_INPUTS, true);
+        return in_array($this, self::SELECTION_INPUTS, true);
     }
 
     /*
@@ -379,7 +383,7 @@ enum InputType: string
      */
     public function isBoolean(): bool
     {
-        return in_array($this, self::NUMERIC_INPUTS, true);
+        return in_array($this, self::BOOLEAN_INPUTS, true);
     }
 
     /*
@@ -392,7 +396,7 @@ enum InputType: string
      */
     public function acceptsFileInput(): bool
     {
-        return in_array($this, self::NUMERIC_INPUTS, true);
+        return in_array($this, self::FILE_INPUTS, true);
     }
 
     /*
@@ -439,7 +443,7 @@ enum InputType: string
      */
     public function isSpecial(): bool
     {
-        return in_array($this, self::NUMERIC_INPUTS, true);
+        return in_array($this, self::SPECIAL_INPUTS, true);
     }
 
     /*
@@ -914,10 +918,8 @@ enum InputType: string
 
     public function isText(): bool
     {
-        return in_array($this, [
-            self::TEXT,
-            self::TEXTAREA,
-        ]);
+        return in_array($this, self::TEXT_INPUTS, true)
+            || in_array($this, self::TEXT_AREA_INPUTS, true);
     }
 
     public function isNumeric(): bool
@@ -928,12 +930,12 @@ enum InputType: string
 
     public function isDate(): bool
     {
-        return in_array($this, self::NUMERIC_INPUTS, true);
+        return in_array($this, self::DATE_INPUTS, true);
     }
 
     public function isFile(): bool
     {
-        return in_array($this, self::NUMERIC_INPUTS, true);
+        return in_array($this, self::FILE_INPUTS, true);
     }
 
     public function requiresOptions(): bool
@@ -960,33 +962,533 @@ enum InputType: string
         return 'x-cn.' . $this->bladeComponentName();
     }
 
-    public function defaultAttributes(): array {}
+    /**
+     * Obtiene los atributos HTML sugeridos para este tipo
+     * de componente.
+     *
+     * @return array<string,mixed>
+     */
+    public function defaultAttributes(): array
+    {
+        return match ($this) {
 
-    public function defaultCssClass(): string {}
+            /*
+        |--------------------------------------------------------------------------
+        | Entradas numéricas
+        |--------------------------------------------------------------------------
+        */
+            self::NUMBER => [
+                'type' => 'number',
+            ],
 
-    public function defaultIcon(): string {}
+            self::RANGE => [
+                'type' => 'range',
+            ],
 
-    public function defaultPlaceholder(): string {}
+            self::CURRENCY,
+            self::MONEY => [
+                'type' => 'number',
+                'step' => '0.01',
+            ],
+
+            /*
+        |--------------------------------------------------------------------------
+        | Fechas
+        |--------------------------------------------------------------------------
+        */
+            self::DATE,
+            self::TIME,
+            self::DATETIME_LOCAL,
+            self::MONTH,
+            self::WEEK => [
+                'type' => $this->htmlType(),
+            ],
+
+            /*
+        |--------------------------------------------------------------------------
+        | Archivos
+        |--------------------------------------------------------------------------
+        */
+            self::FILE => [
+                'type' => 'file',
+            ],
+
+            self::IMAGE => [
+                'type' => 'file',
+                'accept' => 'image/*',
+            ],
+
+            /*
+        |--------------------------------------------------------------------------
+        | Texto enriquecido
+        |--------------------------------------------------------------------------
+        */
+            self::EDITOR => [
+                'data-editor' => 'true',
+            ],
+
+            /*
+        |--------------------------------------------------------------------------
+        | JSON
+        |--------------------------------------------------------------------------
+        */
+            self::JSON => [
+                'spellcheck' => 'false',
+            ],
+
+            /*
+        |--------------------------------------------------------------------------
+        | Color
+        |--------------------------------------------------------------------------
+        */
+            self::COLOR => [
+                'type' => 'color',
+            ],
+
+            /*
+        |--------------------------------------------------------------------------
+        | Controles sin atributos especiales
+        |--------------------------------------------------------------------------
+        */
+            default => [],
+        };
+    }
+
+    /**
+     * Obtiene la clase CSS recomendada para este tipo de control.
+     */
+    public function defaultCssClass(): string
+    {
+        return match ($this) {
+
+            self::TEXT,
+            self::EMAIL,
+            self::PASSWORD,
+            self::TEL,
+            self::URL,
+            self::SEARCH,
+            self::UUID,
+            self::SLUG
+            => 'cn-input',
+
+            self::NUMBER,
+            self::RANGE,
+            self::CURRENCY,
+            self::MONEY
+            => 'cn-number',
+
+            self::DATE,
+            self::TIME,
+            self::DATETIME_LOCAL,
+            self::MONTH,
+            self::WEEK
+            => 'cn-date',
+
+            self::TEXTAREA,
+            self::EDITOR,
+            self::JSON
+            => 'cn-textarea',
+
+            self::SELECT
+            => 'cn-select',
+
+            self::CHECKBOX,
+            self::SWITCH
+            => 'cn-checkbox',
+
+            self::RADIO
+            => 'cn-radio',
+
+            self::FILE,
+            self::IMAGE
+            => 'cn-file',
+
+            self::COLOR
+            => 'cn-color',
+
+            self::HIDDEN
+            => 'cn-hidden',
+        };
+    }
+
+    /**
+     * Obtiene el icono sugerido para este tipo de control.
+     */
+    public function defaultIcon(): string
+    {
+        return match ($this) {
+
+            self::TEXT,
+            self::TEXTAREA
+            => 'bi bi-fonts',
+
+            self::EMAIL
+            => 'bi bi-envelope',
+
+            self::PASSWORD
+            => 'bi bi-lock',
+
+            self::NUMBER,
+            self::RANGE
+            => 'bi bi-123',
+
+            self::CURRENCY,
+            self::MONEY
+            => 'bi bi-cash-stack',
+
+            self::DATE,
+            self::TIME,
+            self::DATETIME_LOCAL,
+            self::MONTH,
+            self::WEEK
+            => 'bi bi-calendar-event',
+
+            self::TEL
+            => 'bi bi-telephone',
+
+            self::URL
+            => 'bi bi-link-45deg',
+
+            self::SEARCH
+            => 'bi bi-search',
+
+            self::SELECT
+            => 'bi bi-list-ul',
+
+            self::CHECKBOX,
+            self::SWITCH
+            => 'bi bi-check-square',
+
+            self::RADIO
+            => 'bi bi-record-circle',
+
+            self::FILE
+            => 'bi bi-file-earmark',
+
+            self::IMAGE
+            => 'bi bi-image',
+
+            self::EDITOR
+            => 'bi bi-pencil-square',
+
+            self::COLOR
+            => 'bi bi-palette',
+
+            self::JSON
+            => 'bi bi-braces',
+
+            self::UUID
+            => 'bi bi-fingerprint',
+
+            self::SLUG
+            => 'bi bi-tag',
+
+            self::HIDDEN
+            => 'bi bi-eye-slash',
+        };
+    }
+
+    /**
+     * Obtiene el placeholder sugerido para este tipo.
+     */
+    public function defaultPlaceholder(): string
+    {
+        return match ($this) {
+
+            self::TEXT
+            => 'Ingrese un valor...',
+
+            self::EMAIL
+            => 'usuario@dominio.com',
+
+            self::PASSWORD
+            => 'Ingrese la contraseña...',
+
+            self::NUMBER
+            => '0',
+
+            self::CURRENCY,
+            self::MONEY
+            => '0.00',
+
+            self::TEL
+            => 'Ingrese el teléfono...',
+
+            self::URL
+            => 'https://...',
+
+            self::SEARCH
+            => 'Buscar...',
+
+            self::TEXTAREA
+            => 'Escriba aquí...',
+
+            self::EDITOR
+            => 'Comience a escribir...',
+
+            self::DATE
+            => 'Seleccione una fecha',
+
+            self::TIME
+            => 'Seleccione una hora',
+
+            self::DATETIME_LOCAL
+            => 'Seleccione fecha y hora',
+
+            self::MONTH
+            => 'Seleccione un mes',
+
+            self::WEEK
+            => 'Seleccione una semana',
+
+            self::SELECT
+            => 'Seleccione una opción',
+
+            self::FILE,
+            self::IMAGE
+            => 'Seleccione un archivo',
+
+            self::COLOR
+            => 'Seleccione un color',
+
+            default
+            => '',
+        };
+    }
 
     public function supportsOldValue(): bool
     {
         return !$this->isHidden();
     }
 
-    public function defaultBladeBinding(): string {}
+    /**
+     * Obtiene la expresión Blade recomendada para enlazar el valor.
+     */
+    public function defaultBladeBinding(): string
+    {
+        return match ($this) {
 
-    public function defaultValidationRule(): string {}
+            self::CHECKBOX,
+            self::SWITCH
+            => ':checked',
 
-    public function preferredColumnWidth(): string {}
+            self::RADIO
+            => ':checked',
 
+            self::FILE,
+            self::IMAGE
+            => '',
+
+            default
+            => ':value',
+        };
+    }
+
+    /**
+     * Obtiene la regla de validación sugerida.
+     */
+    public function defaultValidationRule(): string
+    {
+        return match ($this) {
+
+            self::TEXT,
+            self::TEXTAREA,
+            self::EDITOR
+            => 'string',
+
+            self::EMAIL
+            => 'email',
+
+            self::PASSWORD
+            => 'string|min:8',
+
+            self::NUMBER
+            => 'integer',
+
+            self::CURRENCY,
+            self::MONEY
+            => 'numeric',
+
+            self::RANGE
+            => 'numeric',
+
+            self::DATE,
+            self::MONTH,
+            self::WEEK,
+            self::TIME,
+            self::DATETIME_LOCAL
+            => 'date',
+
+            self::CHECKBOX,
+            self::SWITCH
+            => 'boolean',
+
+            self::SELECT
+            => 'exists',
+
+            self::RADIO
+            => 'string',
+
+            self::FILE
+            => 'file',
+
+            self::IMAGE
+            => 'image',
+
+            self::URL
+            => 'url',
+
+            self::TEL
+            => 'string',
+
+            self::COLOR
+            => 'string|size:7',
+
+            self::UUID
+            => 'uuid',
+
+            self::SLUG
+            => 'alpha_dash',
+
+            self::JSON
+            => 'json',
+
+            self::SEARCH
+            => 'string',
+
+            self::HIDDEN
+            => 'string',
+        };
+    }
+
+    /**
+     * Obtiene el ancho recomendado dentro del grid del formulario.
+     */
+    public function preferredColumnWidth(): string
+    {
+        return match ($this) {
+
+            self::TEXTAREA,
+            self::EDITOR,
+            self::JSON
+            => 'col-md-12',
+
+            self::CHECKBOX,
+            self::SWITCH,
+            self::RADIO
+            => 'col-md-12',
+
+            self::FILE,
+            self::IMAGE
+            => 'col-md-12',
+
+            default
+            => 'col-md-6',
+        };
+    }
+
+    /**
+     * Obtiene todos los metadatos utilizados por el CN Generator.
+     *
+     * Este método constituye el contrato oficial entre el dominio
+     * (InputType) y la capa de presentación del Generator.
+     *
+     * @return array<string,mixed>
+     */
     public function generatorMetadata(): array
     {
         return [
-            'component'    => $this->componentName(),
-            'placeholder'  => $this->defaultPlaceholder(),
-            'icon'         => $this->defaultIcon(),
-            'attributes'   => $this->defaultAttributes(),
-            'validation'   => $this->defaultValidationRule(),
+
+            /*
+        |--------------------------------------------------------------------------
+        | Identidad del componente
+        |--------------------------------------------------------------------------
+        */
+
+            'type' => $this->value,
+
+            'component' => $this->componentName(),
+
+            'blade' => $this->bladeComponentTag(),
+
+            /*
+        |--------------------------------------------------------------------------
+        | Presentación
+        |--------------------------------------------------------------------------
+        */
+
+            'cssClass' => $this->defaultCssClass(),
+
+            'icon' => $this->defaultIcon(),
+
+            'placeholder' => $this->defaultPlaceholder(),
+
+            'columnWidth' => $this->preferredColumnWidth(),
+
+            /*
+        |--------------------------------------------------------------------------
+        | Blade
+        |--------------------------------------------------------------------------
+        */
+
+            'binding' => $this->defaultBladeBinding(),
+
+            'attributes' => $this->defaultAttributes(),
+
+            /*
+        |--------------------------------------------------------------------------
+        | Validación
+        |--------------------------------------------------------------------------
+        */
+
+            'validation' => $this->defaultValidationRule(),
+
+            /*
+        |--------------------------------------------------------------------------
+        | Capacidades
+        |--------------------------------------------------------------------------
+        */
+
+            'supportsLabel' => $this->supportsLabel(),
+
+            'supportsPlaceholder' => $this->supportsPlaceholder(),
+
+            'supportsReadonly' => $this->supportsReadonly(),
+
+            'supportsAutocomplete' => $this->supportsAutocomplete(),
+
+            'supportsIcon' => $this->supportsIcon(),
+
+            'supportsPrefixSuffix' => $this->supportsPrefixSuffix(),
+
+            'supportsFloatingLabel' => $this->supportsFloatingLabel(),
+
+            'supportsMask' => $this->supportsMask(),
+
+            'supportsMultiple' => $this->supportsMultiple(),
+
+            'supportsAccept' => $this->supportsAccept(),
+
+            'supportsMinMax' => $this->supportsMinMax(),
+
+            'supportsStep' => $this->supportsStep(),
+
+            'supportsPattern' => $this->supportsPattern(),
+
+            'supportsSpellcheck' => $this->supportsSpellcheck(),
+
+            'supportsOldValue' => $this->supportsOldValue(),
+
+            'supportsErrorMessage' => $this->supportsErrorMessage(),
+
+            'supportsDescription' => $this->supportsDescription(),
+
+            'supportsGridLayout' => $this->supportsGridLayout(),
+
+            'supportsLiveValidation' => $this->supportsLiveValidation(),
+
+            'supportsStatePersistence' => $this->supportsStatePersistence(),
+
         ];
     }
 }

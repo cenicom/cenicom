@@ -29,7 +29,7 @@
                 <thead>
                     <tr>
 
-[[ tableHeaders ]]
+[[ table_columns ]]
 
                         <th class="text-center">
                             Acciones
@@ -44,7 +44,7 @@
 
                         <tr>
 
-[[ tableColumns ]]
+[[ table_columns ]]
 
                             <td class="text-center">
 

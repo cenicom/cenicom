@@ -47,6 +47,10 @@ final readonly class ColumnDefinition
 
     private ?InputType $inputType;
 
+    private ?string $charset;
+
+    private ?string $collation;
+
     /*
     |--------------------------------------------------------------------------
     | Definición física
@@ -144,6 +148,8 @@ final readonly class ColumnDefinition
 
         ?string $references = null,
         ?string $on = null,
+        ?string $charset = null,
+        ?string $collation = null,
         bool|string $constrained = false,
         bool $cascadeOnDelete = false,
         bool $cascadeOnUpdate = false,
@@ -173,6 +179,8 @@ final readonly class ColumnDefinition
 
         $this->references = $references;
         $this->on = $on;
+        $this->charset = $charset;
+        $this->collation = $collation;
         $this->constrained = $constrained;
         $this->cascadeOnDelete = $cascadeOnDelete;
         $this->cascadeOnUpdate = $cascadeOnUpdate;
@@ -634,14 +642,6 @@ final readonly class ColumnDefinition
     }
 
     /**
-     * Determina si el campo posee longitud.
-     */
-    public function isVariableLength(): bool
-    {
-        return $this->supportsLength();
-    }
-
-    /**
      * Determina si el campo maneja precisión decimal.
      */
     public function isDecimal(): bool
@@ -965,53 +965,9 @@ final readonly class ColumnDefinition
     |--------------------------------------------------------------------------
     */
 
-    /**
-     * Determina si el tipo soporta longitud.
-     */
-    public function supportsLength(): bool
-    {
-        return $this->type->supportsLength();
-    }
 
-    /**
-     * Determina si el tipo soporta precisión.
-     */
-    public function supportsPrecision(): bool
-    {
-        return $this->type->supportsPrecision();
-    }
 
-    /**
-     * Determina si el tipo soporta escala.
-     */
-    public function supportsScale(): bool
-    {
-        return $this->type->supportsScale();
-    }
 
-    /**
-     * Determina si el tipo soporta unsigned.
-     */
-    public function supportsUnsigned(): bool
-    {
-        return $this->type->supportsUnsigned();
-    }
-
-    /**
-     * Determina si el tipo soporta valores por defecto.
-     */
-    public function supportsDefault(): bool
-    {
-        return $this->type->supportsDefault();
-    }
-
-    /**
-     * Determina si el tipo soporta comentarios.
-     */
-    public function supportsComment(): bool
-    {
-        return $this->type->supportsComment();
-    }
 
     /**
      * Determina si el tipo soporta índices.
@@ -1051,14 +1007,6 @@ final readonly class ColumnDefinition
     }
 
     /**
-     * Cast Eloquent recomendado.
-     */
-    public function cast(): ?string
-    {
-        return $this->type->cast();
-    }
-
-    /**
      * Tipo de input por defecto.
      */
     public function defaultInputType(): InputType
@@ -1066,5 +1014,13 @@ final readonly class ColumnDefinition
         return $this->type->defaultInputType();
     }
 
+    public function charset(): ?string
+    {
+        return $this->charset;
+    }
 
+    public function collation(): ?string
+    {
+        return $this->collation;
+    }
 }

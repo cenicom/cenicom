@@ -54,7 +54,7 @@ enum FieldType: string
 
     case BOOLEAN = 'boolean';
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | Texto
     |--------------------------------------------------------------------------
@@ -78,9 +78,9 @@ enum FieldType: string
 
     case EMAIL = 'email';
 
-    //case PASSWORD = 'password';
+        //case PASSWORD = 'password';
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | Fecha y hora
     |--------------------------------------------------------------------------
@@ -100,7 +100,7 @@ enum FieldType: string
 
     case TIMESTAMP_TZ = 'timestampTz';
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | Identificadores
     |--------------------------------------------------------------------------
@@ -114,7 +114,7 @@ enum FieldType: string
 
     case FOREIGN_ID = 'foreignId';
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | Binarios
     |--------------------------------------------------------------------------
@@ -122,7 +122,7 @@ enum FieldType: string
 
     case BINARY = 'binary';
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | Especiales
     |--------------------------------------------------------------------------
@@ -452,7 +452,7 @@ enum FieldType: string
     {
         return match ($this) {
 
-                /*
+            /*
                 |--------------------------------------------------------------------------
                 | Numéricos
                 |--------------------------------------------------------------------------
@@ -470,7 +470,7 @@ enum FieldType: string
 
             self::BOOLEAN => ['boolean'],
 
-                /*
+            /*
                 |--------------------------------------------------------------------------
                 | Texto
                 |--------------------------------------------------------------------------
@@ -487,7 +487,7 @@ enum FieldType: string
 
             self::ENUM => ['string'],
 
-                /*
+            /*
                 |--------------------------------------------------------------------------
                 | Fecha
                 |--------------------------------------------------------------------------
@@ -501,7 +501,7 @@ enum FieldType: string
             self::TIMESTAMP,
             self::TIMESTAMP_TZ => ['date'],
 
-                /*
+            /*
                 |--------------------------------------------------------------------------
                 | Identificadores
                 |--------------------------------------------------------------------------
@@ -514,7 +514,7 @@ enum FieldType: string
             self::ID,
             self::FOREIGN_ID => ['integer'],
 
-                /*
+            /*
                 |--------------------------------------------------------------------------
                 | Binarios
                 |--------------------------------------------------------------------------
@@ -522,7 +522,7 @@ enum FieldType: string
 
             self::BINARY => ['string'],
 
-                /*
+            /*
                 |--------------------------------------------------------------------------
                 | Especiales
                 |--------------------------------------------------------------------------
@@ -534,7 +534,6 @@ enum FieldType: string
 
             self::GEOMETRY,
             self::POINT => [],
-
         };
     }
 
@@ -681,7 +680,7 @@ enum FieldType: string
     {
         return match ($this) {
 
-                /*
+            /*
                 |--------------------------------------------------------------------------
                 | Numéricos
                 |--------------------------------------------------------------------------
@@ -700,7 +699,7 @@ enum FieldType: string
             self::BOOLEAN
             => InputType::CHECKBOX,
 
-                /*
+            /*
                 |--------------------------------------------------------------------------
                 | Texto
                 |--------------------------------------------------------------------------
@@ -720,7 +719,7 @@ enum FieldType: string
             self::ENUM
             => InputType::SELECT,
 
-                /*
+            /*
                 |--------------------------------------------------------------------------
                 | Fecha
                 |--------------------------------------------------------------------------
@@ -741,7 +740,7 @@ enum FieldType: string
             self::TIMESTAMP_TZ
             => InputType::DATETIME_LOCAL,
 
-                /*
+            /*
                 |--------------------------------------------------------------------------
                 | Identificadores
                 |--------------------------------------------------------------------------
@@ -755,7 +754,7 @@ enum FieldType: string
             self::FOREIGN_ID
             => InputType::SELECT,
 
-                /*
+            /*
                 |--------------------------------------------------------------------------
                 | Especiales
                 |--------------------------------------------------------------------------
@@ -791,7 +790,6 @@ enum FieldType: string
             self::BINARY => false,
 
             default => true,
-
         };
     }
 
@@ -807,7 +805,6 @@ enum FieldType: string
             self::BINARY => false,
 
             default => true,
-
         };
     }
 
@@ -838,7 +835,6 @@ enum FieldType: string
             self::ENUM => true,
 
             default => false,
-
         };
     }
 
@@ -858,7 +854,6 @@ enum FieldType: string
             self::BINARY => false,
 
             default => true,
-
         };
     }
 
@@ -896,7 +891,7 @@ enum FieldType: string
     {
         return match ($this) {
 
-                /*
+            /*
                 |--------------------------------------------------------------------------
                 | Texto
                 |--------------------------------------------------------------------------
@@ -918,7 +913,7 @@ enum FieldType: string
             self::ENUM
             => InputType::SELECT,
 
-                /*
+            /*
                 |--------------------------------------------------------------------------
                 | Numéricos
                 |--------------------------------------------------------------------------
@@ -935,7 +930,7 @@ enum FieldType: string
             self::YEAR
             => InputType::NUMBER,
 
-                /*
+            /*
                 |--------------------------------------------------------------------------
                 | Booleanos
                 |--------------------------------------------------------------------------
@@ -944,7 +939,7 @@ enum FieldType: string
             self::BOOLEAN
             => InputType::CHECKBOX,
 
-                /*
+            /*
                 |--------------------------------------------------------------------------
                 | Fechas
                 |--------------------------------------------------------------------------
@@ -962,7 +957,7 @@ enum FieldType: string
             self::TIMESTAMP_TZ
             => InputType::DATETIME_LOCAL,
 
-                /*
+            /*
                 |--------------------------------------------------------------------------
                 | Identificadores
                 |--------------------------------------------------------------------------
@@ -976,7 +971,7 @@ enum FieldType: string
             self::ULID
             => InputType::TEXT,
 
-                /*
+            /*
                 |--------------------------------------------------------------------------
                 | Especiales
                 |--------------------------------------------------------------------------
@@ -991,6 +986,118 @@ enum FieldType: string
         };
     }
 
+    /*
+|--------------------------------------------------------------------------
+| Compatibilidad con ColumnDefinition
+|--------------------------------------------------------------------------
+*/
+
+    /**
+     * Indica si el tipo soporta longitud.
+     */
+    public function supportsLength(): bool
+    {
+        return $this->requiresLength();
+    }
+
+    /**
+     * Indica si el tipo soporta precisión.
+     */
+    public function supportsPrecision(): bool
+    {
+        return $this->requiresPrecision();
+    }
+
+    /**
+     * Indica si el tipo soporta escala.
+     */
+    public function supportsScale(): bool
+    {
+        return match ($this) {
+            self::DECIMAL,
+            self::FLOAT,
+            self::DOUBLE => true,
+
+            default => false,
+        };
+    }
+
+    /**
+     * Indica si el tipo soporta valores por defecto.
+     */
+    public function supportsDefault(): bool
+    {
+        return $this->supportsDefaultValue();
+    }
+
+    /**
+     * Obtiene el cast Eloquent asociado.
+     */
+    public function cast(): ?string
+    {
+        return $this->eloquentCast();
+    }
+
+    /**
+     * Indica si el tipo admite charset.
+     */
+
+    public function supportsCharset(): bool
+    {
+        return match ($this) {
+
+            self::STRING,
+            self::CHAR,
+            self::TEXT,
+            self::MEDIUM_TEXT,
+            self::LONG_TEXT => true,
+
+            default => false,
+        };
+    }
+
+    /**
+     * Indica si el tipo admite collation.
+     */
+    public function supportsCollation(): bool
+    {
+        return $this->supportsCharset();
+    }
+
+    /**
+     * Indica si el tipo admite una lista de valores.
+     */
+    public function supportsValues(): bool
+    {
+        return $this->requiresValues();
+    }
+
+    /**
+     * Indica si la longitud es configurable.
+     */
+    public function supportsVariableLength(): bool
+    {
+        return match ($this) {
+            self::STRING,
+            self::CHAR => true,
+
+            default => false,
+        };
+    }
+
+    /**
+     * Determina si el tipo soporta comentarios.
+     */
+    public function supportsComment(): bool
+    {
+        return match ($this) {
+
+            self::GEOMETRY,
+            self::POINT => false,
+
+            default => true,
+        };
+    }
 
 
 }

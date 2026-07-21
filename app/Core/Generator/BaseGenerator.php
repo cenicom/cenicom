@@ -9,6 +9,7 @@ use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\Results\GeneratorResult;
 use App\Core\Generator\Support\FileWriter;
 use App\Core\Generator\Support\StubManager;
+use App\Core\Generator\Presentation\Factory\PresentationFactory;
 
 /**
  * Clase base para los generadores del CN Generator.
@@ -28,8 +29,8 @@ abstract class BaseGenerator implements GeneratorInterface
     public function __construct(
         protected StubManager $stubManager,
         protected FileWriter $fileWriter,
-    ) {
-    }
+        protected PresentationFactory $presentationFactory
+    ) {}
 
     /**
      * {@inheritDoc}
@@ -131,6 +132,7 @@ abstract class BaseGenerator implements GeneratorInterface
 
         return array_merge(
             $module->toStubVariables(),
+            $this->buildPresentationVariables($module),
             [
 
                 /*
@@ -193,5 +195,52 @@ abstract class BaseGenerator implements GeneratorInterface
 
             ]
         );
+    }
+
+    /**
+     * Construye variables relacionadas con la presentación.
+     *
+     * @return array<string,mixed>
+     */
+    protected function buildPresentationVariables(
+        ModuleData $module
+    ): array {
+
+        $form = $this->presentationFactory
+            ->form($module)
+            ->metadata();
+
+        $table = $this->presentationFactory
+            ->table($module)
+            ->metadata();
+
+        return [
+
+            /*
+        |--------------------------------------------------------------------------
+        | Formulario
+        |--------------------------------------------------------------------------
+        */
+
+            'form_fields' => $form['fields'],
+
+            'form_rows' => $form['rows'],
+
+            'form_sections' => $form['sections'],
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | Tabla
+        |--------------------------------------------------------------------------
+        */
+
+            'table_columns' => $table['columns'],
+
+            'table_labels' => $table['labels'],
+
+            'table_names' => $table['names'],
+
+        ];
     }
 }

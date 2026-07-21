@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace [[ namespace ]];
+namespace App\Core\Repositories;
 
-use [[ qualifiedModel ]];
+use App\Models\TestForm;
 
-use [[ qualifiedRepositoryInterface ]];
+use App\Core\Contracts\TestFormRepositoryInterface;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
@@ -15,21 +15,21 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
  * CENICOM ERP
  * ==========================================================
  *
- * Repositorio de [[ model ]].
+ * Repositorio de TestForm.
  *
  * Encapsula el acceso a datos del modelo y centraliza
  * todas las operaciones de persistencia.
  *
- * @package [[ namespace ]]
+ * @package App\Core\Repositories
  */
-final readonly class [[ repository ]]
-    implements [[ repositoryInterface ]]
+final readonly class TestFormRepository
+    implements TestFormRepositoryInterface
 {
     /**
      * Constructor.
      */
     public function __construct(
-        private [[ model ]] $model,
+        private TestForm $model,
     ) {
     }
 
@@ -52,7 +52,7 @@ final readonly class [[ repository ]]
      */
     public function create(
         array $data
-    ): [[ model ]] {
+    ): TestForm {
 
         return $this->model->create($data);
     }
@@ -63,20 +63,20 @@ final readonly class [[ repository ]]
      * @param array<string,mixed> $data
      */
     public function update(
-        [[ model ]] $[[ variable ]],
+        TestForm $testForm,
         array $data
     ): bool {
 
-        return $[[ variable ]]->update($data);
+        return $testForm->update($data);
     }
 
     /**
      * Elimina un registro.
      */
     public function delete(
-        [[ model ]] $[[ variable ]]
+        TestForm $testForm
     ): bool {
 
-        return $[[ variable ]]->delete();
+        return $testForm->delete();
     }
 }

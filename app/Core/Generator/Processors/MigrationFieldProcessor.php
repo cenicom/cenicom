@@ -19,6 +19,12 @@ final class MigrationFieldProcessor
     |--------------------------------------------------------------------------
     */
 
+    /**
+     * Procesa todas las columnas del módulo.
+     *
+     * @param ColumnDefinition[] $fields
+     */
+
     public function process(
         array $fields
     ): string {
@@ -54,14 +60,11 @@ final class MigrationFieldProcessor
         return $column . ';';
     }
 
-
-
     /*
     |--------------------------------------------------------------------------
     | Construcción de la columna
     |--------------------------------------------------------------------------
     */
-
     private function buildBase(
         ColumnDefinition $field
     ): string {
@@ -184,8 +187,182 @@ final class MigrationFieldProcessor
     private function applyModifiers(
         string $column,
         ColumnDefinition $field
-    ): string;
+    ): string {
 
+        $column = $this->applyNullable($column, $field);
+
+        $column = $this->applyDefault($column, $field);
+
+        $column = $this->applyUnsigned($column, $field);
+
+        $column = $this->applyUnique($column, $field);
+
+        $column = $this->applyIndex($column, $field);
+
+        $column = $this->applyComment($column, $field);
+
+        $column = $this->applyCharset($column, $field);
+
+        $column = $this->applyCollation($column, $field);
+
+        $column = $this->applyAfter($column, $field);
+
+        $column = $this->applyFirst($column, $field);
+
+        return $column;
+    }
+
+    private function applyUnsigned(
+        string $column,
+        ColumnDefinition $field
+    ): string {
+
+        if ($field->unsigned()) {
+
+            $column .= '->unsigned()';
+        }
+
+        return $column;
+    }
+
+    private function applyComment(
+        string $column,
+        ColumnDefinition $field
+    ): string {
+
+        if ($field->comment() === null) {
+            return $column;
+        }
+
+        $column .= sprintf(
+            "->comment('%s')",
+            addslashes($field->comment())
+        );
+
+        return $column;
+    }
+
+    private function applyCharset(
+        string $column,
+        ColumnDefinition $field
+    ): string {
+
+        if ($field->charset() === null) {
+            return $column;
+        }
+
+        $column .= sprintf(
+            "->charset('%s')",
+            $field->charset()
+        );
+
+        return $column;
+    }
+
+    private function applyCollation(
+        string $column,
+        ColumnDefinition $field
+    ): string {
+
+        if ($field->collation() === null) {
+            return $column;
+        }
+
+        $column .= sprintf(
+            "->collation('%s')",
+            $field->collation()
+        );
+
+        return $column;
+    }
+
+    private function applyAfter(
+        string $column,
+        ColumnDefinition $field
+    ): string {
+
+        if ($field->after() === null) {
+            return $column;
+        }
+
+        $column .= sprintf(
+            "->after('%s')",
+            $field->after()
+        );
+
+        return $column;
+    }
+
+    private function applyFirst(
+        string $column,
+        ColumnDefinition $field
+    ): string {
+
+        if ($field->first()) {
+
+            $column .= '->first()';
+        }
+
+        return $column;
+    }
+
+    private function applyNullable(
+        string $column,
+        ColumnDefinition $field
+    ): string {
+
+        if ($field->nullable()) {
+
+            $column .= '->nullable()';
+        }
+
+        return $column;
+    }
+
+    private function applyDefault(
+        string $column,
+        ColumnDefinition $field
+    ): string {
+
+        if ($field->default() === null) {
+            return $column;
+        }
+
+        $column .= sprintf(
+            '->default(%s)',
+            $this->formatDefaultValue(
+                $field->default()
+            )
+        );
+
+        return $column;
+    }
+
+    private function applyUnique(
+        string $column,
+        ColumnDefinition $field
+    ): string {
+
+        if ($field->unique()) {
+
+            $column .= '->unique()';
+        }
+
+        return $column;
+    }
+
+    private function applyIndex(
+        string $column,
+        ColumnDefinition $field
+    ): string {
+
+        if ($field->index()) {
+
+            $column .= '->index()';
+        }
+
+        return $column;
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -236,8 +413,50 @@ final class MigrationFieldProcessor
     | Helpers
     |--------------------------------------------------------------------------
     */
-
     private function formatDefaultValue(
         mixed $value
-    ): string;
+    ): string {
+
+        if ($value === null) {
+            return 'null';
+        }
+
+        if (is_bool($value)) {
+            return $value ? 'true' : 'false';
+        }
+
+        if (is_int($value) || is_float($value)) {
+            return (string) $value;
+        }
+
+        if (is_string($value)) {
+
+            return sprintf(
+                "'%s'",
+                addslashes($value)
+            );
+        }
+
+        if (is_array($value)) {
+
+            return var_export(
+                $value,
+                true
+            );
+        }
+
+        if ($value instanceof \BackedEnum) {
+
+            return $this->formatDefaultValue(
+                $value->value
+            );
+        }
+
+        throw new \InvalidArgumentException(
+            sprintf(
+                'Tipo de valor por defecto no soportado [%s].',
+                get_debug_type($value)
+            )
+        );
+    }
 }

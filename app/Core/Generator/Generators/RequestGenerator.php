@@ -8,6 +8,7 @@ use App\Core\Generator\BaseGenerator;
 use App\Core\Generator\DTO\ColumnDefinition;
 use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\Enums\FieldType;
+use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Results\GeneratorResult;
 use App\Core\Generator\Support\FileWriter;
 use App\Core\Generator\Support\StubManager;
@@ -34,11 +35,13 @@ final class RequestGenerator extends BaseGenerator
 {
     public function __construct(
         StubManager $stubManager,
-        FileWriter $fileWriter
+        FileWriter $fileWriter,
+        PresentationFactory $presentationFactory
     ) {
         parent::__construct(
             $stubManager,
             $fileWriter,
+            $presentationFactory
         );
     }
 

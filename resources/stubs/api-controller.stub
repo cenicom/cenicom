@@ -7,8 +7,11 @@ namespace [[ namespace ]];
 use App\Http\Controllers\Controller;
 
 use [[ qualifiedService ]];
+
 use [[ qualifiedStoreRequest ]];
+
 use [[ qualifiedUpdateRequest ]];
+
 use [[ qualifiedModel ]];
 
 use Illuminate\Http\JsonResponse;

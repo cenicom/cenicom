@@ -15,13 +15,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('[[ table ]]', function (Blueprint $table) {
+        Schema::create('test_forms', function (Blueprint $table) {
 
-            [[ columns ]]
+            $table->uuid('id')->primary();
 
-            [[ timestamps ]]
+$table->string('name');
 
-            [[ softDeletes ]]
+$table->text('description');
+
+            $table->timestamps();
+
+            $table->softDeletes();
         });
     }
 
@@ -30,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('[[ table ]]');
+        Schema::dropIfExists('test_forms');
     }
 };

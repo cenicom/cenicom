@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace [[ namespace ]];
+namespace App\Core\Contracts;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
-use [[ qualifiedModel ]];
+use App\Models\TestForm;
 
 /**
  * ==========================================================
  * CENICOM ERP
  * ==========================================================
  *
- * Contrato del repositorio de [[ model ]].
+ * Contrato del repositorio de TestForm.
  *
  * Define las operaciones de acceso a datos del módulo.
  *
- * @package [[ namespace ]]
+ * @package App\Core\Contracts
  */
-interface [[ repositoryInterface ]]
+interface TestFormRepositoryInterface
 {
     /**
      * Obtiene el listado paginado.
@@ -35,7 +35,7 @@ interface [[ repositoryInterface ]]
      */
     public function create(
         array $data
-    ): [[ model ]];
+    ): TestForm;
 
     /**
      * Actualiza un registro.
@@ -43,7 +43,7 @@ interface [[ repositoryInterface ]]
      * @param array<string,mixed> $data
      */
     public function update(
-        [[ model ]] $[[ variable ]],
+        TestForm $testForm,
         array $data
     ): bool;
 
@@ -51,6 +51,6 @@ interface [[ repositoryInterface ]]
      * Elimina un registro.
      */
     public function delete(
-        [[ model ]] $[[ variable ]]
+        TestForm $testForm
     ): bool;
 }

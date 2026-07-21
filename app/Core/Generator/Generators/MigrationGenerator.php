@@ -6,6 +6,7 @@ namespace App\Core\Generator\Generators;
 
 use App\Core\Generator\BaseGenerator;
 use App\Core\Generator\DTO\ModuleData;
+use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Processors\MigrationFieldProcessor;
 use App\Core\Generator\Results\GeneratorResult;
 use App\Core\Generator\Support\FileWriter;
@@ -26,10 +27,12 @@ final class MigrationGenerator extends BaseGenerator
         StubManager $stubManager,
         FileWriter $fileWriter,
         private readonly MigrationFieldProcessor $fieldProcessor,
+        PresentationFactory $presentationFactory
     ) {
         parent::__construct(
             $stubManager,
             $fileWriter,
+            $presentationFactory
         );
     }
 

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace [[ namespace ]];
+namespace App\Core\Services;
 
-use [[ qualifiedModel ]];
+use App\Models\TestForm;
 
-use [[ qualifiedRepositoryInterface ]];
+use App\Core\Contracts\TestFormRepositoryInterface;
 
-use [[ qualifiedServiceInterface ]];
+use App\Core\Contracts\TestFormServiceInterface;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
@@ -17,21 +17,21 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
  * CENICOM ERP
  * ==========================================================
  *
- * Servicio del módulo [[ model ]].
+ * Servicio del módulo TestForm.
  *
  * Centraliza la lógica de negocio y coordina las operaciones
  * sobre el repositorio.
  *
- * @package [[ namespace ]]
+ * @package App\Core\Services
  */
-final readonly class [[ service ]]
-    implements [[ serviceInterface ]]
+final readonly class TestFormService
+    implements TestFormServiceInterface
 {
     /**
      * Constructor.
      */
     public function __construct(
-        private [[ repositoryInterface ]] $repository,
+        private TestFormRepositoryInterface $repository,
     ) {
     }
 
@@ -50,7 +50,7 @@ final readonly class [[ service ]]
      */
     public function create(
         array $data
-    ): [[ model ]] {
+    ): TestForm {
 
         return $this->repository->create($data);
     }
@@ -59,12 +59,12 @@ final readonly class [[ service ]]
      * {@inheritDoc}
      */
     public function update(
-        [[ model ]] $[[ variable ]],
+        TestForm $testForm,
         array $data
     ): bool {
 
         return $this->repository->update(
-            $[[ variable ]],
+            $testForm,
             $data
         );
     }
@@ -73,11 +73,11 @@ final readonly class [[ service ]]
      * {@inheritDoc}
      */
     public function destroy(
-        [[ model ]] $[[ variable ]]
+        TestForm $testForm
     ): bool {
 
         return $this->repository->delete(
-            $[[ variable ]]
+            $testForm
         );
     }
 }

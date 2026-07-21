@@ -31,7 +31,9 @@ final class ModuleDataFactory
      */
     public function create(array $definition): ModuleData
     {
-        $name = $this->normalizeName($definition['name']);
+        $name = $this->normalizeName(
+            $definition['identity']['name']
+        );
 
         $classes = $this->buildClasses($name);
 
@@ -39,7 +41,7 @@ final class ModuleDataFactory
 
         $paths = $this->buildPaths(
             $name,
-            $definition['plural']
+            $definition['identity']['plural']
         );
 
         $options = $this->buildOptions(
@@ -179,11 +181,11 @@ final class ModuleDataFactory
             |--------------------------------------------------------------------------
             */
 
-            routePrefix: $definition['routePrefix'],
+            routePrefix: $definition['routes']['routePrefix'],
 
-            routeName: $definition['routeName'],
+            routeName: $definition['routes']['routeName'],
 
-            viewPrefix: $definition['viewPrefix'],
+            viewPrefix: $definition['routes']['viewPrefix'],
 
 
 
