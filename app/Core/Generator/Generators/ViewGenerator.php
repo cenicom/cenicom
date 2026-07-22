@@ -73,6 +73,11 @@ final class ViewGenerator implements GeneratorInterface
             'target' => '_form.blade.php',
         ],
 
+        [
+            'stub' => 'views/export.stub',
+            'target' => 'export.blade.php'
+        ]
+
     ];
 
     /**
@@ -142,9 +147,6 @@ final class ViewGenerator implements GeneratorInterface
     /**
      * Genera todas las vistas del módulo.
      */
-    /**
-     * Genera todas las vistas del módulo.
-     */
     private function generateViews(
         ModuleData $module,
         array $variables,
@@ -187,19 +189,27 @@ final class ViewGenerator implements GeneratorInterface
             . DIRECTORY_SEPARATOR
             . $view[self::KEY_TARGET];
 
-        $this->fileWriter->write(
-            $path,
-            $content,
-        );
+        try {
+
+            $this->fileWriter->write(
+                $path,
+                $content,
+            );
+
+            $result->addCreated($path);
+        } catch (\Throwable $exception) {
+            $result->addError(
+                sprintf(
+                    '[%s] %s',
+                    $path,
+                    $exception->getMessage()
+                )
+            );
+        }
 
         $result->addCreated($path);
     }
 
-    /**
-     * Construye todas las variables utilizadas por los stubs.
-     *
-     * @return array<string,mixed>
-     */
     /**
      * Construye todas las variables utilizadas por los stubs.
      *

@@ -38,23 +38,11 @@ final class ModelGenerator extends BaseGenerator
      */
     public function generate(ModuleData $module): GeneratorResult
     {
-        $file = $module->modelPath();
-
-        $result = new GeneratorResult();
-
-        if (
-            $this->generateFile(
-                self::STUB,
-                $file,
-                $this->buildVariables($module)
-            )
-        ) {
-            $result->addCreated($file);
-        } else {
-            $result->addSkipped($file);
-        }
-
-        return $result;
+        return $this->generateResult(
+            self::STUB,
+            $module->modelPath(),
+            $this->buildVariables($module)
+        );
     }
 
     /**
@@ -127,11 +115,6 @@ final class ModelGenerator extends BaseGenerator
         return implode(PHP_EOL, $fillable);
     }
 
-    /**
-     * Determina si un campo puede formar parte de $fillable.
-     */
-
-
     private function buildCasts(
         ModuleData $module
     ): string {
@@ -149,9 +132,7 @@ final class ModelGenerator extends BaseGenerator
                     $column->name(),
                     $cast
                 );
-
             }
-
         }
 
         return implode(
@@ -226,10 +207,22 @@ final class ModelGenerator extends BaseGenerator
 
         if (!empty($this->resolveRelationships($module))) {
 
-            $imports[] = 'Illuminate\Database\Eloquent\Relations\BelongsTo';
-            $imports[] = 'Illuminate\Database\Eloquent\Relations\HasOne';
-            $imports[] = 'Illuminate\Database\Eloquent\Relations\HasMany';
-            $imports[] = 'Illuminate\Database\Eloquent\Relations\BelongsToMany';
+            $imports[] =
+                'Illuminate\Database\Eloquent\Relations\BelongsTo';
+
+            $imports[] =
+                'Illuminate\Database\Eloquent\Relations\HasOne';
+
+            $imports[] =
+                'Illuminate\Database\Eloquent\Relations\HasMany';
+
+            $imports[] =
+                'Illuminate\Database\Eloquent\Relations\BelongsToMany';
+
+            $imports = array_merge(
+                $imports,
+                $this->resolveRelationshipImports($module)
+            );
         }
 
         if (!empty($this->resolveScopes($module))) {
@@ -494,4 +487,33 @@ PHP,
         );
     }
 
+    /**
+     * Resuelve los imports de modelos utilizados en relaciones Eloquent.
+     *
+     * @return array<int,string>
+     */
+    private function resolveRelationshipImports(
+        ModuleData $module
+    ): array {
+
+        if (!method_exists($module, 'relationships')) {
+            return [];
+        }
+
+        $imports = [];
+
+        foreach ($module->relationships() as $relationship) {
+
+            if (
+                !isset($relationship['model'])
+                || empty($relationship['model'])
+            ) {
+                continue;
+            }
+
+            $imports[] = $relationship['model'];
+        }
+
+        return $imports;
+    }
 }

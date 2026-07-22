@@ -45,16 +45,11 @@ final class RepositoryInterfaceGenerator extends BaseGenerator
         ModuleData $module
     ): GeneratorResult {
 
-        $path = $module->repositoryInterfacePath();
-
-        $this->generateFile(
+        return $this->generateResult(
             self::STUB,
-            $path,
+            $module->repositoryInterfacePath(),
             $this->buildVariables($module)
         );
-
-        return (new GeneratorResult())
-            ->addCreated($path);
     }
 
     /**

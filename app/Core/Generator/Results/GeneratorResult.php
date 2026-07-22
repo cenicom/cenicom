@@ -224,27 +224,27 @@ final class GeneratorResult
 
     public function createdCount(): int
     {
-        return count($this->created);
+        return $this->countOf($this->created);
     }
 
     public function updatedCount(): int
     {
-        return count($this->updated);
+        return $this->countOf($this->updated);
     }
 
     public function skippedCount(): int
     {
-        return count($this->skipped);
+        return $this->countOf($this->skipped);
     }
 
     public function warningCount(): int
     {
-        return count($this->warnings);
+        return $this->countOf($this->warnings);
     }
 
     public function errorCount(): int
     {
-        return count($this->errors);
+        return $this->countOf($this->errors);
     }
 
     public function hasCreatedFiles(): bool
@@ -268,5 +268,10 @@ final class GeneratorResult
             $this->createdCount()
             + $this->updatedCount()
             + $this->skippedCount();
+    }
+
+    private function countOf(array $items): int
+    {
+        return count($items);
     }
 }

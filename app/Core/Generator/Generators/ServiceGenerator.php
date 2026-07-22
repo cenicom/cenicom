@@ -42,23 +42,11 @@ final class ServiceGenerator extends BaseGenerator
         ModuleData $module
     ): GeneratorResult {
 
-        $path = $module->servicePath();
-
-        $result = new GeneratorResult();
-
-        if (
-            $this->generateFile(
-                self::STUB,
-                $path,
-                $this->buildVariables($module)
-            )
-        ) {
-            $result->addCreated($path);
-        } else {
-            $result->addSkipped($path);
-        }
-
-        return $result;
+        return $this->generateResult(
+            self::STUB,
+            $module->servicePath(),
+            $this->buildVariables($module)
+        );
     }
 
     /**
@@ -99,6 +87,22 @@ final class ServiceGenerator extends BaseGenerator
             'variable'
             => $module->variable(),
 
+            'imports'
+            => $this->buildImports($module),
+
         ];
+    }
+
+    private function buildImports(
+        ModuleData $module
+    ): string {
+
+        return implode(
+            PHP_EOL,
+            [
+                'use ' . $module->qualifiedRepositoryInterface() . ';',
+                'use ' . $module->qualifiedModel() . ';',
+            ]
+        );
     }
 }

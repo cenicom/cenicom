@@ -58,39 +58,6 @@ abstract class BaseGenerator implements GeneratorInterface
         );
     }
 
-    /**
-     * Genera un archivo a partir de un stub.
-     *
-     * Centraliza el flujo de renderizado y escritura para
-     * todos los generadores del CN Generator.
-     *
-     * @param string $stub Nombre del stub.
-     * @param string $path Ruta destino.
-     * @param array<string,mixed> $variables Variables del stub.
-     */
-    protected function generateFile(
-        string $stub,
-        string $path,
-        array $variables
-    ): bool {
-
-        if ($this->fileWriter->exists($path)) {
-            return false;
-        }
-
-        $content = $this->render(
-            $stub,
-            $variables
-        );
-
-        $this->write(
-            $path,
-            $content
-        );
-
-        return true;
-    }
-
     protected function write(
         string $path,
         string $content
@@ -109,13 +76,21 @@ abstract class BaseGenerator implements GeneratorInterface
 
         $result = new GeneratorResult();
 
-        if ($this->generateFile($stub, $path, $variables)) {
-            $result->addCreated($path);
-        } else {
-            $result->addSkipped($path);
+        if ($this->fileWriter->exists($path)) {
+            return $result->addSkipped($path);
         }
 
-        return $result;
+        $content = $this->render(
+            $stub,
+            $variables
+        );
+
+        $this->fileWriter->write(
+            $path,
+            $content
+        );
+
+        return $result->addCreated($path);
     }
 
     /**

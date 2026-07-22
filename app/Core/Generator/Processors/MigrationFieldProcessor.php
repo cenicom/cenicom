@@ -174,6 +174,13 @@ final class MigrationFieldProcessor
                 "\$table->foreignId('%s')",
                 $field->name()
             ),
+
+            default => throw new \InvalidArgumentException(
+                sprintf(
+                    'Tipo de campo no soportado [%s]',
+                    $field->type()->value
+                )
+            ),
         };
     }
 

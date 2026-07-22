@@ -15,13 +15,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('test_forms', function (Blueprint $table) {
+        Schema::create('currencies', function (Blueprint $table) {
 
             $table->uuid('id')->primary();
-
-$table->string('name');
-
-$table->text('description');
 
             $table->timestamps();
 
@@ -34,6 +30,6 @@ $table->text('description');
      */
     public function down(): void
     {
-        Schema::dropIfExists('test_forms');
+        Schema::dropIfExists('currencies');
     }
 };

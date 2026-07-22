@@ -6,13 +6,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 
-use App\Core\Contracts\TestFormServiceInterface;
+use App\Core\Contracts\CurrencyServiceInterface;
 
-use App\Http\Requests\TestForm\StoreTestFormRequest;
+use App\Http\Requests\Currency\StoreCurrencyRequest;
 
-use App\Http\Requests\TestForm\UpdateTestFormRequest;
+use App\Http\Requests\Currency\UpdateCurrencyRequest;
 
-use App\Models\TestForm;
+use App\Models\Currency;
 
 use Illuminate\Http\RedirectResponse;
 
@@ -23,18 +23,18 @@ use Illuminate\View\View;
  * CENICOM ERP
  * ==========================================================
  *
- * Controlador del módulo TestForm.
+ * Controlador del módulo Currency.
  *
  * Gestiona las operaciones CRUD del módulo.
  *
  * @package App\Http\Controllers
  */
-final class TestFormController extends Controller
+final class CurrencyController extends Controller
 {
     private const PER_PAGE = 15;
 
     public function __construct(
-        private readonly TestFormServiceInterface $service,
+        private readonly CurrencyServiceInterface $service,
     ) {
     }
 
@@ -43,8 +43,8 @@ final class TestFormController extends Controller
     */
     public function index(): View
     {
-        return view('test_forms.index', [
-            'testForms' => $this->service->paginate(
+        return view('currencies.index', [
+            'currencies' => $this->service->paginate(
                 perPage: self::PER_PAGE,
             ),
         ]);
@@ -55,14 +55,14 @@ final class TestFormController extends Controller
         */
     public function create(): View
     {
-        return view('test_forms.create');
+        return view('currencies.create');
     }
 
     /**
         * Almacena un nuevo recurso.
         */
     public function store(
-        StoreTestFormRequest $request,
+        StoreCurrencyRequest $request,
     ): RedirectResponse {
 
         $this->service->create(
@@ -70,19 +70,19 @@ final class TestFormController extends Controller
         );
 
         return redirect()
-            ->route('test_forms.index')
-            ->with('success', 'test_form creado correctamente.');
+            ->route('currencies.index')
+            ->with('success', 'currency creado correctamente.');
     }
 
     /**
         * Muestra un recurso específico.
         */
     public function show(
-        TestForm $testForm
+        Currency $currency
     ): View {
 
-        return view('test_forms.show', [
-            'testForm' => $testForm,
+        return view('currencies.show', [
+            'currency' => $currency,
         ]);
     }
 
@@ -90,11 +90,11 @@ final class TestFormController extends Controller
         * Edita un recurso específico.
         */
     public function edit(
-        TestForm $testForm
+        Currency $currency
     ): View {
 
-        return view('test_forms.edit', [
-            'testForm' => $testForm ,
+        return view('currencies.edit', [
+            'currency' => $currency ,
         ]);
     }
 
@@ -102,31 +102,31 @@ final class TestFormController extends Controller
     * Actualiza un recurso específico.
     */
     public function update(
-        UpdateTestFormRequest $request,
-        TestForm $testForm
+        UpdateCurrencyRequest $request,
+        Currency $currency
     ): RedirectResponse {
 
         $this->service->update(
-            $testForm,
+            $currency,
             $request->validated()
         );
 
         return redirect()
-            ->route('test_forms.index')
-            ->with('success', 'test_form actualizado correctamente.');
+            ->route('currencies.index')
+            ->with('success', 'currency actualizado correctamente.');
     }
 
     /**
     * Elimina el recurso específico.
     */
     public function destroy(
-        TestForm $testForm
+        Currency $currency
     ): RedirectResponse {
 
-        $this->service->destroy($testForm);
+        $this->service->destroy($currency);
 
         return redirect()
-            ->route('test_forms.index')
-            ->with('success', 'test_form eliminado correctamente.');
+            ->route('currencies.index')
+            ->with('success', 'currency eliminado correctamente.');
     }
 }

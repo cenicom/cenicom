@@ -42,23 +42,11 @@ final class ControllerGenerator extends BaseGenerator
         ModuleData $module
     ): GeneratorResult {
 
-        $path = $module->controllerPath();
-
-        $result = new GeneratorResult();
-
-        if (
-            $this->generateFile(
-                self::STUB,
-                $path,
-                $this->buildVariables($module)
-            )
-        ) {
-            $result->addCreated($path);
-        } else {
-            $result->addSkipped($path);
-        }
-
-        return $result;
+        return $this->generateResult(
+            self::STUB,
+            $module->controllerPath(),
+            $this->buildVariables($module)
+        );
     }
 
     /**
@@ -120,6 +108,9 @@ final class ControllerGenerator extends BaseGenerator
             'qualifiedModel'
             => $module->qualifiedModel(),
 
+            'qualifiedController'
+            => $module->qualifiedController(),
+
             'variable'
             => $module->variable(),
 
@@ -129,5 +120,19 @@ final class ControllerGenerator extends BaseGenerator
             'singular'
             => $module->singular(),
         ];
+    }
+
+    private function buildImports(
+        ModuleData $module
+    ): string {
+
+        return implode(
+            PHP_EOL,
+            [
+                'use ' . $module->qualifiedService() . ';',
+                'use ' . $module->qualifiedStoreRequest() . ';',
+                'use ' . $module->qualifiedUpdateRequest() . ';',
+            ]
+        );
     }
 }

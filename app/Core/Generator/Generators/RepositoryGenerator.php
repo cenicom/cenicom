@@ -41,23 +41,11 @@ final class RepositoryGenerator extends BaseGenerator
         ModuleData $module
     ): GeneratorResult {
 
-        $path = $module->repositoryPath();
-
-        $result = new GeneratorResult();
-
-        if (
-            $this->generateFile(
-                self::STUB,
-                $path,
-                $this->buildVariables($module)
-            )
-        ) {
-            $result->addCreated($path);
-        } else {
-            $result->addSkipped($path);
-        }
-
-        return $result;
+        return $this->generateResult(
+            self::STUB,
+            $module->repositoryPath(),
+            $this->buildVariables($module)
+        );
     }
 
     /**
@@ -91,6 +79,22 @@ final class RepositoryGenerator extends BaseGenerator
 
             'variable'
             => $module->variable(),
+
+            'imports'
+            => $this->buildImports($module),
         ];
+    }
+
+    private function buildImports(
+        ModuleData $module
+    ): string {
+
+        return implode(
+            PHP_EOL,
+            [
+                'use ' . $module->qualifiedModel() . ';',
+                'use ' . $module->qualifiedRepositoryInterface() . ';',
+            ]
+        );
     }
 }

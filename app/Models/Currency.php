@@ -14,11 +14,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * CENICOM ERP
  * ==========================================================
  *
- * 
+ * Module Currency
  *
  * @package App\Models
  */
-final class TestForm extends Model
+final class Currency extends Model
 {
     use HasFactory;
     use HasUuids;
@@ -27,7 +27,7 @@ final class TestForm extends Model
     /**
      * Tabla asociada al modelo.
      */
-    protected $table = 'test_forms';
+    protected $table = 'currencies';
 
     /**
      * Atributos asignables masivamente.
@@ -35,8 +35,7 @@ final class TestForm extends Model
      * @var array<int,string>
      */
     protected $fillable = [
-        'name',
-        'description',
+
     ];
 
     /**

@@ -39,12 +39,6 @@ readonly class ModuleData
 
     private string $description;
 
-    private array $routeMiddleware;
-
-    private ?string $routeNamePrefix;
-
-    private bool $resourceRoutes;
-
     /*
     |--------------------------------------------------------------------------
     | 2️⃣ Namespaces
@@ -73,9 +67,6 @@ readonly class ModuleData
 
     private string $observerNamespace;
 
-    private string $featureTestNamespace;
-
-    private string $unitTestNamespace;
     /*
     |--------------------------------------------------------------------------
     | 3️⃣ Clases generadas
@@ -259,8 +250,6 @@ readonly class ModuleData
         string $viewPrefix,
 
         array $columns,
-
-
         bool $timestamps,
         bool $softDeletes,
         bool $uuid,
@@ -327,7 +316,6 @@ readonly class ModuleData
 
         $this->columns = $columns;
 
-
         $this->timestamps = $timestamps;
         $this->softDeletes = $softDeletes;
         $this->uuid = $uuid;
@@ -374,20 +362,6 @@ readonly class ModuleData
         return $this->description;
     }
 
-    public function routeMiddleware(): array
-    {
-        return $this->routeMiddleware;
-    }
-
-    public function routeNamePrefix(): string
-    {
-        return $this->routeNamePrefix;
-    }
-
-    public function resourceRoutes(): bool
-    {
-        return $this->resourceRoutes;
-    }
 
     /*
     |--------------------------------------------------------------------------
@@ -449,17 +423,6 @@ readonly class ModuleData
     {
         return $this->observerNamespace;
     }
-
-    public function featureTestNamespace(): string
-    {
-        return $this->featureTestNamespace;
-    }
-    public function unitTestNamespace(): string
-    {
-        return $this->unitTestNamespace;
-    }
-
-
 
     /*
     |--------------------------------------------------------------------------
@@ -982,5 +945,15 @@ readonly class ModuleData
     public function resourceUri(): string
     {
         return Str::kebab($this->plural());
+    }
+
+    public function relationships(): array
+    {
+        return [];
+    }
+
+    public function scopes(): array
+    {
+        return [];
     }
 }

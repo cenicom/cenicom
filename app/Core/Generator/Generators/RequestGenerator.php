@@ -33,6 +33,9 @@ use App\Core\Generator\Support\StubManager;
  */
 final class RequestGenerator extends BaseGenerator
 {
+    private const STORE_STUB = 'requests/store';
+    private const UPDATE_STUB = 'requests/update';
+
     public function __construct(
         StubManager $stubManager,
         FileWriter $fileWriter,
@@ -62,9 +65,9 @@ final class RequestGenerator extends BaseGenerator
 
         $result = new GeneratorResult();
 
-        $this->generateStoreRequest($module, $result);
+        $this->generateStoreRequest($module);
 
-        $this->generateUpdateRequest($module, $result);
+        $this->generateUpdateRequest($module);
 
         return $result;
     }
@@ -73,51 +76,23 @@ final class RequestGenerator extends BaseGenerator
      * Genera StoreRequest.
      */
     private function generateStoreRequest(
-        ModuleData $module,
-        GeneratorResult $result
-    ): void {
-
-
+        ModuleData $module
+    ): GeneratorResult {
         $file = $module->requestPath()
             . DIRECTORY_SEPARATOR
             . $module->storeRequestClass()
             . '.php';
 
-        if (
-            $this->generateFile(
-                'requests/store',
-                $file,
-                $this->buildVariables(
-                    $module,
-                    $module->storeRequestClass()
-                )
+        return $this->generateResult(
+            self::STORE_STUB,
+            $file,
+            $this->buildVariables(
+                $module,
+                $module->storeRequestClass()
             )
-        ) {
-            $result->addCreated($file);
-        } else {
-            $result->addSkipped($file);
-        }
+        );
     }
 
-    private function buildRules(ModuleData $module): string
-    {
-        $rules = [];
-
-        foreach ($module->columns() as $column) {
-
-            if (!$this->shouldGenerateRule($column)) {
-                continue;
-            }
-
-            $rules[] = sprintf(
-                "            '%s' => %s,",
-                $column->name(),
-                $this->buildRule($column)
-            );
-        }
-
-        return implode(PHP_EOL, $rules);
-    }
 
     private function shouldGenerateRule(
         ColumnDefinition $column
@@ -130,25 +105,21 @@ final class RequestGenerator extends BaseGenerator
      * Genera UpdateRequest.
      */
     private function generateUpdateRequest(
-        ModuleData $module,
-        GeneratorResult $result
-    ): string {
-
-        $path = $module->requestPath()
+        ModuleData $module
+    ): GeneratorResult {
+        $file = $module->requestPath()
             . DIRECTORY_SEPARATOR
             . $module->updateRequestClass()
             . '.php';
 
-        $this->generateFile(
-            'requests/update',
-            $path,
+        return $this->generateResult(
+            self::UPDATE_STUB,
+            $file,
             $this->buildVariables(
                 $module,
                 $module->updateRequestClass()
             )
         );
-
-        return $path;
     }
 
     /**
@@ -168,8 +139,6 @@ final class RequestGenerator extends BaseGenerator
 
             'className' => $class,
 
-            'rules' => $this->resolveRules($module),
-
             'singular'
             => $module->singular(),
 
@@ -179,36 +148,14 @@ final class RequestGenerator extends BaseGenerator
             'updateRequest'
             => $module->updateRequestClass(),
 
+            'rules' => $this->buildRules($module),
+
         ];
     }
 
-
-    /**
-     * Construye reglas Laravel.
-     */
-    private function resolveRules(
-        ModuleData $module
-    ): string {
-
-        $rules = [];
-
-        foreach ($module->columns() as $column) {
-
-            $rules[] = sprintf(
-                "            '%s' => ['required'],",
-                $column->name(),
-                $this->buildRule($column)
-            );
-        }
-
-        return implode(
-            PHP_EOL,
-            $rules
-        );
-    }
-
     private function buildRule(
-        ColumnDefinition $column
+        ColumnDefinition $column,
+        ModuleData $module
     ): string {
 
         $rules = [];
@@ -228,7 +175,39 @@ final class RequestGenerator extends BaseGenerator
             $rules[] = $foreign;
         }
 
+        if ($unique = $this->resolveUniqueRule($column, $module)) {
+            $rules[] = $unique;
+        }
+
         return "['" . implode("', '", $rules) . "']";
+    }
+
+    private function buildRules(
+        ModuleData $module
+    ): string {
+
+        $rules = [];
+
+        foreach ($module->columns() as $column) {
+
+            if (! $this->shouldGenerateRule($column)) {
+                continue;
+            }
+
+            $rules[] = sprintf(
+                "            '%s' => %s,",
+                $column->name(),
+                $this->buildRule(
+                    $column,
+                    $module
+                )
+            );
+        }
+
+        return implode(
+            PHP_EOL,
+            $rules
+        );
     }
 
     private function resolveRequiredRule(
@@ -273,6 +252,16 @@ final class RequestGenerator extends BaseGenerator
 
             FieldType::EMAIL => ['email'],
 
+            FieldType::BIG_INTEGER => ['bigInteger'],
+
+            FieldType::FLOAT => ['float'],
+
+            FieldType::DOUBLE => ['double'],
+
+            FieldType::JSON => ['json'],
+
+            FieldType::ENUM => ['enum'],
+
             default => ['string'],
         };
     }
@@ -292,10 +281,22 @@ final class RequestGenerator extends BaseGenerator
         );
     }
 
+    /**
+     * Resuelve la regla unique de Laravel.
+     */
+    private function resolveUniqueRule(
+        ColumnDefinition $column,
+        ModuleData $module
+    ): ?string {
 
+        if (! $column->unique()) {
+            return null;
+        }
 
-
-
-
-
+        return sprintf(
+            'unique:%s,%s',
+            $module->table(),
+            $column->name()
+        );
+    }
 }

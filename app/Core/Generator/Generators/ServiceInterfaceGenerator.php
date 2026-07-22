@@ -24,26 +24,13 @@ final class ServiceInterfaceGenerator extends BaseGenerator
     ): GeneratorResult {
 
         logger('=== ServiceInterfaceGenerator ejecutado ===');
+        logger($module->serviceInterfacePath());
 
-        $path = $module->serviceInterfacePath();
-
-        logger($path);
-
-        $created = $this->generateFile(
+        return $this->generateResult(
             self::STUB,
-            $path,
+            $module->serviceInterfacePath(),
             $this->buildVariables($module)
         );
-
-        $result = new GeneratorResult();
-
-        if ($created) {
-            $result->addCreated($path);
-        } else {
-            $result->addSkipped($path);
-        }
-
-        return $result;
     }
 
 

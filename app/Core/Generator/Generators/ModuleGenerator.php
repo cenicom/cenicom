@@ -41,9 +41,9 @@ final class ModuleGenerator
                 continue;
             }
 
-            $generatorResult = $generator->generate($module);
-
-            $result->merge($generatorResult);
+            $result->merge(
+                $generator->generate($module)
+            );
         }
 
         return $result;

@@ -38,23 +38,11 @@ final class RouteGenerator extends BaseGenerator
         ModuleData $module
     ): GeneratorResult {
 
-        $path = $module->routePath();
-
-        $result = new GeneratorResult();
-
-        if (
-            $this->generateFile(
-                self::STUB,
-                $path,
-                $this->buildVariables($module)
-            )
-        ) {
-            $result->addCreated($path);
-        } else {
-            $result->addSkipped($path);
-        }
-
-        return $result;
+        return $this->generateResult(
+            self::STUB,
+            $module->routePath(),
+            $this->buildVariables($module)
+        );
     }
 
     /**

@@ -47,8 +47,26 @@ final class MigrationGenerator extends BaseGenerator
     /**
      * {@inheritDoc}
      */
-    public function generate(ModuleData $module): GeneratorResult
-    {
+    public function generate(
+        ModuleData $module
+    ): GeneratorResult {
+
+        return $this->generateResult(
+            self::STUB,
+            $module->migrationFile(),
+            $this->buildVariables($module)
+        );
+    }
+
+    /**
+     * Construye las variables utilizadas por el stub de migración.
+     *
+     * @return array<string,string>
+     */
+    private function buildVariables(
+        ModuleData $module
+    ): array {
+
         $columns = [];
 
         if ($module->uuid()) {
@@ -65,7 +83,10 @@ final class MigrationGenerator extends BaseGenerator
 
         $variables = $module->toStubVariables();
 
-        $variables['columns'] = implode("\n\n", $columns);
+        $variables['columns'] = implode(
+            "\n\n",
+            $columns
+        );
 
         $variables['timestamps'] = $module->timestamps()
             ? '$table->timestamps();'
@@ -75,24 +96,6 @@ final class MigrationGenerator extends BaseGenerator
             ? '$table->softDeletes();'
             : '';
 
-        $file = $module->migrationFile();
-
-        $result = new GeneratorResult();
-
-        if (
-            $this->generateFile(
-                self::STUB,
-                $file,
-                $variables
-            )
-        ) {
-            $result->addCreated($file);
-        } else {
-            $result->addSkipped($file);
-        }
-
-        return $result;
+        return $variables;
     }
-
-
 }

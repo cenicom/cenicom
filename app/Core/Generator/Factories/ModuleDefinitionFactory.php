@@ -19,13 +19,13 @@ final class ModuleDefinitionFactory
 
         return [
 
-            ...$this->buildIdentity($specification),
+            'identity'   => $specification->identity(),
 
             ...$this->buildFields($specification),
 
-            ...$this->buildGeneration($specification),
+            'generation' => $specification->generation(),
 
-            ...$this->buildMetadata($specification),
+            'metadata'   => $specification->metadata(),
         ];
     }
 
@@ -34,8 +34,7 @@ final class ModuleDefinitionFactory
      */
     private function buildIdentity(
         SpecificationInterface $specification
-    ): array
-    {
+    ): array {
         return $specification->identity();
     }
 
@@ -44,8 +43,7 @@ final class ModuleDefinitionFactory
      */
     private function buildFields(
         SpecificationInterface $specification
-    ): array
-    {
+    ): array {
         return [
             'fields' => $specification->fields(),
 
@@ -58,8 +56,7 @@ final class ModuleDefinitionFactory
      */
     private function buildGeneration(
         SpecificationInterface $specification
-    ): array
-    {
+    ): array {
         return $specification->generation();
     }
 
@@ -68,8 +65,7 @@ final class ModuleDefinitionFactory
      */
     private function buildMetadata(
         SpecificationInterface $specification
-    ): array
-    {
+    ): array {
         return $specification->metadata();
     }
 }

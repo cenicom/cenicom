@@ -48,11 +48,11 @@ final class ModuleDataFactory
             $definition['generation'] ?? []
         );
 
-        $route = $definition['routing'] ?? [];
+        $identity = $definition['identity'] ?? [];
 
-        $routing = $this->buildRouting(
-            $route
-        );
+        $generation = $definition['generation'] ?? [];
+
+        $fields = $definition['fields'] ?? [];
 
         return new ModuleData(
 
@@ -64,16 +64,13 @@ final class ModuleDataFactory
 
             name: $name,
 
-            singular: $definition['singular'] ?? Str::snake($name),
+            singular: $identity['singular'],
 
-            plural: $definition['plural'] ?? Str::plural(Str::snake($name)),
+            plural: $identity['plural'],
 
-            table: $definition['table'] ?? Str::snake(
-                Str::plural($name)
-            ),
+            table: $identity['table'],
 
-            description: $definition['description'] ?? '',
-
+            description: $identity['description'],
             /*
             |--------------------------------------------------------------------------
             | Namespaces
@@ -181,13 +178,11 @@ final class ModuleDataFactory
             |--------------------------------------------------------------------------
             */
 
-            routePrefix: $definition['routes']['routePrefix'],
+            routePrefix: $generation['routePrefix'],
 
-            routeName: $definition['routes']['routeName'],
+            routeName: $generation['routeName'],
 
-            viewPrefix: $definition['routes']['viewPrefix'],
-
-
+            viewPrefix: $generation['viewPrefix'],
 
             /*
             |--------------------------------------------------------------------------
@@ -196,7 +191,7 @@ final class ModuleDataFactory
             */
 
             columns: $this->buildColumns(
-                $definition['fields'] ?? []
+                $fields
             ),
 
             /*
@@ -398,13 +393,13 @@ final class ModuleDataFactory
     }
 
     /**
-     * Construye las opciones del módulo.
+     * Construye las opciones de generación del módulo.
      *
-     * @param array<string,mixed> $definition
+     * @param array<string,mixed> $generation
      *
      * @return array<string,mixed>
      */
-    private function buildOptions(array $definition): array
+    private function buildOptions(array $generation): array
     {
         return [
 
@@ -431,30 +426,6 @@ final class ModuleDataFactory
 
             'icon'
             => $definition['icon'] ?? null,
-        ];
-    }
-
-    private function buildRouting(
-        array $routing
-    ): array {
-        return [
-
-            'routeMiddleware'
-            => $routing['middleware']
-                ?? ['auth', 'verified'],
-
-            'routePrefix'
-            => $routing['prefix']
-                ?? '',
-
-            'routeNamePrefix'
-            => $routing['namePrefix']
-                ?? '',
-
-            'resourceRoutes'
-            => $routing['resource']
-                ?? true,
-
         ];
     }
 }

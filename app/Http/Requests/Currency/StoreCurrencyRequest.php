@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\TestForm;
+namespace App\Http\Requests\Currency;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -13,14 +13,14 @@ use Illuminate\Foundation\Http\FormRequest;
  * CENICOM ERP
  * ==========================================================
  *
- * Request para crear un test_form.
+ * Request para crear un currency.
  *
  * Gestiona la autorización y validación de la creación
  * de registros del módulo.
  *
- * @package App\Http\Requests\TestForm
+ * @package App\Http\Requests\Currency
  */
-final class StoreTestFormRequest
+final class StoreCurrencyRequest
     extends FormRequest
 {
     /**
