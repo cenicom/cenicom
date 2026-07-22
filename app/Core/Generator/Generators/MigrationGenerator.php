@@ -11,6 +11,7 @@ use App\Core\Generator\Processors\MigrationFieldProcessor;
 use App\Core\Generator\Results\GeneratorResult;
 use App\Core\Generator\Support\FileWriter;
 use App\Core\Generator\Support\StubManager;
+use App\Core\Generator\Validation\GeneratorValidator;
 
 /**
  * Genera la migración de un módulo del CN Generator.
@@ -26,14 +27,17 @@ final class MigrationGenerator extends BaseGenerator
     public function __construct(
         StubManager $stubManager,
         FileWriter $fileWriter,
+        PresentationFactory $presentationFactory,
+        GeneratorValidator $validator,
         private readonly MigrationFieldProcessor $fieldProcessor,
-        PresentationFactory $presentationFactory
     ) {
         parent::__construct(
             $stubManager,
             $fileWriter,
-            $presentationFactory
+            $presentationFactory,
+            $validator,
         );
+
     }
 
     /**
@@ -81,7 +85,7 @@ final class MigrationGenerator extends BaseGenerator
             $columns[] = $fieldColumns;
         }
 
-        $variables = $module->toStubVariables();
+        $variables = $this->defaultVariables($module);
 
         $variables['columns'] = implode(
             "\n\n",

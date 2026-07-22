@@ -57,32 +57,34 @@ final class RepositoryGenerator extends BaseGenerator
         ModuleData $module
     ): array {
 
-        return [
+        return array_merge(
+            $this->defaultVariables($module),
+            [
+                'namespace' =>
+                $module->repositoryNamespace(),
 
-            'namespace'
-            => $module->repositoryNamespace(),
+                'qualifiedModel' =>
+                $module->qualifiedModel(),
 
-            'qualifiedModel'
-            => $module->qualifiedModel(),
+                'qualifiedRepositoryInterface' =>
+                $module->qualifiedRepositoryInterface(),
 
-            'qualifiedRepositoryInterface'
-            => $module->qualifiedRepositoryInterface(),
+                'repositoryInterface' =>
+                $module->repositoryInterface(),
 
-            'repositoryInterface'
-            => $module->repositoryInterface(),
+                'model' =>
+                $module->modelClass(),
 
-            'model'
-            => $module->modelClass(),
+                'repository' =>
+                $module->repositoryClass(),
 
-            'repository'
-            => $module->repositoryClass(),
+                'variable' =>
+                $module->variable(),
 
-            'variable'
-            => $module->variable(),
-
-            'imports'
-            => $this->buildImports($module),
-        ];
+                'imports' =>
+                $this->buildImports($module),
+            ]
+        );
     }
 
     private function buildImports(

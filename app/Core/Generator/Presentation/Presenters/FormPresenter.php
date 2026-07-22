@@ -170,7 +170,7 @@ final readonly class FormPresenter implements PresentationInterface
     /**
      * Construye una sección del formulario.
      *
-     * @param array<int,array<int,ComponentMetadata>> $rows
+     * @param array<int,array<int,InputPresentation>> $rows
      *
      * @return array<string,mixed>
      */

@@ -7,6 +7,7 @@ namespace App\Core\Generator\Generators;
 use App\Core\Generator\Contracts\GeneratorInterface;
 use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\Results\GeneratorResult;
+use App\Core\Generator\Validation\GeneratorTestSuite;
 
 /**
  * Orquesta la ejecución de todos los generadores del CN Generator.
@@ -26,6 +27,7 @@ final class ModuleGenerator
      */
     public function __construct(
         private readonly iterable $generators,
+        private readonly GeneratorTestSuite $testSuite,
     ) {}
 
     /**
@@ -45,6 +47,8 @@ final class ModuleGenerator
                 $generator->generate($module)
             );
         }
+
+        $this->testSuite->validate($result);
 
         return $result;
     }

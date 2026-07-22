@@ -147,5 +147,19 @@ final class StubManager
         return $content;
     }
 
+    public function ensureExists(string $stub): bool
+    {
+        $path = $this->resolvePath($stub);
 
+        if (! file_exists($path)) {
+            throw new \RuntimeException(
+                sprintf(
+                    'Stub [%s] not found.',
+                    $stub
+                )
+            );
+        }
+
+        return true;
+    }
 }

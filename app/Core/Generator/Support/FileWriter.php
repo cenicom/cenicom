@@ -45,9 +45,12 @@ final class FileWriter
 
         $result = file_put_contents($path, $contents);
 
-        if ($result === false) {
+        if ($contents === '') {
             throw new RuntimeException(
-                sprintf('No fue posible escribir el archivo [%s].', $path)
+                sprintf(
+                    'No se puede escribir contenido vacío en [%s].',
+                    $path
+                )
             );
         }
     }

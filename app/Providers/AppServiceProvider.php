@@ -2,11 +2,15 @@
 
 namespace App\Providers;
 
+use App\Core\Generator\Presentation\Contracts\PresentationRendererInterface;
+use App\Core\Generator\Presentation\Renderers\BladePresentationRenderer;
+use App\Core\Generator\Specifications\Validators\SpecificationValidator;
+
+use App\Core\Generator\Validation\GeneratorValidator;
+use App\Core\Generator\Validation\Validators\FieldsValidator;
 use App\Support\Navigation\NavigationManager;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
-use App\Core\Generator\Presentation\Contracts\PresentationRendererInterface;
-use App\Core\Generator\Presentation\Renderers\BladePresentationRenderer;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,6 +28,14 @@ class AppServiceProvider extends ServiceProvider
             PresentationRendererInterface::class,
             BladePresentationRenderer::class
         );
+
+        $this->app->singleton(GeneratorValidator::class, function ($app) {
+            return new GeneratorValidator([
+
+                $app->make(SpecificationValidator::class),
+                $app->make(FieldsValidator::class),
+            ]);
+        });
     }
 
     /**

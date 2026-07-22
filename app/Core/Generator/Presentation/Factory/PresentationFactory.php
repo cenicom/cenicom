@@ -49,9 +49,6 @@ final readonly class PresentationFactory
     }
 
     /**
-     * Construye un TablePresenter.
-     */
-    /**
      * Construye la presentación de la tabla.
      */
     public function table(

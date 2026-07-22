@@ -12,6 +12,7 @@ use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Results\GeneratorResult;
 use App\Core\Generator\Support\FileWriter;
 use App\Core\Generator\Support\StubManager;
+use App\Core\Generator\Validation\GeneratorValidator;
 
 /**
  * ==========================================================
@@ -39,12 +40,14 @@ final class RequestGenerator extends BaseGenerator
     public function __construct(
         StubManager $stubManager,
         FileWriter $fileWriter,
-        PresentationFactory $presentationFactory
+        PresentationFactory $presentationFactory,
+        GeneratorValidator $validator,
     ) {
         parent::__construct(
             $stubManager,
             $fileWriter,
-            $presentationFactory
+            $presentationFactory,
+            $validator,
         );
     }
 

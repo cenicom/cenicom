@@ -6,10 +6,11 @@ namespace App\Core\Generator;
 
 use App\Core\Generator\Contracts\GeneratorInterface;
 use App\Core\Generator\DTO\ModuleData;
+use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Results\GeneratorResult;
 use App\Core\Generator\Support\FileWriter;
 use App\Core\Generator\Support\StubManager;
-use App\Core\Generator\Presentation\Factory\PresentationFactory;
+use App\Core\Generator\Validation\GeneratorValidator;
 
 /**
  * Clase base para los generadores del CN Generator.
@@ -29,7 +30,8 @@ abstract class BaseGenerator implements GeneratorInterface
     public function __construct(
         protected StubManager $stubManager,
         protected FileWriter $fileWriter,
-        protected PresentationFactory $presentationFactory
+        protected PresentationFactory $presentationFactory,
+        protected GeneratorValidator $validator,
     ) {}
 
     /**
@@ -80,6 +82,10 @@ abstract class BaseGenerator implements GeneratorInterface
             return $result->addSkipped($path);
         }
 
+        $this->ensureStubExists($stub);
+
+        $this->validateVariables($variables);
+
         $content = $this->render(
             $stub,
             $variables
@@ -89,6 +95,8 @@ abstract class BaseGenerator implements GeneratorInterface
             $path,
             $content
         );
+
+        $this->validateGeneratedFile($path);
 
         return $result->addCreated($path);
     }
@@ -194,5 +202,74 @@ abstract class BaseGenerator implements GeneratorInterface
             'table_columns' => $table->columns(),
 
         ];
+    }
+
+    /**
+     * Verifica que exista el stub solicitado.
+     */
+    protected function ensureStubExists(string $stub): void
+    {
+        $this->stubManager->ensureExists($stub);
+    }
+
+    /**
+     * Valida las variables enviadas al stub.
+     *
+     * @param array<string,mixed> $variables
+     */
+    protected function validateVariables(array $variables): void
+    {
+        foreach ($variables as $key => $value) {
+
+            if ($value instanceof \Closure) {
+
+                throw new \RuntimeException(
+                    "La variable '{$key}' no puede ser Closure."
+                );
+            }
+        }
+    }
+
+    /**
+     * Valida el archivo generado.
+     */
+    protected function validateGeneratedFile(
+        string $path
+    ): void {
+
+        if (! is_file($path)) {
+            throw new \RuntimeException(
+                "No fue posible generar {$path}."
+            );
+        }
+
+        if (! is_readable($path)) {
+            throw new \RuntimeException(
+                "No fue posible leer {$path}."
+            );
+        }
+
+        $content = file_get_contents($path);
+
+        if ($content === false) {
+            throw new \RuntimeException(
+                "No fue posible leer {$path}."
+            );
+        }
+
+        if (trim($content) === '') {
+            throw new \RuntimeException(
+                "El archivo {$path} quedó vacío."
+            );
+        }
+
+        if (
+            str_contains($content, '[[') ||
+            str_contains($content, ']]')
+        ) {
+            throw new \RuntimeException(
+                "El archivo {$path} contiene placeholders sin reemplazar."
+            );
+        }
     }
 }

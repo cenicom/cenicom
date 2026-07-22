@@ -700,10 +700,10 @@ final readonly class ColumnDefinition
      */
     public function supportsForeignKey(): bool
     {
-        return $this->type === FieldType::FOREIGN_ID;
+        return $this->type->supportsForeignKey();
     }
 
-        /*
+    /*
     |--------------------------------------------------------------------------
     | Helpers - Participación en Generadores
     |--------------------------------------------------------------------------
@@ -965,10 +965,6 @@ final readonly class ColumnDefinition
     |--------------------------------------------------------------------------
     */
 
-
-
-
-
     /**
      * Determina si el tipo soporta índices.
      */
@@ -1022,5 +1018,23 @@ final readonly class ColumnDefinition
     public function collation(): ?string
     {
         return $this->collation;
+    }
+
+    public function effectiveLength(): ?int
+    {
+        return $this->length
+            ?? $this->type->defaultLength();
+    }
+
+    public function effectivePrecision(): ?int
+    {
+        return $this->length
+            ?? $this->type->defaultLength();
+    }
+
+    public function effectiveScale(): ?int
+    {
+        return $this->length
+            ?? $this->type->defaultLength();
     }
 }

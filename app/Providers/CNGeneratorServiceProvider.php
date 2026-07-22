@@ -24,6 +24,7 @@ use App\Core\Generator\Generators\ServiceGenerator;
 use App\Core\Generator\Generators\ServiceInterfaceGenerator;
 use App\Core\Generator\Generators\UnitTestGenerator;
 use App\Core\Generator\Generators\ViewGenerator;
+use App\Core\Generator\Validation\GeneratorTestSuite;
 use Illuminate\Support\ServiceProvider;
 
 
@@ -114,16 +115,12 @@ final class CNGeneratorServiceProvider extends ServiceProvider
      */
     private function registerModuleGenerator(): void
     {
-        $this->app->singleton(
-            ModuleGenerator::class,
-            function ($app): ModuleGenerator {
+        $this->app->singleton(ModuleGenerator::class, function ($app) {
 
-                return new ModuleGenerator(
-                    $app
-                        ->make(GeneratorRegistry::class)
-                        ->all()
-                );
-            }
-        );
+            return new ModuleGenerator(
+                $app->make(GeneratorRegistry::class)->all(),
+                $app->make(GeneratorTestSuite::class),
+            );
+        });
     }
 }

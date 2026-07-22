@@ -41,14 +41,17 @@ final class ModelGenerator extends BaseGenerator
         return $this->generateResult(
             self::STUB,
             $module->modelPath(),
-            $this->buildVariables($module)
+            array_merge(
+                $this->defaultVariables($module),
+                $this->buildVariables($module)
+            )
         );
     }
 
     /**
      * Construye las variables utilizadas por el stub.
      *
-     * @return array<string,string>
+     * @return array<string,mixed>
      */
     private function buildVariables(ModuleData $module): array
     {

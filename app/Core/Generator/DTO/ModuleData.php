@@ -55,8 +55,6 @@ readonly class ModuleData
 
     private string $requestNamespace;
 
-    private string $contractNamespace;
-
     private string $policyNamespace;
 
     private string $factoryNamespace;
@@ -141,6 +139,10 @@ readonly class ModuleData
 
     private string $serviceInterfacePath;
 
+    private string $repositoryContractNamespace;
+
+    private string $serviceContractNamespace;
+
 
     /*
     |--------------------------------------------------------------------------
@@ -206,7 +208,8 @@ readonly class ModuleData
         string $policyNamespace,
         string $requestNamespace,
         string $factoryNamespace,
-        string $contractNamespace,
+        string $repositoryContractNamespace,
+        string $serviceContractNamespace,
         string $seederNamespace,
         string $testNamespace,
         string $observerNamespace,
@@ -270,7 +273,7 @@ readonly class ModuleData
         $this->serviceNamespace = $serviceNamespace;
         $this->controllerNamespace = $controllerNamespace;
         $this->requestNamespace = $requestNamespace;
-        $this->contractNamespace = $contractNamespace;
+
         $this->policyNamespace = $policyNamespace;
         $this->factoryNamespace = $factoryNamespace;
         $this->seederNamespace = $seederNamespace;
@@ -324,6 +327,9 @@ readonly class ModuleData
         $this->permissions = $permissions;
         $this->menu = $menu;
         $this->icon = $icon;
+
+        $this->repositoryContractNamespace = $repositoryContractNamespace;
+        $this->serviceContractNamespace = $serviceContractNamespace;
     }
 
     /*
@@ -394,10 +400,6 @@ readonly class ModuleData
         return $this->requestNamespace;
     }
 
-    public function contractNamespace(): string
-    {
-        return $this->contractNamespace;
-    }
 
     public function policyNamespace(): string
     {
@@ -597,6 +599,16 @@ readonly class ModuleData
         return $this->serviceInterfacePath;
     }
 
+    public function repositoryContractNamespace(): string
+    {
+        return $this->repositoryContractNamespace;
+    }
+
+    public function serviceContractNamespace(): string
+    {
+        return $this->serviceContractNamespace;
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Getters - Rutas y Vistas
@@ -695,7 +707,7 @@ readonly class ModuleData
 
     public function qualifiedRepositoryInterface(): string
     {
-        return "{$this->contractNamespace()}\\{$this->repositoryInterface()}";
+        return "{$this->repositoryContractNamespace()}\\{$this->repositoryInterface()}";
     }
 
     public function qualifiedService(): string
@@ -705,7 +717,7 @@ readonly class ModuleData
 
     public function qualifiedServiceInterface(): string
     {
-        return "{$this->contractNamespace()}\\{$this->serviceInterface()}";
+        return "{$this->serviceContractNamespace()}\\{$this->serviceInterface()}";
     }
 
     public function qualifiedController(): string
@@ -912,9 +924,6 @@ readonly class ModuleData
             'storeRequest' => $this->storeRequestClass,
             'updateRequest' => $this->updateRequestClass,
             'requestNamespace' => $this->requestNamespace,
-
-            // Contract
-            'contractNamespace' => $this->contractNamespace,
 
             // Rutas
             'routePrefix' => $this->routePrefix,

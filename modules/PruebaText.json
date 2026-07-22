@@ -1,0 +1,32 @@
+{
+    "identity": {
+        "name": "PruebaText",
+        "singular": "prueba_text",
+        "plural": "prueba_texts",
+        "table": "prueba_texts",
+        "description": "Module PruebaText"
+    },
+    "database": [],
+    "fields": [],
+    "relations": [],
+    "validation": [],
+    "permissions": [],
+    "navigation": [],
+    "generation": {
+        "routePrefix": "prueba_texts",
+        "routeName": "prueba_texts",
+        "viewPrefix": "prueba_texts",
+        "timestamps": true,
+        "softDeletes": false,
+        "uuid": true,
+        "api": false,
+        "tests": true,
+        "permissions": true,
+        "menu": true,
+        "icon": "bi-grid"
+    },
+    "metadata": {
+        "version": "1.0.0",
+        "source": "generator"
+    }
+}

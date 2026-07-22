@@ -63,8 +63,7 @@ final class RepositoryInterfaceGenerator extends BaseGenerator
 
         return [
 
-            'namespace'
-            => $module->contractNamespace(),
+        'namespace' => $module->repositoryContractNamespace(),
 
             'repositoryInterface'
             => $module->repositoryInterface(),

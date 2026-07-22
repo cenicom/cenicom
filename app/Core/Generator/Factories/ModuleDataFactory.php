@@ -91,7 +91,9 @@ final class ModuleDataFactory
 
             factoryNamespace: $namespaces['factoryNamespace'],
 
-            contractNamespace: $namespaces['contractNamespace'],
+            repositoryContractNamespace: $namespaces['repositoryContractNamespace'],
+
+            serviceContractNamespace: $namespaces['serviceContractNamespace'],
 
             seederNamespace: $namespaces['seederNamespace'],
 
@@ -305,7 +307,11 @@ final class ModuleDataFactory
 
             'repositoryNamespace' => 'App\\Core\\Repositories',
 
+            'repositoryContractNamespace' => 'App\\Core\\Repositories\\Contracts',
+
             'serviceNamespace' => 'App\\Core\\Services',
+
+            'serviceContractNamespace' => 'App\\Core\\Services\\Contracts',
 
             'controllerNamespace' => 'App\\Http\\Controllers',
 
@@ -315,13 +321,12 @@ final class ModuleDataFactory
 
             'factoryNamespace' => 'Database\\Factories',
 
-            'contractNamespace' => 'App\\Core\\Contracts',
-
             'seederNamespace' => 'Database\\Seeders',
 
             'testNamespace' => 'Tests\\Feature',
 
             'observerNamespace' => 'App\\Observers',
+
         ];
     }
 

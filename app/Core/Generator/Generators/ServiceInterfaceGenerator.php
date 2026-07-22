@@ -40,10 +40,14 @@ final class ServiceInterfaceGenerator extends BaseGenerator
 
         return [
 
-            'namespace' => $module->contractNamespace(),
+            'namespace' => $module->serviceContractNamespace(),
+
             'qualifiedModel' => $module->qualifiedModel(),
+
             'serviceInterface' => $module->serviceInterface(),
+
             'model' => $module->modelClass(),
+
             'variable' => $module->variable(),
 
         ];
