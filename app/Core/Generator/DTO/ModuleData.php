@@ -69,6 +69,10 @@ readonly class ModuleData
 
     private string $serviceContractNamespace;
 
+    private string $permissionNamespace;
+
+     private string $middlewareNamespace;
+
     /*
     |--------------------------------------------------------------------------
     | 3️⃣ Clases generadas
@@ -102,6 +106,10 @@ readonly class ModuleData
     private string $unitTestClass;
 
     private string $observerClass;
+
+    private string $permissionClass;
+
+    private string $middlewareClass;
 
     /*
     |--------------------------------------------------------------------------
@@ -214,6 +222,8 @@ readonly class ModuleData
         string $seederNamespace,
         string $testNamespace,
         string $observerNamespace,
+        string $permissionNamespace,
+        string $middlewareNamespace,
 
         string $modelClass,
         string $repositoryClass,
@@ -229,7 +239,8 @@ readonly class ModuleData
         string $featureTestClass,
         string $unitTestClass,
         string $observerClass,
-
+        string $permissionClass,
+        string $middlewareClass,
 
         string $modelPath,
         string $migrationPath,
@@ -275,12 +286,13 @@ readonly class ModuleData
         $this->serviceNamespace = $serviceNamespace;
         $this->controllerNamespace = $controllerNamespace;
         $this->requestNamespace = $requestNamespace;
-
+        $this->middlewareNamespace = $middlewareNamespace;
         $this->policyNamespace = $policyNamespace;
         $this->factoryNamespace = $factoryNamespace;
         $this->seederNamespace = $seederNamespace;
         $this->testNamespace = $testNamespace;
         $this->observerNamespace = $observerNamespace;
+        $this->permissionNamespace = $permissionNamespace;
 
         $this->modelClass = $modelClass;
         $this->repositoryClass = $repositoryClass;
@@ -296,6 +308,8 @@ readonly class ModuleData
         $this->featureTestClass = $featureTestClass;
         $this->unitTestClass = $unitTestClass;
         $this->observerClass = $observerClass;
+        $this->permissionClass = $permissionClass;
+        $this->middlewareClass = $middlewareClass;
 
         $this->modelPath = $modelPath;
         $this->migrationPath = $migrationPath;
@@ -429,6 +443,26 @@ readonly class ModuleData
         return $this->observerNamespace;
     }
 
+    public function permissionNamespace(): string
+    {
+        return $this->permissionNamespace;
+    }
+
+    public function middlewareNamespace(): string
+    {
+        return $this->middlewareNamespace;
+    }
+
+        public function repositoryContractNamespace(): string
+    {
+        return $this->repositoryContractNamespace;
+    }
+
+    public function serviceContractNamespace(): string
+    {
+        return $this->serviceContractNamespace;
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Getters - Clases
@@ -505,10 +539,19 @@ readonly class ModuleData
         return $this->observerClass;
     }
 
+    public function permissionClass(): string
+    {
+        return $this->permissionClass;
+    }
 
     public function pluralVariable(): string
     {
         return Str::camel($this->plural());
+    }
+
+    public function middlewareClass(): string
+    {
+        return $this->middlewareClass;
     }
 
     /*
@@ -600,16 +643,6 @@ readonly class ModuleData
     public function serviceInterfacePath(): string
     {
         return $this->serviceInterfacePath;
-    }
-
-    public function repositoryContractNamespace(): string
-    {
-        return $this->repositoryContractNamespace;
-    }
-
-    public function serviceContractNamespace(): string
-    {
-        return $this->serviceContractNamespace;
     }
 
     public function middlewarePath(): string

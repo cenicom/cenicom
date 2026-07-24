@@ -43,20 +43,11 @@ final class TestGenerator extends BaseGenerator
         ModuleData $module
     ): GeneratorResult {
 
-        $result = new GeneratorResult();
-
-
-        $feature = $this->generateFeatureTest($module);
-
-        $unit = $this->generateUnitTest($module);
-
-
-        $result->addCreated($feature);
-
-        $result->addCreated($unit);
-
-
-        return $result;
+        return $this->generateResult(
+            'unit-test.stub',
+            $module->seederPath(),
+            $this->buildUnitVariables($module)
+        );
     }
 
 
@@ -118,19 +109,19 @@ final class TestGenerator extends BaseGenerator
         return [
 
             'namespace'
-                => $module->testNamespace(),
+            => $module->testNamespace(),
 
             'class'
-                => $module->featureTestClass(),
+            => $module->featureTestClass(),
 
             'modelClass'
-                => $module->modelClass(),
+            => $module->modelClass(),
 
             'qualifiedModel'
-                => $module->qualifiedModel(),
+            => $module->qualifiedModel(),
 
             'routeName'
-                => $module->routeName(),
+            => $module->routeName(),
         ];
     }
 
@@ -147,16 +138,16 @@ final class TestGenerator extends BaseGenerator
         return [
 
             'namespace'
-                => $module->testNamespace(),
+            => $module->testNamespace(),
 
             'class'
-                => $module->unitTestClass(),
+            => $module->unitTestClass(),
 
             'serviceClass'
-                => $module->serviceClass(),
+            => $module->serviceClass(),
 
             'qualifiedService'
-                => $module->qualifiedService(),
+            => $module->qualifiedService(),
         ];
     }
 }

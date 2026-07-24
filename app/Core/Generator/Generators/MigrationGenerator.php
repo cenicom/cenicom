@@ -66,19 +66,9 @@ final class MigrationGenerator extends BaseGenerator
      *
      * @return array<string,string>
      */
-    private function buildVariables(
-        ModuleData $module
-    ): array {
-
-        $columns = array_filter([
-            $module->uuid()
-                ? "\$table->uuid('id')->primary();"
-                : null,
-
-            $this->fieldProcessor->process(
-                $module->columns()
-            ),
-        ]);
+    private function buildVariables(ModuleData $module): array
+    {
+        $columns = [];
 
         if ($module->uuid()) {
             $columns[] = "\$table->uuid('id')->primary();";

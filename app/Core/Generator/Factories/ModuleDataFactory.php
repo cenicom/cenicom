@@ -101,6 +101,10 @@ final class ModuleDataFactory
 
             observerNamespace: $namespaces['observerNamespace'],
 
+            permissionNamespace: $namespaces['permissionNamespace'],
+
+            middlewareNamespace: $namespaces['middlewareNamespace'],
+
             /*
             |--------------------------------------------------------------------------
             | Clases
@@ -134,6 +138,10 @@ final class ModuleDataFactory
             unitTestClass: $classes['unitTestClass'],
 
             observerClass: $classes['observerClass'],
+
+            permissionClass: $classes['permissionClass'],
+
+            middlewareClass: $classes['middlewareClass'],
 
             /*
             |--------------------------------------------------------------------------
@@ -278,7 +286,11 @@ final class ModuleDataFactory
             'updateRequestClass'
             => "Update{$name}Request",
 
-            'policyClass' => "{$name}Policy",
+            'policyClass'
+            => "{$name}Policy",
+
+            'permissionClass'
+            => "{$name}Permission",
 
             'factoryClass'
             => "{$name}Factory",
@@ -294,6 +306,9 @@ final class ModuleDataFactory
 
             'observerClass'
             => "{$name}Observer",
+
+            'middlewareClass'
+            => "{$name}Middleware",
         ];
     }
 
@@ -318,18 +333,23 @@ final class ModuleDataFactory
 
             'controllerNamespace' => 'App\\Http\\Controllers',
 
+            'requestNamespace' => "App\\Http\\Requests\\{$name}",
+
             'policyNamespace' => 'App\\Policies',
 
-            'requestNamespace' => "App\\Http\\Requests\\{$name}",
+            'observerNamespace' => 'App\\Observers',
+
+            'permissionNamespace' => 'App\\Core\\Permissions',
+
+            'middlewareNamespace' => 'App\\Http\\Middleware',
+
+            'bindingNamespace' => 'App\\Providers',
 
             'factoryNamespace' => 'Database\\Factories',
 
             'seederNamespace' => 'Database\\Seeders',
 
             'testNamespace' => 'Tests\\Feature',
-
-            'observerNamespace' => 'App\\Observers',
-
         ];
     }
 

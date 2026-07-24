@@ -25,20 +25,20 @@ final class MigrationFieldProcessor
      * @param ColumnDefinition[] $fields
      */
 
-    public function process(
-        array $fields
-    ): string {
+    public function process(array $fields): string
+    {
+        $columns = [];
 
-        return implode(
+        foreach ($fields as $field) {
 
-            PHP_EOL . PHP_EOL,
+            if ($this->shouldSkipField($field)) {
+                continue;
+            }
 
-            array_map(
-                fn(ColumnDefinition $field) => $this->build($field),
-                $fields
-            )
+            $columns[] = $this->build($field);
+        }
 
-        );
+        return implode(PHP_EOL . PHP_EOL, $columns);
     }
 
     public function build(
@@ -475,5 +475,24 @@ final class MigrationFieldProcessor
                 get_debug_type($value)
             )
         );
+    }
+
+    private function shouldSkipField(ColumnDefinition $field): bool
+    {
+        return in_array(
+            $field->name(),
+            $this->reservedFields(),
+            true
+        );
+    }
+
+    private function reservedFields(): array
+    {
+        return [
+            'id',
+            'created_at',
+            'updated_at',
+            'deleted_at',
+        ];
     }
 }

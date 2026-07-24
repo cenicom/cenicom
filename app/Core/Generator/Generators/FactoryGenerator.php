@@ -40,22 +40,11 @@ final class FactoryGenerator extends BaseGenerator
         ModuleData $module
     ): GeneratorResult {
 
-        $content = $this->render(
+        return $this->generateResult(
             'factory.stub',
+            $module->factoryPath(),
             $this->buildVariables($module)
         );
-
-
-        $this->write(
-            $module->factoryPath(),
-            $content
-        );
-
-
-        return (new GeneratorResult())
-            ->addCreated(
-                $module->factoryPath()
-            );
     }
 
 
@@ -88,6 +77,4 @@ final class FactoryGenerator extends BaseGenerator
 
         ];
     }
-
-
 }

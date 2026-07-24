@@ -40,22 +40,11 @@ final class SeederGenerator extends BaseGenerator
         ModuleData $module
     ): GeneratorResult {
 
-        $content = $this->render(
+        return $this->generateResult(
             'seeder.stub',
+            $module->seederPath(),
             $this->buildVariables($module)
         );
-
-
-        $this->write(
-            $module->seederPath(),
-            $content
-        );
-
-
-        return (new GeneratorResult())
-            ->addCreated(
-                $module->seederPath()
-            );
     }
 
 

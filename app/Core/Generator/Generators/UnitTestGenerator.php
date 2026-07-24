@@ -39,19 +39,20 @@ final class UnitTestGenerator extends BaseGenerator
         ModuleData $module
     ): GeneratorResult {
 
-        $content = $this->render(
+        return $this->generateResult(
             'unit-test.stub',
+            $module->unitTestPath(),
             $this->buildVariables($module)
         );
 
         $this->write(
-            $module->unitTestPath(),
+            $module->featureTestPath(),
             $content
         );
 
         return (new GeneratorResult())
             ->addCreated(
-                $module->unitTestPath()
+                $module->featureTestPath()
             );
     }
 
@@ -67,16 +68,16 @@ final class UnitTestGenerator extends BaseGenerator
         return [
 
             'namespace'
-                => $module->testNamespace(),
+            => $module->testNamespace(),
 
             'unitTest'
-                => $module->unitTestClass(),
+            => $module->unitTestClass(),
 
             'model'
-                => $module->modelClass(),
+            => $module->modelClass(),
 
             'qualifiedModel'
-                => $module->qualifiedModel(),
+            => $module->qualifiedModel(),
 
         ];
     }

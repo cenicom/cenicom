@@ -12,8 +12,6 @@ use Illuminate\Support\ServiceProvider;
 |--------------------------------------------------------------------------
 */
 
-use App\Contracts\CurrencyRepositoryInterface;
-use App\Contracts\CurrencyServiceInterface;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,7 +19,7 @@ use App\Contracts\CurrencyServiceInterface;
 |--------------------------------------------------------------------------
 */
 
-use App\Repositories\CurrencyRepository;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -29,7 +27,7 @@ use App\Repositories\CurrencyRepository;
 |--------------------------------------------------------------------------
 */
 
-use App\Services\CurrencyService;
+
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -38,21 +36,7 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        /*
-        |--------------------------------------------------------------------------
-        | Currency Module
-        |--------------------------------------------------------------------------
-        */
 
-        $this->app->singleton(
-            CurrencyRepositoryInterface::class,
-            CurrencyRepository::class
-        );
-
-        $this->app->singleton(
-            CurrencyServiceInterface::class,
-            CurrencyService::class
-        );
     }
 
     /**

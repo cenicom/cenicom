@@ -16,7 +16,7 @@ namespace App\Modules\[[ module ]]\Security;
  * Archivo generado automáticamente por el CN Generator.
  * No modificar manualmente.
  */
-final class Permissions
+final class [[ moduleName ]]
 {
     /*
     |--------------------------------------------------------------------------

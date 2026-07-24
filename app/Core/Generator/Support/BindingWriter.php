@@ -144,6 +144,7 @@ final readonly class BindingWriter
         $this->fileWriter->write(
             $this->configPath(),
             $this->render($bindings),
+            overwrite: true,
         );
     }
 

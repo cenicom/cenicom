@@ -15,6 +15,7 @@ use App\Core\Generator\Generators\MigrationGenerator;
 use App\Core\Generator\Generators\ModelGenerator;
 use App\Core\Generator\Generators\ModuleGenerator;
 use App\Core\Generator\Generators\ObserverGenerator;
+use App\Core\Generator\Generators\PermissionGenerator;
 use App\Core\Generator\Generators\PolicyGenerator;
 use App\Core\Generator\Generators\RepositoryGenerator;
 use App\Core\Generator\Generators\RepositoryInterfaceGenerator;
@@ -27,6 +28,8 @@ use App\Core\Generator\Generators\UnitTestGenerator;
 use App\Core\Generator\Generators\ViewGenerator;
 use App\Core\Generator\Validation\GeneratorTestSuite;
 use Illuminate\Support\ServiceProvider;
+//use MiddlewareGenerator;
+
 
 
 /**
@@ -107,6 +110,10 @@ final class CNGeneratorServiceProvider extends ServiceProvider
                     $app->make(ObserverGenerator::class),
 
                     $app->make(BindingGenerator::class),
+
+                    $app->make(PermissionGenerator::class),
+
+                    //$app->make(MiddlewareGenerator::class),
 
                 ]);
             }
