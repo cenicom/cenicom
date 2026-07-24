@@ -24,8 +24,7 @@ final readonly class ManifestGenerator
 {
     public function __construct(
         private FileWriter $writer,
-    ) {
-    }
+    ) {}
 
     /**
      * Genera el manifiesto base del módulo.
@@ -37,8 +36,8 @@ final readonly class ManifestGenerator
         $json = json_encode(
             $manifest,
             JSON_PRETTY_PRINT
-            | JSON_UNESCAPED_SLASHES
-            | JSON_THROW_ON_ERROR
+                | JSON_UNESCAPED_SLASHES
+                | JSON_THROW_ON_ERROR
         );
 
         $file = $this->manifestFile($module);
@@ -71,29 +70,29 @@ final readonly class ManifestGenerator
                 'description' => "Module {$module}",
             ],
 
-            'database' => [
+            'security' => [
+
+                'auth' => true,
+
+                'verified' => false,
+
+                'middleware' => [],
+
+                'permissions' => false,
 
             ],
 
-            'fields' => [
+            'database' => [],
 
-            ],
+            'fields' => [],
 
-            'relations' => [
+            'relations' => [],
 
-            ],
+            'validation' => [],
 
-            'validation' => [
+            'permissions' => [],
 
-            ],
-
-            'permissions' => [
-
-            ],
-
-            'navigation' => [
-
-            ],
+            'navigation' => [],
 
             'generation' => [
                 'routePrefix' => $plural,

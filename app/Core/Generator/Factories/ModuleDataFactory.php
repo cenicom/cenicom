@@ -6,6 +6,7 @@ namespace App\Core\Generator\Factories;
 
 use App\Core\Generator\DTO\ColumnDefinition;
 use App\Core\Generator\DTO\ModuleData;
+use App\Core\Generator\DTO\SecurityDefinition;
 use Illuminate\Support\Str;
 
 /**
@@ -53,6 +54,15 @@ final class ModuleDataFactory
         $generation = $definition['generation'] ?? [];
 
         $fields = $definition['fields'] ?? [];
+
+        $securityDefinition = null;
+
+        if (($definition['security'] ?? []) !== []) {
+
+            $securityDefinition = SecurityDefinition::fromArray(
+                $definition['security']
+            );
+        }
 
         return new ModuleData(
 
@@ -230,6 +240,8 @@ final class ModuleDataFactory
             menu: $options['menu'],
 
             icon: $options['icon'],
+
+            security: $securityDefinition,
 
 
         );

@@ -4,9 +4,15 @@ declare(strict_types=1);
 
 namespace App\Core\Generator\Generators;
 
+
 use App\Core\Generator\BaseGenerator;
 use App\Core\Generator\DTO\ModuleData;
+use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Results\GeneratorResult;
+use App\Core\Generator\Support\FileWriter;
+use App\Core\Generator\Support\MiddlewareResolver;
+use App\Core\Generator\Support\StubManager;
+use App\Core\Generator\Validation\GeneratorValidator;
 
 /**
  * ==========================================================
@@ -26,10 +32,27 @@ final class RouteGenerator extends BaseGenerator
 {
     private const STUB = 'route.stub';
 
+     public function __construct(
+        StubManager $stubManager,
+        FileWriter $fileWriter,
+        PresentationFactory $presentationFactory,
+        GeneratorValidator $validator,
+        private readonly MiddlewareResolver $middlewareResolver,
+    ) {
+        parent::__construct(
+            $stubManager,
+            $fileWriter,
+            $presentationFactory,
+            $validator,
+        );
+    }
+
     public function supports(ModuleData $module): bool
     {
         return true;
     }
+
+
 
     /**
      * Genera las rutas del módulo.
@@ -39,7 +62,7 @@ final class RouteGenerator extends BaseGenerator
     ): GeneratorResult {
 
         return $this->generateResult(
-            self::STUB,
+            'route.stub',
             $module->routePath(),
             $this->buildVariables($module)
         );
@@ -57,17 +80,64 @@ final class RouteGenerator extends BaseGenerator
         return array_merge(
             $this->defaultVariables($module),
             [
-
-                'qualifiedController'
+                'controllerNamespace'
                 => $module->qualifiedController(),
 
-                //'controllerClass'
-                //=> $module->controllerClass(),
+                'controllerClass'
+                => $module->controllerClass(),
 
                 'pluralVariable'
                 => $module->pluralVariable(),
 
+                'middleware'
+                => $this->buildMiddleware($module),
             ]
         );
+    }
+
+    /**
+     * Construye el bloque middleware de la ruta.
+     */
+    private function buildMiddleware(
+        ModuleData $module
+    ): string {
+
+        $security = $module->security();
+
+        if ($security === null) {
+            return '';
+        }
+
+        $middlewares = $this
+            ->middlewareResolver
+            ->resolve($security);
+
+        return $this->formatMiddleware($middlewares);
+    }
+
+    /**
+     * Formatea middleware para el stub de rutas.
+     *
+     * @param array<int,string> $middlewares
+     */
+    private function formatMiddleware(
+        array $middlewares
+    ): string {
+
+        if ($middlewares === []) {
+            return '';
+        }
+
+        return PHP_EOL .
+            '->middleware([' .
+            PHP_EOL .
+            '    \'' .
+            implode(
+                "'," . PHP_EOL . "    '",
+                $middlewares
+            ) .
+            '\'' .
+            PHP_EOL .
+            '])';
     }
 }

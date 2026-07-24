@@ -13,8 +13,7 @@ final class ModuleSpecification implements SpecificationInterface
      */
     public function __construct(
         private readonly array $definition
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string,mixed>
@@ -23,6 +22,7 @@ final class ModuleSpecification implements SpecificationInterface
     {
         return [
             'identity' => $this->identity(),
+            'security' => $this->security(),
             'database' => $this->database(),
             'fields' => $this->fields(),
             'columns' => $this->columns(),
@@ -41,6 +41,19 @@ final class ModuleSpecification implements SpecificationInterface
     public function identity(): array
     {
         return $this->definition['identity'] ?? [];
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    public function security(): array
+    {
+        return $this->definition['security'] ?? [
+            'auth' => true,
+            'verified' => false,
+            'middleware' => [],
+            'permissions' => false,
+        ];
     }
     /**
      * @return array<string,mixed>
@@ -125,5 +138,10 @@ final class ModuleSpecification implements SpecificationInterface
     public function version(): string
     {
         return $this->metadata()['version'] ?? '1.0';
+    }
+
+    public function hasSecurity(): bool
+    {
+        return isset($this->definition['security']);
     }
 }

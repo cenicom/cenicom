@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Core\Generator\DTO;
 
 use App\Core\Generator\DTO\ColumnDefinition;
+use App\Core\Generator\DTO\SecurityDefinition;
 use Illuminate\Support\Str;
 
 /**
@@ -178,6 +179,9 @@ readonly class ModuleData
      */
     private array $columns;
 
+    private array $options;
+
+    private ?SecurityDefinition $security;
 
     /*
     |--------------------------------------------------------------------------
@@ -277,6 +281,7 @@ readonly class ModuleData
         bool $permissions,
         bool $menu,
         ?string $icon,
+        ?SecurityDefinition $security = null,
     ) {
         $this->name = $name;
         $this->singular = $singular;
@@ -348,6 +353,7 @@ readonly class ModuleData
         $this->permissions = $permissions;
         $this->menu = $menu;
         $this->icon = $icon;
+        $this->security = $security;
 
         $this->repositoryContractNamespace = $repositoryContractNamespace;
         $this->serviceContractNamespace = $serviceContractNamespace;
@@ -387,6 +393,14 @@ readonly class ModuleData
     public function description(): string
     {
         return $this->description;
+    }
+
+    /**
+     * Obtiene la definición de seguridad del módulo.
+     */
+    public function security(): ?SecurityDefinition
+    {
+        return $this->security;
     }
 
 

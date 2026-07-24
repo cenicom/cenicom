@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use [[ qualifiedController ]];
+use [[ controllerNamespace ]];
 
 use Illuminate\Support\Facades\Route;
 
@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::resource(
-    '[[ routeName ]]',
-    [[ controller ]]::class
-);
+    '[[ plural ]]',
+    [[ controllerClass ]]::class
+)
+[[ middleware ]]
+->names('[[ plural ]]');

@@ -1,0 +1,69 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Requests\SecureRoute02Test;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+
+
+/**
+ * ==========================================================
+ * CENICOM ERP
+ * ==========================================================
+ *
+ * Request para crear un secure_route02_test.
+ *
+ * Gestiona la autorización y validación de la creación
+ * de registros del módulo.
+ *
+ * @package App\Http\Requests\SecureRoute02Test
+ */
+final class StoreSecureRoute02TestRequest
+    extends FormRequest
+{
+    /**
+     * Determina si el usuario está autorizado.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Reglas de validación.
+     *
+     * @return array<string, mixed>
+     */
+    public function rules(): array
+    {
+        return [
+
+        ];
+    }
+
+    /**
+     * Mensajes personalizados.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+
+        ];
+    }
+
+    /**
+     * Nombres amigables de los atributos.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+
+        ];
+    }
+}

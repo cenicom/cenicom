@@ -21,6 +21,8 @@ final class ModuleDefinitionFactory
 
             'identity'   => $specification->identity(),
 
+            'security'   => $specification->security(),
+
             ...$this->buildFields($specification),
 
             'generation' => $specification->generation(),

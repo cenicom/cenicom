@@ -72,6 +72,11 @@ interface SpecificationInterface
     public function generation(): array;
 
     /**
+     * @return array<string,mixed>
+     */
+    public function security(): array;
+
+    /**
      * Metadatos de la especificación.
      *
      * @return array<string, mixed>
