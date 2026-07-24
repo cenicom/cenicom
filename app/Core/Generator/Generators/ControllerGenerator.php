@@ -132,7 +132,9 @@ final class ControllerGenerator extends BaseGenerator
                 'use ' . $module->qualifiedService() . ';',
                 'use ' . $module->qualifiedStoreRequest() . ';',
                 'use ' . $module->qualifiedUpdateRequest() . ';',
+                'imports' => $this->buildImports($module),
             ]
         );
+
     }
 }

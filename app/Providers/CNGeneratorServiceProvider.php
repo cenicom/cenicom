@@ -7,6 +7,7 @@ namespace App\Providers;
 
 
 use App\Core\Generator\GeneratorRegistry;
+use App\Core\Generator\Generators\BindingGenerator;
 use App\Core\Generator\Generators\ControllerGenerator;
 use App\Core\Generator\Generators\FactoryGenerator;
 use App\Core\Generator\Generators\FeatureTestGenerator;
@@ -105,6 +106,8 @@ final class CNGeneratorServiceProvider extends ServiceProvider
 
                     $app->make(ObserverGenerator::class),
 
+                    $app->make(BindingGenerator::class),
+
                 ]);
             }
         );
@@ -120,6 +123,8 @@ final class CNGeneratorServiceProvider extends ServiceProvider
             return new ModuleGenerator(
                 $app->make(GeneratorRegistry::class)->all(),
                 $app->make(GeneratorTestSuite::class),
+
+
             );
         });
     }

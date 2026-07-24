@@ -1,0 +1,41 @@
+<?php
+
+declare(strict_types=1);
+
+namespace [[ seederNamespace ]];
+
+use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Permission;
+use [[ moduleNamespace ]]\Security\Permissions;
+
+/**
+ * ==========================================================
+ * CENICOM ERP
+ * ==========================================================
+ *
+ * Seeder de permisos del módulo [[ moduleName ]].
+ *
+ * Archivo generado automáticamente por el CN Generator.
+ * No modificar manualmente.
+ */
+final class [[ seeder ]] extends Seeder
+{
+    /**
+     * Ejecuta el seeder.
+     */
+    public function run(): void
+    {
+        foreach (Permissions::toArray() as $permission) {
+
+            Permission::query()->firstOrCreate(
+                [
+                    'name' => $permission['permission'],
+                    'guard_name' => $permission['guard'],
+                ],
+                [
+                    'description' => $permission['description'],
+                ]
+            );
+        }
+    }
+}

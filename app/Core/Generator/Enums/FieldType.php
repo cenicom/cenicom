@@ -403,6 +403,7 @@ enum FieldType: string
         Solo ENUM necesita un arreglo de valores.
     |--------------------------------------------------------------------------
     */
+
     /**
      * Indica si el tipo requiere un listado de valores.
      */
@@ -543,6 +544,7 @@ enum FieldType: string
     | 📦 defaultValidationRuleString()
     |--------------------------------------------------------------------------
     */
+
     /**
      * Obtiene las reglas base en formato Laravel.
      */
@@ -557,6 +559,7 @@ enum FieldType: string
         Muy útil para DTOs y exportaciones.
     |--------------------------------------------------------------------------
     */
+
     /**
      * Indica si el tipo representa un valor escalar.
      */
@@ -588,6 +591,7 @@ enum FieldType: string
     | 📦 supportsNullable()
     |--------------------------------------------------------------------------
     */
+
     /**
      * Indica si admite nullable.
      */
@@ -601,6 +605,7 @@ enum FieldType: string
     | 📦 supportsDefaultValue()
     |--------------------------------------------------------------------------
     */
+
     /**
      * Indica si admite valores por defecto.
      */
@@ -620,6 +625,7 @@ enum FieldType: string
     | 📦 supportsUnique()
     |--------------------------------------------------------------------------
     */
+
     /**
      * Indica si admite restricción UNIQUE.
      */
@@ -639,6 +645,7 @@ enum FieldType: string
     | 📦 supportsIndex()
     |--------------------------------------------------------------------------
     */
+
     /**
      * Indica si admite índices.
      */
@@ -652,6 +659,7 @@ enum FieldType: string
     | 📦 supportsForeignKey()
     |--------------------------------------------------------------------------
     */
+
     /**
      * Indica si puede participar como clave foránea.
      */
@@ -674,6 +682,7 @@ enum FieldType: string
         Este será probablemente el helper más utilizado por todo el Generator.
     |--------------------------------------------------------------------------
     */
+
     /**
      * Obtiene el InputType recomendado.
      */
@@ -779,6 +788,7 @@ enum FieldType: string
     | 📦 supportsFormComponent()
     |--------------------------------------------------------------------------
     */
+
     /**
      * Indica si el tipo puede renderizarse automáticamente.
      */
@@ -799,6 +809,7 @@ enum FieldType: string
     | 📦 supportsTableColumn()
     |--------------------------------------------------------------------------
     */
+
     public function supportsTableColumn(): bool
     {
         return match ($this) {
@@ -814,6 +825,7 @@ enum FieldType: string
     | 📦 supportsFilter()
     |--------------------------------------------------------------------------
     */
+
     public function supportsFilter(): bool
     {
         return match ($this) {
@@ -844,6 +856,7 @@ enum FieldType: string
     | 📦 supportsSorting()
     |--------------------------------------------------------------------------
     */
+
     public function supportsSorting(): bool
     {
         return match ($this) {
@@ -863,6 +876,7 @@ enum FieldType: string
     | 📦 supportsFactory()
     |--------------------------------------------------------------------------
     */
+
     public function supportsFactory(): bool
     {
         return true;
@@ -873,6 +887,7 @@ enum FieldType: string
     | 📦 supportsSeeder()
     |--------------------------------------------------------------------------
     */
+
     public function supportsSeeder(): bool
     {
         return true;
@@ -883,6 +898,7 @@ enum FieldType: string
     | 📦 supportsApiResource()
     |--------------------------------------------------------------------------
     */
+
     public function supportsApiResource(): bool
     {
         return true;

@@ -148,17 +148,9 @@ final class ModelGenerator extends BaseGenerator
         ColumnDefinition $column
     ): ?string {
 
-        return match ($column->type()) {
-
-            'boolean' => 'boolean',
-
-            'decimal' => 'decimal:2',
-
-            'date',
-            'datetime' => 'datetime',
-
-            default => null,
-        };
+        return $column
+            ->type()
+            ->cast();
     }
 
     /**
@@ -279,14 +271,7 @@ final class ModelGenerator extends BaseGenerator
         ModuleData $module
     ): array {
         return [
-            [
-                'name' => 'STATUS_ACTIVE',
-                'value' => "'active'",
-            ],
-            [
-                'name' => 'STATUS_INACTIVE',
-                'value' => "'inactive'",
-            ],
+
         ];
     }
 

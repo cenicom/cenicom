@@ -174,6 +174,9 @@ final class ModuleDataFactory
             observerPath: $paths['observerPath'],
 
             moduleManifestPath: $paths['moduleManifestPath'],
+
+            middlewarePath: $paths['middlewarePath'],
+
             /*
             |--------------------------------------------------------------------------
             | Rutas
@@ -307,11 +310,11 @@ final class ModuleDataFactory
 
             'repositoryNamespace' => 'App\\Core\\Repositories',
 
-            'repositoryContractNamespace' => 'App\\Core\\Repositories\\Contracts',
+            'repositoryContractNamespace' => 'App\\Core\\Contracts',
 
             'serviceNamespace' => 'App\\Core\\Services',
 
-            'serviceContractNamespace' => 'App\\Core\\Services\\Contracts',
+            'serviceContractNamespace' => 'App\\Core\\Contracts',
 
             'controllerNamespace' => 'App\\Http\\Controllers',
 
@@ -394,6 +397,11 @@ final class ModuleDataFactory
 
             'moduleManifestPath'
             => base_path("modules/{$name}.json"), // o la ruta que hayas definido para el manifiesto
+
+            // NUEVO
+            'middlewarePath' => app_path(
+                "Http/Middleware/{$name}Middleware.php"
+            ),
         ];
     }
 
@@ -408,29 +416,21 @@ final class ModuleDataFactory
     {
         return [
 
-            'timestamps'
-            => $definition['timestamps'] ?? true,
+            'timestamps' => $generation['timestamps'] ?? true,
 
-            'softDeletes'
-            => $definition['softDeletes'] ?? true,
+            'softDeletes' => $generation['softDeletes'] ?? true,
 
-            'uuid'
-            => $definition['uuid'] ?? true,
+            'uuid' => $generation['uuid'] ?? true,
 
-            'api'
-            => $definition['api'] ?? true,
+            'api' => $generation['api'] ?? true,
 
-            'tests'
-            => $definition['tests'] ?? true,
+            'tests' => $generation['tests'] ?? true,
 
-            'permissions'
-            => $definition['permissions'] ?? true,
+            'permissions' => $generation['permissions'] ?? true,
 
-            'menu'
-            => $definition['menu'] ?? true,
+            'menu' => $generation['menu'] ?? true,
 
-            'icon'
-            => $definition['icon'] ?? null,
+            'icon' => $generation['icon'] ?? null,
         ];
     }
 }

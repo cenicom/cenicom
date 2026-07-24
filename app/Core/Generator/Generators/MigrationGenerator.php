@@ -37,7 +37,6 @@ final class MigrationGenerator extends BaseGenerator
             $presentationFactory,
             $validator,
         );
-
     }
 
     /**
@@ -45,7 +44,7 @@ final class MigrationGenerator extends BaseGenerator
      */
     public function supports(ModuleData $module): bool
     {
-        return true;
+        return $module->table() !== '';
     }
 
     /**
@@ -71,7 +70,15 @@ final class MigrationGenerator extends BaseGenerator
         ModuleData $module
     ): array {
 
-        $columns = [];
+        $columns = array_filter([
+            $module->uuid()
+                ? "\$table->uuid('id')->primary();"
+                : null,
+
+            $this->fieldProcessor->process(
+                $module->columns()
+            ),
+        ]);
 
         if ($module->uuid()) {
             $columns[] = "\$table->uuid('id')->primary();";
@@ -88,7 +95,7 @@ final class MigrationGenerator extends BaseGenerator
         $variables = $this->defaultVariables($module);
 
         $variables['columns'] = implode(
-            "\n\n",
+            PHP_EOL,
             $columns
         );
 

@@ -65,6 +65,10 @@ readonly class ModuleData
 
     private string $observerNamespace;
 
+    private string $repositoryContractNamespace;
+
+    private string $serviceContractNamespace;
+
     /*
     |--------------------------------------------------------------------------
     | 3️⃣ Clases generadas
@@ -123,6 +127,8 @@ readonly class ModuleData
 
     private string $policyPath;
 
+    private string $middlewarePath;
+
     private string $factoryPath;
 
     private string $seederPath;
@@ -138,11 +144,6 @@ readonly class ModuleData
     private string $repositoryInterfacePath;
 
     private string $serviceInterfacePath;
-
-    private string $repositoryContractNamespace;
-
-    private string $serviceContractNamespace;
-
 
     /*
     |--------------------------------------------------------------------------
@@ -247,6 +248,7 @@ readonly class ModuleData
         string $unitTestPath,
         string $observerPath,
         string $moduleManifestPath,
+        string $middlewarePath,
 
         string $routePrefix,
         string $routeName,
@@ -312,6 +314,7 @@ readonly class ModuleData
         $this->unitTestPath = $unitTestPath;
         $this->observerPath = $observerPath;
         $this->moduleManifestPath = $moduleManifestPath;
+        $this->middlewarePath = $middlewarePath;
 
         $this->routePrefix = $routePrefix;
         $this->routeName = $routeName;
@@ -609,6 +612,23 @@ readonly class ModuleData
         return $this->serviceContractNamespace;
     }
 
+    public function middlewarePath(): string
+    {
+        return $this->middlewarePath;
+    }
+
+    public function permissionPath(): string
+    {
+        return $this->moduleManifestPath()
+            . DIRECTORY_SEPARATOR
+            . 'Permissions.php';
+    }
+
+    public function permissionSeederPath(): string
+    {
+        return $this->seederPath();
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Getters - Rutas y Vistas
@@ -860,17 +880,17 @@ readonly class ModuleData
 
     public function routeStore(): string
     {
-        return "{$this->routeName}.store";
+        return "{$this->routeName()}.store";
     }
 
     public function routeUpdate(): string
     {
-        return "{$this->routeName}.update";
+        return "{$this->routeName()}.update";
     }
 
     public function routeDestroy(): string
     {
-        return "{$this->routeName}.destroy";
+        return "{$this->routeName()}.destroy";
     }
 
     public function hasTimestamps(): bool

@@ -69,6 +69,8 @@ final readonly class ColumnDefinition
 
     private bool $unsigned;
 
+    private bool $useCurrent;
+
     /*
     |--------------------------------------------------------------------------
     | Restricciones
@@ -161,6 +163,7 @@ final readonly class ColumnDefinition
         ?string $comment = null,
         ?string $after = null,
         bool $first = false,
+        bool $useCurrent = false,
     ) {
         $this->name = $name;
         $this->type = $type;
@@ -192,6 +195,7 @@ final readonly class ColumnDefinition
         $this->comment = $comment;
         $this->after = $after;
         $this->first = $first;
+        $this->useCurrent = $useCurrent;
     }
 
     /**
@@ -328,9 +332,9 @@ final readonly class ColumnDefinition
         array $definition
     ): void {
 
-        if (! isset($definition['name'])) {
+        if (trim((string)$definition['name']) === '') {
             throw new \InvalidArgumentException(
-                'The column definition requires the "name" attribute.'
+                'Column name cannot be empty.'
             );
         }
 
@@ -956,7 +960,11 @@ final readonly class ColumnDefinition
             || $this->hasDefault()
             || $this->unique
             || $this->index
-            || $this->hasComment();
+            || $this->hasComment()
+            || $this->charset !== null
+            || $this->collation !== null
+            || $this->after !== null
+            || $this->first;
     }
 
         /*
@@ -1028,13 +1036,23 @@ final readonly class ColumnDefinition
 
     public function effectivePrecision(): ?int
     {
-        return $this->length
-            ?? $this->type->defaultLength();
+        return $this->precision
+            ?? $this->type->defaultPrecision();
     }
 
     public function effectiveScale(): ?int
     {
-        return $this->length
-            ?? $this->type->defaultLength();
+        return $this->scale
+            ?? $this->type->defaultScale();
+    }
+
+    public function useCurrent(): bool
+    {
+        return $this->useCurrent;
+    }
+
+    public function hasCurrent(): bool
+    {
+        return $this->useCurrent;
     }
 }

@@ -68,9 +68,13 @@ final class RequestGenerator extends BaseGenerator
 
         $result = new GeneratorResult();
 
-        $this->generateStoreRequest($module);
+        $result->merge(
+            $this->generateStoreRequest($module)
+        );
 
-        $this->generateUpdateRequest($module);
+        $result->merge(
+            $this->generateUpdateRequest($module)
+        );
 
         return $result;
     }

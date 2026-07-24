@@ -70,9 +70,6 @@ final class MigrationFieldProcessor
     ): string {
         return match ($field->type()) {
 
-            FieldType::ID =>
-            '$table->id()',
-
             FieldType::UUID =>
             sprintf(
                 "\$table->uuid('%s')",
@@ -182,6 +179,19 @@ final class MigrationFieldProcessor
                 )
             ),
         };
+    }
+
+    private function formatArray(array $values): string
+    {
+        return '[' .
+            implode(
+                ', ',
+                array_map(
+                    fn($value) => "'{$value}'",
+                    $values
+                )
+            )
+            . ']';
     }
 
 

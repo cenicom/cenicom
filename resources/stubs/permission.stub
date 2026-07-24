@@ -1,0 +1,64 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Modules\[[ module ]]\Security;
+
+[[ imports ]]
+
+/**
+ * ==========================================================
+ * CENICOM ERP
+ * ==========================================================
+ *
+ * Definición de permisos del módulo [[ moduleName ]].
+ *
+ * Archivo generado automáticamente por el CN Generator.
+ * No modificar manualmente.
+ */
+final class Permissions
+{
+    /*
+    |--------------------------------------------------------------------------
+    | Constantes
+    |--------------------------------------------------------------------------
+    */
+
+[[ constants ]]
+
+    /*
+    |--------------------------------------------------------------------------
+    | Definiciones
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * @return PermissionDefinition[]
+     */
+    public static function definitions(): array
+    {
+        return [
+
+[[ permissionDefinitions ]]
+
+        ];
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Array para Seeders
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * @return array<int,array<string,mixed>>
+     */
+    public static function toArray(): array
+    {
+        return [
+
+[[ permissionArray ]]
+
+        ];
+    }
+}

@@ -42,9 +42,9 @@ use App\Core\Generator\Presentation\Renderers\ShowRenderer;
  */
 final class ViewGenerator implements GeneratorInterface
 {
-    private const KEY_STUB = 'stub';
+    private const VIEW__STUB = 'stub';
 
-    private const KEY_TARGET = 'target';
+    private const VIEW__TARGET = 'target';
 
     private const VIEWS = [
 
@@ -181,13 +181,13 @@ final class ViewGenerator implements GeneratorInterface
     ): void {
 
         $content = $this->stubManager->render(
-            $view[self::KEY_STUB],
+            $view[self::VIEW__STUB],
             $variables,
         );
 
         $path = $module->viewPath()
             . DIRECTORY_SEPARATOR
-            . $view[self::KEY_TARGET];
+            . $view[self::VIEW__TARGET];
 
         try {
 
@@ -197,6 +197,7 @@ final class ViewGenerator implements GeneratorInterface
             );
 
             $result->addCreated($path);
+
         } catch (\Throwable $exception) {
             $result->addError(
                 sprintf(
@@ -207,7 +208,6 @@ final class ViewGenerator implements GeneratorInterface
             );
         }
 
-        $result->addCreated($path);
     }
 
     /**
