@@ -40,20 +40,11 @@ final class PolicyGenerator extends BaseGenerator
         ModuleData $module
     ): GeneratorResult {
 
-        $content = $this->render(
+        return $this->generateResult(
             'policy.stub',
-            $this->buildVariables($module)
-        );
-
-        $this->write(
             $module->policyPath(),
-            $content
+            $this->buildVariables($module),
         );
-
-        return (new GeneratorResult())
-            ->addCreated(
-                $module->policyPath()
-            );
     }
 
     /**

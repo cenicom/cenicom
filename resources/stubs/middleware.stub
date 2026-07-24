@@ -6,6 +6,16 @@ namespace [[ namespace ]];
 
 [[ imports ]]
 
+/**
+ * ==========================================================
+ * CENICOM ERP
+ * ==========================================================
+ *
+ * Middleware del módulo [[ class ]].
+ *
+ * Archivo generado automáticamente por el CN Generator.
+ * No modificar manualmente.
+ */
 final class [[ class ]]
 {
 [[ methods ]]

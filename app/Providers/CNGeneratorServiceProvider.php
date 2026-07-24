@@ -11,6 +11,7 @@ use App\Core\Generator\Generators\BindingGenerator;
 use App\Core\Generator\Generators\ControllerGenerator;
 use App\Core\Generator\Generators\FactoryGenerator;
 use App\Core\Generator\Generators\FeatureTestGenerator;
+use App\Core\Generator\Generators\MiddlewareGenerator;
 use App\Core\Generator\Generators\MigrationGenerator;
 use App\Core\Generator\Generators\ModelGenerator;
 use App\Core\Generator\Generators\ModuleGenerator;
@@ -113,7 +114,7 @@ final class CNGeneratorServiceProvider extends ServiceProvider
 
                     $app->make(PermissionGenerator::class),
 
-                    //$app->make(MiddlewareGenerator::class),
+                    $app->make(MiddlewareGenerator::class),
 
                 ]);
             }

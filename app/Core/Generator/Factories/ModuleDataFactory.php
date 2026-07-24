@@ -185,6 +185,8 @@ final class ModuleDataFactory
 
             middlewarePath: $paths['middlewarePath'],
 
+            permissionPath: $paths['permissionPath'],
+
             /*
             |--------------------------------------------------------------------------
             | Rutas
@@ -422,6 +424,9 @@ final class ModuleDataFactory
             'middlewarePath' => app_path(
                 "Http/Middleware/{$name}Middleware.php"
             ),
+
+            'permissionPath'
+            => app_path("Core/Permissions/{$name}Permission.php")
         ];
     }
 

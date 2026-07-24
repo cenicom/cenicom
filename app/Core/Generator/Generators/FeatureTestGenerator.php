@@ -39,20 +39,11 @@ final class FeatureTestGenerator extends BaseGenerator
         ModuleData $module
     ): GeneratorResult {
 
-        $content = $this->render(
+        return $this->generateResult(
             'feature-test.stub',
-            $this->buildVariables($module)
-        );
-
-        $this->write(
             $module->featureTestPath(),
-            $content
+            $this->buildVariables($module),
         );
-
-        return (new GeneratorResult())
-            ->addCreated(
-                $module->featureTestPath()
-            );
     }
 
     /**
@@ -67,22 +58,22 @@ final class FeatureTestGenerator extends BaseGenerator
         return [
 
             'namespace'
-                => $module->testNamespace(),
+            => $module->testNamespace(),
 
             'featureTest'
-                => $module->featureTestClass(),
+            => $module->featureTestClass(),
 
             'model'
-                => $module->modelClass(),
+            => $module->modelClass(),
 
             'qualifiedModel'
-                => $module->qualifiedModel(),
+            => $module->qualifiedModel(),
 
             'route'
-                => $module->routeName(),
+            => $module->routeName(),
 
             'viewPrefix'
-                => $module->viewPrefix(),
+            => $module->viewPrefix(),
 
         ];
     }

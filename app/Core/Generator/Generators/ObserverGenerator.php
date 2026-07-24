@@ -40,22 +40,11 @@ final class ObserverGenerator extends BaseGenerator
         ModuleData $module
     ): GeneratorResult {
 
-        $content = $this->render(
+        return $this->generateResult(
             'observer.stub',
-            $this->buildVariables($module)
-        );
-
-
-        $this->write(
             $module->observerPath(),
-            $content
+            $this->buildVariables($module),
         );
-
-
-        return (new GeneratorResult())
-            ->addCreated(
-                $module->observerPath()
-            );
     }
 
 

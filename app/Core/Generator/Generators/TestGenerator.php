@@ -39,63 +39,28 @@ final class TestGenerator extends BaseGenerator
     /**
      * Genera las pruebas del módulo.
      */
-    public function generate(
-        ModuleData $module
-    ): GeneratorResult {
+    public function generate(ModuleData $module): GeneratorResult
+    {
+        $result = new GeneratorResult();
 
-        return $this->generateResult(
-            'unit-test.stub',
-            $module->seederPath(),
-            $this->buildUnitVariables($module)
+        $result->merge(
+            $this->generateResult(
+                'tests/unit.stub',
+                $module->unitTestPath(),
+                $this->buildUnitVariables($module)
+            )
         );
+
+        $result->merge(
+            $this->generateResult(
+                'tests/feature.stub',
+                $module->featureTestPath(),
+                $this->buildFeatureVariables($module)
+            )
+        );
+
+        return $result;
     }
-
-
-    /**
-     * Genera Feature Test.
-     */
-    private function generateFeatureTest(
-        ModuleData $module
-    ): string {
-
-        $content = $this->render(
-            'tests/feature.stub',
-            $this->buildFeatureVariables($module)
-        );
-
-
-        $this->write(
-            $module->featureTestPath(),
-            $content
-        );
-
-
-        return $module->featureTestPath();
-    }
-
-
-    /**
-     * Genera Unit Test.
-     */
-    private function generateUnitTest(
-        ModuleData $module
-    ): string {
-
-        $content = $this->render(
-            'tests/unit.stub',
-            $this->buildUnitVariables($module)
-        );
-
-
-        $this->write(
-            $module->unitTestPath(),
-            $content
-        );
-
-
-        return $module->unitTestPath();
-    }
-
 
     /**
      * Variables Feature Test.

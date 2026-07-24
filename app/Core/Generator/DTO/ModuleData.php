@@ -71,7 +71,7 @@ readonly class ModuleData
 
     private string $permissionNamespace;
 
-     private string $middlewareNamespace;
+    private string $middlewareNamespace;
 
     /*
     |--------------------------------------------------------------------------
@@ -152,6 +152,8 @@ readonly class ModuleData
     private string $repositoryInterfacePath;
 
     private string $serviceInterfacePath;
+
+    private string $permissionPath;
 
     /*
     |--------------------------------------------------------------------------
@@ -260,6 +262,7 @@ readonly class ModuleData
         string $observerPath,
         string $moduleManifestPath,
         string $middlewarePath,
+        string $permissionPath,
 
         string $routePrefix,
         string $routeName,
@@ -329,6 +332,7 @@ readonly class ModuleData
         $this->observerPath = $observerPath;
         $this->moduleManifestPath = $moduleManifestPath;
         $this->middlewarePath = $middlewarePath;
+        $this->permissionPath = $permissionPath;
 
         $this->routePrefix = $routePrefix;
         $this->routeName = $routeName;
@@ -453,7 +457,7 @@ readonly class ModuleData
         return $this->middlewareNamespace;
     }
 
-        public function repositoryContractNamespace(): string
+    public function repositoryContractNamespace(): string
     {
         return $this->repositoryContractNamespace;
     }
@@ -652,15 +656,10 @@ readonly class ModuleData
 
     public function permissionPath(): string
     {
-        return $this->moduleManifestPath()
-            . DIRECTORY_SEPARATOR
-            . 'Permissions.php';
+        return $this->permissionPath;
     }
 
-    public function permissionSeederPath(): string
-    {
-        return $this->seederPath();
-    }
+
 
     /*
     |--------------------------------------------------------------------------
@@ -816,6 +815,16 @@ readonly class ModuleData
     public function qualifiedObserver(): string
     {
         return "{$this->observerNamespace()}\\{$this->observerClass()}";
+    }
+
+    public function qualifiedPermission(): string
+    {
+        return "{$this->permissionNamespace()}\\{$this->permissionClass()}";
+    }
+
+    public function qualifiedMiddleware(): string
+    {
+        return "{$this->middlewareNamespace()}\\{$this->middlewareClass()}";
     }
 
     /*
@@ -988,6 +997,12 @@ readonly class ModuleData
             'relationships' => '',
             'casts' => '',
             'rules' => '',
+
+            'permission' => $this->permissionClass,
+            'middleware' => $this->middlewareClass,
+
+            'permissionNamespace' => $this->permissionNamespace,
+            'middlewareNamespace' => $this->middlewareNamespace,
         ];
     }
     /*

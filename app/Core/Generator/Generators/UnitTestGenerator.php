@@ -42,18 +42,8 @@ final class UnitTestGenerator extends BaseGenerator
         return $this->generateResult(
             'unit-test.stub',
             $module->unitTestPath(),
-            $this->buildVariables($module)
+            $this->buildVariables($module),
         );
-
-        $this->write(
-            $module->featureTestPath(),
-            $content
-        );
-
-        return (new GeneratorResult())
-            ->addCreated(
-                $module->featureTestPath()
-            );
     }
 
     /**
