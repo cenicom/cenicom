@@ -55,19 +55,20 @@ final class PermissionBuilder
 
     private function buildConstants(ModuleData $module): string
     {
-        $prefix = $this->permissionPrefix($module);
+        $matrix = $module->permissionMatrix();
 
-        $permissions = $this->resolvePermissions($module);
+        if ($matrix === null) {
+            return '';
+        }
 
         $constants = [];
 
-        foreach ($permissions as $permission) {
+        foreach ($matrix->permissions() as $permission) {
 
             $constants[] = sprintf(
-                "public const %s = '%s.%s';",
-                strtoupper($permission),
-                $prefix,
-                $permission
+                "public const %s = '%s';",
+                strtoupper($permission->action()),
+                $permission->permission()
             );
         }
 
@@ -81,71 +82,36 @@ final class PermissionBuilder
         ]);
     }
 
-
-    /**
-     * Construye el arreglo completo de variables.
-     *
-     * @return array<string, string>
-     */
-
-    /**
-     * Obtiene los permisos aplicables al módulo.
-     *
-     * @return array<int, string>
-     */
-    private function resolvePermissions(ModuleData $module): array
-    {
-        // En esta primera versión todos los módulos
-        // generan el CRUD estándar.
-
-        return [
-            'view',
-            'create',
-            'update',
-            'delete',
-        ];
-    }
-
-    /**
-     * Prefijo estándar del permiso.
-     */
-    private function permissionPrefix(
-        ModuleData $module
-    ): string {
-        return strtolower(
-            $module->plural()
-        );
-    }
-
     /**
      * Construye las definiciones (constantes, bloques, etc.).
      */
     private function buildPermissionDefinitions(ModuleData $module): string
     {
-        $prefix = $this->permissionPrefix($module);
+        $matrix = $module->permissionMatrix();
 
-        $permissions = $this->resolvePermissions($module);
+        if ($matrix === null) {
+            return '';
+        }
 
         $items = [];
 
-        foreach ($permissions as $permission) {
+        foreach ($matrix->permissions() as $permission) {
 
             $items[] = sprintf(
                 "            PermissionDefinition::fromArray([
                 'name' => '%s',
                 'action' => '%s',
-                'permission' => '%s.%s',
+                'permission' => '%s',
                 'group' => '%s',
-                'guard' => 'web',
-                'description' => '%s %s',
+                'guard' => '%s',
+                'description' => '%s',
             ])",
-                strtoupper($permission),
-                $permission,
-                $prefix,
-                $permission,
-                $module->name(),
-                ucfirst($permission),
-                $module->singular()
+                $permission->name(),
+                $permission->action(),
+                $permission->permission(),
+                $permission->group(),
+                $permission->guard(),
+                $permission->description() ?? ''
             );
         }
 
@@ -157,24 +123,25 @@ final class PermissionBuilder
      */
     private function buildPermissionArray(ModuleData $module): string
     {
-        $prefix = $this->permissionPrefix($module);
+        $matrix = $module->permissionMatrix();
 
-        $permissions = $this->resolvePermissions($module);
+        if ($matrix === null) {
+            return '';
+        }
 
         $items = [];
 
-        foreach ($permissions as $permission) {
+        foreach ($matrix->permissions() as $permission) {
 
             $items[] = sprintf(
                 "[
-                'permission' => '%s.%s',
-                'guard' => 'web',
-                'description' => '%s %s'
+                'permission' => '%s',
+                'guard' => '%s',
+                'description' => '%s'
             ]",
-                $prefix,
-                $permission,
-                ucfirst($permission),
-                $module->singular()
+                $permission->permission(),
+                $permission->guard(),
+                $permission->description() ?? ''
             );
         }
 

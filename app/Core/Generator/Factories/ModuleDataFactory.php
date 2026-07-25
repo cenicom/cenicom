@@ -6,6 +6,7 @@ namespace App\Core\Generator\Factories;
 
 use App\Core\Generator\DTO\ColumnDefinition;
 use App\Core\Generator\DTO\ModuleData;
+use App\Core\Generator\DTO\PermissionMatrix;
 use App\Core\Generator\DTO\SecurityDefinition;
 use Illuminate\Support\Str;
 
@@ -25,6 +26,12 @@ use Illuminate\Support\Str;
  */
 final class ModuleDataFactory
 {
+    /*
+    |--------------------------------------------------------------------------
+    | create(array $definition): ModuleData
+    |--------------------------------------------------------------------------
+    */
+
     /**
      * Construye un objeto ModuleData.
      *
@@ -33,8 +40,16 @@ final class ModuleDataFactory
     public function create(array $definition): ModuleData
     {
         $name = $this->normalizeName(
-            $definition['identity']['name']
+            $this->identity($definition)['name']
         );
+
+        $identity = $this->identity($definition);
+
+        $generation = $this->generation($definition);
+
+        $fields = $this->fields($definition);
+
+        $options = $this->buildOptions($generation);
 
         $classes = $this->buildClasses($name);
 
@@ -42,27 +57,13 @@ final class ModuleDataFactory
 
         $paths = $this->buildPaths(
             $name,
-            $definition['identity']['plural']
+            $identity['plural']
         );
 
-        $options = $this->buildOptions(
-            $definition['generation'] ?? []
-        );
+        $securityDefinition = $this->buildSecurity($definition);
 
-        $identity = $definition['identity'] ?? [];
+        $permissionMatrix = $this->buildPermissionMatrix($definition);
 
-        $generation = $definition['generation'] ?? [];
-
-        $fields = $definition['fields'] ?? [];
-
-        $securityDefinition = null;
-
-        if (($definition['security'] ?? []) !== []) {
-
-            $securityDefinition = SecurityDefinition::fromArray(
-                $definition['security']
-            );
-        }
 
         return new ModuleData(
 
@@ -74,6 +75,8 @@ final class ModuleDataFactory
 
             name: $name,
 
+            options: $options,
+
             singular: $identity['singular'],
 
             plural: $identity['plural'],
@@ -81,6 +84,8 @@ final class ModuleDataFactory
             table: $identity['table'],
 
             description: $identity['description'],
+
+
             /*
             |--------------------------------------------------------------------------
             | Namespaces
@@ -243,9 +248,135 @@ final class ModuleDataFactory
 
             security: $securityDefinition,
 
+            permissionMatrix: $permissionMatrix,
+
 
         );
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Lectura del Manifiesto
+    |--------------------------------------------------------------------------
+    */
+
+    /*
+    |--------------------------------------------------------------------------
+    | identity(array $definition): array
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Obtiene la sección identity del manifiesto.
+     *
+     * @param array<string,mixed> $definition
+     *
+     * @return array<string,mixed>
+     */
+    private function identity(array $definition): array
+    {
+        return $definition['identity'] ?? [];
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | generation(array $definition): array
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Obtiene la sección generation del manifiesto.
+     *
+     * @param array<string,mixed> $definition
+     *
+     * @return array<string,mixed>
+     */
+    private function generation(array $definition): array
+    {
+        return $definition['generation'] ?? [];
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | fields(array $definition): array
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Obtiene la sección fields del manifiesto.
+     *
+     * @param array<string,mixed> $definition
+     *
+     * @return array<int,array<string,mixed>>
+     */
+    private function fields(array $definition): array
+    {
+        return $definition['fields'] ?? [];
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Construcción del DTO
+    |--------------------------------------------------------------------------
+    */
+
+    /*
+    |--------------------------------------------------------------------------
+    | buildSecurity(array $definition, ): ?SecurityDefinition
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Construye la definición de seguridad del módulo.
+     *
+     * @param array<string,mixed> $definition
+     */
+    private function buildSecurity(array $definition, ): ?SecurityDefinition
+    {
+
+        if (
+            ! isset($definition['security'])
+            || $definition['security'] === []
+        ) {
+            return null;
+        }
+
+        return SecurityDefinition::fromArray(
+            $definition['security']
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | buildPermissionMatrix(array $definition, ): PermissionMatrix
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Construye la matriz de permisos del módulo.
+     *
+     * @param array<string,mixed> $definition
+     */
+    private function buildPermissionMatrix(array $definition, ): PermissionMatrix
+    {
+
+        if (
+            ! isset($definition['permissions'])
+            || $definition['permissions'] === []
+        ) {
+            return new PermissionMatrix([]);
+        }
+
+        return PermissionMatrix::fromArray(
+            $definition['permissions']
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | buildColumns(array $fields): array
+    |--------------------------------------------------------------------------
+    */
 
     /**
      * @param array<int,array<string,mixed>> $fields
@@ -261,6 +392,18 @@ final class ModuleDataFactory
         );
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Construcción de Infraestructura
+    |--------------------------------------------------------------------------
+    */
+
+    /*
+    |--------------------------------------------------------------------------
+    | normalizeName(string $name): string
+    |--------------------------------------------------------------------------
+    */
+
     /**
      * Normaliza el nombre del módulo.
      */
@@ -268,6 +411,12 @@ final class ModuleDataFactory
     {
         return Str::studly($name);
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | buildClasses(string $name): array
+    |--------------------------------------------------------------------------
+    */
 
     /**
      * Construye los nombres de las clases.
@@ -326,6 +475,12 @@ final class ModuleDataFactory
         ];
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | buildNamespaces(string $name): array
+    |--------------------------------------------------------------------------
+    */
+
     /**
      * Construye los namespaces.
      *
@@ -367,15 +522,19 @@ final class ModuleDataFactory
         ];
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | buildPaths(string $name, string $plural): array
+    |--------------------------------------------------------------------------
+    */
+
     /**
      * Construye las rutas físicas.
      *
      * @return array<string,string>
      */
-    private function buildPaths(
-        string $name,
-        string $plural
-    ): array {
+    private function buildPaths(string $name, string $plural): array
+    {
 
         return [
 
@@ -441,6 +600,12 @@ final class ModuleDataFactory
             => app_path("Core/Permissions/{$name}Permission.php")
         ];
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | buildOptions(array $generation): array
+    |--------------------------------------------------------------------------
+    */
 
     /**
      * Construye las opciones de generación del módulo.

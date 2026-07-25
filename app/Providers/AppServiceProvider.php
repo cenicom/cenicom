@@ -4,8 +4,8 @@ namespace App\Providers;
 
 use App\Core\Generator\Presentation\Contracts\PresentationRendererInterface;
 use App\Core\Generator\Presentation\Renderers\BladePresentationRenderer;
+use App\Core\Generator\Security\MiddlewareRegistry;
 use App\Core\Generator\Specifications\Validators\SpecificationValidator;
-
 use App\Core\Generator\Validation\GeneratorValidator;
 use App\Core\Generator\Validation\Validators\FieldsValidator;
 use App\Support\Navigation\NavigationManager;
@@ -35,6 +35,13 @@ class AppServiceProvider extends ServiceProvider
                 $app->make(FieldsValidator::class),
             ]);
         });
+
+        $this->app->singleton(
+            MiddlewareRegistry::class,
+            function () {
+                return new MiddlewareRegistry();
+            }
+        );
     }
 
     /**

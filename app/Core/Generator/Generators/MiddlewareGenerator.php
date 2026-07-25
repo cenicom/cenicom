@@ -53,8 +53,10 @@ final class MiddlewareGenerator extends BaseGenerator
      */
     public function supports(ModuleData $module): bool
     {
-
-        return true;
+        return $module->option(
+            'generate_middleware',
+            true
+        );
     }
 
     /**

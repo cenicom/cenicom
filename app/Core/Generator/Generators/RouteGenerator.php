@@ -9,6 +9,7 @@ use App\Core\Generator\BaseGenerator;
 use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Results\GeneratorResult;
+use App\Core\Generator\Security\PermissionResolver;
 use App\Core\Generator\Support\FileWriter;
 use App\Core\Generator\Support\MiddlewareResolver;
 use App\Core\Generator\Support\StubManager;
@@ -32,12 +33,13 @@ final class RouteGenerator extends BaseGenerator
 {
     private const STUB = 'route.stub';
 
-     public function __construct(
+    public function __construct(
         StubManager $stubManager,
         FileWriter $fileWriter,
         PresentationFactory $presentationFactory,
         GeneratorValidator $validator,
         private readonly MiddlewareResolver $middlewareResolver,
+        private readonly PermissionResolver $permissionResolver,
     ) {
         parent::__construct(
             $stubManager,
@@ -111,6 +113,20 @@ final class RouteGenerator extends BaseGenerator
         $middlewares = $this
             ->middlewareResolver
             ->resolve($security);
+
+        if ($security->usesPermissions()) {
+
+            $permissions = $this
+                ->permissionResolver
+                ->resolve($module);
+
+
+            foreach ($permissions as $permission) {
+
+                $middlewares[] =
+                    'permission:' . $permission;
+            }
+        }
 
         return $this->formatMiddleware($middlewares);
     }

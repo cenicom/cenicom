@@ -38,6 +38,12 @@ final class MiddlewareBuilder
         return $this->buildVariables($module);
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Variables del stub
+    |--------------------------------------------------------------------------
+    */
+
     /**
      * Construye todas las variables del stub.
      *
@@ -58,20 +64,18 @@ final class MiddlewareBuilder
         ];
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Construcción de metadata
+    |--------------------------------------------------------------------------
+    */
+
     /**
      * Construye el namespace.
      */
     private function buildNamespace(ModuleData $module): string
     {
         return $module->middlewareNamespace();
-    }
-
-    /**
-     * Construye el nombre de la clase.
-     */
-    private function buildClassName(ModuleData $module): string
-    {
-        return $module->middlewareClass();
     }
 
     /**
@@ -92,6 +96,20 @@ final class MiddlewareBuilder
 
         return implode("\n", array_unique($imports));
     }
+
+    /**
+     * Construye el nombre de la clase.
+     */
+    private function buildClassName(ModuleData $module): string
+    {
+        return $module->middlewareClass();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Construcción del middleware
+    |--------------------------------------------------------------------------
+    */
 
     /**
      * Construye los métodos del middleware.
@@ -132,18 +150,73 @@ final class MiddlewareBuilder
     private function buildAuthorization(ModuleData $module): string
     {
         return implode("\n\n", [
-            '// TODO: Implementar autorización del middleware.',
+
+            $this->buildPermissionCheck($module),
+
             $this->buildReturnStatement(),
+
         ]);
     }
 
     /**
-     * Construye el retorno del middleware.
+     * Construye la validación del permiso principal.
      */
+    private function buildPermissionCheck(
+        ModuleData $module,
+    ): string {
+        $permission = $this->resolvePrimaryPermission($module);
+
+        if ($permission === null) {
+            return '// El módulo no define permisos.';
+        }
+
+        return sprintf(
+            "if (%s) {\n    %s\n}",
+            $this->buildPermissionCondition($permission),
+            $this->buildUnauthorizedResponse()
+        );
+    }
+
+    /**
+     * Construye la respuesta cuando el usuario
+     * no posee el permiso requerido.
+     */
+    private function buildUnauthorizedResponse(): string
+    {
+        return $this->buildWebUnauthorizedResponse();
+
+    }
+
+    /**
+     * Construye la respuesta para peticiones web.
+     */
+    private function buildWebUnauthorizedResponse(): string
+    {
+        return 'abort(403);';
+    }
+
     private function buildReturnStatement(): string
     {
         return 'return $next($request);';
     }
+
+    /**
+     * Construye la condición de autorización.
+     */
+    private function buildPermissionCondition(
+        string $permission,
+    ): string {
+        return sprintf(
+            "! \$request->user()?->can('%s')",
+            $permission
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Helpers
+    |--------------------------------------------------------------------------
+    */
 
     private function indent(string $text, int $level = 1): string
     {
@@ -156,5 +229,27 @@ final class MiddlewareBuilder
                 explode("\n", $text)
             )
         );
+    }
+
+    /**
+     * Obtiene el permiso principal del módulo.
+     */
+    private function resolvePrimaryPermission(
+        ModuleData $module,
+    ): ?string {
+        $matrix = $module->permissionMatrix();
+
+        if ($matrix === null) {
+            return null;
+        }
+
+        foreach ($matrix->permissions() as $permission) {
+
+            if ($permission->action() === 'view') {
+                return $permission->permission();
+            }
+        }
+
+        return null;
     }
 }

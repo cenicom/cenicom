@@ -81,15 +81,23 @@ final readonly class SecurityDefinition
         return $this->permissions;
     }
 
+/**
+ * Construye una definición de seguridad desde array.
+ *
+ * @param array<string,mixed> $security
+ */
     public static function fromArray(
-        array $data
+        array $security
     ): self {
 
         return new self(
-            auth: $data['auth'] ?? true,
-            verified: $data['verified'] ?? false,
-            middleware: $data['middleware'] ?? [],
-            permissions: $data['permissions'] ?? false,
+            auth: $security['auth'] ?? true,
+
+            verified: $security['verified'] ?? true,
+
+            middleware: $security['middleware'] ?? [],
+
+            permissions: $security['permissions'] ?? false,
         );
     }
 }

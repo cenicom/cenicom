@@ -35,7 +35,7 @@ final class PermissionGenerator extends BaseGenerator
      */
     public function supports(ModuleData $module): bool
     {
-        return $module->permissions()['permissions'] ?? true;
+        return $module->permissions();
     }
 
     /**

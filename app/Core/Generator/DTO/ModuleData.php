@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Core\Generator\DTO;
 
 use App\Core\Generator\DTO\ColumnDefinition;
+use App\Core\Generator\DTO\PermissionMatrix;
 use App\Core\Generator\DTO\SecurityDefinition;
 use Illuminate\Support\Str;
 
@@ -179,9 +180,14 @@ readonly class ModuleData
      */
     private array $columns;
 
+    /**
+     * @var array<string,mixed>
+     */
     private array $options;
 
     private ?SecurityDefinition $security;
+
+    private ?PermissionMatrix $permissionMatrix;
 
     /*
     |--------------------------------------------------------------------------
@@ -273,15 +279,22 @@ readonly class ModuleData
         string $viewPrefix,
 
         array $columns,
+        /**
+         * @param array<string,mixed> $options
+         */
+        array $options,
+
         bool $timestamps,
         bool $softDeletes,
         bool $uuid,
         bool $api,
         bool $tests,
         bool $permissions,
+
         bool $menu,
         ?string $icon,
         ?SecurityDefinition $security = null,
+        ?PermissionMatrix $permissionMatrix = null,
     ) {
         $this->name = $name;
         $this->singular = $singular;
@@ -339,11 +352,13 @@ readonly class ModuleData
         $this->middlewarePath = $middlewarePath;
         $this->permissionPath = $permissionPath;
 
+
         $this->routePrefix = $routePrefix;
         $this->routeName = $routeName;
         $this->viewPrefix = $viewPrefix;
 
         $this->columns = $columns;
+        $this->options = $options;
 
         $this->timestamps = $timestamps;
         $this->softDeletes = $softDeletes;
@@ -351,6 +366,7 @@ readonly class ModuleData
         $this->api = $api;
         $this->tests = $tests;
         $this->permissions = $permissions;
+        $this->permissionMatrix = $permissionMatrix;
         $this->menu = $menu;
         $this->icon = $icon;
         $this->security = $security;
@@ -401,6 +417,11 @@ readonly class ModuleData
     public function security(): ?SecurityDefinition
     {
         return $this->security;
+    }
+
+    public function permissionMatrix(): ?PermissionMatrix
+    {
+        return $this->permissionMatrix;
     }
 
 
@@ -708,6 +729,16 @@ readonly class ModuleData
     public function columns(): array
     {
         return $this->columns;
+    }
+
+    /**
+     * Devuelve las opciones completas del módulo.
+     *
+     * @return array<string,mixed>
+     */
+    public function options(): array
+    {
+        return $this->options;
     }
 
     /*
@@ -1046,5 +1077,27 @@ readonly class ModuleData
     public function scopes(): array
     {
         return [];
+    }
+
+    /**
+     * Obtiene una opción del módulo.
+     *
+     * @param mixed $default
+     *
+     * @return mixed
+     */
+    public function option(
+        string $key,
+        mixed $default = null,
+    ): mixed {
+        return $this->options[$key] ?? $default;
+    }
+
+    public function hasOption(string $key): bool
+    {
+        return array_key_exists(
+            $key,
+            $this->options
+        );
     }
 }

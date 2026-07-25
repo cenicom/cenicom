@@ -5,9 +5,18 @@ declare(strict_types=1);
 namespace App\Core\Generator\Support;
 
 use App\Core\Generator\DTO\SecurityDefinition;
+use App\Core\Generator\Security\MiddlewareRegistry;
 
 final class MiddlewareResolver
 {
+    private MiddlewareRegistry $registry;
+
+    public function __construct(
+        MiddlewareRegistry $registry
+    ) {
+        $this->registry = $registry;
+    }
+
     /**
      * Resuelve middleware Laravel.
      *
@@ -28,7 +37,14 @@ final class MiddlewareResolver
         }
 
         foreach ($security->middleware() as $middleware) {
-            $middlewares[] = $middleware;
+
+            $resolved = $this->registry->resolve(
+                $middleware
+            );
+
+            if ($resolved !== null) {
+                $middlewares[] = $resolved;
+            }
         }
 
         return $middlewares;

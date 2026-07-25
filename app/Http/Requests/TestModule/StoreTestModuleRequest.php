@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Secure03RouteTest;
+namespace App\Http\Requests\TestModule;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -13,14 +13,14 @@ use Illuminate\Foundation\Http\FormRequest;
  * CENICOM ERP
  * ==========================================================
  *
- * Request para crear un secure03_route_test.
+ * Request para crear un test_module.
  *
  * Gestiona la autorización y validación de la creación
  * de registros del módulo.
  *
- * @package App\Http\Requests\Secure03RouteTest
+ * @package App\Http\Requests\TestModule
  */
-final class StoreSecure03RouteTestRequest
+final class StoreTestModuleRequest
     extends FormRequest
 {
     /**

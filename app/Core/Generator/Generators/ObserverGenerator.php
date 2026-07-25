@@ -6,7 +6,12 @@ namespace App\Core\Generator\Generators;
 
 use App\Core\Generator\BaseGenerator;
 use App\Core\Generator\DTO\ModuleData;
+use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Results\GeneratorResult;
+use App\Core\Generator\Support\FileWriter;
+use App\Core\Generator\Support\Observer\ObserverBuilder;
+use App\Core\Generator\Support\StubManager;
+use App\Core\Generator\Validation\GeneratorValidator;
 
 /**
  * ==========================================================
@@ -24,6 +29,21 @@ use App\Core\Generator\Results\GeneratorResult;
  */
 final class ObserverGenerator extends BaseGenerator
 {
+
+    public function __construct(
+        StubManager $stubManager,
+        FileWriter $fileWriter,
+        PresentationFactory $presentationFactory,
+        GeneratorValidator $validator,
+        private readonly ObserverBuilder $observerBuilder,
+    ) {
+        parent::__construct(
+            $stubManager,
+            $fileWriter,
+            $presentationFactory,
+            $validator,
+        );
+    }
     /**
      * Determina si el generador aplica al módulo recibido.
      */
@@ -43,39 +63,8 @@ final class ObserverGenerator extends BaseGenerator
         return $this->generateResult(
             'observer.stub',
             $module->observerPath(),
-            $this->buildVariables($module),
+            $this->observerBuilder->build($module),
         );
     }
 
-
-    /**
-     * Construye las variables utilizadas por el stub.
-     *
-     * @return array<string, string>
-     */
-    private function buildVariables(
-        ModuleData $module
-    ): array {
-
-        return [
-
-            'namespace'
-            => $module->observerNamespace(),
-
-            'observer'
-            => $module->observerClass(),
-
-            'modelNamespace'
-            => $module->modelNamespace(),
-
-            'model'
-            => $module->modelClass(),
-
-            'qualifiedModel'
-            => $module->qualifiedModel(),
-
-            'variable'
-            => lcfirst($module->modelClass()),
-        ];
-    }
 }
