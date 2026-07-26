@@ -39,8 +39,8 @@ final class [[ controller ]] extends Controller
     }
 
     /**
-    * Muestra el listado del recurso.
-    */
+     * Muestra el listado del recurso.
+     */
     public function index(): View
     {
         return view('[[ viewPrefix ]].index', [
@@ -51,16 +51,16 @@ final class [[ controller ]] extends Controller
     }
 
     /**
-        * Muestra el formulario de creación.
-        */
+     * Muestra el formulario de creación.
+     */
     public function create(): View
     {
         return view('[[ viewPrefix ]].create');
     }
 
     /**
-        * Almacena un nuevo recurso.
-        */
+     * Almacena un nuevo recurso.
+     */
     public function store(
         [[ storeRequest ]] $request,
     ): RedirectResponse {
@@ -71,12 +71,12 @@ final class [[ controller ]] extends Controller
 
         return redirect()
             ->route('[[ routeName ]].index')
-            ->with('success', '[[ singular ]] creado correctamente.');
+            ->with('success', '[[ displayName ]] creado correctamente.');
     }
 
     /**
-        * Muestra un recurso específico.
-        */
+     * Muestra un recurso específico.
+     */
     public function show(
         [[ model ]] $[[ variable ]]
     ): View {
@@ -87,20 +87,20 @@ final class [[ controller ]] extends Controller
     }
 
     /**
-        * Edita un recurso específico.
-        */
+     * Edita un recurso específico.
+     */
     public function edit(
         [[ model ]] $[[ variable ]]
     ): View {
 
         return view('[[ viewPrefix ]].edit', [
-            '[[ variable ]]' => $[[ variable ]] ,
+            '[[ variable ]]' => $[[ variable ]],
         ]);
     }
 
     /**
-    * Actualiza un recurso específico.
-    */
+     * Actualiza un recurso específico.
+     */
     public function update(
         [[ updateRequest ]] $request,
         [[ model ]] $[[ variable ]]
@@ -113,12 +113,12 @@ final class [[ controller ]] extends Controller
 
         return redirect()
             ->route('[[ routeName ]].index')
-            ->with('success', '[[ singular ]] actualizado correctamente.');
+            ->with('success', '[[ displayName ]] actualizado correctamente.');
     }
 
     /**
-    * Elimina el recurso específico.
-    */
+     * Elimina el recurso específico.
+     */
     public function destroy(
         [[ model ]] $[[ variable ]]
     ): RedirectResponse {
@@ -127,6 +127,6 @@ final class [[ controller ]] extends Controller
 
         return redirect()
             ->route('[[ routeName ]].index')
-            ->with('success', '[[ singular ]] eliminado correctamente.');
+            ->with('success', '[[ displayName ]] eliminado correctamente.');
     }
 }

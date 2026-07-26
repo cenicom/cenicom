@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use [[ controllerNamespace ]];
+use [[ qualifiedController ]];
 
 use Illuminate\Support\Facades\Route;
 

@@ -6,7 +6,15 @@ namespace App\Core\Generator\Generators;
 
 use App\Core\Generator\BaseGenerator;
 use App\Core\Generator\DTO\ModuleData;
+use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Results\GeneratorResult;
+use App\Core\Generator\Support\Controller\ControllerBuilder;
+use App\Core\Generator\Support\FileWriter;
+use App\Core\Generator\Support\StubManager;
+use App\Core\Generator\Validation\GeneratorValidator;
+
+
+
 
 /**
  * ==========================================================
@@ -27,6 +35,21 @@ final class ControllerGenerator extends BaseGenerator
 
     private const STUB = 'controller.stub';
 
+    public function __construct(
+        StubManager $stubManager,
+        FileWriter $fileWriter,
+        PresentationFactory $presentationFactory,
+        GeneratorValidator $validator,
+        private readonly ControllerBuilder $controllerBuilder,
+    ) {
+        parent::__construct(
+            $stubManager,
+            $fileWriter,
+            $presentationFactory,
+            $validator,
+        );
+    }
+
     /**
      * Determina si el generador aplica al módulo recibido.
      */
@@ -45,7 +68,7 @@ final class ControllerGenerator extends BaseGenerator
         return $this->generateResult(
             self::STUB,
             $module->controllerPath(),
-            $this->buildVariables($module)
+            $this->controllerBuilder->build($module),
         );
     }
 
@@ -54,87 +77,7 @@ final class ControllerGenerator extends BaseGenerator
      *
      * @return array<string, string>
      */
-    private function buildVariables(
-        ModuleData $module
-    ): array {
 
-        return [
 
-            'namespace'
-            => $module->controllerNamespace(),
 
-            'controller'
-            => $module->controllerClass(),
-
-            'qualifiedServiceInterface'
-            => $module->qualifiedServiceInterface(),
-
-            'service'
-            => $module->serviceNamespace(),
-
-            'serviceClass'
-            => $module->serviceClass(),
-
-            'serviceInterface'
-            => $module->serviceInterface(),
-
-            'qualifiedService'
-            => $module->qualifiedService(),
-
-            'requestNamespace'
-            => $module->requestNamespace(),
-
-            'storeRequest'
-            => $module->storeRequestClass(),
-
-            'updateRequest'
-            => $module->updateRequestClass(),
-
-            'qualifiedStoreRequest'
-            => $module->qualifiedStoreRequest(),
-
-            'qualifiedUpdateRequest'
-            => $module->qualifiedUpdateRequest(),
-
-            'model'
-            => $module->modelClass(),
-
-            'routeName'
-            => $module->routeName(),
-
-            'viewPrefix'
-            => $module->viewPrefix(),
-
-            'qualifiedModel'
-            => $module->qualifiedModel(),
-
-            'qualifiedController'
-            => $module->qualifiedController(),
-
-            'variable'
-            => $module->variable(),
-
-            'pluralVariable'
-            => $module->pluralVariable(),
-
-            'singular'
-            => $module->singular(),
-        ];
-    }
-
-    private function buildImports(
-        ModuleData $module
-    ): string {
-
-        return implode(
-            PHP_EOL,
-            [
-                'use ' . $module->qualifiedService() . ';',
-                'use ' . $module->qualifiedStoreRequest() . ';',
-                'use ' . $module->qualifiedUpdateRequest() . ';',
-                'imports' => $this->buildImports($module),
-            ]
-        );
-
-    }
 }

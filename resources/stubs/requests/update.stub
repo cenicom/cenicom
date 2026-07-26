@@ -36,9 +36,9 @@ final class [[ updateRequest ]]
      */
     public function rules(): array
     {
-        return [
-
-        ];
+    return [
+    [[ rules ]]
+    ];
     }
 
     /**
@@ -48,9 +48,7 @@ final class [[ updateRequest ]]
      */
     public function messages(): array
     {
-        return [
-
-        ];
+        return [ ];
     }
 
     /**
@@ -60,8 +58,6 @@ final class [[ updateRequest ]]
      */
     public function attributes(): array
     {
-        return [
-
-        ];
+        return [ ];
     }
 }

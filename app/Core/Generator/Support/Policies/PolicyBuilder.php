@@ -110,7 +110,7 @@ final class PolicyBuilder
      */
     private function buildViewAnyMethod(ModuleData $module): string
     {
-        return <<<PHP
+    return <<<PHP
     /**
      * Determina si el usuario puede ver cualquier registro.
      */
@@ -129,7 +129,7 @@ final class PolicyBuilder
         $model = $module->modelClass();
         $variable = $module->variable();
 
-        return <<<PHP
+    return <<<PHP
     /**
      * Determina si el usuario puede ver el registro.
      */
@@ -147,7 +147,7 @@ final class PolicyBuilder
      */
     private function buildCreateMethod(ModuleData $module): string
     {
-        return <<<PHP
+    return <<<PHP
     /**
      * Determina si el usuario puede crear registros.
      */
@@ -166,7 +166,7 @@ final class PolicyBuilder
         $model = $module->modelClass();
         $variable = $module->variable();
 
-        return <<<PHP
+    return <<<PHP
     /**
      * Determina si el usuario puede actualizar el registro.
      */
@@ -187,7 +187,7 @@ final class PolicyBuilder
         $model = $module->modelClass();
         $variable = $module->variable();
 
-        return <<<PHP
+    return <<<PHP
     /**
      * Determina si el usuario puede eliminar el registro.
      */
@@ -208,7 +208,7 @@ final class PolicyBuilder
         $model = $module->modelClass();
         $variable = $module->variable();
 
-        return <<<PHP
+    return <<<PHP
     /**
      * Determina si el usuario puede restaurar el registro.
      */
@@ -229,7 +229,7 @@ final class PolicyBuilder
         $model = $module->modelClass();
         $variable = $module->variable();
 
-        return <<<PHP
+    return <<<PHP
     /**
      * Determina si el usuario puede eliminar definitivamente el registro.
      */

@@ -74,7 +74,7 @@ final readonly class ManifestGenerator
 
                 'auth' => true,
 
-                'verified' => false,
+                'verified' => true,
 
                 'middleware' => [],
 

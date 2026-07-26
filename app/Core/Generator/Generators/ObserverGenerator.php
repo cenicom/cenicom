@@ -56,9 +56,7 @@ final class ObserverGenerator extends BaseGenerator
     /**
      * Genera el Observer del módulo.
      */
-    public function generate(
-        ModuleData $module
-    ): GeneratorResult {
+    public function generate(ModuleData $module): GeneratorResult {
 
         return $this->generateResult(
             'observer.stub',

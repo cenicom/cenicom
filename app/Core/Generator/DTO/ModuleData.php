@@ -1100,4 +1100,14 @@ readonly class ModuleData
             $this->options
         );
     }
+
+    /**
+     * Nombre legible del módulo.
+     */
+    public function displayName(): string
+    {
+        return str($this->modelClass())
+            ->headline()
+            ->toString();
+    }
 }

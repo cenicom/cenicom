@@ -126,7 +126,7 @@ final class ObserverBuilder
         $model = $module->modelClass();
         $variable = $module->variable();
 
-        return <<<PHP
+    return <<<PHP
     /**
      * Handle the {$model} "creating" event.
      */
@@ -145,7 +145,7 @@ final class ObserverBuilder
         $model = $module->modelClass();
         $variable = $module->variable();
 
-        return <<<PHP
+    return <<<PHP
     /**
      * Handle the {$model} "created" event.
      */
@@ -164,7 +164,7 @@ final class ObserverBuilder
         $model = $module->modelClass();
         $variable = $module->variable();
 
-        return <<<PHP
+    return <<<PHP
     /**
      * Handle the {$model} "updating" event.
      */
@@ -183,7 +183,7 @@ final class ObserverBuilder
         $model = $module->modelClass();
         $variable = $module->variable();
 
-        return <<<PHP
+    return <<<PHP
     /**
      * Handle the {$model} "updated" event.
      */
@@ -202,7 +202,7 @@ final class ObserverBuilder
         $model = $module->modelClass();
         $variable = $module->variable();
 
-        return <<<PHP
+    return <<<PHP
     /**
      * Handle the {$model} "deleting" event.
      */
@@ -221,7 +221,7 @@ final class ObserverBuilder
         $model = $module->modelClass();
         $variable = $module->variable();
 
-        return <<<PHP
+    return <<<PHP
     /**
      * Handle the {$model} "deleted" event.
      */
@@ -240,7 +240,7 @@ final class ObserverBuilder
         $model = $module->modelClass();
         $variable = $module->variable();
 
-        return <<<PHP
+    return <<<PHP
     /**
      * Handle the {$model} "restoring" event.
      */
@@ -259,7 +259,7 @@ final class ObserverBuilder
         $model = $module->modelClass();
         $variable = $module->variable();
 
-        return <<<PHP
+    return <<<PHP
     /**
      * Handle the {$model} "restored" event.
      */
@@ -278,7 +278,7 @@ final class ObserverBuilder
         $model = $module->modelClass();
         $variable = $module->variable();
 
-        return <<<PHP
+    return <<<PHP
     /**
      * Handle the {$model} "force deleted" event.
      */
