@@ -1,10 +1,8 @@
 <?php
 
-
 use App\Providers\AppServiceProvider;
 use App\Providers\CNFrameworkServiceProvider;
 use App\Providers\CNGeneratorServiceProvider;
-//use App\Providers\GeneratorServiceProvider;
 use App\Providers\RepositoryServiceProvider;
 
 return [
@@ -23,5 +21,7 @@ return [
     App\Core\Navigation\NavigationServiceProvider::class,
 
     App\Modules\Institution\Providers\InstitutionServiceProvider::class,
+
+
 
 ];

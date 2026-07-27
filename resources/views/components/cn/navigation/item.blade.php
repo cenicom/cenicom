@@ -2,12 +2,9 @@
     'node'
 ])
 
-
 <li class="cn-navigation-item">
 
-    <a href="{{ $node->route() && \Illuminate\Support\Facades\Route::has($node->route())
-        ? route($node->route())
-        : '#' }}">
+    <a href="{{ $node->href() }}">
 
         @if($node->icon())
             <i class="{{ $node->icon() }}"></i>

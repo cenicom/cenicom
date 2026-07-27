@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Core\Navigation;
 
+use App\Core\Contracts\NavigationAuthorizationInterface;
+use App\Core\Contracts\TestFormRepositoryInterface;
+use App\Core\Navigation\Authorization\NavigationAuthorization;
 use App\Core\Navigation\Builder\NavigationBuilder;
 use App\Core\Navigation\Contracts\NavigationBuilderInterface;
 use App\Core\Navigation\Contracts\NavigationRegistrarInterface;
@@ -11,6 +14,7 @@ use App\Core\Navigation\Contracts\NavigationRegistryInterface;
 use App\Core\Navigation\Registrar\NavigationRegistrar;
 use App\Core\Navigation\Registry\NavigationRegistry;
 use App\Core\Navigation\View\NavigationViewComposer;
+use App\Core\Repositories\TestFormRepository;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -32,6 +36,16 @@ final class NavigationServiceProvider extends ServiceProvider
         $this->app->singleton(
             NavigationBuilderInterface::class,
             NavigationBuilder::class
+        );
+
+        $this->app->singleton(
+            NavigationAuthorizationInterface::class,
+            NavigationAuthorization::class
+        );
+
+        $this->app->bind(
+            TestFormRepositoryInterface::class,
+            TestFormRepository::class
         );
     }
 
