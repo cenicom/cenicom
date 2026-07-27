@@ -8,9 +8,11 @@ use App\Core\Generator\Security\MiddlewareRegistry;
 use App\Core\Generator\Specifications\Validators\SpecificationValidator;
 use App\Core\Generator\Validation\GeneratorValidator;
 use App\Core\Generator\Validation\Validators\FieldsValidator;
+use App\Core\Navigation\Contracts\NavigationServiceInterface;
+use App\Core\Navigation\Services\NavigationService;
 use App\Support\Navigation\NavigationManager;
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -42,6 +44,11 @@ class AppServiceProvider extends ServiceProvider
                 return new MiddlewareRegistry();
             }
         );
+
+        $this->app->bind(
+            NavigationServiceInterface::class,
+            NavigationService::class
+        );
     }
 
     /**
@@ -54,7 +61,11 @@ class AppServiceProvider extends ServiceProvider
 
             $nav = app(NavigationManager::class);
 
-            $view->with('navigation', $nav->grouped());
+            $view->with(
+            'legacyNavigation',
+            $nav->grouped()
+        );
         });
+
     }
 }

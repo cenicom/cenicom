@@ -20,4 +20,8 @@ return [
 
     //GeneratorServiceProvider::class,
 
+    App\Core\Navigation\NavigationServiceProvider::class,
+
+    App\Modules\Institution\Providers\InstitutionServiceProvider::class,
+
 ];
