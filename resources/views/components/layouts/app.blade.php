@@ -18,7 +18,7 @@
 <body>
 
     <x-cn.navigation.sidebar
-        :navigation="$navigationTree"
+        :navigation="$navigation"
     />
 
     {{ $slot }}

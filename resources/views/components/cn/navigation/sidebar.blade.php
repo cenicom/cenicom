@@ -5,10 +5,6 @@
 
 <aside class="cn-sidebar">
 
-     <pre>
-        {{ print_r($navigation->nodes(), true) }}
-    </pre>
-
     <nav>
 
         @foreach($navigation->nodes() as $node)
