@@ -55,4 +55,11 @@ interface ModuleRegistryInterface
      * Obtiene la cantidad de módulos registrados.
      */
     public function count(): int;
+
+    /**
+     * Obtiene los nombres de los módulos registrados.
+     *
+     * @return array<int,string>
+     */
+    public function names(): array;
 }

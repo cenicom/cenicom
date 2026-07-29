@@ -77,11 +77,9 @@ final class ModuleProviderRegistrar implements ModuleProviderRegistrarInterface
             return;
         }
 
-        if (! $this->providerExists($provider)) {
+        if (! $this->validator->validate($provider)) {
             return;
         }
-
-        $this->validator->validate($provider);
 
         $this->registerIntoApplication($provider);
 

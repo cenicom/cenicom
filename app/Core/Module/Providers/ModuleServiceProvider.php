@@ -8,6 +8,7 @@ use App\Core\Contracts\Module\ModuleManifestFinderInterface;
 use App\Core\Contracts\Module\ModuleProviderRegistrarInterface;
 use App\Core\Contracts\Module\ModuleRegistryInterface;
 use App\Core\Module\Bootstrap\Contracts\ModuleProviderValidatorInterface;
+use App\Core\Module\Bootstrap\ModuleBootstrap;
 use App\Core\Module\Bootstrap\ModuleProviderRegistrar;
 use App\Core\Module\Bootstrap\ModuleProviderValidator;
 use App\Core\Module\Discovery\ModuleManifestFinder;
@@ -27,7 +28,7 @@ final class ModuleServiceProvider extends ServiceProvider
             ModuleManifestFinderInterface::class,
             function () {
                 return new ModuleManifestFinder(
-                    base_path('Modules')
+                    base_path('tests/Fixtures/Modules')
                 );
             }
         );
@@ -51,5 +52,10 @@ final class ModuleServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+        if ($this->app->runningUnitTests()) {
+            return;
+        }
+
+        app(ModuleBootstrap::class)->bootstrap();
     }
 }

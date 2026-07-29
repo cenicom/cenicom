@@ -28,7 +28,30 @@ final class ModuleDefinitionFactory
      */
     public function create(string $manifestPath): ModuleDefinition
     {
+        if (! is_file($manifestPath)) {
+            throw new \RuntimeException(
+                "Manifest not found: {$manifestPath}"
+            );
+        }
+
         $manifest = require $manifestPath;
+
+        if (! is_array($manifest)) {
+            throw new \UnexpectedValueException(
+                'Module manifest must return an array.',
+            );
+        }
+
+        if (
+            array_key_exists('enabled', $manifest)
+            && ! is_bool($manifest['enabled'])
+        ) {
+            throw new \UnexpectedValueException(
+                'Module manifest "enabled" must be a boolean.',
+            );
+        }
+
+
 
         if (! array_key_exists('name', $manifest)) {
             throw new \UnexpectedValueException(
@@ -66,12 +89,15 @@ final class ModuleDefinitionFactory
             );
         }
 
+        $enabled = $manifest['enabled'] ?? true;
+
         return new ModuleDefinition(
             name: $manifest['name'],
             namespace: $manifest['namespace'],
             basePath: dirname($manifestPath),
             manifestPath: $manifestPath,
             providers: $manifest['providers'],
+            enabled: $enabled,
         );
 
         //

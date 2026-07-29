@@ -23,11 +23,13 @@ final class ModuleBootstrap
         //
         $manifests = $this->manifestFinder->find();
 
-        dd($manifests);
-
         foreach ($manifests as $manifestPath) {
 
             $definition = $this->factory->create($manifestPath);
+
+            if (! $definition->enabled) {
+                continue;
+            }
 
             $this->registrar->registerDefinition($definition);
 

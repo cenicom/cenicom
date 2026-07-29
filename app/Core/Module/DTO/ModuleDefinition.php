@@ -27,7 +27,8 @@ final readonly class ModuleDefinition
         public string $namespace,
         public string $basePath,
         public string $manifestPath,
-        public array $providers = [],
+        public array $providers,
+        public readonly bool $enabled,
     ) {
     }
 }

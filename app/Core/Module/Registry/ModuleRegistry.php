@@ -76,4 +76,17 @@ final class ModuleRegistry implements ModuleRegistryInterface
     {
         return count($this->modules);
     }
+
+    /**
+     * Obtiene los nombres de todos los módulos registrados.
+     *
+     * @return array<int, string>
+     */
+    public function names(): array
+    {
+        return array_map(
+            static fn(ModuleDefinition $module): string => $module->name,
+            $this->all(),
+        );
+    }
 }
