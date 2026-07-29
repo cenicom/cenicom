@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Core\Navigation;
 
+
 use App\Core\Contracts\NavigationAuthorizationInterface;
 use App\Core\Contracts\TestFormRepositoryInterface;
+
 use App\Core\Navigation\Authorization\NavigationAuthorization;
 use App\Core\Navigation\Bootstrap\NavigationBootstrapper;
 use App\Core\Navigation\Builder\NavigationBuilder;
@@ -111,6 +113,7 @@ final class NavigationServiceProvider extends ServiceProvider
                 );
             }
         );
+
     }
 
     public function boot(): void

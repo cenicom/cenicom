@@ -22,6 +22,8 @@ return [
 
     App\Modules\Institution\Providers\InstitutionServiceProvider::class,
 
+    App\Core\Module\Providers\ModuleServiceProvider::class,
+
 
 
 ];
