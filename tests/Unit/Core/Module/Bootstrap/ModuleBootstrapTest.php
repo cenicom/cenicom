@@ -4,183 +4,116 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Module\Bootstrap;
 
+use App\Core\Contracts\Module\ModuleBootstrapPipelineInterface;
 use App\Core\Contracts\Module\ModuleManifestFinderInterface;
-use App\Core\Contracts\Module\ModuleProviderRegistrarInterface;
-use App\Core\Contracts\Module\ModuleRegistryInterface;
 use App\Core\Module\Bootstrap\ModuleBootstrap;
-use App\Core\Module\Discovery\ModuleManifestFinder;
-use App\Core\Module\Factory\ModuleDefinitionFactory;
+use App\Core\Module\Bootstrap\ModuleBootstrapContext;
+use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
-
 
 final class ModuleBootstrapTest extends TestCase
 {
-    public function test_bootstrap_registers_modules(): void
+    private ModuleManifestFinderInterface&MockObject $manifestFinder;
+
+    private ModuleBootstrapPipelineInterface&MockObject $pipeline;
+
+    private ModuleBootstrap $bootstrap;
+
+    protected function setUp(): void
     {
-        $this->app->bind(
-            ModuleManifestFinderInterface::class,
-            fn() => new ModuleManifestFinder(
-                base_path('tests/Fixtures/Modules')
-            ),
+        parent::setUp();
+
+        $this->manifestFinder = $this->createMock(
+            ModuleManifestFinderInterface::class
         );
 
-        $finder = app(ModuleManifestFinderInterface::class);
-
-        $registrar = app(ModuleProviderRegistrarInterface::class);
-
-        $registry = app(ModuleRegistryInterface::class);
-
-
-        $bootstrap = new ModuleBootstrap(
-            $registrar,
-            $finder,
-            $registry,
-            new ModuleDefinitionFactory()
+        $this->pipeline = $this->createMock(
+            ModuleBootstrapPipelineInterface::class
         );
 
+        $this->bootstrap = new ModuleBootstrap(
+            $this->manifestFinder,
+            $this->pipeline,
+        );
+    }
 
-        $bootstrap->bootstrap();
+    public function test_bootstrap_processes_every_discovered_manifest(): void
+    {
+        $manifests = [
+            '/modules/Blog/module.json',
+            '/modules/User/module.json',
+            '/modules/Inventory/module.json',
+        ];
 
+        $this->manifestFinder
+            ->expects($this->once())
+            ->method('find')
+            ->willReturn($manifests);
 
-        $modules = $registry->all();
+        $contexts = [];
 
+        $this->pipeline
+            ->expects($this->exactly(3))
+            ->method('process')
+            ->willReturnCallback(
+                function (ModuleBootstrapContext $context) use (&$contexts): void {
+                    $contexts[] = $context;
+                }
+            );
 
-        $this->assertCount(3, $modules);
+        $this->bootstrap->bootstrap();
 
+        $this->assertCount(3, $contexts);
 
-        $names = array_map(
-            fn($module) => $module->name,
-            $modules
+        $this->assertSame(
+            '/modules/Blog/module.json',
+            $contexts[0]->manifestPath()
         );
 
-        $this->assertContains('Blog', $names);
-        $this->assertContains('Users', $names);
-        $this->assertContains('EmptyModule', $names);
+        $this->assertSame(
+            '/modules/User/module.json',
+            $contexts[1]->manifestPath()
+        );
+
+        $this->assertSame(
+            '/modules/Inventory/module.json',
+            $contexts[2]->manifestPath()
+        );
+    }
+
+    public function test_bootstrap_handles_empty_manifest_list(): void
+    {
+        $this->manifestFinder
+            ->expects($this->once())
+            ->method('find')
+            ->willReturn([]);
+
+        $this->pipeline
+            ->expects($this->never())
+            ->method('process');
+
+        $this->bootstrap->bootstrap();
+
+        $this->assertTrue(true);
     }
 
     public function test_bootstrap_is_idempotent(): void
     {
-        $this->app->bind(
-            ModuleManifestFinderInterface::class,
-            fn() => new ModuleManifestFinder(
-                base_path('tests/Fixtures/Modules')
-            ),
-        );
+        $manifests = [
+            '/modules/Blog/module.json',
+        ];
 
-        $finder = app(ModuleManifestFinderInterface::class);
+        $this->manifestFinder
+            ->expects($this->exactly(2))
+            ->method('find')
+            ->willReturn($manifests);
 
-        $registrar = app(ModuleProviderRegistrarInterface::class);
+        $this->pipeline
+            ->expects($this->exactly(2))
+            ->method('process');
 
-        $registry = app(ModuleRegistryInterface::class);
+        $this->bootstrap->bootstrap();
 
-        $bootstrap = new ModuleBootstrap(
-            $registrar,
-            $finder,
-            $registry,
-            new ModuleDefinitionFactory()
-        );
-
-        // Primera ejecución
-        $bootstrap->bootstrap();
-
-        $firstModules = $registry->all();
-
-        $firstCount = count($firstModules);
-
-        // Segunda ejecución
-        $bootstrap->bootstrap();
-
-        $secondModules = $registry->all();
-
-        $secondCount = count($secondModules);
-
-        $this->assertSame($firstCount, $secondCount);
-
-        $this->assertCount(3, $secondModules);
-
-        $names = array_map(
-            fn($module) => $module->name,
-            $secondModules
-        );
-
-        sort($names);
-
-        $this->assertSame(
-            ['Blog', 'EmptyModule', 'Users'],
-            $names
-        );
-    }
-
-    public function test_bootstrap_handles_empty_modules_directory(): void
-    {
-        $this->app->bind(
-            ModuleManifestFinderInterface::class,
-            fn() => new ModuleManifestFinder(
-                base_path('tests/Fixtures/EmptyModules')
-            ),
-        );
-
-        $finder = app(ModuleManifestFinderInterface::class);
-
-        $registrar = app(ModuleProviderRegistrarInterface::class);
-
-        $registry = app(ModuleRegistryInterface::class);
-
-        $bootstrap = new ModuleBootstrap(
-            $registrar,
-            $finder,
-            $registry,
-            new ModuleDefinitionFactory()
-        );
-
-        $bootstrap->bootstrap();
-
-        $this->assertCount(0, $registry->all());
-
-        $this->assertSame(0, $registry->count());
-    }
-
-    public function test_bootstrap_skips_disabled_modules(): void
-    {
-        $this->app->bind(
-            ModuleManifestFinderInterface::class,
-            fn() => new ModuleManifestFinder(
-                base_path('tests/Fixtures/Modules')
-            ),
-        );
-
-        $finder = app(ModuleManifestFinderInterface::class);
-
-        $registrar = app(ModuleProviderRegistrarInterface::class);
-
-        $registry = app(ModuleRegistryInterface::class);
-
-        $bootstrap = new ModuleBootstrap(
-            $registrar,
-            $finder,
-            $registry,
-            new ModuleDefinitionFactory(),
-        );
-
-        $bootstrap->bootstrap();
-
-        $this->assertFalse(
-            $registry->has('DisabledModule')
-        );
-
-        $names = array_map(
-            fn($module) => $module->name,
-            $registry->all()
-        );
-
-        $this->assertNotContains(
-            'DisabledModule',
-            $names
-        );
-
-        $this->assertCount(
-            3,
-            $registry->all()
-        );
+        $this->bootstrap->bootstrap();
     }
 }

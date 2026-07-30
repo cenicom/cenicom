@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\Module\Factory;
 
+use App\Core\Contracts\Module\ModuleDefinitionFactoryInterface;
 use App\Core\Module\DTO\ModuleDefinition;
 
 /**
@@ -19,7 +20,7 @@ use App\Core\Module\DTO\ModuleDefinition;
  *
  * @author CENICOM
  */
-final class ModuleDefinitionFactory
+final class ModuleDefinitionFactory implements ModuleDefinitionFactoryInterface
 {
 
     /**
