@@ -37,7 +37,14 @@ final class CreateDefinitionStageTest extends TestCase
             '/modules/Blog/module.json'
         );
 
-        $definition = $this->createMock(ModuleDefinition::class);
+        $definition = new ModuleDefinition(
+            name: 'Blog',
+            namespace: 'Modules\\Blog',
+            basePath: '/modules/Blog',
+            manifestPath: '/modules/Blog/module.php',
+            providers: [],
+            enabled: true,
+        );
 
         $this->factory
             ->expects($this->once())

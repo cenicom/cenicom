@@ -32,37 +32,50 @@ final class ModuleManifestFinder implements ModuleManifestFinderInterface
             );
         }
     }
+
+
     /**
      * Obtiene la colección de manifiestos
      * disponibles en el sistema.
-     *
-     * @return list<string>
      */
-    public function find(): array
+    public function find(): iterable
     {
-        //
-        $manifests = [];
+        try {
 
-        $directories = new \DirectoryIterator($this->modulesPath);
+            $manifests = [];
 
-        foreach ($directories as $directory) {
+            $directories = new \DirectoryIterator(
+                $this->modulesPath
+            );
 
-            if (
-                $directory->isDot()
-                || ! $directory->isDir()
-            ) {
-                continue;
+            foreach ($directories as $directory) {
+
+                if (
+                    $directory->isDot()
+                    || ! $directory->isDir()
+                ) {
+                    continue;
+                }
+
+
+                $manifest = $directory->getPathname()
+                    . DIRECTORY_SEPARATOR
+                    . 'module.php';
+
+
+                if (is_file($manifest)) {
+                    $manifests[] = $manifest;
+                }
             }
 
-            $manifest = $directory->getPathname()
-                . DIRECTORY_SEPARATOR
-                . 'module.php';
+            return $manifests;
 
-            if (is_file($manifest)) {
-                $manifests[] = $manifest;
-            }
+        } catch (\Throwable $exception) {
+
+            throw new \RuntimeException(
+                'Module manifest discovery failed',
+                previous: $exception
+            );
         }
-
-        return $manifests;
     }
 }

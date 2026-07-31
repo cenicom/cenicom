@@ -14,14 +14,16 @@ final class ModuleBootstrapPipeline implements ModuleBootstrapPipelineInterface
      */
     public function __construct(
         private readonly iterable $stages,
-    ) {
-    }
+    ) {}
 
     public function process(ModuleBootstrapContext $context): void
     {
         foreach ($this->stages as $stage) {
 
-            if ($context->hasException()) {
+            if (
+                $context->hasException()
+                || $context->isSkipped()
+            ) {
                 break;
             }
 

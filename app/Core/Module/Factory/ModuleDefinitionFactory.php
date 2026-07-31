@@ -29,6 +29,8 @@ final class ModuleDefinitionFactory implements ModuleDefinitionFactoryInterface
      */
     public function create(string $manifestPath): ModuleDefinition
     {
+
+        //code...
         if (! is_file($manifestPath)) {
             throw new \RuntimeException(
                 "Manifest not found: {$manifestPath}"
@@ -51,8 +53,6 @@ final class ModuleDefinitionFactory implements ModuleDefinitionFactoryInterface
                 'Module manifest "enabled" must be a boolean.',
             );
         }
-
-
 
         if (! array_key_exists('name', $manifest)) {
             throw new \UnexpectedValueException(
@@ -92,7 +92,7 @@ final class ModuleDefinitionFactory implements ModuleDefinitionFactoryInterface
 
         $enabled = $manifest['enabled'] ?? true;
 
-        return new ModuleDefinition(
+        $definition = new ModuleDefinition(
             name: $manifest['name'],
             namespace: $manifest['namespace'],
             basePath: dirname($manifestPath),
@@ -101,6 +101,6 @@ final class ModuleDefinitionFactory implements ModuleDefinitionFactoryInterface
             enabled: $enabled,
         );
 
-        //
+        return $definition;
     }
 }

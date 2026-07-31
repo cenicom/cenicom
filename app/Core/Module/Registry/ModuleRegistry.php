@@ -89,4 +89,18 @@ final class ModuleRegistry implements ModuleRegistryInterface
             $this->all(),
         );
     }
+
+    private function createDefinition(string $name): ModuleDefinition
+    {
+        return new ModuleDefinition(
+            name: $name,
+            namespace: "Modules\\{$name}",
+            basePath: "/modules/{$name}",
+            manifestPath: "/modules/{$name}/module.php",
+            providers: [],
+            enabled: true,
+        );
+
+        $definition = $this->createDefinition('Blog');
+    }
 }

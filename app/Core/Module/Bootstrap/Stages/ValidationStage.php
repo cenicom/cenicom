@@ -17,6 +17,17 @@ use Throwable;
  */
 final class ValidationStage implements ModuleBootstrapStageInterface
 {
+    private bool $skipped = false;
+
+    public function markSkipped(): void
+    {
+        $this->skipped = true;
+    }
+
+    public function isSkipped(): bool
+    {
+        return $this->skipped;
+    }
     public function process(ModuleBootstrapContext $context): void
     {
         if ($context->hasException()) {
@@ -39,12 +50,9 @@ final class ValidationStage implements ModuleBootstrapStageInterface
             }
 
             if (! $definition->enabled) {
-                throw new RuntimeException(
-                    sprintf(
-                        'Module "%s" is disabled.',
-                        $definition->name
-                    )
-                );
+                $context->markSkipped();
+
+                return;
             }
 
             // -----------------------------------------------------------------
@@ -58,7 +66,9 @@ final class ValidationStage implements ModuleBootstrapStageInterface
             // - Version compatibility
             // - Signature verification
             //
+
         } catch (Throwable $exception) {
+
             $context->setException($exception);
         }
     }

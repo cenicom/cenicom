@@ -10,7 +10,7 @@ interface ModuleManifestFinderInterface
      * Obtiene la colección de manifiestos
      * disponibles en el sistema.
      *
-     * @return list<string>
+     * @return iterable
      */
-    public function find(): array;
+    public function find(): iterable;
 }

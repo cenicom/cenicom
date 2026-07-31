@@ -109,6 +109,11 @@ final class ModuleServiceProvider extends ServiceProvider
                 );
             }
         );
+
+        $this->app->singleton(
+            ModuleProviderRegistrarInterface::class,
+            ModuleProviderRegistrar::class,
+        );
     }
 
     public function boot(): void

@@ -133,6 +133,16 @@ final class ModuleRegistryTest extends TestCase
             0,
             $this->registry->all()
         );
+
+        $this->assertSame(
+            0,
+            $this->registry->count()
+        );
+
+        $this->assertSame(
+            [],
+            $this->registry->names()
+        );
     }
 
     public function test_clear_removes_all_modules(): void
@@ -224,6 +234,44 @@ final class ModuleRegistryTest extends TestCase
                 'Users',
                 'Inventory',
             ],
+            $this->registry->names()
+        );
+    }
+
+    /*
+    *🚢 ERP-INT-004.5.1.5 — MRG-005
+        Registrar el mismo módulo dos veces no crea duplicados
+        Objetivo
+        Certificar que el ModuleRegistry mantiene un único registro por nombre de módulo.
+        */
+    public function test_registering_same_module_twice_keeps_single_entry(): void
+    {
+        $module = $this->makeModule('Blog');
+
+        $this->registry->register($module);
+        $this->registry->register($module);
+
+        $this->assertSame(
+            1,
+            $this->registry->count()
+        );
+
+        $this->assertTrue(
+            $this->registry->has('Blog')
+        );
+
+        $this->assertSame(
+            $module,
+            $this->registry->get('Blog')
+        );
+
+        $this->assertCount(
+            1,
+            $this->registry->all()
+        );
+
+        $this->assertSame(
+            ['Blog'],
             $this->registry->names()
         );
     }

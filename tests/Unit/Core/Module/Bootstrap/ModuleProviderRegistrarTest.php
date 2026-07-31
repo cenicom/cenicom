@@ -8,6 +8,7 @@ use App\Core\Module\Bootstrap\Contracts\ModuleProviderValidatorInterface;
 use App\Core\Module\Bootstrap\ModuleProviderRegistrar;
 use App\Core\Module\DTO\ModuleDefinition;
 use Illuminate\Contracts\Foundation\Application;
+use RuntimeException;
 use Tests\Fixtures\Providers\BlogServiceProvider;
 use Tests\Fixtures\Providers\UsersServiceProvider;
 use Tests\TestCase;
@@ -23,8 +24,10 @@ final class ModuleProviderRegistrarTest extends TestCase
         );
 
         $validator
-            ->expects($this->never())
-            ->method('validate');
+            ->expects($this->once())
+            ->method('validate')
+            ->with($provider)
+            ->willReturn(false);
 
         $app = $this->createMock(Application::class);
 
@@ -154,6 +157,7 @@ final class ModuleProviderRegistrarTest extends TestCase
                 BlogServiceProvider::class,
                 UsersServiceProvider::class,
             ],
+            enabled: true,
         );
 
         $validator = $this->createMock(
@@ -192,7 +196,10 @@ final class ModuleProviderRegistrarTest extends TestCase
             namespace: 'Tests\\Fixtures\\Modules\\EmptyModule',
             basePath: __DIR__,
             manifestPath: __FILE__,
-            providers: [],
+            providers: [
+
+            ],
+            enabled: true,
         );
 
         $validator = $this->createMock(
@@ -220,5 +227,48 @@ final class ModuleProviderRegistrarTest extends TestCase
             [],
             $definition->providers,
         );
+    }
+
+    /*⚓ ERP-INT-004.5.2.2 — MPR-002
+        Certificar propagación de excepciones del Container
+        Objetivo
+        Demostrar que ModuleProviderRegistrar no oculta errores del Container
+        de Laravel
+        */
+    public function test_register_provider_propagates_application_exception(): void
+    {
+        $provider = BlogServiceProvider::class;
+
+        $validator = $this->createMock(
+            ModuleProviderValidatorInterface::class
+        );
+
+        $validator
+            ->expects($this->once())
+            ->method('validate')
+            ->with($provider)
+            ->willReturn(true);
+
+        $app = $this->createMock(
+            Application::class
+        );
+
+        $app
+            ->expects($this->once())
+            ->method('register')
+            ->with($provider)
+            ->willThrowException(
+                new \RuntimeException('Container failure.')
+            );
+
+        $registrar = new ModuleProviderRegistrar(
+            $validator,
+            $app
+        );
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Container failure.');
+
+        $registrar->registerProvider($provider);
     }
 }

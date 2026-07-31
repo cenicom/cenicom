@@ -37,8 +37,13 @@ final class RegisterModuleStageTest extends TestCase
             '/modules/Blog/module.json'
         );
 
-        $definition = $this->createMock(
-            ModuleDefinition::class
+        $definition = new ModuleDefinition(
+            name: 'Blog',
+            namespace: 'Modules\\Blog',
+            basePath: '/modules/Blog',
+            manifestPath: '/modules/Blog/module.json',
+            providers: [],
+            enabled: true,
         );
 
         $context->setDefinition($definition);
@@ -60,8 +65,13 @@ final class RegisterModuleStageTest extends TestCase
             '/modules/Blog/module.json'
         );
 
-        $definition = $this->createMock(
-            ModuleDefinition::class
+        $definition = new ModuleDefinition(
+            name: 'Blog',
+            namespace: 'Modules\\Blog',
+            basePath: '/modules/Blog',
+            manifestPath: '/modules/Blog/module.json',
+            providers: [],
+            enabled: true,
         );
 
         $context->setDefinition($definition);
@@ -102,8 +112,13 @@ final class RegisterModuleStageTest extends TestCase
             '/modules/Blog/module.json'
         );
 
-        $definition = $this->createMock(
-            ModuleDefinition::class
+        $definition = new ModuleDefinition(
+            name: 'Blog',
+            namespace: 'Modules\\Blog',
+            basePath: '/modules/Blog',
+            manifestPath: '/modules/Blog/module.json',
+            providers: [],
+            enabled: true,
         );
 
         $context->setDefinition($definition);

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Module\Bootstrap;
 
-
 use App\Core\Module\Discovery\ModuleManifestFinder;
 use Tests\TestCase;
 
@@ -25,14 +24,29 @@ final class ModuleManifestFinderTest extends TestCase
 
         // Act
 
-        $manifests = $finder->find();
+        $result = $finder->find();
 
 
         // Assert
 
+        $this->assertTrue(
+            $result->successful()
+        );
+
+
+        $manifests = $result->data();
+
+
         $this->assertNotEmpty(
             $manifests
         );
+
+        $normalized = array_map(
+            static fn(string $manifest): string =>
+            str_replace('\\', '/', $manifest),
+            $manifests
+        );
+
 
         $this->assertContains(
             str_replace(
@@ -42,11 +56,7 @@ final class ModuleManifestFinderTest extends TestCase
                     $path . '/TestModule/module.php'
                 )
             ),
-            array_map(
-                static fn(string $manifest): string =>
-                str_replace('\\', '/', $manifest),
-                $manifests
-            )
+            $normalized
         );
     }
 }

@@ -17,6 +17,8 @@ final class ModuleBootstrap
 
     /**
      * Bootstraps all discovered modules.
+     *
+     * @throws \Throwable
      */
     public function bootstrap(): void
     {
@@ -27,6 +29,10 @@ final class ModuleBootstrap
             );
 
             $this->pipeline->process($context);
+
+            if ($context->hasException()) {
+                throw $context->exception();
+            }
         }
     }
 }

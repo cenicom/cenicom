@@ -18,12 +18,17 @@ use Throwable;
 final class ModuleBootstrapContext
 {
     /**
+     * Indicates that the module has been skipped during bootstrap.
+     */
+    private bool $skipped = false;
+
+
+    /**
      * Creates a new bootstrap context.
      */
     public function __construct(
         private readonly string $manifestPath,
-    ) {
-    }
+    ) {}
 
     /**
      * Module definition produced by the factory.
@@ -48,6 +53,12 @@ final class ModuleBootstrapContext
      */
     public function setDefinition(ModuleDefinition $definition): void
     {
+        if ($this->definition !== null) {
+            throw new \LogicException(
+                'Module definition has already been assigned.'
+            );
+        }
+
         $this->definition = $definition;
     }
 
@@ -72,6 +83,10 @@ final class ModuleBootstrapContext
      */
     public function setException(Throwable $exception): void
     {
+        if ($this->exception !== null) {
+            return;
+        }
+
         $this->exception = $exception;
     }
 
@@ -92,6 +107,25 @@ final class ModuleBootstrapContext
     }
 
     /**
+     * Marks the current module as skipped.
+     *
+     * Disabled modules are not failures.
+     * They are intentionally excluded from bootstrap execution.
+     */
+    public function markSkipped(): void
+    {
+        $this->skipped = true;
+    }
+
+    /**
+     * Indicates whether the module was skipped.
+     */
+    public function isSkipped(): bool
+    {
+        return $this->skipped;
+    }
+
+    /**
      * Clears the stored exception.
      *
      * Reserved for future recovery stages.
@@ -100,4 +134,6 @@ final class ModuleBootstrapContext
     {
         $this->exception = null;
     }
+
+
 }
