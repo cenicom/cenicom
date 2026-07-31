@@ -8,6 +8,7 @@ use App\Core\Contracts\Module\ModuleDefinitionFactoryInterface;
 use App\Core\Contracts\Module\ModuleManifestFinderInterface;
 use App\Core\Contracts\Module\ModuleProviderRegistrarInterface;
 use App\Core\Contracts\Module\ModuleRegistryInterface;
+use App\Core\Module\Bootstrap\Events\ModuleFailed;
 use App\Core\Module\Bootstrap\ModuleBootstrap;
 use App\Core\Module\Bootstrap\ModuleBootstrapPipeline;
 use App\Core\Module\Bootstrap\Stages\CreateDefinitionStage;
@@ -15,6 +16,7 @@ use App\Core\Module\Bootstrap\Stages\RegisterModuleStage;
 use App\Core\Module\Bootstrap\Stages\RegisterProvidersStage;
 use App\Core\Module\Bootstrap\Stages\ValidationStage;
 use App\Core\Module\Factory\ModuleDefinitionFactory;
+use Illuminate\Support\Facades\Event;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -199,15 +201,17 @@ final class ModuleBootstrapIntegrationTest extends TestCase
         );
 
 
-        $this->expectException(\UnexpectedValueException::class);
-
-        $this->expectExceptionMessage(
-            'Module manifest must return an array.'
-        );
-
+        Event::fake();
 
         $bootstrap->bootstrap();
+
+        Event::assertDispatched(
+            ModuleFailed::class,
+            function (ModuleFailed $event) use ($manifest): bool {
+
+                return $event->moduleName === $manifest
+                    && $event->exception instanceof \UnexpectedValueException;
+            }
+        );
     }
-
-
 }

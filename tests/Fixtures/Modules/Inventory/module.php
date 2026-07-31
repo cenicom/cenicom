@@ -1,12 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
 return [
-    'name' => 'Blog',
-
-    'namespace' => 'Tests\\Fixtures\\Modules\\Blog',
-
+    'name' => 'Inventory',
+    'namespace' => 'Tests\\Fixtures\\Modules\\Inventory',
     'providers' => [
         Tests\Fixtures\Providers\BlogServiceProvider::class,
     ],

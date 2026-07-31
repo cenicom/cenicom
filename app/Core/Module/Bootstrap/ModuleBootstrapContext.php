@@ -22,13 +22,20 @@ final class ModuleBootstrapContext
      */
     private bool $skipped = false;
 
+    private readonly ModuleBootstrapDiagnostics $diagnostics;
 
     /**
      * Creates a new bootstrap context.
      */
     public function __construct(
         private readonly string $manifestPath,
-    ) {}
+    ) {
+        $this->diagnostics =
+            new ModuleBootstrapDiagnostics();
+
+        $this->diagnostics
+            ->setManifestPath($manifestPath);
+    }
 
     /**
      * Module definition produced by the factory.
@@ -46,6 +53,11 @@ final class ModuleBootstrapContext
     public function manifestPath(): string
     {
         return $this->manifestPath;
+    }
+
+    public function diagnostics(): ModuleBootstrapDiagnostics
+    {
+        return $this->diagnostics;
     }
 
     /**
@@ -88,6 +100,9 @@ final class ModuleBootstrapContext
         }
 
         $this->exception = $exception;
+
+        $this->diagnostics
+            ->setException($exception);
     }
 
     /**
@@ -134,6 +149,4 @@ final class ModuleBootstrapContext
     {
         $this->exception = null;
     }
-
-
 }
