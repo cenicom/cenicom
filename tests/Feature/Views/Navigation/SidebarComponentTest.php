@@ -6,6 +6,7 @@ namespace Tests\Feature\Views\Navigation;
 
 use App\Core\Navigation\DTO\NavigationNodeData;
 use App\Core\Navigation\DTO\NavigationTreeData;
+use App\Core\Navigation\Enums\NavigationNodeType;
 use Tests\TestCase;
 
 final class SidebarComponentTest extends TestCase
@@ -38,7 +39,7 @@ final class SidebarComponentTest extends TestCase
         $node = new NavigationNodeData(
             id: 'institutions',
             label: 'Instituciones',
-            type: 'ITEM',
+            type: NavigationNodeType::ITEM,
         );
 
         $navigation = new NavigationTreeData(

@@ -7,6 +7,7 @@ namespace Tests\Feature\Views\Navigation;
 
 use App\Core\Navigation\DTO\NavigationNodeData;
 use App\Core\Navigation\DTO\NavigationTreeData;
+use App\Core\Navigation\Enums\NavigationNodeType;
 use Tests\TestCase;
 
 final class FullNavigationRenderTest extends TestCase
@@ -18,19 +19,19 @@ final class FullNavigationRenderTest extends TestCase
         $institutions = new NavigationNodeData(
             id: 'institutions',
             label: 'Instituciones',
-            type: 'ITEM',
+            type: NavigationNodeType::ITEM,
         );
 
         $users = new NavigationNodeData(
             id: 'users',
             label: 'Usuarios',
-            type: 'ITEM',
+            type: NavigationNodeType::ITEM,
         );
 
         $group = new NavigationNodeData(
             id: 'administration',
             label: 'Administración',
-            type: 'GROUP',
+            type: NavigationNodeType::GROUP,
             children: [
                 $institutions,
                 $users,
@@ -66,13 +67,13 @@ final class FullNavigationRenderTest extends TestCase
         $administration = new NavigationNodeData(
             id: 'administration',
             label: 'Administración',
-            type: 'GROUP',
+            type: NavigationNodeType::GROUP,
         );
 
         $configuration = new NavigationNodeData(
             id: 'configuration',
             label: 'Configuración',
-            type: 'GROUP',
+            type: NavigationNodeType::GROUP,
         );
 
         $navigation = new NavigationTreeData(
@@ -104,13 +105,13 @@ final class FullNavigationRenderTest extends TestCase
         $child = new NavigationNodeData(
             id: 'institutions',
             label: 'Instituciones',
-            type: 'ITEM',
+            type: NavigationNodeType::ITEM,
         );
 
         $group = new NavigationNodeData(
             id: 'administration',
             label: 'Administración',
-            type: 'GROUP',
+            type: NavigationNodeType::GROUP,
             children: [
                 $child,
             ],

@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace App\Core\Navigation\Builder;
 
 use App\Core\Navigation\Contracts\NavigationBuilderInterface;
+use App\Core\Navigation\Contracts\NavigationPermissionResolverInterface;
 use App\Core\Navigation\Contracts\NavigationRegistryInterface;
 use App\Core\Navigation\DTO\NavigationGroupData;
 use App\Core\Navigation\DTO\NavigationItemData;
 use App\Core\Navigation\DTO\NavigationNodeData;
 use App\Core\Navigation\DTO\NavigationTreeData;
+use App\Core\Navigation\Enums\NavigationNodeType;
+use App\Core\Security\Contracts\IdentityInterface;
 
 /**
  * ==========================================================
@@ -21,6 +24,7 @@ use App\Core\Navigation\DTO\NavigationTreeData;
  * Responsabilidades:
  *
  * - Leer información del Navigation Registry.
+ * - Filtrar elementos autorizados.
  * - Transformar grupos en nodos.
  * - Construir la estructura jerárquica.
  * - Entregar NavigationTreeData.
@@ -29,7 +33,7 @@ use App\Core\Navigation\DTO\NavigationTreeData;
  *
  * - Renderizar menús.
  * - Resolver permisos.
- * - Consultar usuarios.
+ * - Consultar roles.
  * - Acceder directamente a base de datos.
  *
  * ==========================================================
@@ -38,8 +42,10 @@ final class NavigationBuilder implements NavigationBuilderInterface
 {
     public function __construct(
         private readonly NavigationRegistryInterface $registry,
-    ) {}
-
+        private readonly NavigationPermissionResolverInterface $permissionResolver,
+        private readonly IdentityInterface $identity,
+    ) {
+    }
 
     /**
      * Construye el árbol completo de navegación.
@@ -47,68 +53,83 @@ final class NavigationBuilder implements NavigationBuilderInterface
     public function build(): NavigationTreeData
     {
         return new NavigationTreeData(
-            nodes: $this->buildGroups()
+            nodes: $this->buildGroups(),
         );
     }
 
-
     /**
-     * Construye grupos principales como nodos.
+     * Construye los grupos principales del árbol.
+     *
+     * Los grupos que no contengan elementos visibles
+     * para la identidad actual son descartados.
      *
      * @return array<int, NavigationNodeData>
      */
     private function buildGroups(): array
     {
         $groups = $this->registry->groups();
-
         $items = $this->registry->items();
 
+        $nodes = [];
 
-        return array_map(
-            function (NavigationGroupData $group) use ($items): NavigationNodeData {
+        foreach ($groups as $group) {
 
-                $children = array_map(
-                    fn(NavigationItemData $item): NavigationNodeData =>
-                        $this->createItemNode($item),
+            $children = [];
 
-                    array_filter(
-                        $items,
-                        fn(NavigationItemData $item): bool =>
-                            $item->group() === $group->id()
-                    )
-                );
+            foreach ($items as $item) {
 
+                if ($item->group() !== $group->id()) {
+                    continue;
+                }
 
-                return $this->createGroupNode(
-                    $group,
-                    array_values($children)
-                );
+                if (! $this->permissionResolver->canView(
+                    $this->identity,
+                    $item->permission()
+                )) {
+                    continue;
+                }
 
-            },
-            array_values($groups)
-        );
+                $children[] = $this->createItemNode($item);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Omitir grupos vacíos
+            |--------------------------------------------------------------------------
+            */
+
+            if ($children === []) {
+                continue;
+            }
+
+            $nodes[] = $this->createGroupNode(
+                $group,
+                $children
+            );
+        }
+
+        return $nodes;
     }
-
 
     /**
      * Convierte un grupo en NavigationNodeData.
+     *
+     * @param array<int, NavigationNodeData> $children
      */
     private function createGroupNode(
         NavigationGroupData $group,
         array $children
     ): NavigationNodeData {
-
         return new NavigationNodeData(
             id: $group->id(),
             label: $group->label(),
-            type: 'GROUP',
+            type: NavigationNodeType::GROUP,
             icon: $group->icon(),
             route: null,
             order: $group->order(),
-            children: $children
+            children: $children,
         );
     }
-
 
     /**
      * Convierte un item en NavigationNodeData.
@@ -116,15 +137,14 @@ final class NavigationBuilder implements NavigationBuilderInterface
     private function createItemNode(
         NavigationItemData $item
     ): NavigationNodeData {
-
         return new NavigationNodeData(
             id: $item->id(),
             label: $item->label(),
-            type: 'ITEM',
+            type: NavigationNodeType::ITEM,
             icon: $item->icon(),
             route: $item->route(),
             order: $item->order(),
-            children: []
+            children: [],
         );
     }
 }

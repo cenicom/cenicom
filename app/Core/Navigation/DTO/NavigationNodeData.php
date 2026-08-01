@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\Navigation\DTO;
 
+use App\Core\Navigation\Enums\NavigationNodeType;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -36,7 +37,7 @@ final readonly class NavigationNodeData
     public function __construct(
         private string $id,
         private string $label,
-        private string $type,
+        private NavigationNodeType $type,
         private ?string $icon = null,
         private ?string $route = null,
         private int $order = 0,
@@ -84,7 +85,7 @@ final readonly class NavigationNodeData
         return $this->label;
     }
 
-    public function type(): string
+    public function type(): NavigationNodeType
     {
         return $this->type;
     }
@@ -184,5 +185,15 @@ final readonly class NavigationNodeData
             ancestor: $ancestor,
             expanded: $expanded,
         );
+    }
+
+    public function isGroup(): bool
+    {
+        return $this->type === NavigationNodeType::GROUP;
+    }
+
+    public function isItem(): bool
+    {
+        return $this->type === NavigationNodeType::ITEM;
     }
 }

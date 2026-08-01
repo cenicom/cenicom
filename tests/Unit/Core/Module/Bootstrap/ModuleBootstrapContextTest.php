@@ -318,7 +318,7 @@ final class ModuleBootstrapContextTest extends TestCase
     public function test_starts_without_skipped_state(): void
     {
         $context = new ModuleBootstrapContext(
-            '/modules/Blog/module.json'
+            '/modules/Blog/module.json',
         );
 
         $this->assertFalse(

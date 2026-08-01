@@ -24,6 +24,8 @@ return [
 
     App\Core\Module\Providers\ModuleServiceProvider::class,
 
+    App\Core\Security\Providers\SecurityServiceProvider::class,
+
 
 
 ];

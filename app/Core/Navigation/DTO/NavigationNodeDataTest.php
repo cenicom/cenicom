@@ -6,6 +6,7 @@ namespace Tests\Unit\Navigation\DTO;
 
 use App\Core\Navigation\DTO\NavigationNodeData;
 use App\Core\Navigation\DTO\NavigationTreeData;
+use App\Core\Navigation\Enums\NavigationNodeType;
 use PHPUnit\Framework\TestCase;
 
 final class NavigationTreeDataTest extends TestCase
@@ -94,7 +95,7 @@ final class NavigationTreeDataTest extends TestCase
         return new NavigationNodeData(
             id: $id,
             label: ucfirst($id),
-            type: 'ITEM',
+            type: NavigationNodeType::ITEM,
             order: 1,
             children: $children,
         );

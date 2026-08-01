@@ -32,9 +32,11 @@ final readonly class NavigationItemData
         private string $id,
         private string $label,
         private string $route,
+        public ?string $permission = null,
         private ?string $icon = null,
         private int $order = 0,
         private string $group = '',
+
     ) {
     }
 
@@ -54,6 +56,11 @@ final readonly class NavigationItemData
     public function route(): string
     {
         return $this->route;
+    }
+
+    public function permission(): ?string
+    {
+        return $this->permission;
     }
 
 

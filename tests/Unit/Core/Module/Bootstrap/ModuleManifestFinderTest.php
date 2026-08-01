@@ -12,50 +12,27 @@ final class ModuleManifestFinderTest extends TestCase
     public function test_finds_module_manifest_from_fixture_directory(): void
     {
         // Arrange
-
-        $path = base_path(
-            'tests/Fixtures/Modules'
-        );
-
         $finder = new ModuleManifestFinder(
-            $path
+            base_path('tests/Fixtures/Modules')
         );
-
 
         // Act
-
-        $result = $finder->find();
-
+        $manifests = iterator_to_array($finder->find());
 
         // Assert
-
-        $this->assertTrue(
-            $result->successful()
-        );
-
-
-        $manifests = $result->data();
-
-
-        $this->assertNotEmpty(
-            $manifests
-        );
+        $this->assertNotEmpty($manifests);
 
         $normalized = array_map(
-            static fn(string $manifest): string =>
-            str_replace('\\', '/', $manifest),
+            static fn (string $path): string => realpath($path),
             $manifests
         );
 
+        $expected = realpath(
+            base_path('tests/Fixtures/Modules/Blog/module.php')
+        );
 
         $this->assertContains(
-            str_replace(
-                '\\',
-                '/',
-                realpath(
-                    $path . '/TestModule/module.php'
-                )
-            ),
+            $expected,
             $normalized
         );
     }

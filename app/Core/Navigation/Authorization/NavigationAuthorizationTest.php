@@ -6,6 +6,7 @@ namespace Tests\Unit\Core\Navigation\Authorization;
 
 use App\Core\Navigation\Authorization\NavigationAuthorization;
 use App\Core\Navigation\DTO\NavigationNodeData;
+use App\Core\Navigation\Enums\NavigationNodeType;
 use PHPUnit\Framework\TestCase;
 
 final class NavigationAuthorizationTest extends TestCase
@@ -116,7 +117,7 @@ final class NavigationAuthorizationTest extends TestCase
         return new NavigationNodeData(
             id: 'users',
             label: 'Usuarios',
-            type: 'ITEM',
+            type: NavigationNodeType::ITEM,
             icon: 'bi-people',
             route: 'users.index',
             order: 1,
@@ -131,7 +132,7 @@ final class NavigationAuthorizationTest extends TestCase
         return new NavigationNodeData(
             id: 'system',
             label: 'Sistema',
-            type: 'GROUP',
+            type: NavigationNodeType::GROUP,
             icon: 'bi-gear',
             route: null,
             order: 1,

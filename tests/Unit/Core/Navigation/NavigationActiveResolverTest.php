@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Navigation;
 
-use Tests\TestCase;
-
-use Illuminate\Support\Facades\Route;
-
-use App\Core\Navigation\Resolver\NavigationActiveResolver;
 use App\Core\Navigation\DTO\NavigationNodeData;
 use App\Core\Navigation\DTO\NavigationTreeData;
+use App\Core\Navigation\Enums\NavigationNodeType;
+use App\Core\Navigation\Resolver\NavigationActiveResolver;
+use Illuminate\Support\Facades\Route;
+use Tests\TestCase;
 
 
 final class NavigationActiveResolverTest extends TestCase
@@ -27,7 +26,7 @@ final class NavigationActiveResolverTest extends TestCase
         $node = new NavigationNodeData(
             id: 'institutions.index',
             label: 'Instituciones',
-            type: 'ITEM',
+            type: NavigationNodeType::ITEM,
             route: 'institutions.index'
         );
 
@@ -66,16 +65,10 @@ final class NavigationActiveResolverTest extends TestCase
             ->andReturn(true);
 
 
-        Route::shouldReceive('currentRouteNamed')
-            ->with('institutions')
-            ->andReturn(false);
-
-
-
         $child = new NavigationNodeData(
             id: 'institutions.index',
             label: 'Instituciones',
-            type: 'ITEM',
+            type: NavigationNodeType::ITEM,
             route: 'institutions.index'
         );
 
@@ -83,7 +76,7 @@ final class NavigationActiveResolverTest extends TestCase
         $parent = new NavigationNodeData(
             id: 'administration',
             label: 'Administración',
-            type: 'GROUP',
+            type: NavigationNodeType::GROUP,
             route: null,
             children: [
                 $child
@@ -130,7 +123,7 @@ final class NavigationActiveResolverTest extends TestCase
         $node = new NavigationNodeData(
             id: 'users',
             label: 'Usuarios',
-            type: 'ITEM',
+            type: NavigationNodeType::ITEM,
             route: 'users.index'
         );
 
@@ -171,7 +164,7 @@ final class NavigationActiveResolverTest extends TestCase
         $node = new NavigationNodeData(
             id: 'configuration',
             label: 'Configuración',
-            type: 'GROUP',
+            type: NavigationNodeType::GROUP,
             route: null
         );
 
@@ -197,4 +190,49 @@ final class NavigationActiveResolverTest extends TestCase
             $resolved->isActive()
         );
     }
+
+    /* Cobertura que aún falta
+     * Para certificar completamente CN-NAV-003.2, añadiría estos cinco casos. */
+
+    //1. Árbol vacío -- Objetivo: garantizar que el resolver no falle con un árbol vacío.
+    public function test_resolve_returns_empty_tree_when_tree_is_empty(): void
+    {
+        $tree = new NavigationTreeData([]);
+
+        $result = (new NavigationActiveResolver())->resolve($tree);
+
+        $this->assertTrue($result->isEmpty());
+    }
+
+    //2. Inmutabilidad -- Este es probablemente el test más importante de todo el sprint.
+    public function test_resolve_does_not_modify_original_tree(): void
+{
+    Route::shouldReceive('currentRouteNamed')
+        ->once()
+        ->with('institutions.index')
+        ->andReturn(true);
+
+    $node = new NavigationNodeData(
+        id: 'institutions',
+        label: 'Instituciones',
+        type: NavigationNodeType::ITEM,
+        route: 'institutions.index'
+    );
+
+    $tree = new NavigationTreeData([$node]);
+
+    $resolved = (new NavigationActiveResolver())->resolve($tree);
+
+    $this->assertNotSame($tree, $resolved);
+
+    $this->assertFalse(
+        $tree->nodes()[0]->isActive()
+    );
+
+    $this->assertTrue(
+        $resolved->nodes()[0]->isActive()
+    );
+}
+
+
 }

@@ -2,22 +2,16 @@
     'node'
 ])
 
-@switch($node->type())
+@php
+    use App\Core\Navigation\Enums\NavigationNodeType;
+@endphp
 
-    @case('GROUP')
+@if ($node->type() === NavigationNodeType::GROUP)
 
-        <x-cn.navigation.group
-            :node="$node"
-        />
+    <x-cn.navigation.group :node="$node" />
 
-        @break
+@elseif ($node->type() === NavigationNodeType::ITEM)
 
-    @case('ITEM')
+    <x-cn.navigation.item :node="$node" />
 
-        <x-cn.navigation.item
-            :node="$node"
-        />
-
-        @break
-
-@endswitch
+@endif

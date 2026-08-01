@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Views\Navigation;
 
 use App\Core\Navigation\DTO\NavigationNodeData;
+use App\Core\Navigation\Enums\NavigationNodeType;
 use Tests\TestCase;
 
 final class GroupComponentTest extends TestCase
@@ -16,7 +17,7 @@ final class GroupComponentTest extends TestCase
         $node = new NavigationNodeData(
             id: 'administration',
             label: 'Administración',
-            type: 'GROUP',
+            type: NavigationNodeType::GROUP,
         );
 
         // Act
@@ -40,7 +41,7 @@ final class GroupComponentTest extends TestCase
         $node = new NavigationNodeData(
             id: 'administration',
             label: 'Administración',
-            type: 'GROUP',
+            type: NavigationNodeType::GROUP,
             icon: 'bi bi-gear',
         );
 
@@ -65,13 +66,13 @@ final class GroupComponentTest extends TestCase
         $child = new NavigationNodeData(
             id: 'institutions',
             label: 'Instituciones',
-            type: 'ITEM',
+            type: NavigationNodeType::ITEM,
         );
 
         $group = new NavigationNodeData(
             id: 'administration',
             label: 'Administración',
-            type: 'GROUP',
+            type: NavigationNodeType::GROUP,
             children: [
                 $child,
             ],
@@ -99,7 +100,7 @@ final class GroupComponentTest extends TestCase
         $group = new NavigationNodeData(
             id: 'administration',
             label: 'Administración',
-            type: 'GROUP',
+            type: NavigationNodeType::GROUP,
         );
 
         // Act

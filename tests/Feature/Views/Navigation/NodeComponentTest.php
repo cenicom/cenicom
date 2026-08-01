@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Views\Navigation;
 
 use App\Core\Navigation\DTO\NavigationNodeData;
+use App\Core\Navigation\Enums\NavigationNodeType;
 use Tests\TestCase;
 
 final class NodeComponentTest extends TestCase
@@ -16,7 +17,7 @@ final class NodeComponentTest extends TestCase
         $node = new NavigationNodeData(
             id: 'administration',
             label: 'Administración',
-            type: 'GROUP',
+            type: NavigationNodeType::GROUP,
             icon: 'bi bi-gear',
         );
 
@@ -42,7 +43,7 @@ final class NodeComponentTest extends TestCase
         $node = new NavigationNodeData(
             id: 'institutions',
             label: 'Instituciones',
-            type: 'ITEM',
+            type: NavigationNodeType::ITEM,
             icon: 'bi bi-building'
         );
 

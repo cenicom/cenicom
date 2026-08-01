@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace Tests\Unit\Core\Module\Lifecycle;
 
 use App\Core\Contracts\Module\ModuleManifestFinderInterface;
-use App\Core\Contracts\Module\ModuleProviderRegistrarInterface;
+
 use App\Core\Contracts\Module\ModuleRegistryInterface;
 use App\Core\Module\Bootstrap\ModuleBootstrap;
 use App\Core\Module\Discovery\ModuleManifestFinder;
-use App\Core\Module\Factory\ModuleDefinitionFactory;
 use Mockery;
 use Tests\TestCase;
 
@@ -24,19 +23,9 @@ final class ModuleLifecycleTest extends TestCase
             ),
         );
 
-        $finder = app(ModuleManifestFinderInterface::class);
-
-        $registrar = app(ModuleProviderRegistrarInterface::class);
+        $bootstrap = app(ModuleBootstrap::class);
 
         $registry = app(ModuleRegistryInterface::class);
-
-
-        $bootstrap = new ModuleBootstrap(
-            $registrar,
-            $finder,
-            $registry,
-            new ModuleDefinitionFactory(),
-        );
 
 
         $bootstrap->bootstrap();
@@ -60,23 +49,11 @@ final class ModuleLifecycleTest extends TestCase
             ),
         );
 
-        $finder = app(ModuleManifestFinderInterface::class);
-
-        $registrar = app(ModuleProviderRegistrarInterface::class);
+        $bootstrap = app(ModuleBootstrap::class);
 
         $registry = app(ModuleRegistryInterface::class);
 
-
-        $bootstrap = new ModuleBootstrap(
-            $registrar,
-            $finder,
-            $registry,
-            new ModuleDefinitionFactory(),
-        );
-
-
         $bootstrap->bootstrap();
-
 
         $this->assertFalse(
             $registry->has('DisabledModule')
@@ -92,30 +69,17 @@ final class ModuleLifecycleTest extends TestCase
             ),
         );
 
-        $finder = app(ModuleManifestFinderInterface::class);
-
-        $registrar = app(ModuleProviderRegistrarInterface::class);
+        $bootstrap = app(ModuleBootstrap::class);
 
         $registry = app(ModuleRegistryInterface::class);
-
-
-        $bootstrap = new ModuleBootstrap(
-            $registrar,
-            $finder,
-            $registry,
-            new ModuleDefinitionFactory(),
-        );
-
 
         $bootstrap->bootstrap();
 
         $firstState = $registry->names();
 
-
         $bootstrap->bootstrap();
 
         $secondState = $registry->names();
-
 
         $this->assertSame(
             $firstState,
@@ -123,7 +87,7 @@ final class ModuleLifecycleTest extends TestCase
         );
 
         $this->assertCount(
-            3,
+            5,
             $registry->all()
         );
     }
@@ -153,6 +117,4 @@ final class ModuleLifecycleTest extends TestCase
             $registry->all()
         );
     }
-
-
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Core\Module\Bootstrap;
 
 
+use App\Core\Module\Diagnostics\FailureTrace;
 use App\Core\Module\DTO\ModuleDefinition;
 use Throwable;
 
@@ -24,17 +25,27 @@ final class ModuleBootstrapContext
 
     private readonly ModuleBootstrapDiagnostics $diagnostics;
 
+    private FailureTrace $failureTrace;
+
     /**
      * Creates a new bootstrap context.
      */
     public function __construct(
         private readonly string $manifestPath,
+
     ) {
         $this->diagnostics =
             new ModuleBootstrapDiagnostics();
 
         $this->diagnostics
             ->setManifestPath($manifestPath);
+
+        $this->failureTrace = new FailureTrace();
+    }
+
+    public function failureTrace(): FailureTrace
+    {
+        return $this->failureTrace;
     }
 
     /**

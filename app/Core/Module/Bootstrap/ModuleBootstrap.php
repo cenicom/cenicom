@@ -12,6 +12,7 @@ use App\Core\Module\Bootstrap\Events\ModuleFailed;
 use App\Core\Module\Bootstrap\Events\ModuleRegistered;
 use App\Core\Module\Bootstrap\Events\ModuleSkipped;
 
+
 final class ModuleBootstrap
 {
     public function __construct(
