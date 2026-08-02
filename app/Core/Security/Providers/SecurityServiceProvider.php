@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Core\Security\Providers;
 
+use App\Core\Security\Authorization\Contracts\PermissionResolverInterface;
+use App\Core\Security\Authorization\PermissionResolver;
+use App\Core\Security\Authorization\RolePermissionResolver;
+use App\Core\Security\Authorization\Contracts\RolePermissionResolverInterface;
 use App\Core\Security\Authorization\AuthorizationService;
 use App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface;
 use App\Core\Security\Permissions\Contracts\PermissionCheckerInterface;
@@ -20,6 +24,8 @@ use App\Core\Security\Roles\RoleRegistrar;
 use App\Core\Security\Roles\RoleRegistry;
 use App\Core\Security\Services\IdentityService;
 use Illuminate\Support\ServiceProvider;
+use App\Core\Security\Contracts\IdentityInterface;
+use App\Core\Security\Identity\Identity;
 
 final class SecurityServiceProvider extends ServiceProvider
 {
@@ -83,6 +89,23 @@ final class SecurityServiceProvider extends ServiceProvider
                 $app->make(PermissionCheckerInterface::class)
             )
         );
+
+        $this->app->singleton(
+            RolePermissionResolverInterface::class,
+            fn($app) => new RolePermissionResolver(
+                $app->make(RoleRegistryInterface::class)
+            )
+        );
+
+        $this->app->bind(
+            PermissionResolverInterface::class,
+            PermissionResolver::class
+        );
+
+        $this->app->bind(
+        IdentityInterface::class,
+        Identity::class
+    );
     }
 
 

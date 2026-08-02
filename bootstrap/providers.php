@@ -9,7 +9,6 @@ return [
 
     AppServiceProvider::class,
 
-
     RepositoryServiceProvider::class,
 
     CNGeneratorServiceProvider::class,
@@ -26,6 +25,7 @@ return [
 
     App\Core\Security\Providers\SecurityServiceProvider::class,
 
+    App\Core\Navigation\NavigationServiceProvider::class,
 
 
 ];

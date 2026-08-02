@@ -1,0 +1,49 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Unit\Core\Specification;
+
+use App\Core\Specification\AlwaysFalseSpecification;
+use PHPUnit\Framework\TestCase;
+
+final class AlwaysFalseSpecificationTest extends TestCase
+{
+    public function test_returns_false_for_object(): void
+    {
+        $specification = new AlwaysFalseSpecification();
+
+        $this->assertFalse(
+            $specification->isSatisfiedBy(
+                new \stdClass()
+            )
+        );
+    }
+
+    public function test_returns_false_for_array(): void
+    {
+        $specification = new AlwaysFalseSpecification();
+
+        $this->assertFalse(
+            $specification->isSatisfiedBy([])
+        );
+    }
+
+    public function test_returns_false_for_scalar(): void
+    {
+        $specification = new AlwaysFalseSpecification();
+
+        $this->assertFalse(
+            $specification->isSatisfiedBy(123)
+        );
+    }
+
+    public function test_returns_false_for_null(): void
+    {
+        $specification = new AlwaysFalseSpecification();
+
+        $this->assertFalse(
+            $specification->isSatisfiedBy(null)
+        );
+    }
+}

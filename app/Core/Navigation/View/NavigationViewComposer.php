@@ -4,25 +4,36 @@ declare(strict_types=1);
 
 namespace App\Core\Navigation\View;
 
-use App\Core\Navigation\Contracts\NavigationBuilderInterface;
-
-use App\Core\Navigation\Resolver\NavigationActiveResolver;
+use App\Core\Navigation\Contracts\NavigationServiceInterface;
+use App\Core\Navigation\Contracts\NavigationActiveResolverInterface;
+use App\Core\Security\Contracts\IdentityInterface;
 use Illuminate\View\View;
 
 final readonly class NavigationViewComposer
 {
+    public function __construct(
+        private NavigationServiceInterface $navigationService,
+        private NavigationActiveResolverInterface $activeResolver,
+        private IdentityInterface $identity,
+    ) {
+    }
 
     public function compose(View $view): void
     {
-        if ($view->getData()['navigation'] ?? null) {
+        if (array_key_exists(
+            'navigation',
+            $view->getData()
+        )) {
             return;
         }
 
-        $tree = app(NavigationBuilderInterface::class)
-            ->build();
+        $tree = $this->navigationService->tree(
+            $this->identity
+        );
 
-        $tree = app(NavigationActiveResolver::class)
-            ->resolve($tree);
+        $tree = $this->activeResolver->resolve(
+            $tree
+        );
 
         $view->with(
             'navigation',

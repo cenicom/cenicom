@@ -5,28 +5,15 @@ declare(strict_types=1);
 namespace App\Core\Navigation\Contracts;
 
 use App\Core\Navigation\DTO\NavigationTreeData;
+use App\Core\Security\Contracts\IdentityInterface;
 
-/**
- * ==========================================================
- * CENICOM ERP
- * ==========================================================
- *
- * Contrato público para consumo de navegación.
- *
- * Responsabilidades:
- *
- * - Exponer árbol maestro.
- * - Entregar grupos.
- * - Entregar items.
- *
- * ==========================================================
- */
 interface NavigationServiceInterface
 {
     /**
-     * Obtiene el árbol completo de navegación.
+     * Obtiene el árbol de navegación filtrado
+     * según la identidad actual.
      */
-    public function tree(): NavigationTreeData;
-
-
+    public function tree(
+        IdentityInterface $identity
+    ): NavigationTreeData;
 }

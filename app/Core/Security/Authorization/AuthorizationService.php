@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace App\Core\Security\Authorization;
 
 use App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface;
+use App\Core\Security\Authorization\Contracts\PermissionResolverInterface;
 use App\Core\Security\Contracts\IdentityInterface;
-use App\Core\Security\Permissions\Contracts\PermissionCheckerInterface;
+
 
 final readonly class AuthorizationService implements AuthorizationServiceInterface
 {
     public function __construct(
-        private PermissionCheckerInterface $permissionChecker,
+        private PermissionResolverInterface $permissionResolver,
     ) {
     }
 
@@ -22,7 +23,7 @@ final readonly class AuthorizationService implements AuthorizationServiceInterfa
         IdentityInterface $identity,
         string $permission
     ): bool {
-        return $this->permissionChecker->can(
+        return $this->permissionResolver->can(
             $identity,
             $permission
         );

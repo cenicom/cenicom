@@ -5,100 +5,169 @@ declare(strict_types=1);
 namespace Tests\Unit\Core\Security\Authorization;
 
 use App\Core\Security\Authorization\AuthorizationService;
+use App\Core\Security\Authorization\Contracts\PermissionResolverInterface;
 use App\Core\Security\Contracts\IdentityInterface;
-use App\Core\Security\Permissions\Contracts\PermissionCheckerInterface;
 use PHPUnit\Framework\TestCase;
 
 final class AuthorizationServiceTest extends TestCase
 {
     private AuthorizationService $service;
 
+    private FakePermissionResolver $resolver;
+
     protected function setUp(): void
     {
         parent::setUp();
 
+        $this->resolver = new FakePermissionResolver();
+
         $this->service = new AuthorizationService(
-            new FakePermissionChecker()
+            $this->resolver
         );
     }
 
+
     public function test_delegates_permission_check(): void
     {
-        //
+        // Arrange
+
+        $identity = new FakeIdentity();
+
+        // Act
+
+        $this->service->can(
+            $identity,
+            'users.view'
+        );
+
+        // Assert
+
+        $this->assertTrue(
+            $this->resolver->called
+        );
+
+        $this->assertSame(
+            'users.view',
+            $this->resolver->permission
+        );
     }
+
 
     public function test_allows_granted_permission(): void
     {
-        //
+        // Arrange
+
+        $this->resolver->result = true;
+
+        $identity = new FakeIdentity();
+
+
+        // Act
+
+        $result = $this->service->can(
+            $identity,
+            'users.view'
+        );
+
+
+        // Assert
+
+        $this->assertTrue(
+            $result
+        );
     }
+
 
     public function test_denies_missing_permission(): void
     {
-        //
+        // Arrange
+
+        $this->resolver->result = false;
+
+        $identity = new FakeIdentity();
+
+
+        // Act
+
+        $result = $this->service->can(
+            $identity,
+            'users.delete'
+        );
+
+
+        // Assert
+
+        $this->assertFalse(
+            $result
+        );
     }
 }
 
+
 /**
- * Fake Permission Checker para pruebas.
+ * Fake Permission Resolver para pruebas.
  */
-final class FakePermissionChecker implements PermissionCheckerInterface
+final class FakePermissionResolver implements PermissionResolverInterface
 {
+    public bool $called = false;
+
+    public bool $result = false;
+
+    public ?string $permission = null;
+
+
     public function can(
         IdentityInterface $identity,
         string $permission
     ): bool {
-        return $identity->can($permission);
+
+        $this->called = true;
+
+        $this->permission = $permission;
+
+        return $this->result;
     }
 }
+
 
 /**
  * Fake Identity para pruebas.
  */
 final class FakeIdentity implements IdentityInterface
 {
-    /**
-     * @param array<int, string> $roles
-     * @param array<int, string> $permissions
-     */
-    public function __construct(
-        private readonly bool $authenticated = true,
-        private readonly array $roles = [],
-        private readonly array $permissions = [],
-    ) {}
-
     public function id(): int|string|null
     {
-        return $this->authenticated ? 1 : null;
+        return 1;
     }
+
 
     public function name(): string
     {
-        return $this->authenticated
-            ? 'Test User'
-            : '';
+        return 'Test User';
     }
+
 
     public function roles(): array
     {
-        return $this->roles;
+        return [];
     }
+
 
     public function permissions(): array
     {
-        return $this->permissions;
+        return [];
     }
 
-    public function can(string $permission): bool
-    {
-        return in_array(
-            $permission,
-            $this->permissions,
-            true
-        );
+
+    public function can(
+        string $permission
+    ): bool {
+        return false;
     }
+
 
     public function authenticated(): bool
     {
-        return $this->authenticated;
+        return true;
     }
 }

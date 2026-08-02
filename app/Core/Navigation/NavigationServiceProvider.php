@@ -5,22 +5,37 @@ declare(strict_types=1);
 namespace App\Core\Navigation;
 
 
+
 use App\Core\Contracts\NavigationAuthorizationInterface;
 use App\Core\Contracts\TestFormRepositoryInterface;
-
 use App\Core\Navigation\Authorization\NavigationAuthorization;
+use App\Core\Navigation\Authorization\NavigationPermissionResolver;
 use App\Core\Navigation\Bootstrap\NavigationBootstrapper;
+use App\Core\Navigation\Bootstrap\NavigationManifestBootstrapper;
 use App\Core\Navigation\Builder\NavigationBuilder;
+use App\Core\Navigation\Cache\Contracts\NavigationCacheInterface;
+use App\Core\Navigation\Cache\NavigationCache;
 use App\Core\Navigation\Contracts\NavigationBuilderInterface;
+use App\Core\Navigation\Contracts\NavigationManifestBootstrapperInterface;
+use App\Core\Navigation\Contracts\NavigationManifestDiscoveryInterface;
+use App\Core\Navigation\Contracts\NavigationManifestFinderInterface;
+use App\Core\Navigation\Contracts\NavigationManifestLoaderInterface;
+use App\Core\Navigation\Contracts\NavigationManifestRegistrarInterface;
+use App\Core\Navigation\Contracts\NavigationPermissionResolverInterface;
 use App\Core\Navigation\Contracts\NavigationRegistrarInterface;
 use App\Core\Navigation\Contracts\NavigationRegistryInterface;
+use App\Core\Navigation\Discovery\NavigationManifestDiscoveryService;
+use App\Core\Navigation\Discovery\NavigationManifestFinder;
+use App\Core\Navigation\Discovery\NavigationManifestLoader;
+use App\Core\Navigation\Discovery\NavigationManifestRegistrar;
 use App\Core\Navigation\Loader\NavigationDefinitionLoader;
 use App\Core\Navigation\Registrar\NavigationRegistrar;
 use App\Core\Navigation\Registry\NavigationDefinitionRegistry;
 use App\Core\Navigation\Registry\NavigationRegistry;
 use App\Core\Navigation\Resolver\NavigationActiveResolver;
-use App\Core\Navigation\View\NavigationViewComposer;
+
 use App\Core\Repositories\TestFormRepository;
+use App\Support\Navigation\NavigationManager;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -114,6 +129,40 @@ final class NavigationServiceProvider extends ServiceProvider
             }
         );
 
+        $this->app->bind(
+            NavigationPermissionResolverInterface::class,
+            NavigationPermissionResolver::class
+        );
+
+        $this->app->singleton(
+            NavigationManifestFinderInterface::class,
+            NavigationManifestFinder::class,
+        );
+
+        $this->app->singleton(
+            NavigationManifestLoaderInterface::class,
+            NavigationManifestLoader::class,
+        );
+
+        $this->app->singleton(
+            NavigationManifestRegistrarInterface::class,
+            NavigationManifestRegistrar::class,
+        );
+
+        $this->app->singleton(
+            NavigationManifestDiscoveryInterface::class,
+            NavigationManifestDiscoveryService::class,
+        );
+
+        $this->app->singleton(
+            NavigationManifestBootstrapperInterface::class,
+            NavigationManifestBootstrapper::class,
+        );
+
+        $this->app->bind(
+            NavigationCacheInterface::class,
+            NavigationCache::class
+        );
     }
 
     public function boot(): void
@@ -126,9 +175,21 @@ final class NavigationServiceProvider extends ServiceProvider
             NavigationBootstrapper::class
         )->boot();
 
+        app(
+            NavigationManifestBootstrapperInterface::class
+        )->boot();
+
         View::composer(
-            '*',
-            NavigationViewComposer::class
+            'layouts.app',
+            function ($view) {
+
+                $nav = app(NavigationManager::class);
+
+                $view->with(
+                    'legacyNavigation',
+                    $nav->grouped()
+                );
+            }
         );
     }
 }

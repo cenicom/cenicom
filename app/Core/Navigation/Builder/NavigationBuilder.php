@@ -43,17 +43,17 @@ final class NavigationBuilder implements NavigationBuilderInterface
     public function __construct(
         private readonly NavigationRegistryInterface $registry,
         private readonly NavigationPermissionResolverInterface $permissionResolver,
-        private readonly IdentityInterface $identity,
+
     ) {
     }
 
     /**
      * Construye el árbol completo de navegación.
      */
-    public function build(): NavigationTreeData
+    public function build(IdentityInterface $identity): NavigationTreeData
     {
         return new NavigationTreeData(
-            nodes: $this->buildGroups(),
+            nodes: $this->buildGroups($identity),
         );
     }
 
@@ -65,9 +65,10 @@ final class NavigationBuilder implements NavigationBuilderInterface
      *
      * @return array<int, NavigationNodeData>
      */
-    private function buildGroups(): array
+    private function buildGroups(IdentityInterface $identity): array
     {
         $groups = $this->registry->groups();
+
         $items = $this->registry->items();
 
         $nodes = [];
@@ -83,7 +84,7 @@ final class NavigationBuilder implements NavigationBuilderInterface
                 }
 
                 if (! $this->permissionResolver->canView(
-                    $this->identity,
+                    $identity,
                     $item->permission()
                 )) {
                     continue;
@@ -147,4 +148,6 @@ final class NavigationBuilder implements NavigationBuilderInterface
             children: [],
         );
     }
+
+
 }

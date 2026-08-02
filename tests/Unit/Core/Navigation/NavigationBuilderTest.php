@@ -11,6 +11,7 @@ use App\Core\Navigation\DTO\NavigationGroupData;
 use App\Core\Navigation\DTO\NavigationItemData;
 use App\Core\Navigation\DTO\NavigationTreeData;
 use App\Core\Navigation\Enums\NavigationNodeType;
+use App\Core\Security\Contracts\IdentityInterface;
 use Mockery;
 use Tests\TestCase;
 
@@ -20,6 +21,10 @@ final class NavigationBuilderTest extends TestCase
     {
         $permissionResolver = Mockery::mock(
             NavigationPermissionResolverInterface::class
+        );
+
+        $identity = Mockery::mock(
+            IdentityInterface::class
         );
 
         $registry = Mockery::mock(
@@ -38,9 +43,12 @@ final class NavigationBuilderTest extends TestCase
 
         $builder = new NavigationBuilder(
             $registry,
+            $permissionResolver,
         );
 
-        $tree = $builder->build();
+        $tree = $builder->build(
+            $identity
+        );
 
         $this->assertInstanceOf(
             NavigationTreeData::class,
@@ -52,10 +60,19 @@ final class NavigationBuilderTest extends TestCase
         );
     }
 
+
     public function test_build_creates_group_with_items(): void
     {
         $registry = Mockery::mock(
             NavigationRegistryInterface::class
+        );
+
+        $permissionResolver = Mockery::mock(
+            NavigationPermissionResolverInterface::class
+        );
+
+        $identity = Mockery::mock(
+            IdentityInterface::class
         );
 
         $group = new NavigationGroupData(
@@ -88,9 +105,21 @@ final class NavigationBuilderTest extends TestCase
                 'institutions' => $item,
             ]);
 
+        $permissionResolver
+            ->shouldReceive('canView')
+            ->once()
+            ->with(
+                $identity,
+                $item->permission()
+            )
+            ->andReturn(true);
+
         $tree = (new NavigationBuilder(
             $registry,
-        ))->build();
+            $permissionResolver,
+        ))->build(
+            $identity
+        );
 
         $this->assertInstanceOf(
             NavigationTreeData::class,

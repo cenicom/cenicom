@@ -206,33 +206,206 @@ final class NavigationActiveResolverTest extends TestCase
 
     //2. Inmutabilidad -- Este es probablemente el test más importante de todo el sprint.
     public function test_resolve_does_not_modify_original_tree(): void
-{
-    Route::shouldReceive('currentRouteNamed')
-        ->once()
-        ->with('institutions.index')
-        ->andReturn(true);
+    {
+        Route::shouldReceive('currentRouteNamed')
+            ->once()
+            ->with('institutions.index')
+            ->andReturn(true);
 
-    $node = new NavigationNodeData(
-        id: 'institutions',
-        label: 'Instituciones',
-        type: NavigationNodeType::ITEM,
-        route: 'institutions.index'
-    );
+        $node = new NavigationNodeData(
+            id: 'institutions',
+            label: 'Instituciones',
+            type: NavigationNodeType::ITEM,
+            route: 'institutions.index'
+        );
 
-    $tree = new NavigationTreeData([$node]);
+        $tree = new NavigationTreeData([$node]);
 
-    $resolved = (new NavigationActiveResolver())->resolve($tree);
+        $resolved = (new NavigationActiveResolver())->resolve($tree);
 
-    $this->assertNotSame($tree, $resolved);
+        $this->assertNotSame($tree, $resolved);
 
-    $this->assertFalse(
-        $tree->nodes()[0]->isActive()
-    );
+        $this->assertFalse(
+            $tree->nodes()[0]->isActive()
+        );
 
-    $this->assertTrue(
-        $resolved->nodes()[0]->isActive()
-    );
-}
+        $this->assertTrue(
+            $resolved->nodes()[0]->isActive()
+        );
+    }
+
+    public function test_marks_all_ancestors_in_multilevel_tree(): void
+    {
+        Route::shouldReceive('currentRouteNamed')
+            ->with('permissions.index')
+            ->andReturn(true);
+
+        $item = new NavigationNodeData(
+            id: 'permissions.index',
+            label: 'Permisos',
+            type: NavigationNodeType::ITEM,
+            route: 'permissions.index'
+        );
+
+        $section = new NavigationNodeData(
+            id: 'users',
+            label: 'Usuarios',
+            type: NavigationNodeType::GROUP,
+            children: [
+                $item
+            ]
+        );
+
+        $root = new NavigationNodeData(
+            id: 'administration',
+            label: 'Administración',
+            type: NavigationNodeType::GROUP,
+            children: [
+                $section
+            ]
+        );
+
+        $tree = new NavigationTreeData([
+            $root
+        ]);
+
+        $result = (new NavigationActiveResolver())
+            ->resolve($tree);
+
+        $resolvedRoot = $result->nodes()[0];
+        $resolvedSection = $resolvedRoot->children()[0];
+        $resolvedItem = $resolvedSection->children()[0];
+
+        $this->assertTrue(
+            $resolvedRoot->isAncestor()
+        );
+
+        $this->assertTrue(
+            $resolvedRoot->isExpanded()
+        );
+
+        $this->assertTrue(
+            $resolvedSection->isAncestor()
+        );
+
+        $this->assertTrue(
+            $resolvedSection->isExpanded()
+        );
+
+        $this->assertTrue(
+            $resolvedItem->isCurrent()
+        );
+
+        $this->assertTrue(
+            $resolvedItem->isActive()
+        );
+    }
 
 
+    public function test_does_not_activate_unrelated_branch(): void
+    {
+        Route::shouldReceive('currentRouteNamed')
+            ->with('products.index')
+            ->andReturn(false);
+
+        Route::shouldReceive('currentRouteNamed')
+            ->with('users.index')
+            ->andReturn(true);
+
+        $users = new NavigationNodeData(
+            id: 'users.index',
+            label: 'Usuarios',
+            type: NavigationNodeType::ITEM,
+            route: 'users.index'
+        );
+
+        $products = new NavigationNodeData(
+            id: 'products.index',
+            label: 'Productos',
+            type: NavigationNodeType::ITEM,
+            route: 'products.index'
+        );
+
+        $administration = new NavigationNodeData(
+            id: 'administration',
+            label: 'Administración',
+            type: NavigationNodeType::GROUP,
+            children: [
+                $users
+            ]
+        );
+
+        $inventory = new NavigationNodeData(
+            id: 'inventory',
+            label: 'Inventario',
+            type: NavigationNodeType::GROUP,
+            children: [
+                $products
+            ]
+        );
+
+        $tree = new NavigationTreeData([
+            $administration,
+            $inventory,
+        ]);
+
+        $result = (new NavigationActiveResolver())
+            ->resolve($tree);
+
+        $resolvedAdministration = $result->nodes()[0];
+        $resolvedInventory = $result->nodes()[1];
+
+        $this->assertTrue(
+            $resolvedAdministration->isActive()
+        );
+
+        $this->assertFalse(
+            $resolvedInventory->isActive()
+        );
+    }
+
+
+    public function test_group_without_active_child_remains_inactive(): void
+    {
+        Route::shouldReceive('currentRouteNamed')
+            ->with('users.index')
+            ->andReturn(false);
+
+        $child = new NavigationNodeData(
+            id: 'users.index',
+            label: 'Usuarios',
+            type: NavigationNodeType::ITEM,
+            route: 'users.index'
+        );
+
+        $group = new NavigationNodeData(
+            id: 'administration',
+            label: 'Administración',
+            type: NavigationNodeType::GROUP,
+            children: [
+                $child
+            ]
+        );
+
+        $tree = new NavigationTreeData([
+            $group
+        ]);
+
+        $result = (new NavigationActiveResolver())
+            ->resolve($tree);
+
+        $resolved = $result->nodes()[0];
+
+        $this->assertFalse(
+            $resolved->isActive()
+        );
+
+        $this->assertFalse(
+            $resolved->isAncestor()
+        );
+
+        $this->assertFalse(
+            $resolved->isExpanded()
+        );
+    }
 }

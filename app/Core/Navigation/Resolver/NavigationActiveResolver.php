@@ -6,6 +6,7 @@ namespace App\Core\Navigation\Resolver;
 
 use App\Core\Navigation\DTO\NavigationNodeData;
 use App\Core\Navigation\DTO\NavigationTreeData;
+use App\Core\Navigation\Contracts\NavigationActiveResolverInterface;
 use Illuminate\Support\Facades\Route;
 
 /**
@@ -32,7 +33,7 @@ use Illuminate\Support\Facades\Route;
  *
  * ==========================================================
  */
-final readonly class NavigationActiveResolver
+final readonly class NavigationActiveResolver implements NavigationActiveResolverInterface
 {
     public function resolve(
         NavigationTreeData $tree
