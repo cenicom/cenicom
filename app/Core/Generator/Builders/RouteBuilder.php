@@ -5,137 +5,148 @@ declare(strict_types=1);
 namespace App\Core\Generator\Builders;
 
 use App\Core\Generator\DTO\ModuleData;
+use App\Core\Generator\Support\MiddlewareResolver;
+use App\Core\Generator\Security\PermissionResolver;
 
 /**
  * ==========================================================
  * CENICOM ERP
  * ==========================================================
  *
- * Construye la definición de rutas de un módulo.
+ * Construye todas las variables necesarias
+ * para generar las rutas del módulo.
  *
- * Esta clase encapsula toda la lógica relacionada con la
- * generación de grupos de rutas, middleware, prefijos y
- * nombres, manteniendo el RouteGenerator completamente
- * desacoplado de dicha lógica.
- *
- * @package App\Core\Generator\Builders
- * @since 1.0.0
+ * RouteGenerator únicamente orquesta.
  */
 final class RouteBuilder
 {
-    /**
-     * Construye el bloque de rutas.
-     */
-    public function build(
-        ModuleData $module
-    ): string {
-
-        $lines = [];
-
-        /*
-        |--------------------------------------------------------------------------
-        | Middleware
-        |--------------------------------------------------------------------------
-        */
-
-        if ($module->routeMiddleware() !== []) {
-
-            $middleware = implode(
-                "', '",
-                $module->routeMiddleware()
-            );
-
-            $lines[] =
-                "Route::middleware(['{$middleware}'])";
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Prefix
-        |--------------------------------------------------------------------------
-        */
-
-        if ($module->routePrefix() !== '') {
-
-            $this->append(
-                $lines,
-                "->prefix('{$module->routePrefix()}')"
-            );
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Name Prefix
-        |--------------------------------------------------------------------------
-        */
-
-        if ($module->routeNamePrefix() !== '') {
-
-            $this->append(
-                $lines,
-                "->name('{$module->routeNamePrefix()}.')"
-            );
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Group
-        |--------------------------------------------------------------------------
-        */
-
-        if ($lines !== []) {
-
-            $lines[] = '->group(function (): void {';
-
-            $lines[] =
-                '    ' .
-                $this->resourceRoute($module);
-
-            $lines[] = '});';
-
-            return implode("\n", $lines);
-        }
-
-        return $this->resourceRoute($module);
+    public function __construct(
+        private readonly MiddlewareResolver $middlewareResolver,
+        private readonly PermissionResolver $permissionResolver,
+    ) {
     }
 
+
     /**
-     * Construye el Route::resource().
+     * Punto de entrada.
+     *
+     * @return array<string,string>
      */
-    private function resourceRoute(
+    public function build(ModuleData $module ): array {
+
+        return $this->buildVariables($module);
+    }
+
+
+    /**
+     * Construye variables del stub.
+     *
+     * @return array<string,string>
+     */
+    private function buildVariables(ModuleData $module): array
+    {
+
+        return [
+
+        'qualifiedController'
+            => $module->qualifiedController(),
+
+        'controllerNamespace'
+            => $module->qualifiedController(),
+
+        'controllerClass'
+            => $module->controllerClass(),
+
+        'plural'
+            => $module->plural(),
+
+        'singular'
+            => $module->singular(),
+
+        'middleware'
+            => $this->buildMiddleware($module),
+    ];
+    }
+
+
+    private function buildControllerNamespace(
         ModuleData $module
     ): string {
 
-        return sprintf(
+        return $module->qualifiedController();
+    }
 
-            "Route::resource('%s', %s::class)->names('%s');",
 
-            $module->resourceUri(),
+    private function buildControllerClass(
+        ModuleData $module
+    ): string {
 
-            $module->controllerClass(),
+        return $module->controllerClass();
+    }
 
-            $module->routeName()
 
+    /**
+     * Construye middleware dinámico.
+     */
+    private function buildMiddleware(
+        ModuleData $module
+    ): string {
+
+        $security = $module->security();
+
+        if ($security === null) {
+            return '';
+        }
+
+
+        $middlewares = $this
+            ->middlewareResolver
+            ->resolve($security);
+
+
+        if ($security->usesPermissions()) {
+
+            foreach (
+                $this->permissionResolver->resolve($module)
+                as $permission
+            ) {
+
+                $middlewares[] =
+                    'permission:' . $permission;
+            }
+        }
+
+
+        return $this->formatMiddleware(
+            $middlewares
         );
     }
 
+
     /**
-     * Agrega una línea al builder.
+     * Formatea middleware para Route.
      *
-     * @param array<int,string> $lines
+     * @param array<int,string> $middlewares
      */
-    private function append(
-        array &$lines,
-        string $line
-    ): void {
+    private function formatMiddleware(
+        array $middlewares
+    ): string {
 
-        if ($lines === []) {
-
-            $lines[] = $line;
-
-            return;
+        if ($middlewares === []) {
+            return '';
         }
 
-        $lines[count($lines) - 1] .= $line;
+
+        return PHP_EOL .
+            "->middleware([" .
+            PHP_EOL .
+            "    '" .
+            implode(
+                "'," . PHP_EOL . "    '",
+                $middlewares
+            ) .
+            "'" .
+            PHP_EOL .
+            "])";
     }
 }

@@ -43,7 +43,9 @@ final class GeneratorResult
 
     public static function success(string $file): self
     {
-        return (new self())->addCreated($file);
+        $result = new self();
+
+        return $result->addCreated($file);
     }
 
     public static function failure(string $message): self

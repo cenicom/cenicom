@@ -10,7 +10,7 @@ use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Results\GeneratorResult;
 use App\Core\Generator\Support\FileWriter;
-use App\Core\Generator\Support\Route\RouteBuilder;
+use App\Core\Generator\Builders\RouteBuilder;
 use App\Core\Generator\Support\StubManager;
 use App\Core\Generator\Validation\GeneratorValidator;
 

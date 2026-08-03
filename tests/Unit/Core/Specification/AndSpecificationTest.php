@@ -163,4 +163,15 @@ final class AndSpecificationTest extends TestCase
 
         return $specification;
     }
+
+    public function test_returns_true_when_no_specifications_are_provided(): void
+    {
+        $specification = new AndSpecification();
+
+        $this->assertTrue(
+            $specification->isSatisfiedBy(
+                new \stdClass()
+            )
+        );
+    }
 }

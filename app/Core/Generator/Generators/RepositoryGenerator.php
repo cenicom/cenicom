@@ -60,29 +60,16 @@ final class RepositoryGenerator extends BaseGenerator
         return array_merge(
             $this->defaultVariables($module),
             [
-                'namespace' =>
-                $module->repositoryNamespace(),
+                'namespace' => $module->repositoryNamespace(),
 
-                'qualifiedModel' =>
-                $module->qualifiedModel(),
+        'qualifiedRepositoryInterface'
+            => $module->qualifiedRepositoryInterface(),
 
-                'qualifiedRepositoryInterface' =>
-                $module->qualifiedRepositoryInterface(),
+        'repositoryInterface'
+            => $module->repositoryInterface(),
 
-                'repositoryInterface' =>
-                $module->repositoryInterface(),
-
-                'model' =>
-                $module->modelClass(),
-
-                'repository' =>
-                $module->repositoryClass(),
-
-                'variable' =>
-                $module->variable(),
-
-                'imports' =>
-                $this->buildImports($module),
+        'repository'
+            => $module->repositoryClass(),
             ]
         );
     }

@@ -86,7 +86,7 @@ final class SecurityServiceProvider extends ServiceProvider
         $this->app->singleton(
             AuthorizationServiceInterface::class,
             fn($app) => new AuthorizationService(
-                $app->make(PermissionCheckerInterface::class)
+                $app->make(PermissionResolverInterface::class)
             )
         );
 
@@ -97,7 +97,7 @@ final class SecurityServiceProvider extends ServiceProvider
             )
         );
 
-        $this->app->bind(
+        $this->app->singleton(
             PermissionResolverInterface::class,
             PermissionResolver::class
         );

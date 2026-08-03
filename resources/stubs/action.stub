@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace [[ namespace ]];
 
+use [[ qualifiedModel ]];
+use [[ qualifiedServiceInterface ]];
+
 /**
  * ==========================================================
  * CENICOM ERP
@@ -17,15 +20,41 @@ namespace [[ namespace ]];
  */
 final readonly class [[ action ]]
 {
+    public function __construct(
+        private [[ serviceInterface ]] $service,
+    ) {
+    }
+
     /**
-     * Ejecuta la acción.
-     *
      * @param array<string,mixed> $data
      */
-    public function execute(
-        array $data = []
-    ): mixed {
+    public function create(
+        array $data
+    ): [[ model ]]
+    {
+        return $this->service->create($data);
+    }
 
-        //
+    /**
+     * @param array<string,mixed> $data
+     */
+    public function update(
+        [[ model ]] $[[ variable ]],
+        array $data
+    ): bool
+    {
+        return $this->service->update(
+            $[[ variable ]],
+            $data
+        );
+    }
+
+    public function destroy(
+        [[ model ]] $[[ variable ]]
+    ): bool
+    {
+        return $this->service->destroy(
+            $[[ variable ]]
+        );
     }
 }

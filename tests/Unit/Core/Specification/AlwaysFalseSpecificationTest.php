@@ -9,6 +9,10 @@ use PHPUnit\Framework\TestCase;
 
 final class AlwaysFalseSpecificationTest extends TestCase
 {
+
+    /**
+     * @covers \App\Core\Specification\AlwaysFalseSpecification::isSatisfiedBy
+     */
     public function test_returns_false_for_object(): void
     {
         $specification = new AlwaysFalseSpecification();
@@ -20,6 +24,9 @@ final class AlwaysFalseSpecificationTest extends TestCase
         );
     }
 
+    /**
+     * @covers \App\Core\Specification\AlwaysFalseSpecification::isSatisfiedBy
+     */
     public function test_returns_false_for_array(): void
     {
         $specification = new AlwaysFalseSpecification();
@@ -29,6 +36,9 @@ final class AlwaysFalseSpecificationTest extends TestCase
         );
     }
 
+    /**
+     * @covers \App\Core\Specification\AlwaysFalseSpecification::isSatisfiedBy
+     */
     public function test_returns_false_for_scalar(): void
     {
         $specification = new AlwaysFalseSpecification();
@@ -38,6 +48,9 @@ final class AlwaysFalseSpecificationTest extends TestCase
         );
     }
 
+    /**
+     * @covers \App\Core\Specification\AlwaysFalseSpecification::isSatisfiedBy
+     */
     public function test_returns_false_for_null(): void
     {
         $specification = new AlwaysFalseSpecification();

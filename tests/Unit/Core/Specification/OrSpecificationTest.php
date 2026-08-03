@@ -173,6 +173,11 @@ final class OrSpecificationTest extends TestCase
         );
     }
 
+    /**
+     * Summary of createSpecification
+     * @param bool $result
+     * @return SpecificationInterface
+     */
     private function createSpecification(
         bool $result
     ): SpecificationInterface {
@@ -186,5 +191,28 @@ final class OrSpecificationTest extends TestCase
             ->willReturn($result);
 
         return $specification;
+    }
+
+    /**
+     * Summary of test_returns_false_when_no_specifications_are_provided
+     * @return void
+     */
+    public function test_returns_false_when_no_specifications_are_provided(): void
+    {
+        // Arrange
+
+        $orSpecification = new OrSpecification();
+
+        // Act
+
+        $result = $orSpecification->isSatisfiedBy(
+            new \stdClass()
+        );
+
+        // Assert
+
+        $this->assertFalse(
+            $result
+        );
     }
 }

@@ -1,0 +1,73 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+/**
+ * ==========================================================
+ * CENICOM ERP
+ * ==========================================================
+ *
+ * Currency module
+ *
+ * @package App\Models
+ */
+final class Currency extends Model
+{
+    use HasFactory;
+    use HasUuids;
+    use SoftDeletes;
+
+    /**
+     * Tabla asociada al modelo.
+     */
+    protected $table = 'currencies';
+
+    /**
+     * Atributos asignables masivamente.
+     *
+     * @var array<int,string>
+     */
+    protected $fillable = [
+
+    ];
+
+    /**
+     * Conversión automática de atributos.
+     *
+     * @var array<string,string>
+     */
+    protected function casts(): array
+{
+    return [
+
+
+
+    ];
+}
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relaciones
+    |--------------------------------------------------------------------------
+    */
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Scopes
+    |--------------------------------------------------------------------------
+    */
+
+
+
+}

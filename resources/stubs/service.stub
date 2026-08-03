@@ -5,11 +5,8 @@ declare(strict_types=1);
 namespace [[ namespace ]];
 
 use [[ qualifiedModel ]];
-
 use [[ qualifiedRepositoryInterface ]];
-
 use [[ qualifiedServiceInterface ]];
-
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 /**

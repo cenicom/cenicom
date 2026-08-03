@@ -6,9 +6,10 @@ namespace App\Core\Generator\Generators;
 
 
 use App\Core\Generator\BaseGenerator;
+use App\Core\Generator\DTO\ColumnDefinition;
 use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\Results\GeneratorResult;
-use App\Core\Generator\DTO\ColumnDefinition;
+use RuntimeException;
 
 /**
  * ==========================================================
@@ -85,14 +86,15 @@ final class ModelGenerator extends BaseGenerator
     ): string {
 
         $relationships = array_map(
-            fn(array $relationship): string =>
-            $this->buildRelationship($relationship),
-            $this->resolveRelationships($module)
+            fn(array $relationship): string => $this->buildRelationship(
+                $relationship
+            ),
+            $this->resolveRelationships($module),
         );
 
         return implode(
             PHP_EOL . PHP_EOL,
-            array_filter($relationships)
+            array_filter($relationships),
         );
     }
 
@@ -270,9 +272,7 @@ final class ModelGenerator extends BaseGenerator
     private function resolveConstants(
         ModuleData $module
     ): array {
-        return [
-
-        ];
+        return [];
     }
 
     private function buildConstants(
@@ -329,7 +329,12 @@ final class ModelGenerator extends BaseGenerator
 
             'belongsToMany' => $this->buildBelongsToMany($relationship),
 
-            default => '',
+            default => throw new RuntimeException(
+                sprintf(
+                    'Unsupported relationship type [%s].',
+                    $relationship['type'] ?? 'unknown',
+                ),
+            ),
         };
     }
 

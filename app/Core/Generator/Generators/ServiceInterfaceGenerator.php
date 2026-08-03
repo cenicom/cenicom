@@ -19,12 +19,8 @@ final class ServiceInterfaceGenerator extends BaseGenerator
     }
 
 
-    public function generate(
-        ModuleData $module
-    ): GeneratorResult {
-
-        logger('=== ServiceInterfaceGenerator ejecutado ===');
-        logger($module->serviceInterfacePath());
+    public function generate(ModuleData $module): GeneratorResult
+    {
 
         return $this->generateResult(
             self::STUB,
@@ -34,22 +30,27 @@ final class ServiceInterfaceGenerator extends BaseGenerator
     }
 
 
-    private function buildVariables(
-        ModuleData $module
-    ): array {
+    private function buildVariables(ModuleData $module): array
+    {
 
-        return [
+        return array_merge(
+            $this->defaultVariables($module),
+            [
+                'namespace'
+                => $module->serviceContractNamespace(),
 
-            'namespace' => $module->serviceContractNamespace(),
+                'qualifiedModel'
+                => $module->qualifiedModel(),
 
-            'qualifiedModel' => $module->qualifiedModel(),
+                'serviceInterface'
+                => $module->serviceInterface(),
 
-            'serviceInterface' => $module->serviceInterface(),
+                'model'
+                => $module->modelClass(),
 
-            'model' => $module->modelClass(),
-
-            'variable' => $module->variable(),
-
-        ];
+                'variable'
+                => $module->variable(),
+            ]
+        );
     }
 }

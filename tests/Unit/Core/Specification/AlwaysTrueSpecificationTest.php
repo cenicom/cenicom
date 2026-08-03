@@ -9,6 +9,9 @@ use PHPUnit\Framework\TestCase;
 
 final class AlwaysTrueSpecificationTest extends TestCase
 {
+    /**
+     * @covers \App\Core\Specification\AlwaysTrueSpecification::isSatisfiedBy
+     */
     public function test_returns_true_for_object(): void
     {
         // Arrange
@@ -28,6 +31,9 @@ final class AlwaysTrueSpecificationTest extends TestCase
         );
     }
 
+    /**
+     * @covers \App\Core\Specification\AlwaysTrueSpecification::isSatisfiedBy
+     */
     public function test_returns_true_for_array(): void
     {
         // Arrange
@@ -47,6 +53,9 @@ final class AlwaysTrueSpecificationTest extends TestCase
         );
     }
 
+    /**
+     * @covers \App\Core\Specification\AlwaysTrueSpecification::isSatisfiedBy
+     */
     public function test_returns_true_for_scalar(): void
     {
         // Arrange
@@ -66,6 +75,9 @@ final class AlwaysTrueSpecificationTest extends TestCase
         );
     }
 
+    /**
+     * @covers \App\Core\Specification\AlwaysTrueSpecification::isSatisfiedBy
+     */
     public function test_returns_true_for_null(): void
     {
         // Arrange

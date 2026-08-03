@@ -37,7 +37,7 @@ final class OrSpecification extends CompositeSpecification
     /**
      * Specifications que componen la operación lógica OR.
      *
-     * @var array<int, SpecificationInterface>
+     * @var list<SpecificationInterface>
      */
     private array $specifications;
 

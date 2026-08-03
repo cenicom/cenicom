@@ -70,4 +70,46 @@ final class NotSpecificationTest extends TestCase
 
         return $specification;
     }
+
+    /**
+     * @test
+     * 1. Doble negación
+     * Este caso verifica que la composición funciona correctamente.
+     */
+    public function test_double_negation_returns_original_result(): void
+    {
+        $specification = $this->createSpecification(true);
+
+        $not = new NotSpecification(
+            new NotSpecification($specification)
+        );
+
+        $this->assertTrue(
+            $not->isSatisfiedBy(new \stdClass())
+        );
+    }
+
+    /**
+     * @test
+     * 2. Propaga correctamente el candidato
+     * Actualmente el mock devuelve un valor fijo, pero no certifica que el mismo objeto recibido por NotSpecification se entregue a la Specification interna.
+     */
+    public function test_passes_candidate_to_inner_specification(): void
+    {
+        $candidate = new \stdClass();
+
+        $specification = $this->createMock(
+            SpecificationInterface::class
+        );
+
+        $specification
+            ->expects($this->once())
+            ->method('isSatisfiedBy')
+            ->with($candidate)
+            ->willReturn(true);
+
+        $not = new NotSpecification($specification);
+
+        $not->isSatisfiedBy($candidate);
+    }
 }

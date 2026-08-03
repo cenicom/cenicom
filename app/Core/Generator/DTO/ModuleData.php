@@ -502,6 +502,11 @@ readonly class ModuleData
         return $this->serviceContractNamespace;
     }
 
+    public function actionNamespace(): string
+    {
+        return 'App\\Core\\Actions';
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Getters - Clases
@@ -591,6 +596,11 @@ readonly class ModuleData
     public function middlewareClass(): string
     {
         return $this->middlewareClass;
+    }
+
+    public function actionClass(): string
+    {
+        return $this->modelClass() . 'Action';
     }
 
     /*
@@ -694,7 +704,14 @@ readonly class ModuleData
         return $this->permissionPath;
     }
 
-
+    public function actionPath(): string
+    {
+        return app_path(
+            'Core/Actions/'
+                . $this->actionClass()
+                . '.php'
+        );
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -870,6 +887,13 @@ readonly class ModuleData
     public function qualifiedMiddleware(): string
     {
         return "{$this->middlewareNamespace()}\\{$this->middlewareClass()}";
+    }
+
+    public function qualifiedAction(): string
+    {
+        return $this->actionNamespace()
+            . '\\'
+            . $this->actionClass();
     }
 
     /*

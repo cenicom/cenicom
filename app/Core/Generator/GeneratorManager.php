@@ -102,10 +102,29 @@ final class GeneratorManager
         GeneratorInterface $generator,
         ModuleData $module,
     ): GeneratorResult {
-        return $generator->generate($module);
+
+        try {
+
+            if (! $generator->supports($module)) {
+                return new GeneratorResult();
+            }
+
+            return $generator->generate($module);
+        } catch (\Throwable $exception) {
+
+            return GeneratorResult::failure(
+                $exception->getMessage()
+            );
+        }
     }
 
-    public function registered(): array{
-        return [];
+    /**
+     * Obtiene los generadores registrados.
+     *
+     * @return array<GeneratorInterface>
+     */
+    public function registered(): array
+    {
+        return $this->generators;
     }
 }

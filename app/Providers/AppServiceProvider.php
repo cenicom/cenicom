@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Core\Generator\Pipeline\Steps\ValidateModuleStep;
 use App\Core\Generator\Presentation\Contracts\PresentationRendererInterface;
 use App\Core\Generator\Presentation\Renderers\BladePresentationRenderer;
 use App\Core\Generator\Security\MiddlewareRegistry;
@@ -11,8 +12,9 @@ use App\Core\Generator\Validation\Validators\FieldsValidator;
 use App\Core\Navigation\Contracts\NavigationServiceInterface;
 use App\Core\Navigation\Services\NavigationService;
 use App\Support\Navigation\NavigationManager;
-use Illuminate\Support\ServiceProvider;
+use ExecuteGeneratorsStep;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -49,6 +51,14 @@ class AppServiceProvider extends ServiceProvider
             NavigationServiceInterface::class,
             NavigationService::class
         );
+
+        $this->app->tag(
+    [
+        ValidateModuleStep::class,
+        ExecuteGeneratorsStep::class,
+    ],
+    'cn.generator.pipeline.steps'
+);
     }
 
     /**

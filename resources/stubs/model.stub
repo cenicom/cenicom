@@ -38,9 +38,14 @@ final class [[ model ]] extends Model
      *
      * @var array<string,string>
      */
-    protected $casts = [
+    protected function casts(): array
+{
+    return [
+
 [[ casts ]]
+
     ];
+}
 
 [[ constants ]]
 

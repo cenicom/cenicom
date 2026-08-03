@@ -19,15 +19,22 @@ final class ModuleDefinitionFactory
 
         return [
 
-            'identity'   => $specification->identity(),
+            'identity'
+            => $this->buildIdentity($specification),
 
-            'security'   => $specification->security(),
+            'security'
+            => $specification->security(),
+
+            'permissions'
+            => $specification->permissions(),
 
             ...$this->buildFields($specification),
 
-            'generation' => $specification->generation(),
+            'generation'
+            => $this->buildGeneration($specification),
 
-            'metadata'   => $specification->metadata(),
+            'metadata'
+            => $this->buildMetadata($specification),
         ];
     }
 

@@ -54,7 +54,7 @@ final class AndSpecification extends CompositeSpecification
     public function isSatisfiedBy(
         mixed $candidate
     ): bool {
-        // Se implementará en la siguiente maniobra.
+
         foreach ($this->specifications as $specification) {
 
             if (! $specification->isSatisfiedBy($candidate)) {

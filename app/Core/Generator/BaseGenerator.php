@@ -70,15 +70,13 @@ abstract class BaseGenerator implements GeneratorInterface
         );
     }
 
-    protected function generateResult(
-        string $stub,
-        string $path,
-        array $variables
+    protected function generateResult(string $stub, string $path, array $variables
     ): GeneratorResult {
 
         $result = new GeneratorResult();
 
         if ($this->fileWriter->exists($path)) {
+
             return $result->addSkipped($path);
         }
 

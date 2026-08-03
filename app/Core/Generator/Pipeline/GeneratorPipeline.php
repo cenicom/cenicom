@@ -21,34 +21,33 @@ use App\Core\Generator\Contracts\PipelineStepInterface;
  * @package App\Core\Generator\Pipeline
  * @since 1.0.0
  */
-final class GeneratorPipeline
+final readonly class GeneratorPipeline
 {
     /**
      * @param iterable<PipelineStepInterface> $steps
      */
     public function __construct(
-        private readonly iterable $steps,
+        private iterable $steps,
     ) {
     }
 
 
-    /**
-     * Ejecuta todas las etapas del pipeline.
-     */
     public function run(
         ModuleData $module
     ): GeneratorResult {
 
         $result = new GeneratorResult();
 
-
         foreach ($this->steps as $step) {
 
-            $result->merge(
-                $step->execute($module)
-            );
-        }
+            $stepResult = $step->execute($module);
 
+            $result->merge($stepResult);
+
+            if ($stepResult->hasErrors()) {
+                break;
+            }
+        }
 
         return $result;
     }

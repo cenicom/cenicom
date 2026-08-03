@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace [[ namespace ]];
 
 use [[ qualifiedModel ]];
-
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+
 /**
  * ==========================================================
  * CENICOM ERP

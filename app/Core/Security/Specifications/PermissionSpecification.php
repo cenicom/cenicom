@@ -34,16 +34,11 @@ use App\Core\Specification\AtomicSpecification;
 final class PermissionSpecification extends AtomicSpecification
 {
     /**
-     * Permiso requerido por la Specification.
-     */
-    private string $permission;
-
-    /**
      * Constructor de la Specification.
      */
-    public function __construct(string $permission)
+    public function __construct( private readonly string $permission)
     {
-        $this->permission = $permission;
+
     }
 
     /**

@@ -34,20 +34,14 @@ use App\Core\Specification\AtomicSpecification;
 final class RoleSpecification extends AtomicSpecification
 {
     /**
-     * Rol que debe poseer la identidad.
-     * @var string
-     */
-    private string $role;
-
-    /**
      * Constructor.
      * Rol requerido por la Specification.
      *
      * @param string $role El rol a verificar.
      */
-    public function __construct(string $role)
+    public function __construct(private readonly string $role)
     {
-        $this->role = $role;
+
     }
 
     /**
@@ -71,6 +65,6 @@ final class RoleSpecification extends AtomicSpecification
             $this->role,
             $candidate->roles(),
             true,
-        ); // Simulación de verificación de rol
+        );
     }
 }
