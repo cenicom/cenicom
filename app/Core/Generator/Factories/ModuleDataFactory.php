@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Core\Generator\Factories;
 
 use App\Core\Generator\DTO\ColumnDefinition;
+use App\Core\Navigation\DTO\NavigationManifestData;
+use App\Core\Navigation\DTO\NavigationGroupData;
+use App\Core\Navigation\DTO\NavigationItemData;
 use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\DTO\PermissionMatrix;
 use App\Core\Generator\DTO\SecurityDefinition;
@@ -39,11 +42,11 @@ final class ModuleDataFactory
      */
     public function create(array $definition): ModuleData
     {
-        $name = $this->normalizeName(
-            $this->identity($definition)['name']
-        );
-
         $identity = $this->identity($definition);
+
+        $name = $this->normalizeName(
+            $identity['name']
+        );
 
         $generation = $this->generation($definition);
 
@@ -64,6 +67,12 @@ final class ModuleDataFactory
 
         $permissionMatrix = $this->buildPermissionMatrix($definition);
 
+        $navigation = $this->buildNavigation($definition);
+
+        $generation = $this->buildGeneration(
+            $identity['plural'],
+            $this->generation($definition),
+        );
 
         return new ModuleData(
 
@@ -224,6 +233,7 @@ final class ModuleDataFactory
                 $fields
             ),
 
+
             /*
             |--------------------------------------------------------------------------
             | Opciones
@@ -250,16 +260,60 @@ final class ModuleDataFactory
 
             permissionMatrix: $permissionMatrix,
 
+            navigation: $navigation,
 
         );
     }
 
     /*
     |--------------------------------------------------------------------------
-    | Lectura del Manifiesto
+    | private function buildNavigation
     |--------------------------------------------------------------------------
     */
+    /**
+     * Construye el manifiesto de navegación.
+     *
+     * @param array<string,mixed> $definition
+     */
+    private function buildNavigation(
+        array $definition
+    ): NavigationManifestData {
 
+        $navigation = $definition['navigation'] ?? [];
+
+        $groups = array_map(
+            static fn(array $group): NavigationGroupData =>
+            new NavigationGroupData(
+                id: $group['id'],
+                label: $group['label'],
+                icon: $group['icon'] ?? null,
+                order: $group['order'] ?? 0,
+            ),
+            $navigation['groups'] ?? []
+        );
+
+
+        $items = array_map(
+            static fn(array $item): NavigationItemData =>
+            new NavigationItemData(
+                id: $item['id'],
+                label: $item['label'],
+                route: $item['route'],
+                permission: $item['permission'] ?? null,
+                icon: $item['icon'] ?? null,
+                order: $item['order'] ?? 0,
+                group: $item['group'] ?? '',
+            ),
+            $navigation['items'] ?? []
+        );
+
+
+        return new NavigationManifestData(
+            module: $definition['identity']['name'],
+            groups: $groups,
+            items: $items,
+        );
+    }
     /*
     |--------------------------------------------------------------------------
     | identity(array $definition): array
@@ -331,7 +385,7 @@ final class ModuleDataFactory
      *
      * @param array<string,mixed> $definition
      */
-    private function buildSecurity(array $definition, ): ?SecurityDefinition
+    private function buildSecurity(array $definition,): ?SecurityDefinition
     {
 
         if (
@@ -357,7 +411,7 @@ final class ModuleDataFactory
      *
      * @param array<string,mixed> $definition
      */
-    private function buildPermissionMatrix(array $definition, ): PermissionMatrix
+    private function buildPermissionMatrix(array $definition,): PermissionMatrix
     {
 
         if (
@@ -394,10 +448,21 @@ final class ModuleDataFactory
 
     /*
     |--------------------------------------------------------------------------
-    | Construcción de Infraestructura
+    | private function buildGeneration(string $plural,array $generation,): array
     |--------------------------------------------------------------------------
     */
+    private function buildGeneration(string $plural, array $generation,): array
+    {
+        return [
 
+            'routePrefix' => $generation['routePrefix'] ?? Str::kebab($plural),
+
+            'routeName' => $generation['routeName'] ?? Str::kebab($plural),
+
+            'viewPrefix' => $generation['viewPrefix'] ?? Str::snake($plural),
+
+        ];
+    }
     /*
     |--------------------------------------------------------------------------
     | normalizeName(string $name): string

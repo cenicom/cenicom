@@ -32,23 +32,21 @@ use App\Core\Navigation\Contracts\NavigationManifestRegistrarInterface;
  * ==========================================================
  */
 final readonly class NavigationManifestDiscoveryService
-    implements NavigationManifestDiscoveryInterface
+implements NavigationManifestDiscoveryInterface
 {
     public function __construct(
         private NavigationManifestFinderInterface $finder,
         private NavigationManifestLoaderInterface $loader,
         private NavigationManifestRegistrarInterface $registrar,
-    ) {
-    }
+    ) {}
 
     public function discover(): void
     {
-        $manifests = $this->finder->discover();
+        foreach ($this->finder->discover() as $path) {
 
-        foreach ($manifests as $manifest) {
-            $loaded = $this->loader->load($manifest);
+            $manifest = $this->loader->load($path);
 
-            $this->registrar->register($loaded);
+            $this->registrar->register($manifest);
         }
     }
 }

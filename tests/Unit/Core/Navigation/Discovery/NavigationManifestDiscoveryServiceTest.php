@@ -45,21 +45,26 @@ final class NavigationManifestDiscoveryServiceTest extends TestCase
             NavigationManifestRegistrarInterface::class
         );
 
+        $path = base_path('modules/Test/navigation.php');
+
         $finder
             ->shouldReceive('discover')
             ->once()
-            ->andReturn([$manifest]);
+            ->andReturn([$path]);
 
         $loader
             ->shouldReceive('load')
             ->once()
-            ->with($manifest)
+            ->with($path)
             ->andReturn($manifest);
 
         $registrar
             ->shouldReceive('register')
             ->once()
-            ->with($manifest);
+            ->with(Mockery::on(
+                fn(NavigationManifestData $data) =>
+                $data->module === 'Users'
+            ));
 
         $service = new NavigationManifestDiscoveryService(
             $finder,

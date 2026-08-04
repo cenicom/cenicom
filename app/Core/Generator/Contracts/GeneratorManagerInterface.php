@@ -7,12 +7,9 @@ namespace App\Core\Generator\Contracts;
 use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\Results\GeneratorResult;
 
-interface PipelineStepInterface
+interface GeneratorManagerInterface
 {
-    /**
-     * Ejecuta una etapa del pipeline.
-     */
-    public function execute(
-        ModuleData $module
+    public function generate(
+        ModuleData $module,
     ): GeneratorResult;
 }

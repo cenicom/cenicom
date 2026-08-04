@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Core\Generator;
 
 use App\Core\Generator\Contracts\GeneratorInterface;
+use App\Core\Generator\Contracts\GeneratorManagerInterface;
 use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\Results\GeneratorResult;
 
@@ -36,7 +37,7 @@ use App\Core\Generator\Results\GeneratorResult;
  *
  * @author CENICOM
  */
-final class GeneratorManager
+final class GeneratorManager implements GeneratorManagerInterface
 {
     /**
      * Generadores registrados.

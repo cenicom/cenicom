@@ -10,6 +10,8 @@ use App\Core\Navigation\Loader\NavigationDefinitionLoader;
 use App\Core\Navigation\Registrar\NavigationRegistrar;
 use App\Core\Navigation\Registry\NavigationDefinitionRegistry;
 use App\Core\Navigation\Registry\NavigationRegistry;
+use App\Core\Navigation\Contracts\NavigationPermissionResolverInterface;
+use App\Core\Security\Contracts\IdentityInterface;
 use Tests\TestCase;
 
 final class NavigationMultiModuleIntegrationTest extends TestCase
@@ -108,8 +110,21 @@ final class NavigationMultiModuleIntegrationTest extends TestCase
         );
 
 
+        $permissionResolver = $this->createMock(
+            NavigationPermissionResolverInterface::class
+        );
+
+        $permissionResolver
+            ->method('canView')
+            ->willReturn(true);
+
+        $identity = $this->createMock(
+            IdentityInterface::class
+        );
+
         $builder = new NavigationBuilder(
-            $navigationRegistry
+            $navigationRegistry,
+            $permissionResolver,
         );
 
 
@@ -119,7 +134,7 @@ final class NavigationMultiModuleIntegrationTest extends TestCase
 
         $bootstrapper->boot();
 
-        $tree = $builder->build();
+        $tree = $builder->build($identity);
 
 
         // Assert
@@ -156,8 +171,21 @@ final class NavigationMultiModuleIntegrationTest extends TestCase
         );
 
 
+        $permissionResolver = $this->createMock(
+            NavigationPermissionResolverInterface::class
+        );
+
+        $permissionResolver
+            ->method('canView')
+            ->willReturn(true);
+
+        $identity = $this->createMock(
+            IdentityInterface::class
+        );
+
         $builder = new NavigationBuilder(
-            $navigationRegistry
+            $navigationRegistry,
+            $permissionResolver,
         );
 
 
@@ -167,7 +195,7 @@ final class NavigationMultiModuleIntegrationTest extends TestCase
 
         $bootstrapper->boot();
 
-        $tree = $builder->build();
+       $tree = $builder->build($identity);
 
 
         // Assert

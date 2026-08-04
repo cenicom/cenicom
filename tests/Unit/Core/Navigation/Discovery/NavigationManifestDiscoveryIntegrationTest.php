@@ -50,24 +50,27 @@ final class NavigationManifestDiscoveryIntegrationTest extends TestCase
             NavigationManifestRegistrarInterface::class
         );
 
+        $pathA = base_path('modules/Users/navigation.php');
+        $pathB = base_path('modules/Inventory/navigation.php');
+
         $finder
             ->shouldReceive('discover')
             ->once()
             ->andReturn([
-                $manifestA,
-                $manifestB,
+                $pathA,
+                $pathB,
             ]);
 
         $loader
             ->shouldReceive('load')
             ->once()
-            ->with($manifestA)
+            ->with($pathA)
             ->andReturn($manifestA);
 
         $loader
             ->shouldReceive('load')
             ->once()
-            ->with($manifestB)
+            ->with($pathB)
             ->andReturn($manifestB);
 
         $registrar

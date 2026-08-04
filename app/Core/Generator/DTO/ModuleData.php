@@ -7,6 +7,7 @@ namespace App\Core\Generator\DTO;
 use App\Core\Generator\DTO\ColumnDefinition;
 use App\Core\Generator\DTO\PermissionMatrix;
 use App\Core\Generator\DTO\SecurityDefinition;
+use App\Core\Navigation\DTO\NavigationManifestData;
 use Illuminate\Support\Str;
 
 /**
@@ -189,6 +190,8 @@ readonly class ModuleData
 
     private ?PermissionMatrix $permissionMatrix;
 
+    private ?NavigationManifestData $navigation;
+
     /*
     |--------------------------------------------------------------------------
     | 7️⃣ Opciones
@@ -295,6 +298,8 @@ readonly class ModuleData
         ?string $icon,
         ?SecurityDefinition $security = null,
         ?PermissionMatrix $permissionMatrix = null,
+        ?NavigationManifestData $navigation = null,
+
     ) {
         $this->name = $name;
         $this->singular = $singular;
@@ -367,12 +372,21 @@ readonly class ModuleData
         $this->tests = $tests;
         $this->permissions = $permissions;
         $this->permissionMatrix = $permissionMatrix;
+        $this->navigation = $navigation
+            ?? new NavigationManifestData(
+                module: $this->name,
+            );
         $this->menu = $menu;
         $this->icon = $icon;
         $this->security = $security;
 
         $this->repositoryContractNamespace = $repositoryContractNamespace;
         $this->serviceContractNamespace = $serviceContractNamespace;
+    }
+
+    public function navigation(): NavigationManifestData
+    {
+        return $this->navigation;
     }
 
     /*
@@ -1133,5 +1147,36 @@ readonly class ModuleData
         return str($this->modelClass())
             ->headline()
             ->toString();
+    }
+
+    /**
+     * Obtiene todos los directorios que deben existir para
+     * generar el módulo.
+     *
+     * @return array<string>
+     */
+    public function directories(): array
+    {
+        return array_unique([
+            dirname($this->modelPath),
+            dirname($this->migrationPath),
+            dirname($this->repositoryPath),
+            dirname($this->servicePath),
+            dirname($this->controllerPath),
+            dirname($this->requestPath),
+            dirname($this->viewPath),
+            dirname($this->routePath),
+            dirname($this->policyPath),
+            dirname($this->middlewarePath),
+            dirname($this->factoryPath),
+            dirname($this->seederPath),
+            dirname($this->featureTestPath),
+            dirname($this->unitTestPath),
+            dirname($this->observerPath),
+            dirname($this->moduleManifestPath),
+            dirname($this->repositoryInterfacePath),
+            dirname($this->serviceInterfacePath),
+            dirname($this->permissionPath),
+        ]);
     }
 }

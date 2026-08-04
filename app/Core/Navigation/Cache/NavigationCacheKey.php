@@ -21,6 +21,22 @@ final class NavigationCacheKey
         return self::PREFIX . '.tree';
     }
 
+    public static function role(
+        string $role
+    ): string {
+        return self::PREFIX
+            . '.tree.role.'
+            . $role;
+    }
+
+    public static function institution(
+        int|string $institutionId
+    ): string {
+        return self::PREFIX
+            . '.tree.institution.'
+            . $institutionId;
+    }
+
     public static function all(): string
     {
         return self::PREFIX . '.*';

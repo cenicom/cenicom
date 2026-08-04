@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\Generator\Support;
 
+use App\Core\Generator\Support\Contracts\FileWriterInterface;
 use RuntimeException;
 
 /**
@@ -21,7 +22,7 @@ use RuntimeException;
  * @package App\Core\Generator\Support
  * @since 1.0.0
  */
-final class FileWriter
+final class FileWriter implements FileWriterInterface
 {
     /**
      * Escribe un archivo en disco.
