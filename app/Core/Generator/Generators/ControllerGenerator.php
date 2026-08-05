@@ -72,11 +72,7 @@ final class ControllerGenerator extends BaseGenerator
         );
     }
 
-    /**
-     * Construye las variables utilizadas por el stub.
-     *
-     * @return array<string, string>
-     */
+    
 
 
 

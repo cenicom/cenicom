@@ -32,10 +32,8 @@ final class StubManager
      *
      * @param array<string, mixed> $variables
      */
-    public function render(
-        string $stub,
-        array $variables = []
-    ): string {
+    public function render(string $stub, array $variables = []): string
+    {
 
         $path = $this->resolvePath($stub);
 
@@ -94,11 +92,8 @@ final class StubManager
      *
      * @param array<string, mixed> $variables
      */
-    private function replace(
-        string $content,
-        array $variables,
-        string $stub
-    ): string {
+    private function replace(string $content, array $variables, string $stub): string
+    {
 
         foreach ($variables as $key => $value) {
 

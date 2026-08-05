@@ -10,9 +10,10 @@ use App\Core\Generator\Factories\ModuleDataFactory;
 use App\Core\Generator\Generators\ModuleGenerator;
 use App\Core\Generator\Results\GeneratorResult;
 use App\Core\Generator\Validation\GeneratorTestSuite;
-use Tests\TestCase;
+use Tests\Support\GeneratorTestCase;
 
-final class ModuleGeneratorTest extends TestCase
+
+final class ModuleGeneratorTest extends GeneratorTestCase
 {
     public function test_generates_complete_module(): void
     {

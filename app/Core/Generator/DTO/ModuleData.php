@@ -76,6 +76,8 @@ readonly class ModuleData
 
     private string $middlewareNamespace;
 
+    private string $actionNamespace;
+
     /*
     |--------------------------------------------------------------------------
     | 3️⃣ Clases generadas
@@ -113,6 +115,8 @@ readonly class ModuleData
     private string $permissionClass;
 
     private string $middlewareClass;
+
+    private string $actionClass;
 
     /*
     |--------------------------------------------------------------------------
@@ -157,6 +161,8 @@ readonly class ModuleData
     private string $serviceInterfacePath;
 
     private string $permissionPath;
+
+    private string $actionPath;
 
     /*
     |--------------------------------------------------------------------------
@@ -239,6 +245,7 @@ readonly class ModuleData
         string $observerNamespace,
         string $permissionNamespace,
         string $middlewareNamespace,
+        string $actionNamespace,
 
         string $modelClass,
         string $repositoryClass,
@@ -256,6 +263,7 @@ readonly class ModuleData
         string $observerClass,
         string $permissionClass,
         string $middlewareClass,
+        string $actionClass,
 
         string $modelPath,
         string $migrationPath,
@@ -276,6 +284,7 @@ readonly class ModuleData
         string $moduleManifestPath,
         string $middlewarePath,
         string $permissionPath,
+        string $actionPath,
 
         string $routePrefix,
         string $routeName,
@@ -319,6 +328,7 @@ readonly class ModuleData
         $this->testNamespace = $testNamespace;
         $this->observerNamespace = $observerNamespace;
         $this->permissionNamespace = $permissionNamespace;
+        $this->actionNamespace = $actionNamespace;
 
         $this->modelClass = $modelClass;
         $this->repositoryClass = $repositoryClass;
@@ -336,6 +346,7 @@ readonly class ModuleData
         $this->observerClass = $observerClass;
         $this->permissionClass = $permissionClass;
         $this->middlewareClass = $middlewareClass;
+        $this->actionClass = $actionClass;
 
         $this->modelPath = $modelPath;
         $this->migrationPath = $migrationPath;
@@ -356,7 +367,7 @@ readonly class ModuleData
         $this->moduleManifestPath = $moduleManifestPath;
         $this->middlewarePath = $middlewarePath;
         $this->permissionPath = $permissionPath;
-
+        $this->actionPath = $actionPath;
 
         $this->routePrefix = $routePrefix;
         $this->routeName = $routeName;
@@ -518,7 +529,7 @@ readonly class ModuleData
 
     public function actionNamespace(): string
     {
-        return 'App\\Core\\Actions';
+        return $this->actionNamespace;
     }
 
     /*
@@ -614,7 +625,7 @@ readonly class ModuleData
 
     public function actionClass(): string
     {
-        return $this->modelClass() . 'Action';
+        return $this->actionClass;
     }
 
     /*
@@ -720,11 +731,7 @@ readonly class ModuleData
 
     public function actionPath(): string
     {
-        return app_path(
-            'Core/Actions/'
-                . $this->actionClass()
-                . '.php'
-        );
+        return $this->actionPath;
     }
 
     /*

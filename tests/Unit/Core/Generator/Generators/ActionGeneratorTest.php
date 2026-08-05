@@ -4,24 +4,23 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Generator\Generators;
 
-use App\Core\Generator\DTO\ModuleData;
-use App\Core\Generator\Factories\ModuleDataFactory;
 use App\Core\Generator\Generators\ActionGenerator;
 use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Support\FileWriter;
 use App\Core\Generator\Support\StubManager;
 use App\Core\Generator\Validation\GeneratorValidator;
-use Tests\TestCase;
+use Tests\Support\GeneratorTestCase;
 
-final class ActionGeneratorTest extends TestCase
+
+final class ActionGeneratorTest extends GeneratorTestCase
 {
     public function test_generates_action_file(): void
     {
         $generator = $this->createGenerator();
 
         $result = $generator->generate(
-            $this->module()
-        );
+    $this->createModuleData()
+);
 
         $this->assertTrue(
             $result->isSuccessful()
@@ -38,7 +37,7 @@ final class ActionGeneratorTest extends TestCase
 
         $this->assertTrue(
             $generator->supports(
-                $this->module()
+                $this->createModuleData()
             )
         );
     }
@@ -47,7 +46,7 @@ final class ActionGeneratorTest extends TestCase
     {
         $generator = $this->createGenerator();
 
-        $module = $this->module();
+        $module = $this->createModuleData();
 
         $generator->generate($module);
 
@@ -95,25 +94,5 @@ final class ActionGeneratorTest extends TestCase
         );
     }
 
-    private function module(): ModuleData
-    {
-        return (new ModuleDataFactory())->create([
-            'identity' => [
-                'name' => 'Currency',
-                'singular' => 'currency',
-                'plural' => 'currencies',
-                'table' => 'currencies',
-                'description' => 'Currency module',
-            ],
 
-            'generation' => [
-                'routePrefix' => 'currencies',
-                'routeName' => 'currencies',
-                'viewPrefix' => 'currencies',
-            ],
-
-            'fields' => [],
-            'columns' => [],
-        ]);
-    }
 }

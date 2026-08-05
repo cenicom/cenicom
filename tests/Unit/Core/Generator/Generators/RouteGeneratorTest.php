@@ -14,9 +14,10 @@ use App\Core\Generator\Support\FileWriter;
 use App\Core\Generator\Support\MiddlewareResolver;
 use App\Core\Generator\Support\StubManager;
 use App\Core\Generator\Validation\GeneratorValidator;
-use Tests\TestCase;
+use Tests\Support\GeneratorTestCase;
 
-final class RouteGeneratorTest extends TestCase
+
+final class RouteGeneratorTest extends GeneratorTestCase
 {
     public function test_generates_route_file(): void
     {

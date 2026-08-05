@@ -13,9 +13,10 @@ use App\Core\Generator\Presentation\Renderers\TableRenderer;
 use App\Core\Generator\Results\GeneratorResult;
 use App\Core\Generator\Support\FileWriter;
 use App\Core\Generator\Support\StubManager;
-use Tests\TestCase;
+use Tests\Support\GeneratorTestCase;
 
-final class ViewGeneratorTest extends TestCase
+
+final class ViewGeneratorTest extends GeneratorTestCase
 {
     public function test_generates_all_views(): void
     {

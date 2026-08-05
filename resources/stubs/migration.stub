@@ -14,12 +14,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('[[ table ]]', function (Blueprint $table) {
+            
+[[ columns ]]
 
-            [[ columns ]]
+[[ timestamps ]]
 
-            [[ timestamps ]]
-
-            [[ softDeletes ]]
+[[ softDeletes ]]
         });
     }
 

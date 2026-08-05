@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Core\Generator\Factories;
 
 use App\Core\Generator\DTO\ColumnDefinition;
-use App\Core\Navigation\DTO\NavigationManifestData;
-use App\Core\Navigation\DTO\NavigationGroupData;
-use App\Core\Navigation\DTO\NavigationItemData;
 use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\DTO\PermissionMatrix;
 use App\Core\Generator\DTO\SecurityDefinition;
+use App\Core\Generator\Support\Contracts\PathResolverInterface;
+use App\Core\Generator\Support\PathResolver;
+use App\Core\Navigation\DTO\NavigationGroupData;
+use App\Core\Navigation\DTO\NavigationItemData;
+use App\Core\Navigation\DTO\NavigationManifestData;
 use Illuminate\Support\Str;
 
 /**
@@ -29,6 +31,20 @@ use Illuminate\Support\Str;
  */
 final class ModuleDataFactory
 {
+    private PathResolverInterface $paths;
+
+    /**
+     * Summary of migrationOffset
+     * @var int
+     */
+    private int $migrationOffset = 0;
+
+
+    public function __construct(
+        ?PathResolverInterface $paths = null
+    ) {
+        $this->paths = $paths ?? new PathResolver();
+    }
     /*
     |--------------------------------------------------------------------------
     | create(array $definition): ModuleData
@@ -129,6 +145,8 @@ final class ModuleDataFactory
 
             middlewareNamespace: $namespaces['middlewareNamespace'],
 
+            actionNamespace: $namespaces['actionNamespace'],
+
             /*
             |--------------------------------------------------------------------------
             | Clases
@@ -166,6 +184,8 @@ final class ModuleDataFactory
             permissionClass: $classes['permissionClass'],
 
             middlewareClass: $classes['middlewareClass'],
+
+            actionClass: $classes['actionClass'],
 
             /*
             |--------------------------------------------------------------------------
@@ -210,6 +230,8 @@ final class ModuleDataFactory
             middlewarePath: $paths['middlewarePath'],
 
             permissionPath: $paths['permissionPath'],
+
+            actionPath: $paths['actionPath'],
 
             /*
             |--------------------------------------------------------------------------
@@ -262,6 +284,8 @@ final class ModuleDataFactory
 
             navigation: $navigation,
 
+
+
         );
     }
 
@@ -275,9 +299,8 @@ final class ModuleDataFactory
      *
      * @param array<string,mixed> $definition
      */
-    private function buildNavigation(
-        array $definition
-    ): NavigationManifestData {
+    private function buildNavigation(array $definition): NavigationManifestData
+    {
 
         $navigation = $definition['navigation'] ?? [];
 
@@ -537,6 +560,8 @@ final class ModuleDataFactory
 
             'middlewareClass'
             => "{$name}Middleware",
+
+            'actionClass' => "{$name}Action",
         ];
     }
 
@@ -577,6 +602,8 @@ final class ModuleDataFactory
 
             'middlewareNamespace' => 'App\\Http\\Middleware',
 
+            'actionNamespace' => 'App\\Core\\Actions',
+
             'bindingNamespace' => 'App\\Providers',
 
             'factoryNamespace' => 'Database\\Factories',
@@ -604,66 +631,111 @@ final class ModuleDataFactory
         return [
 
             'modelPath'
-            => app_path("Models/{$name}.php"),
+            => $this->paths->app(
+                "Models/{$name}.php"
+            ),
 
             'migrationPath'
-            => database_path('migrations'),
+            => $this->paths->database(
+                "migrations/{$this->migrationName($plural)}.php"
+            ),
 
             'repositoryPath'
-            => app_path("Core/Repositories/{$name}Repository.php"),
+            => $this->paths->app(
+                "Core/Repositories/{$name}Repository.php"
+            ),
 
             'repositoryInterfacePath'
-            => app_path("Core/Contracts/{$name}RepositoryInterface.php"),
+            => $this->paths->app(
+                "Core/Contracts/{$name}RepositoryInterface.php"
+            ),
 
             'serviceInterfacePath'
-            => app_path("Core/Contracts/{$name}ServiceInterface.php"),
+            => $this->paths->app(
+                "Core/Contracts/{$name}ServiceInterface.php"
+            ),
 
             'servicePath'
-            => app_path("Core/Services/{$name}Service.php"),
+            => $this->paths->app(
+                "Core/Services/{$name}Service.php"
+            ),
 
             'controllerPath'
-            => app_path("Http/Controllers/{$name}Controller.php"),
+            => $this->paths->app(
+                "Http/Controllers/{$name}Controller.php"
+            ),
 
             'requestPath'
-            => app_path("Http/Requests/{$name}"),
+            => $this->paths->app(
+                "Http/Requests/{$name}"
+            ),
 
             'viewPath'
-            => resource_path("views/{$plural}"),
+            => $this->paths->resource(
+                "views/{$plural}"
+            ),
 
             'routePath'
-            => base_path(
-                "routes/modules/{$plural}.php"
+            => $this->paths->routes(
+                "modules/{$plural}.php"
             ),
 
             'policyPath'
-            => app_path("Policies/{$name}Policy.php"),
+            => $this->paths->app(
+                "Policies/{$name}Policy.php"
+            ),
 
             'factoryPath'
-            => database_path("factories/{$name}Factory.php"),
+            => $this->paths->database(
+                "factories/{$name}Factory.php"
+            ),
 
             'seederPath'
-            => database_path("seeders/{$name}Seeder.php"),
+            => $this->paths->database(
+                "seeders/{$name}Seeder.php"
+            ),
 
             'featureTestPath'
-            => base_path("tests/Feature/{$name}FeatureTest.php"),
+            => $this->paths->app(
+                "Tests/Feature/{$name}FeatureTest.php"
+            ),
 
             'unitTestPath'
-            => base_path("tests/Unit/{$name}UnitTest.php"),
+            => $this->paths->app(
+                "Tests/Unit/{$name}UnitTest.php"
+            ),
 
             'observerPath'
-            => app_path("Observers/{$name}Observer.php"),
+            => $this->paths->app(
+                "Observers/{$name}Observer.php"
+            ),
 
             'moduleManifestPath'
-            => base_path("modules/{$name}.json"), // o la ruta que hayas definido para el manifiesto
+            => $this->paths->app(
+                "modules/{$name}.json"
+            ), // o la ruta que hayas definido para el manifiesto
 
             // NUEVO
-            'middlewarePath' => app_path(
+            'middlewarePath' => $this->paths->app(
                 "Http/Middleware/{$name}Middleware.php"
             ),
 
             'permissionPath'
-            => app_path("Core/Permissions/{$name}Permission.php")
+            => $this->paths->app("Core/Permissions/{$name}Permission.php"),
+
+            'actionPath' => $this->paths->app(
+                "Core/Actions/{$name}Action.php"
+            ),
         ];
+    }
+
+    private function migrationName(string $table): string
+    {
+        $timestamp = now()
+            ->addSeconds($this->migrationOffset++)
+            ->format('Y_m_d_His');
+
+        return "{$timestamp}_create_{$table}_table";
     }
 
     /*
@@ -698,6 +770,86 @@ final class ModuleDataFactory
             'menu' => $generation['menu'] ?? true,
 
             'icon' => $generation['icon'] ?? null,
+        ];
+    }
+
+    public function fullCrud(array $definition): ModuleData
+    {
+        $definition['generation'] = array_merge(
+            $definition['generation'] ?? [],
+            $this->fullCrudOptions(),
+        );
+
+        return $this->create($definition);
+    }
+
+
+    private function fullCrudOptions(): array
+    {
+        return array_merge(
+            $this->timestampsOption(),
+            $this->softDeletesOption(),
+            $this->testsOption(),
+            $this->uuidOption(),
+            $this->apiOption(),
+            $this->permissionsOption(),
+            $this->menuOption(),
+        );
+    }
+
+
+    private function timestampsOption(): array
+    {
+        return [
+            'timestamps' => true,
+        ];
+    }
+
+
+    private function softDeletesOption(): array
+    {
+        return [
+            'softDeletes' => true,
+        ];
+    }
+
+
+    private function testsOption(): array
+    {
+        return [
+            'tests' => true,
+        ];
+    }
+
+
+    private function uuidOption(): array
+    {
+        return [
+            'uuid' => true,
+        ];
+    }
+
+
+    private function apiOption(): array
+    {
+        return [
+            'api' => true,
+        ];
+    }
+
+
+    private function permissionsOption(): array
+    {
+        return [
+            'permissions' => true,
+        ];
+    }
+
+
+    private function menuOption(): array
+    {
+        return [
+            'menu' => true,
         ];
     }
 }

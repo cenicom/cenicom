@@ -50,15 +50,17 @@ final class MigrationGenerator extends BaseGenerator
     /**
      * {@inheritDoc}
      */
-    public function generate(
-        ModuleData $module
-    ): GeneratorResult {
+    public function generate(ModuleData $module): GeneratorResult
+    {
+        $variables = $this->buildVariables($module);
 
         return $this->generateResult(
             self::STUB,
             $module->migrationFile(),
             $this->buildVariables($module)
         );
+
+        
     }
 
     /**
@@ -68,6 +70,7 @@ final class MigrationGenerator extends BaseGenerator
      */
     private function buildVariables(ModuleData $module): array
     {
+
         $columns = [];
 
         if ($module->uuid()) {
@@ -96,6 +99,7 @@ final class MigrationGenerator extends BaseGenerator
         $variables['softDeletes'] = $module->softDeletes()
             ? '$table->softDeletes();'
             : '';
+
 
         return $variables;
     }

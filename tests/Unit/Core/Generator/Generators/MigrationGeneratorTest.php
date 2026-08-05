@@ -11,9 +11,10 @@ use App\Core\Generator\Processors\MigrationFieldProcessor;
 use App\Core\Generator\Support\FileWriter;
 use App\Core\Generator\Support\StubManager;
 use App\Core\Generator\Validation\GeneratorValidator;
-use Tests\TestCase;
+use Tests\Support\GeneratorTestCase;
 
-final class MigrationGeneratorTest extends TestCase
+
+final class MigrationGeneratorTest extends GeneratorTestCase
 {
     public function test_generates_migration_file(): void
     {
@@ -65,7 +66,6 @@ final class MigrationGeneratorTest extends TestCase
         );
     }
 
-
     public function test_generator_supports_only_modules_with_table(): void
     {
         $generator = $this->createGenerator();
@@ -96,7 +96,7 @@ final class MigrationGeneratorTest extends TestCase
     {
         $generator = $this->createGenerator();
 
-        $module = $this->module();
+        $module = $this->createModuleData();
 
         $generator->generate($module);
 
@@ -128,41 +128,6 @@ final class MigrationGeneratorTest extends TestCase
             $content
         );
     }
-
-
-    private function module()
-    {
-        return (new ModuleDataFactory())->create([
-            'identity' => [
-                'name' => 'Currency',
-                'singular' => 'currency',
-                'plural' => 'currencies',
-                'table' => 'currencies',
-                'description' => 'Currency module',
-            ],
-
-            'generation' => [
-                'routePrefix' => 'currencies',
-                'routeName' => 'currencies',
-                'viewPrefix' => 'currencies',
-            ],
-
-            'fields' => [
-                [
-                    'name' => 'name',
-                    'type' => 'string',
-                    'required' => true,
-                ],
-
-                [
-                    'name' => 'symbol',
-                    'type' => 'string',
-                    'required' => true,
-                ],
-            ],
-        ]);
-    }
-
 
     private function createGenerator(): MigrationGenerator
     {

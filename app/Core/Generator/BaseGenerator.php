@@ -49,10 +49,8 @@ abstract class BaseGenerator implements GeneratorInterface
      *
      *  @param array<string,mixed> $variables
      */
-    protected function render(
-        string $stub,
-        array $variables
-    ): string {
+    protected function render(string $stub, array $variables): string 
+    {
 
         return $this->stubManager->render(
             $stub,
@@ -70,8 +68,8 @@ abstract class BaseGenerator implements GeneratorInterface
         );
     }
 
-    protected function generateResult(string $stub, string $path, array $variables
-    ): GeneratorResult {
+    protected function generateResult(string $stub, string $path, array $variables): GeneratorResult
+    {
 
         $result = new GeneratorResult();
 
@@ -107,9 +105,8 @@ abstract class BaseGenerator implements GeneratorInterface
      *
      * @return array<string,mixed>
      */
-    protected function defaultVariables(
-        ModuleData $module
-    ): array {
+    protected function defaultVariables(ModuleData $module): array
+    {
 
         return array_merge(
             $module->toStubVariables(),
@@ -183,9 +180,8 @@ abstract class BaseGenerator implements GeneratorInterface
      *
      * @return array<string,mixed>
      */
-    protected function buildPresentationVariables(
-        ModuleData $module,
-    ): array {
+    protected function buildPresentationVariables(ModuleData $module ): array
+    {
 
         $form = $this->presentationFactory->form($module);
 
@@ -231,9 +227,8 @@ abstract class BaseGenerator implements GeneratorInterface
     /**
      * Valida el archivo generado.
      */
-    protected function validateGeneratedFile(
-        string $path
-    ): void {
+    protected function validateGeneratedFile(string $path): void
+    {
 
         if (! is_file($path)) {
             throw new \RuntimeException(

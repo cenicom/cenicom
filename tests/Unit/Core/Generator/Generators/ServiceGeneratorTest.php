@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Generator\Generators;
 
-use App\Core\Generator\DTO\ModuleData;
+
 use App\Core\Generator\Factories\ModuleDataFactory;
 use App\Core\Generator\Generators\ServiceGenerator;
 use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Support\FileWriter;
 use App\Core\Generator\Support\StubManager;
 use App\Core\Generator\Validation\GeneratorValidator;
-use Tests\TestCase;
+use Tests\Support\GeneratorTestCase;
 
-final class ServiceGeneratorTest extends TestCase
+
+final class ServiceGeneratorTest extends GeneratorTestCase
 {
     public function test_generates_service_file(): void
     {
@@ -75,7 +76,7 @@ final class ServiceGeneratorTest extends TestCase
     {
         $generator = $this->createGenerator();
 
-        $module = $this->module();
+        $module = $this->createModuleData();
 
         $generator->generate($module);
 
@@ -121,26 +122,6 @@ final class ServiceGeneratorTest extends TestCase
             'public function destroy',
             $content
         );
-    }
-
-    private function module(): ModuleData
-    {
-        return (new ModuleDataFactory())->create([
-            'identity' => [
-                'name' => 'Currency',
-                'singular' => 'currency',
-                'plural' => 'currencies',
-                'table' => 'currencies',
-                'description' => 'Currency module',
-            ],
-            'generation' => [
-                'routePrefix' => 'currencies',
-                'routeName' => 'currencies',
-                'viewPrefix' => 'currencies',
-            ],
-            'fields' => [],
-            'columns' => [],
-        ]);
     }
 
     private function createGenerator(): ServiceGenerator

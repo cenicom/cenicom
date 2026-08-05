@@ -43,9 +43,8 @@ final class ActionGenerator extends BaseGenerator
     /**
      * @return array<string,string>
      */
-    private function buildVariables(
-        ModuleData $module
-    ): array {
+    private function buildVariables(ModuleData $module): array
+    {
 
         return array_merge(
             $this->defaultVariables($module),

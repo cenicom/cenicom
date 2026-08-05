@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Generator\Generators;
 
-use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\Factories\ModuleDataFactory;
 use App\Core\Generator\Generators\RequestGenerator;
 use App\Core\Generator\Presentation\Factory\PresentationFactory;
@@ -13,9 +12,10 @@ use App\Core\Generator\Support\Request\RequestBuilder;
 use App\Core\Generator\Support\StubManager;
 use App\Core\Generator\Validation\GeneratorValidator;
 use Illuminate\Support\Facades\File;
-use Tests\TestCase;
+use Tests\Support\GeneratorTestCase;
 
-final class RequestGeneratorTest extends TestCase
+
+final class RequestGeneratorTest extends GeneratorTestCase
 {
     public function test_generates_request_files(): void
     {
@@ -99,7 +99,7 @@ final class RequestGeneratorTest extends TestCase
     {
         $generator = $this->createGenerator();
 
-        $module = $this->module();
+        $module = $this->createModuleData();
 
         $result = $generator->generate($module);
 
@@ -127,36 +127,6 @@ final class RequestGeneratorTest extends TestCase
             "'symbol'",
             $store
         );
-    }
-
-    private function module(): ModuleData
-    {
-        return (new ModuleDataFactory())->create([
-            'identity' => [
-                'name' => 'Currency',
-                'singular' => 'currency',
-                'plural' => 'currencies',
-                'table' => 'currencies',
-                'description' => 'Currency module',
-            ],
-            'generation' => [
-                'routePrefix' => 'currencies',
-                'routeName' => 'currencies',
-                'viewPrefix' => 'currencies',
-            ],
-            'fields' => [
-                [
-                    'name' => 'name',
-                    'type' => 'string',
-                    'required' => true,
-                ],
-                [
-                    'name' => 'symbol',
-                    'type' => 'string',
-                    'required' => true,
-                ],
-            ],
-        ]);
     }
 
     private function createGenerator(): RequestGenerator

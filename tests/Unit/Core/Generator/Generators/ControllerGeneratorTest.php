@@ -11,27 +11,27 @@ use App\Core\Generator\Support\Controller\ControllerBuilder;
 use App\Core\Generator\Support\FileWriter;
 use App\Core\Generator\Support\StubManager;
 use App\Core\Generator\Validation\GeneratorValidator;
-use Tests\TestCase;
+use Tests\Support\GeneratorTestCase;
 
-final class ControllerGeneratorTest extends TestCase
+
+final class ControllerGeneratorTest extends GeneratorTestCase
 {
     public function test_generates_controller_file(): void
     {
         $generator = $this->createGenerator();
 
-        $module = (new ModuleDataFactory())->create([
+        $module = $this->createModuleData([
             'identity' => [
-                'name' => 'Currency',
-                'singular' => 'currency',
-                'plural' => 'currencies',
-                'table' => 'currencies',
-                'description' => 'Currency',
+                'name' => 'Test',
+                'singular' => 'test',
+                'plural' => 'tests',
+                'table' => 'tests',
+                'description' => 'Test module',
             ],
-
             'generation' => [
-                'routePrefix' => 'currencies',
-                'routeName' => 'currencies',
-                'viewPrefix' => 'currencies',
+                'routePrefix' => 'tests',
+                'routeName'   => 'tests',
+                'viewPrefix'  => 'tests',
             ],
         ]);
 

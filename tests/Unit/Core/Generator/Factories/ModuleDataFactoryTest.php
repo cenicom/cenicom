@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Unit\Core\Generator\Factories;
 
 use App\Core\Generator\Factories\ModuleDataFactory;
-
 use Tests\TestCase;
 
 final class ModuleDataFactoryTest extends TestCase
@@ -195,5 +194,29 @@ final class ModuleDataFactoryTest extends TestCase
             'catalogs',
             $navigation->items[0]->group()
         );
+    }
+
+    public function test_full_crud_preset_contains_all_generation_options(): void
+    {
+        $module = $this->factory->fullCrud([
+            'identity' => [
+                'name' => 'Currency',
+                'singular' => 'currency',
+                'plural' => 'currencies',
+                'table' => 'currencies',
+                'description' => 'Currency module',
+            ],
+            'fields' => [],
+        ]);
+
+        $options = $module->options();
+
+        self::assertArrayHasKey('timestamps', $options);
+        self::assertArrayHasKey('softDeletes', $options);
+        self::assertArrayHasKey('tests', $options);
+        self::assertArrayHasKey('uuid', $options);
+        self::assertArrayHasKey('api', $options);
+        self::assertArrayHasKey('permissions', $options);
+        self::assertArrayHasKey('menu', $options);
     }
 }

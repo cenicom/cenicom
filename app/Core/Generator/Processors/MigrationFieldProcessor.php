@@ -30,6 +30,7 @@ final class MigrationFieldProcessor
         $columns = [];
 
         foreach ($fields as $field) {
+        
 
             if ($this->shouldSkipField($field)) {
                 continue;
@@ -41,9 +42,8 @@ final class MigrationFieldProcessor
         return implode(PHP_EOL . PHP_EOL, $columns);
     }
 
-    public function build(
-        ColumnDefinition $field
-    ): string {
+    public function build(ColumnDefinition $field): string
+    {
 
         $column = $this->buildBase($field);
 
@@ -65,9 +65,8 @@ final class MigrationFieldProcessor
     | Construcción de la columna
     |--------------------------------------------------------------------------
     */
-    private function buildBase(
-        ColumnDefinition $field
-    ): string {
+    private function buildBase(ColumnDefinition $field): string
+    {
         return match ($field->type()) {
 
             FieldType::UUID =>
@@ -201,10 +200,8 @@ final class MigrationFieldProcessor
     |--------------------------------------------------------------------------
     */
 
-    private function applyModifiers(
-        string $column,
-        ColumnDefinition $field
-    ): string {
+    private function applyModifiers(string $column, ColumnDefinition $field): string
+    {
 
         $column = $this->applyNullable($column, $field);
 
@@ -229,10 +226,8 @@ final class MigrationFieldProcessor
         return $column;
     }
 
-    private function applyUnsigned(
-        string $column,
-        ColumnDefinition $field
-    ): string {
+    private function applyUnsigned(string $column, ColumnDefinition $field): string
+    {
 
         if ($field->unsigned()) {
 
@@ -242,10 +237,8 @@ final class MigrationFieldProcessor
         return $column;
     }
 
-    private function applyComment(
-        string $column,
-        ColumnDefinition $field
-    ): string {
+    private function applyComment(string $column, ColumnDefinition $field): string
+    {
 
         if ($field->comment() === null) {
             return $column;
@@ -259,10 +252,8 @@ final class MigrationFieldProcessor
         return $column;
     }
 
-    private function applyCharset(
-        string $column,
-        ColumnDefinition $field
-    ): string {
+    private function applyCharset(string $column, ColumnDefinition $field): string
+    {
 
         if ($field->charset() === null) {
             return $column;
