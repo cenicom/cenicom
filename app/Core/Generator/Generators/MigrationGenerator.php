@@ -24,13 +24,10 @@ final class MigrationGenerator extends BaseGenerator
 {
     private const STUB = 'migration.stub';
 
-    public function __construct(
-        StubManager $stubManager,
-        FileWriter $fileWriter,
-        PresentationFactory $presentationFactory,
-        GeneratorValidator $validator,
-        private readonly MigrationFieldProcessor $fieldProcessor,
-    ) {
+    public function __construct(StubManager $stubManager, FileWriter $fileWriter,
+        PresentationFactory $presentationFactory, GeneratorValidator $validator,
+        private readonly MigrationFieldProcessor $fieldProcessor,)
+    {
         parent::__construct(
             $stubManager,
             $fileWriter,
@@ -50,8 +47,9 @@ final class MigrationGenerator extends BaseGenerator
     /**
      * {@inheritDoc}
      */
-    public function generate(ModuleData $module): GeneratorResult
+    public function generate(ModuleData $module,): GeneratorResult
     {
+
         $variables = $this->buildVariables($module);
 
         return $this->generateResult(
@@ -60,7 +58,7 @@ final class MigrationGenerator extends BaseGenerator
             $this->buildVariables($module)
         );
 
-        
+
     }
 
     /**
@@ -68,7 +66,7 @@ final class MigrationGenerator extends BaseGenerator
      *
      * @return array<string,string>
      */
-    private function buildVariables(ModuleData $module): array
+    private function buildVariables(ModuleData $module, ): array
     {
 
         $columns = [];

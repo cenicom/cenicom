@@ -384,9 +384,7 @@ final readonly class ColumnDefinition
             && isset($definition['scale'])
         ) {
 
-            if (
-                (int) $definition['scale']
-                >
+            if ((int) $definition['scale']>
                 (int) $definition['precision']
             ) {
 

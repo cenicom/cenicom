@@ -101,9 +101,8 @@ abstract class GeneratorTestCase extends TestCase
      * @param string $directory
      * @return void
      */
-    private function deleteDirectory(
-        string $directory
-    ): void {
+    private function deleteDirectory(string $directory): void
+    {
 
         if (!is_dir($directory)) {
             return;
@@ -155,9 +154,17 @@ abstract class GeneratorTestCase extends TestCase
                     'viewPrefix' => 'currencies',
                 ],
 
-                'fields' => [],
-                'columns' => [],
+                'fields' => [
+                    $this->stringField('name', [
+                        'required' => true,
+                    ]),
+
+                    $this->stringField('symbol', [
+                        'required' => true,
+                    ]),
+                ],
             ],
+
             $overrides
         );
 

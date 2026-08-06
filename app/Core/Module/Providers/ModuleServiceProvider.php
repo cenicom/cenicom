@@ -106,6 +106,8 @@ final class ModuleServiceProvider extends ServiceProvider
                 return new ModuleBootstrap(
                     $app->make(ModuleManifestFinderInterface::class),
                     $app->make(ModuleBootstrapPipelineInterface::class),
+                    $app->make(ModuleRegistryInterface::class),
+                     $app->make(ModuleProviderRegistrarInterface::class),
                 );
             }
         );

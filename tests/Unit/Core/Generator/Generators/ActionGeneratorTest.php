@@ -19,8 +19,8 @@ final class ActionGeneratorTest extends GeneratorTestCase
         $generator = $this->createGenerator();
 
         $result = $generator->generate(
-    $this->createModuleData()
-);
+            $this->createModuleData()
+        );
 
         $this->assertTrue(
             $result->isSuccessful()
@@ -93,6 +93,4 @@ final class ActionGeneratorTest extends GeneratorTestCase
             new GeneratorValidator([])
         );
     }
-
-
 }

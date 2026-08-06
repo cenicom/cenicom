@@ -8,7 +8,10 @@ use App\Core\Module\DTO\ModuleDefinition;
 
 interface ModuleProviderRegistrarInterface
 {
-    public function registerDefinition(
-        ModuleDefinition $definition
-    ): void;
+     /**
+     * Registers all providers declared by the module definition.
+     */
+    public function registerDefinition(ModuleDefinition $definition): void;
+
+
 }

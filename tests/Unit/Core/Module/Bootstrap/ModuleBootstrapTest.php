@@ -6,8 +6,11 @@ namespace Tests\Unit\Core\Module\Bootstrap;
 
 use App\Core\Contracts\Module\ModuleBootstrapPipelineInterface;
 use App\Core\Contracts\Module\ModuleManifestFinderInterface;
+use App\Core\Contracts\Module\ModuleRegistryInterface;
 use App\Core\Module\Bootstrap\ModuleBootstrap;
 use App\Core\Module\Bootstrap\ModuleBootstrapContext;
+use App\Core\Module\DTO\ModuleDefinition;
+use App\Core\Module\Registry\ModuleRegistry;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -18,6 +21,8 @@ final class ModuleBootstrapTest extends TestCase
     private ModuleBootstrapPipelineInterface&MockObject $pipeline;
 
     private ModuleBootstrap $bootstrap;
+
+    private ModuleRegistryInterface $registry;
 
     protected function setUp(): void
     {
@@ -31,9 +36,12 @@ final class ModuleBootstrapTest extends TestCase
             ModuleBootstrapPipelineInterface::class
         );
 
+        $this->registry = new ModuleRegistry();
+
         $this->bootstrap = new ModuleBootstrap(
             $this->manifestFinder,
             $this->pipeline,
+            $this->registry,
         );
     }
 
@@ -57,11 +65,26 @@ final class ModuleBootstrapTest extends TestCase
             ->method('process')
             ->willReturnCallback(
                 function (ModuleBootstrapContext $context) use (&$contexts): void {
+
                     $contexts[] = $context;
+
+                    $context->setDefinition(
+                        new ModuleDefinition(
+                            name: basename(
+                                dirname($context->manifestPath())
+                            ),
+                            namespace: 'Modules\\Test',
+                            basePath: '/modules/test',
+                            manifestPath: $context->manifestPath(),
+                            providers: [],
+                            enabled: true,
+                        )
+                    );
                 }
             );
 
         $this->bootstrap->bootstrap();
+
 
         $this->assertCount(3, $contexts);
 
@@ -78,6 +101,39 @@ final class ModuleBootstrapTest extends TestCase
         $this->assertSame(
             '/modules/Inventory/module.json',
             $contexts[2]->manifestPath()
+        );
+    }
+
+    public function test_bootstrap_registers_modules(): void
+    {
+        $this->manifestFinder
+            ->method('find')
+            ->willReturn([
+                '/modules/Blog/module.json',
+            ]);
+
+        $this->pipeline
+            ->method('process')
+            ->willReturnCallback(
+                function (ModuleBootstrapContext $context): void {
+
+                    $context->setDefinition(
+                        new ModuleDefinition(
+                            name: 'Blog',
+                            namespace: 'Modules\\Blog',
+                            basePath: '/modules/Blog',
+                            manifestPath: $context->manifestPath(),
+                            providers: [],
+                            enabled: true,
+                        )
+                    );
+                }
+            );
+
+        $this->bootstrap->bootstrap();
+
+        $this->assertTrue(
+            $this->registry->has('Blog')
         );
     }
 

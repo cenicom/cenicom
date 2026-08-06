@@ -99,15 +99,13 @@ final class ViewGenerator implements GeneratorInterface
         private readonly ShowRenderer $showRenderer,
     ) {}
 
-    public function supports(
-        ModuleData $module
-    ): bool {
+    public function supports(ModuleData $module): bool
+    {
         return true;
     }
 
-    public function generate(
-        ModuleData $module,
-    ): GeneratorResult {
+    public function generate(ModuleData $module,): GeneratorResult
+    {
 
         $form = $this->presentationFactory->form($module);
 
@@ -147,10 +145,8 @@ final class ViewGenerator implements GeneratorInterface
     /**
      * Genera todas las vistas del módulo.
      */
-    private function generateViews(
-        ModuleData $module,
-        array $variables,
-    ): GeneratorResult {
+    private function generateViews(ModuleData $module, array $variables,): GeneratorResult
+    {
 
         $result = new GeneratorResult();
 
@@ -173,12 +169,9 @@ final class ViewGenerator implements GeneratorInterface
      * @param array<string,string> $view
      * @param array<string,mixed>  $variables
      */
-    private function generateView(
-        ModuleData $module,
-        array $view,
-        array $variables,
-        GeneratorResult $result,
-    ): void {
+    private function generateView(ModuleData $module, array $view,
+        array $variables, GeneratorResult $result,): void
+    {
 
         $content = $this->stubManager->render(
             $view[self::VIEW__STUB],
@@ -215,10 +208,8 @@ final class ViewGenerator implements GeneratorInterface
      *
      * @return array<string,mixed>
      */
-    private function buildVariables(
-        ModuleData $module,
-    ): array {
-
+    private function buildVariables( ModuleData $module,): array
+    {
         return $this->buildDomainVariables(
             $module,
         );
@@ -229,9 +220,8 @@ final class ViewGenerator implements GeneratorInterface
      *
      * @return array<string,mixed>
      */
-    private function buildDomainVariables(
-        ModuleData $module,
-    ): array {
+    private function buildDomainVariables(ModuleData $module,): array
+    {
         return [
 
             'title' => $module->plural(),

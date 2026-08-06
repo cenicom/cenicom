@@ -646,11 +646,13 @@ readonly class ModuleData
 
     public function repositoryPath(): string
     {
+
         return $this->repositoryPath;
     }
 
     public function servicePath(): string
     {
+
         return $this->servicePath;
     }
 
@@ -666,6 +668,7 @@ readonly class ModuleData
 
     public function viewPath(): string
     {
+
         return $this->viewPath;
     }
 
@@ -711,6 +714,7 @@ readonly class ModuleData
 
     public function repositoryInterfacePath(): string
     {
+
         return $this->repositoryInterfacePath;
     }
 
@@ -1131,10 +1135,8 @@ readonly class ModuleData
      *
      * @return mixed
      */
-    public function option(
-        string $key,
-        mixed $default = null,
-    ): mixed {
+    public function option(string $key, mixed $default = null,): mixed
+    {
         return $this->options[$key] ?? $default;
     }
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Generator\Generators;
 
-use App\Core\Generator\Factories\ModuleDataFactory;
+
 use App\Core\Generator\Generators\ServiceInterfaceGenerator;
 use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Support\FileWriter;
@@ -19,7 +19,7 @@ final class ServiceInterfaceGeneratorTest extends GeneratorTestCase
     {
         $generator = $this->createGenerator();
 
-        $module = (new ModuleDataFactory())->create([
+        $module = $this->createModuleData([
             'identity' => [
                 'name' => 'Currency',
                 'singular' => 'currency',
@@ -53,7 +53,7 @@ final class ServiceInterfaceGeneratorTest extends GeneratorTestCase
     {
         $generator = $this->createGenerator();
 
-        $module = (new ModuleDataFactory())->create([
+        $module = $this->createModuleData([
             'identity' => [
                 'name' => 'Test',
                 'singular' => 'test',

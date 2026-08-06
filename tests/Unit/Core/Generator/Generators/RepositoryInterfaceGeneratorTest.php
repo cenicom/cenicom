@@ -38,7 +38,7 @@ final class RepositoryInterfaceGeneratorTest extends GeneratorTestCase
         $generator = $this->createGenerator();
 
 
-        $module = (new ModuleDataFactory())->create([
+        $module = $this->createModuleData([
             'identity' => [
                 'name' => 'Currency',
                 'singular' => 'currency',

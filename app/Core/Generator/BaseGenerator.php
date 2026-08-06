@@ -49,7 +49,7 @@ abstract class BaseGenerator implements GeneratorInterface
      *
      *  @param array<string,mixed> $variables
      */
-    protected function render(string $stub, array $variables): string 
+    protected function render(string $stub, array $variables): string
     {
 
         return $this->stubManager->render(
@@ -58,10 +58,8 @@ abstract class BaseGenerator implements GeneratorInterface
         );
     }
 
-    protected function write(
-        string $path,
-        string $content
-    ): void {
+    protected function write(string $path, string $content): void
+    {
         $this->fileWriter->write(
             $path,
             $content
@@ -94,7 +92,9 @@ abstract class BaseGenerator implements GeneratorInterface
 
         $this->validateGeneratedFile($path);
 
-        return $result->addCreated($path);
+        $result->addCreated($path);
+
+        return $result;
     }
 
     /**
@@ -180,7 +180,7 @@ abstract class BaseGenerator implements GeneratorInterface
      *
      * @return array<string,mixed>
      */
-    protected function buildPresentationVariables(ModuleData $module ): array
+    protected function buildPresentationVariables(ModuleData $module): array
     {
 
         $form = $this->presentationFactory->form($module);

@@ -23,21 +23,21 @@ final class RouteGeneratorTest extends GeneratorTestCase
     {
         $generator = $this->createGenerator();
 
-        $module = (new ModuleDataFactory())->create([
+        $module = $this->createModuleData([
             'identity' => [
-                'name' => 'Currency',
-                'singular' => 'currency',
-                'plural' => 'currencies',
-                'table' => 'currencies',
-                'description' => 'Currency module',
+                'name' => 'Test',
+                'singular' => 'test',
+                'plural' => 'tests',
+                'table' => 'tests',
+                'description' => 'Test module',
             ],
-
             'generation' => [
-                'routePrefix' => 'currencies',
-                'routeName' => 'currencies',
-                'viewPrefix' => 'currencies',
+                'routePrefix' => 'tests',
+                'routeName'   => 'tests',
+                'viewPrefix'  => 'tests',
             ],
         ]);
+
 
         $result = $generator->generate($module);
 

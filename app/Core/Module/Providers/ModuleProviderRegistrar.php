@@ -18,10 +18,9 @@ final class ModuleProviderRegistrar implements ModuleProviderRegistrarInterface
     ) {
     }
 
-    public function registerDefinition(
-        ModuleDefinition $definition,
-    ): void {
-        foreach ($definition->providers as $provider) {
+    public function registerDefinition(ModuleDefinition $definition,): void
+    {
+        foreach (array_unique($definition->providers) as $provider) {
             $this->app->register($provider);
         }
     }

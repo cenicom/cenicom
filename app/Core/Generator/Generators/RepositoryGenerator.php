@@ -37,15 +37,14 @@ final class RepositoryGenerator extends BaseGenerator
      * Genera el repositorio del módulo.
      */
 
-    public function generate(
-        ModuleData $module
-    ): GeneratorResult {
-
+    public function generate(ModuleData $module,): GeneratorResult
+    {
         return $this->generateResult(
             self::STUB,
             $module->repositoryPath(),
             $this->buildVariables($module)
         );
+
     }
 
     /**
@@ -53,31 +52,27 @@ final class RepositoryGenerator extends BaseGenerator
      *
      * @return array<string, string>
      */
-    private function buildVariables(
-        ModuleData $module
-    ): array {
-
+    private function buildVariables(ModuleData $module,): array
+    {
         return array_merge(
             $this->defaultVariables($module),
             [
                 'namespace' => $module->repositoryNamespace(),
 
-        'qualifiedRepositoryInterface'
-            => $module->qualifiedRepositoryInterface(),
+                'qualifiedRepositoryInterface'
+                => $module->qualifiedRepositoryInterface(),
 
-        'repositoryInterface'
-            => $module->repositoryInterface(),
+                'repositoryInterface'
+                => $module->repositoryInterface(),
 
-        'repository'
-            => $module->repositoryClass(),
+                'repository'
+                => $module->repositoryClass(),
             ]
         );
     }
 
-    private function buildImports(
-        ModuleData $module
-    ): string {
-
+    private function buildImports(ModuleData $module,): string
+    {
         return implode(
             PHP_EOL,
             [

@@ -7,9 +7,9 @@ namespace App\Core\Module\Registry;
 use App\Core\Contracts\Module\ModuleRegistryInterface;
 use App\Core\Module\DTO\ModuleDefinition;
 
-
-
-
+/**
+ * Summary of ModuleRegistry
+ */
 final class ModuleRegistry implements ModuleRegistryInterface
 {
     /**
@@ -40,7 +40,7 @@ final class ModuleRegistry implements ModuleRegistryInterface
      */
     public function get(string $name): ?ModuleDefinition
     {
-        return $this->modules[$name] ?? null;
+            return $this->modules[$name] ?? null;
     }
 
     /**
@@ -100,7 +100,5 @@ final class ModuleRegistry implements ModuleRegistryInterface
             providers: [],
             enabled: true,
         );
-
-        $definition = $this->createDefinition('Blog');
     }
 }

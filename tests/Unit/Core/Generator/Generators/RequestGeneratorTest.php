@@ -21,7 +21,7 @@ final class RequestGeneratorTest extends GeneratorTestCase
     {
         $generator = $this->createGenerator();
 
-        $module = (new ModuleDataFactory())->create([
+        $module = $this->createModuleData([
             'identity' => [
                 'name' => 'Currency',
                 'singular' => 'currency',
@@ -70,6 +70,7 @@ final class RequestGeneratorTest extends GeneratorTestCase
 
         parent::tearDown();
     }
+
     public function test_generator_supports_any_module(): void
     {
         $generator = $this->createGenerator();

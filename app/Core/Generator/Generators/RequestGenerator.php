@@ -38,13 +38,10 @@ final class RequestGenerator extends BaseGenerator
     private const STORE_STUB = 'requests/store';
     private const UPDATE_STUB = 'requests/update';
 
-    public function __construct(
-        StubManager $stubManager,
-        FileWriter $fileWriter,
-        PresentationFactory $presentationFactory,
-        GeneratorValidator $validator,
-        private readonly RequestBuilder $builder,
-    ) {
+    public function __construct(StubManager $stubManager, FileWriter $fileWriter,
+        PresentationFactory $presentationFactory, GeneratorValidator $validator,
+        private readonly RequestBuilder $builder, )
+    {
         parent::__construct(
             $stubManager,
             $fileWriter,

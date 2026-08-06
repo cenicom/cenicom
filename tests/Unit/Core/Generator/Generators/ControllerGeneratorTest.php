@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Generator\Generators;
 
-use App\Core\Generator\Factories\ModuleDataFactory;
+
 use App\Core\Generator\Generators\ControllerGenerator;
 use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Support\Controller\ControllerBuilder;
@@ -18,6 +18,7 @@ final class ControllerGeneratorTest extends GeneratorTestCase
 {
     public function test_generates_controller_file(): void
     {
+
         $generator = $this->createGenerator();
 
         $module = $this->createModuleData([
@@ -50,7 +51,7 @@ final class ControllerGeneratorTest extends GeneratorTestCase
     {
         $generator = $this->createGenerator();
 
-        $module = (new ModuleDataFactory())->create([
+        $module = $this->createModuleData([
             'identity' => [
                 'name' => 'Test',
                 'singular' => 'test',

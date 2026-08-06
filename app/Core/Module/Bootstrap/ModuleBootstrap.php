@@ -6,6 +6,8 @@ namespace App\Core\Module\Bootstrap;
 
 use App\Core\Contracts\Module\ModuleBootstrapPipelineInterface;
 use App\Core\Contracts\Module\ModuleManifestFinderInterface;
+use App\Core\Contracts\Module\ModuleRegistryInterface;
+use App\Core\Contracts\Module\ModuleProviderRegistrarInterface;
 use App\Core\Module\Bootstrap\Events\ModuleBootstrapCompleted;
 use App\Core\Module\Bootstrap\Events\ModuleBootstrapping;
 use App\Core\Module\Bootstrap\Events\ModuleFailed;
@@ -18,7 +20,11 @@ final class ModuleBootstrap
     public function __construct(
         private readonly ModuleManifestFinderInterface $manifestFinder,
         private readonly ModuleBootstrapPipelineInterface $pipeline,
-    ) {}
+        private readonly ModuleRegistryInterface $registry,
+        private readonly ModuleProviderRegistrarInterface $providerRegistrar,
+    ) {
+
+    }
 
     /**
      * Bootstraps all discovered modules
@@ -100,6 +106,10 @@ final class ModuleBootstrap
             $definition = $context->definition();
 
             if ($definition !== null) {
+
+                $this->registry->register($definition);
+
+                $this->providerRegistrar->registerDefinition($definition);
 
                 $registered++;
 

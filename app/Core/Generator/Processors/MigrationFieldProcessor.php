@@ -30,7 +30,7 @@ final class MigrationFieldProcessor
         $columns = [];
 
         foreach ($fields as $field) {
-        
+
 
             if ($this->shouldSkipField($field)) {
                 continue;
@@ -267,10 +267,8 @@ final class MigrationFieldProcessor
         return $column;
     }
 
-    private function applyCollation(
-        string $column,
-        ColumnDefinition $field
-    ): string {
+    private function applyCollation(string $column, ColumnDefinition $field): string
+    {
 
         if ($field->collation() === null) {
             return $column;

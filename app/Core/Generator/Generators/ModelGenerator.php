@@ -231,9 +231,8 @@ final class ModelGenerator extends BaseGenerator
         return $imports;
     }
 
-    private function buildTraits(
-        ModuleData $module
-    ): string {
+    private function buildTraits(ModuleData $module): string
+    {
 
         $traits = array_unique(
             $this->resolveTraits($module)

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Generator\Generators;
 
-use App\Core\Generator\Factories\ModuleDataFactory;
+
 use App\Core\Generator\Generators\MigrationGenerator;
 use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Processors\MigrationFieldProcessor;
@@ -20,7 +20,7 @@ final class MigrationGeneratorTest extends GeneratorTestCase
     {
         $generator = $this->createGenerator();
 
-        $module = (new ModuleDataFactory())->create([
+        $module = $this->createModuleData([
             'identity' => [
                 'name' => 'Currency',
                 'singular' => 'currency',
@@ -70,7 +70,7 @@ final class MigrationGeneratorTest extends GeneratorTestCase
     {
         $generator = $this->createGenerator();
 
-        $module = (new ModuleDataFactory())->create([
+        $module = $this->createModuleData([
             'identity' => [
                 'name' => 'Currency',
                 'singular' => 'currency',

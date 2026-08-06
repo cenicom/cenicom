@@ -29,11 +29,8 @@ final class FileWriter implements FileWriterInterface
      *
      * @throws RuntimeException
      */
-    public function write(
-        string $path,
-        string $contents,
-        bool $overwrite = false
-    ): void {
+    public function write(string $path, string $contents, bool $overwrite = false): void
+    {
         $directory = dirname($path);
 
         $this->ensureDirectory($directory);

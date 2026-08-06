@@ -41,9 +41,8 @@ final class RepositoryInterfaceGenerator extends BaseGenerator
     /**
      * Genera la interfaz del repositorio.
      */
-    public function generate(
-        ModuleData $module
-    ): GeneratorResult {
+    public function generate( ModuleData $module): GeneratorResult
+    {
 
         return $this->generateResult(
             self::STUB,
