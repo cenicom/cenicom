@@ -11,6 +11,10 @@ use App\Core\Module\Bootstrap\ModuleBootstrap;
 use App\Core\Module\Bootstrap\ModuleBootstrapContext;
 use App\Core\Module\DTO\ModuleDefinition;
 use App\Core\Module\Registry\ModuleRegistry;
+use App\Core\Contracts\Events\EventDispatcherInterface;
+use App\Core\Contracts\Module\ModuleProviderRegistrarInterface;
+
+use App\Core\Module\Lifecycle\ModuleLifecycleManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -21,6 +25,12 @@ final class ModuleBootstrapLifecycleTest extends TestCase
     private ModuleBootstrapPipelineInterface&MockObject $pipeline;
 
     private ModuleBootstrap $bootstrap;
+
+    private ModuleRegistryInterface $registry;
+
+    private ModuleProviderRegistrarInterface&MockObject $providerRegistrar;
+
+    private ModuleLifecycleManager $lifecycle;
 
     protected function setUp(): void
     {
@@ -34,9 +44,27 @@ final class ModuleBootstrapLifecycleTest extends TestCase
             ModuleBootstrapPipelineInterface::class
         );
 
+        $this->registry = new ModuleRegistry();
+
+        $this->providerRegistrar = $this->createMock(
+            ModuleProviderRegistrarInterface::class
+        );
+
+        $this->lifecycle = new ModuleLifecycleManager(
+            new class implements EventDispatcherInterface {
+                public function dispatch(object $event): void
+                {
+                    // No-op.
+                }
+            }
+        );
+
         $this->bootstrap = new ModuleBootstrap(
             $this->manifestFinder,
             $this->pipeline,
+            $this->registry,
+            $this->providerRegistrar,
+            $this->lifecycle,
         );
     }
 

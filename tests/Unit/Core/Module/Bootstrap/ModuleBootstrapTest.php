@@ -11,6 +11,9 @@ use App\Core\Module\Bootstrap\ModuleBootstrap;
 use App\Core\Module\Bootstrap\ModuleBootstrapContext;
 use App\Core\Module\DTO\ModuleDefinition;
 use App\Core\Module\Registry\ModuleRegistry;
+use App\Core\Contracts\Events\EventDispatcherInterface;
+use App\Core\Contracts\Module\ModuleProviderRegistrarInterface;
+use App\Core\Module\Lifecycle\ModuleLifecycleManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -24,6 +27,10 @@ final class ModuleBootstrapTest extends TestCase
 
     private ModuleRegistryInterface $registry;
 
+    private ModuleProviderRegistrarInterface&MockObject $providerRegistrar;
+
+    private ModuleLifecycleManager $lifecycle;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -36,17 +43,36 @@ final class ModuleBootstrapTest extends TestCase
             ModuleBootstrapPipelineInterface::class
         );
 
+        $this->providerRegistrar = $this->createMock(
+            ModuleProviderRegistrarInterface::class
+        );
+
+        $this->lifecycle = new ModuleLifecycleManager(
+            new class implements EventDispatcherInterface {
+                public function dispatch(object $event): void
+                {
+                    // No-op para pruebas unitarias.
+                }
+            }
+        );
+
         $this->registry = new ModuleRegistry();
 
         $this->bootstrap = new ModuleBootstrap(
             $this->manifestFinder,
             $this->pipeline,
             $this->registry,
+            $this->providerRegistrar,
+            $this->lifecycle,
         );
     }
 
     public function test_bootstrap_processes_every_discovered_manifest(): void
     {
+        $this->providerRegistrar
+            ->expects($this->exactly(3))
+            ->method('registerDefinition');
+
         $manifests = [
             '/modules/Blog/module.json',
             '/modules/User/module.json',
@@ -106,6 +132,10 @@ final class ModuleBootstrapTest extends TestCase
 
     public function test_bootstrap_registers_modules(): void
     {
+        $this->providerRegistrar
+            ->expects($this->once())
+            ->method('registerDefinition');
+
         $this->manifestFinder
             ->method('find')
             ->willReturn([

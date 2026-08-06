@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Module\Bootstrap;
 
+use App\Core\Contracts\Events\EventDispatcherInterface;
 use App\Core\Contracts\Module\ModuleManifestFinderInterface;
 use App\Core\Module\Bootstrap\ModuleBootstrap;
 use App\Core\Module\Bootstrap\ModuleBootstrapPipeline;
@@ -14,8 +15,8 @@ use App\Core\Module\Bootstrap\Stages\RegisterModuleStage;
 use App\Core\Module\Bootstrap\Stages\RegisterProvidersStage;
 use App\Core\Module\Bootstrap\Stages\ValidationStage;
 use App\Core\Module\Factory\ModuleDefinitionFactory;
+use App\Core\Module\Lifecycle\ModuleLifecycleManager;
 use App\Core\Module\Registry\ModuleRegistry;
-use Illuminate\Contracts\Foundation\Application;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -27,39 +28,53 @@ final class ModuleBootstrapEndToEndTest extends TestCase
 
     private ModuleBootstrap $bootstrap;
 
+    private ModuleProviderRegistrar $providerRegistrar;
+
+    private ModuleLifecycleManager $lifecycle;
+
     protected function setUp(): void
-    {
-        parent::setUp();
+{
+    parent::setUp();
 
-        $this->finder = $this->createMock(
-            ModuleManifestFinderInterface::class
-        );
+    $this->finder = $this->createMock(
+        ModuleManifestFinderInterface::class
+    );
 
-        $this->registry = new ModuleRegistry();
+    $this->registry = new ModuleRegistry();
 
-        $validator = new ModuleProviderValidator();
+    $validator = new ModuleProviderValidator();
 
-        $app = $this->createMock(Application::class);
+    $this->providerRegistrar = new ModuleProviderRegistrar(
+        $validator,
+        $this->app
+    );
 
-        $registrar = new ModuleProviderRegistrar(
-            $validator,
-            $app,
-        );
+    $this->lifecycle = new ModuleLifecycleManager(
+        new class implements EventDispatcherInterface {
+            public function dispatch(object $event): void
+            {
+                // no-op
+            }
+        }
+    );
 
-        $factory = new ModuleDefinitionFactory();
+    $factory = new ModuleDefinitionFactory();
 
-        $pipeline = new ModuleBootstrapPipeline([
-            new CreateDefinitionStage($factory),
-            new ValidationStage(),
-            new RegisterModuleStage($this->registry),
-            new RegisterProvidersStage($registrar),
-        ]);
+    $pipeline = new ModuleBootstrapPipeline([
+        new CreateDefinitionStage($factory),
+        new ValidationStage(),
+        new RegisterModuleStage($this->registry),
+        new RegisterProvidersStage($this->providerRegistrar),
+    ]);
 
-        $this->bootstrap = new ModuleBootstrap(
-            $this->finder,
-            $pipeline,
-        );
-    }
+    $this->bootstrap = new ModuleBootstrap(
+        $this->finder,
+        $pipeline,
+        $this->registry,
+        $this->providerRegistrar,
+        $this->lifecycle,
+    );
+}
 
     /**
      * E2E-001

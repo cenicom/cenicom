@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Core\Module\Providers;
 
+use App\Core\Contracts\Events\EventDispatcherInterface;
 use App\Core\Contracts\Module\ModuleBootstrapPipelineInterface;
 use App\Core\Contracts\Module\ModuleBootstrapReporterInterface;
 use App\Core\Contracts\Module\ModuleDefinitionFactoryInterface;
 use App\Core\Contracts\Module\ModuleManifestFinderInterface;
 use App\Core\Contracts\Module\ModuleProviderRegistrarInterface;
 use App\Core\Contracts\Module\ModuleRegistryInterface;
+use App\Core\Events\LaravelEventDispatcher;
 use App\Core\Module\Bootstrap\Contracts\ModuleProviderValidatorInterface;
 use App\Core\Module\Bootstrap\ModuleBootstrap;
 use App\Core\Module\Bootstrap\ModuleBootstrapPipeline;
@@ -22,6 +24,7 @@ use App\Core\Module\Bootstrap\Stages\RegisterProvidersStage;
 use App\Core\Module\Bootstrap\Stages\ValidationStage;
 use App\Core\Module\Discovery\ModuleManifestFinder;
 use App\Core\Module\Factory\ModuleDefinitionFactory;
+use App\Core\Module\Lifecycle\ModuleLifecycleManager;
 use App\Core\Module\Registry\ModuleRegistry;
 use Illuminate\Support\ServiceProvider;
 
@@ -107,7 +110,8 @@ final class ModuleServiceProvider extends ServiceProvider
                     $app->make(ModuleManifestFinderInterface::class),
                     $app->make(ModuleBootstrapPipelineInterface::class),
                     $app->make(ModuleRegistryInterface::class),
-                     $app->make(ModuleProviderRegistrarInterface::class),
+                    $app->make(ModuleProviderRegistrarInterface::class),
+                    $app->make(ModuleLifecycleManager::class),
                 );
             }
         );
@@ -115,6 +119,16 @@ final class ModuleServiceProvider extends ServiceProvider
         $this->app->singleton(
             ModuleProviderRegistrarInterface::class,
             ModuleProviderRegistrar::class,
+        );
+
+        $this->app->singleton(
+            EventDispatcherInterface::class,
+            LaravelEventDispatcher::class
+        );
+
+        $this->app->singleton(
+            EventDispatcherInterface::class,
+            static fn() => new LaravelEventDispatcher()
         );
     }
 

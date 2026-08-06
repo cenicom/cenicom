@@ -6,13 +6,16 @@ namespace App\Core\Module\Bootstrap;
 
 use App\Core\Contracts\Module\ModuleBootstrapPipelineInterface;
 use App\Core\Contracts\Module\ModuleManifestFinderInterface;
-use App\Core\Contracts\Module\ModuleRegistryInterface;
 use App\Core\Contracts\Module\ModuleProviderRegistrarInterface;
+use App\Core\Contracts\Module\ModuleRegistryInterface;
 use App\Core\Module\Bootstrap\Events\ModuleBootstrapCompleted;
 use App\Core\Module\Bootstrap\Events\ModuleBootstrapping;
 use App\Core\Module\Bootstrap\Events\ModuleFailed;
 use App\Core\Module\Bootstrap\Events\ModuleRegistered;
 use App\Core\Module\Bootstrap\Events\ModuleSkipped;
+
+use App\Core\Module\Lifecycle\ModuleLifecycleManager;
+
 
 
 final class ModuleBootstrap
@@ -22,9 +25,8 @@ final class ModuleBootstrap
         private readonly ModuleBootstrapPipelineInterface $pipeline,
         private readonly ModuleRegistryInterface $registry,
         private readonly ModuleProviderRegistrarInterface $providerRegistrar,
-    ) {
-
-    }
+        private readonly ModuleLifecycleManager $lifecycle,
+    ) {}
 
     /**
      * Bootstraps all discovered modules
@@ -81,6 +83,12 @@ final class ModuleBootstrap
 
             if ($context->hasException()) {
 
+                if ($context->definition() !== null) {
+                    $this->lifecycle->failed(
+                        $context->definition()->name
+                    );
+                }
+
                 $failed++;
 
                 event(
@@ -105,30 +113,51 @@ final class ModuleBootstrap
 
             $definition = $context->definition();
 
-            if ($definition !== null) {
+            if ($definition === null) {
+                continue;
+            }
 
-                $this->registry->register($definition);
+            if ($this->registry->has($definition->name)) {
+                continue;
+            }
 
-                $this->providerRegistrar->registerDefinition($definition);
+            $this->lifecycle->discovered(
+                $definition->name
+            );
 
-                $registered++;
+            $this->lifecycle->registered(
+                $definition->name
+            );
 
-                event(
-                    new ModuleRegistered(
-                        $definition->name,
-                        $definition->providers
-                    )
-                );
+            $this->lifecycle->booting(
+                $definition->name
+            );
 
-                $report->addRegistered(
+            $this->lifecycle->booted(
+                $definition->name
+            );
+
+            $this->lifecycle->running(
+                $definition->name
+            );
+
+            $registered++;
+
+            event(
+                new ModuleRegistered(
                     $definition->name,
                     $definition->providers
-                );
+                )
+            );
 
-                $report
-                    ->metrics()
-                    ->incrementRegistered();
-            }
+            $report->addRegistered(
+                $definition->name,
+                $definition->providers
+            );
+
+            $report
+                ->metrics()
+                ->incrementRegistered();
         }
 
 

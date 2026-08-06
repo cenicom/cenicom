@@ -4,39 +4,76 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Module\Bootstrap;
 
+use App\Core\Contracts\Events\EventDispatcherInterface;
 use App\Core\Contracts\Module\ModuleBootstrapPipelineInterface;
 use App\Core\Contracts\Module\ModuleManifestFinderInterface;
+use App\Core\Contracts\Module\ModuleRegistryInterface;
+use App\Core\Contracts\Module\ModuleProviderRegistrarInterface;
 use App\Core\Module\Bootstrap\ModuleBootstrap;
 use App\Core\Module\Bootstrap\ModuleBootstrapContext;
 use App\Core\Module\DTO\ModuleDefinition;
+use App\Core\Module\Lifecycle\ModuleLifecycleManager;
+use App\Core\Module\Registry\ModuleRegistry;
+use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
 final class ModuleBootstrapMetricsIntegrationTest extends TestCase
 {
-    public function test_bootstrap_returns_report_with_metrics(): void
+    private ModuleManifestFinderInterface&MockObject $finder;
+
+    private ModuleBootstrapPipelineInterface&MockObject $pipeline;
+
+    private ModuleRegistryInterface $registry;
+
+    private ModuleProviderRegistrarInterface&MockObject $providerRegistrar;
+
+    private ModuleLifecycleManager $lifecycle;
+
+    private ModuleBootstrap $bootstrap;
+
+    protected function setUp(): void
     {
-        $finder = $this->createMock(
+        parent::setUp();
+
+        $this->finder = $this->createMock(
             ModuleManifestFinderInterface::class
         );
 
-        $pipeline = $this->createMock(
+        $this->pipeline = $this->createMock(
             ModuleBootstrapPipelineInterface::class
         );
 
+        $this->registry = new ModuleRegistry();
 
-        $finder
+        $this->providerRegistrar = $this->createMock(
+            ModuleProviderRegistrarInterface::class
+        );
+
+        $this->lifecycle = new ModuleLifecycleManager(
+            new class implements EventDispatcherInterface {
+                public function dispatch(object $event): void
+                {
+                    // no-op
+                }
+            }
+        );
+
+        $this->bootstrap = new ModuleBootstrap(
+            $this->finder,
+            $this->pipeline,
+            $this->registry,
+            $this->providerRegistrar,
+            $this->lifecycle,
+        );
+    }
+
+    public function test_bootstrap_returns_report_with_metrics(): void
+    {
+        $this->finder
             ->method('find')
             ->willReturn([]);
 
-
-        $bootstrap = new ModuleBootstrap(
-            $finder,
-            $pipeline
-        );
-
-
-        $report = $bootstrap->bootstrap();
-
+        $report = $this->bootstrap->bootstrap();
 
         self::assertNotNull(
             $report->metrics()
@@ -46,36 +83,26 @@ final class ModuleBootstrapMetricsIntegrationTest extends TestCase
 
     public function test_metrics_count_registered_modules(): void
     {
-        $finder = $this->createMock(
-            ModuleManifestFinderInterface::class
-        );
-
-        $pipeline = $this->createMock(
-            ModuleBootstrapPipelineInterface::class
-        );
-
-
-        $finder
+        $this->finder
             ->method('find')
             ->willReturn([
                 '/modules/Inventory/module.php',
                 '/modules/Finance/module.php',
             ]);
 
-
-        $pipeline
+        $this->pipeline
             ->expects($this->exactly(2))
             ->method('process')
             ->willReturnCallback(
-                function (
-                    ModuleBootstrapContext $context
-                ): void {
+                function (ModuleBootstrapContext $context): void
+                {
+                    $name = basename(dirname($context->manifestPath()));
 
                     $context->setDefinition(
                         new ModuleDefinition(
-                            'TestModule',
-                            'Modules\\TestModule',
-                            '/modules/TestModule',
+                            $name,
+                            'Modules\\{$name}',
+                            '/modules/{$name}',
                             $context->manifestPath(),
                             [],
                             true
@@ -85,14 +112,7 @@ final class ModuleBootstrapMetricsIntegrationTest extends TestCase
             );
 
 
-        $bootstrap = new ModuleBootstrap(
-            $finder,
-            $pipeline
-        );
-
-
-        $report = $bootstrap->bootstrap();
-
+        $report = $this->bootstrap->bootstrap();
 
         self::assertSame(
             2,
@@ -103,23 +123,13 @@ final class ModuleBootstrapMetricsIntegrationTest extends TestCase
 
     public function test_metrics_count_skipped_modules(): void
     {
-        $finder = $this->createMock(
-            ModuleManifestFinderInterface::class
-        );
-
-        $pipeline = $this->createMock(
-            ModuleBootstrapPipelineInterface::class
-        );
-
-
-        $finder
+        $this->finder
             ->method('find')
             ->willReturn([
                 '/modules/Disabled/module.php',
             ]);
 
-
-        $pipeline
+        $this->pipeline
             ->expects($this->once())
             ->method('process')
             ->willReturnCallback(
@@ -131,15 +141,7 @@ final class ModuleBootstrapMetricsIntegrationTest extends TestCase
                 }
             );
 
-
-        $bootstrap = new ModuleBootstrap(
-            $finder,
-            $pipeline
-        );
-
-
-        $report = $bootstrap->bootstrap();
-
+        $report = $this->bootstrap->bootstrap();
 
         self::assertSame(
             1,
@@ -150,23 +152,13 @@ final class ModuleBootstrapMetricsIntegrationTest extends TestCase
 
     public function test_metrics_count_failed_modules(): void
     {
-        $finder = $this->createMock(
-            ModuleManifestFinderInterface::class
-        );
-
-        $pipeline = $this->createMock(
-            ModuleBootstrapPipelineInterface::class
-        );
-
-
-        $finder
+        $this->finder
             ->method('find')
             ->willReturn([
                 '/modules/Broken/module.php',
             ]);
 
-
-        $pipeline
+        $this->pipeline
             ->expects($this->once())
             ->method('process')
             ->willReturnCallback(
@@ -182,14 +174,7 @@ final class ModuleBootstrapMetricsIntegrationTest extends TestCase
                 }
             );
 
-
-        $bootstrap = new ModuleBootstrap(
-            $finder,
-            $pipeline
-        );
-
-
-        $report = $bootstrap->bootstrap();
+        $report = $this->bootstrap->bootstrap();
 
 
         self::assertSame(
@@ -201,27 +186,11 @@ final class ModuleBootstrapMetricsIntegrationTest extends TestCase
 
     public function test_metrics_calculates_execution_duration(): void
     {
-        $finder = $this->createMock(
-            ModuleManifestFinderInterface::class
-        );
-
-        $pipeline = $this->createMock(
-            ModuleBootstrapPipelineInterface::class
-        );
-
-
-        $finder
+        $this->finder
             ->method('find')
             ->willReturn([]);
 
-
-        $bootstrap = new ModuleBootstrap(
-            $finder,
-            $pipeline
-        );
-
-
-        $report = $bootstrap->bootstrap();
+        $report = $this->bootstrap->bootstrap();
 
 
         self::assertNotNull(

@@ -16,6 +16,8 @@ use App\Core\Module\Bootstrap\Stages\RegisterModuleStage;
 use App\Core\Module\Bootstrap\Stages\RegisterProvidersStage;
 use App\Core\Module\Bootstrap\Stages\ValidationStage;
 use App\Core\Module\Factory\ModuleDefinitionFactory;
+use App\Core\Module\Lifecycle\ModuleLifecycleManager;
+use App\Core\Contracts\Events\EventDispatcherInterface;
 use Illuminate\Support\Facades\Event;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
@@ -26,7 +28,9 @@ final class ModuleBootstrapIntegrationTest extends TestCase
 
     private ModuleRegistryInterface&MockObject $registry;
 
-    private ModuleProviderRegistrarInterface&MockObject $registrar;
+    private ModuleProviderRegistrarInterface&MockObject $providerRegistrar;
+
+    private ModuleLifecycleManager $lifecycle;
 
     protected function setUp(): void
     {
@@ -40,8 +44,17 @@ final class ModuleBootstrapIntegrationTest extends TestCase
             ModuleRegistryInterface::class
         );
 
-        $this->registrar = $this->createMock(
+        $this->providerRegistrar = $this->createMock(
             ModuleProviderRegistrarInterface::class
+        );
+
+        $this->lifecycle = new ModuleLifecycleManager(
+            new class implements EventDispatcherInterface {
+                public function dispatch(object $event): void
+                {
+                    // no-op
+                }
+            }
         );
     }
 
@@ -60,7 +73,7 @@ final class ModuleBootstrapIntegrationTest extends TestCase
             ->expects($this->once())
             ->method('register');
 
-        $this->registrar
+        $this->providerRegistrar
             ->expects($this->once())
             ->method('registerDefinition');
 
@@ -73,13 +86,16 @@ final class ModuleBootstrapIntegrationTest extends TestCase
                 $this->registry
             ),
             new RegisterProvidersStage(
-                $this->registrar
+                $this->providerRegistrar
             ),
         ]);
 
         $bootstrap = new ModuleBootstrap(
             $this->finder,
-            $pipeline
+            $pipeline,
+            $this->registry,
+            $this->providerRegistrar,
+            $this->lifecycle,
         );
 
         $bootstrap->bootstrap();
@@ -92,8 +108,6 @@ final class ModuleBootstrapIntegrationTest extends TestCase
         $manifest = base_path(
             'tests/Fixtures/ModuleDefinitionFactory/EnabledFalse/module.php'
         );
-
-        $context = null;
 
         $finder = $this->createMock(
             ModuleManifestFinderInterface::class
@@ -137,7 +151,10 @@ final class ModuleBootstrapIntegrationTest extends TestCase
 
         $bootstrap = new ModuleBootstrap(
             $finder,
-            $pipeline
+            $pipeline,
+            $this->registry,
+            $this->providerRegistrar,
+            $this->lifecycle,
         );
 
         $bootstrap->bootstrap();
@@ -197,7 +214,10 @@ final class ModuleBootstrapIntegrationTest extends TestCase
 
         $bootstrap = new ModuleBootstrap(
             $finder,
-            $pipeline
+            $pipeline,
+            $this->registry,
+            $this->providerRegistrar,
+            $this->lifecycle,
         );
 
 

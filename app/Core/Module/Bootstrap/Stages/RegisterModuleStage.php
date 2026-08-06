@@ -17,8 +17,7 @@ final class RegisterModuleStage implements ModuleBootstrapStageInterface
 {
     public function __construct(
         private readonly ModuleRegistryInterface $registry,
-    ) {
-    }
+    ) {}
 
     public function process(ModuleBootstrapContext $context): void
     {
@@ -34,16 +33,11 @@ final class RegisterModuleStage implements ModuleBootstrapStageInterface
                 );
             }
 
-            $definition = $context->definition();
-
-            if ($definition === null) {
+            if ($context->definition() === null) {
                 throw new RuntimeException(
                     'Module definition is null.'
                 );
             }
-
-            $this->registry->register($definition);
-
         } catch (Throwable $exception) {
 
             $context->setException($exception);
