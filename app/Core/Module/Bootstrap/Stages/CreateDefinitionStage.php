@@ -18,6 +18,7 @@ final class CreateDefinitionStage implements ModuleBootstrapStageInterface
 
     public function process(ModuleBootstrapContext $context): void
     {
+
         if ($context->hasException()) {
             return;
         }

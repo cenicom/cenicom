@@ -23,6 +23,12 @@ final class ModuleBootstrapContext
      */
     private bool $skipped = false;
 
+    /**
+     * Indicates whether the module was registered during
+     * the current bootstrap execution.
+     */
+    private bool $moduleRegistered = false;
+
     private readonly ModuleBootstrapDiagnostics $diagnostics;
 
     private FailureTrace $failureTrace;
@@ -144,6 +150,23 @@ final class ModuleBootstrapContext
     }
 
     /**
+     * Marks the module as successfully registered.
+     */
+    public function markModuleRegistered(): void
+    {
+        $this->moduleRegistered = true;
+    }
+
+    /**
+     * Indicates whether the module was registered during
+     * the current bootstrap execution.
+     */
+    public function wasModuleRegistered(): bool
+    {
+        return $this->moduleRegistered;
+    }
+
+    /**
      * Indicates whether the module was skipped.
      */
     public function isSkipped(): bool
@@ -159,5 +182,7 @@ final class ModuleBootstrapContext
     public function clearException(): void
     {
         $this->exception = null;
+
+        $this->diagnostics->clearException();
     }
 }

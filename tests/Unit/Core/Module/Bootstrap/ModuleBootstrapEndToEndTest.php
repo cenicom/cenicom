@@ -33,48 +33,48 @@ final class ModuleBootstrapEndToEndTest extends TestCase
     private ModuleLifecycleManager $lifecycle;
 
     protected function setUp(): void
-{
-    parent::setUp();
+    {
+        parent::setUp();
 
-    $this->finder = $this->createMock(
-        ModuleManifestFinderInterface::class
-    );
+        $this->finder = $this->createMock(
+            ModuleManifestFinderInterface::class
+        );
 
-    $this->registry = new ModuleRegistry();
+        $this->registry = new ModuleRegistry();
 
-    $validator = new ModuleProviderValidator();
+        $validator = new ModuleProviderValidator();
 
-    $this->providerRegistrar = new ModuleProviderRegistrar(
-        $validator,
-        $this->app
-    );
+        $this->providerRegistrar = new ModuleProviderRegistrar(
+            $validator,
+            $this->app
+        );
 
-    $this->lifecycle = new ModuleLifecycleManager(
-        new class implements EventDispatcherInterface {
-            public function dispatch(object $event): void
-            {
-                // no-op
+        $this->lifecycle = new ModuleLifecycleManager(
+            new class implements EventDispatcherInterface {
+                public function dispatch(object $event): void
+                {
+                    // no-op
+                }
             }
-        }
-    );
+        );
 
-    $factory = new ModuleDefinitionFactory();
+        $factory = new ModuleDefinitionFactory();
 
-    $pipeline = new ModuleBootstrapPipeline([
-        new CreateDefinitionStage($factory),
-        new ValidationStage(),
-        new RegisterModuleStage($this->registry),
-        new RegisterProvidersStage($this->providerRegistrar),
-    ]);
+        $pipeline = new ModuleBootstrapPipeline([
+            new CreateDefinitionStage($factory),
+            new ValidationStage(),
+            new RegisterModuleStage($this->registry),
+            new RegisterProvidersStage($this->providerRegistrar),
+        ]);
 
-    $this->bootstrap = new ModuleBootstrap(
-        $this->finder,
-        $pipeline,
-        $this->registry,
-        $this->providerRegistrar,
-        $this->lifecycle,
-    );
-}
+        $this->bootstrap = new ModuleBootstrap(
+            $this->finder,
+            $pipeline,
+            $this->registry,
+            $this->providerRegistrar,
+            $this->lifecycle,
+        );
+    }
 
     /**
      * E2E-001
@@ -171,6 +171,7 @@ final class ModuleBootstrapEndToEndTest extends TestCase
             $this->registry->names()
         );
     }
+
     /* E2E-003
      * Bootstrap continúa cuando un módulo falla (Fail Safe) */
     public function test_bootstrap_continues_when_module_definition_fails(): void
@@ -294,24 +295,25 @@ final class ModuleBootstrapEndToEndTest extends TestCase
             ->method('find')
             ->willReturn($manifests);
 
-        $this->bootstrap->bootstrap();
+        try {
+            $this->bootstrap->bootstrap();
 
-        $this->assertSame(
-            100,
-            $this->registry->count()
-        );
-
-        foreach (range(1, 100) as $i) {
-
-            $this->assertTrue(
-                $this->registry->has(
-                    sprintf('Module%03d', $i)
-                )
+            self::assertSame(
+                100,
+                $this->registry->count()
             );
-        }
 
-        foreach ($manifests as $manifest) {
-            @unlink($manifest);
+            foreach (range(1, 100) as $i) {
+                self::assertTrue(
+                    $this->registry->has(
+                        sprintf('Module%03d', $i)
+                    )
+                );
+            }
+        } finally {
+            foreach ($manifests as $manifest) {
+                @unlink($manifest);
+            }
         }
     }
 }

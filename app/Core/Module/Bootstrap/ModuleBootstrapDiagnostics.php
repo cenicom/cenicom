@@ -16,58 +16,49 @@ final class ModuleBootstrapDiagnostics
 
     private ?Throwable $exception = null;
 
-
-    public function setManifestPath(
-        string $manifestPath
-    ): void {
+    public function setManifestPath(string $manifestPath): void
+    {
         $this->manifestPath = $manifestPath;
     }
-
 
     public function manifestPath(): ?string
     {
         return $this->manifestPath;
     }
 
-
-    public function setModuleName(
-        string $moduleName
-    ): void {
+    public function setModuleName(string $moduleName): void
+    {
         $this->moduleName = $moduleName;
     }
-
 
     public function moduleName(): ?string
     {
         return $this->moduleName;
     }
 
-
-    public function setFailedStage(
-        string $stage
-    ): void {
+    public function setFailedStage(string $stage): void
+    {
         $this->failedStage = $stage;
     }
-
 
     public function failedStage(): ?string
     {
         return $this->failedStage;
     }
 
-
-    public function setException(
-        Throwable $exception
-    ): void {
+    public function setException(Throwable $exception): void
+    {
         $this->exception = $exception;
     }
-
+    public function clearException(): void
+    {
+        $this->exception = null;
+    }
 
     public function exception(): ?Throwable
     {
         return $this->exception;
     }
-
 
     public function hasFailure(): bool
     {

@@ -152,8 +152,8 @@ final class ModuleBootstrapIntegrationTest extends TestCase
         $bootstrap = new ModuleBootstrap(
             $finder,
             $pipeline,
-            $this->registry,
-            $this->providerRegistrar,
+            $registry,
+            $registrar,
             $this->lifecycle,
         );
 
@@ -197,7 +197,6 @@ final class ModuleBootstrapIntegrationTest extends TestCase
             ->expects($this->never())
             ->method('registerDefinition');
 
-
         $pipeline = new ModuleBootstrapPipeline([
             new CreateDefinitionStage(
                 app(ModuleDefinitionFactoryInterface::class)
@@ -211,15 +210,13 @@ final class ModuleBootstrapIntegrationTest extends TestCase
             ),
         ]);
 
-
         $bootstrap = new ModuleBootstrap(
             $finder,
             $pipeline,
-            $this->registry,
-            $this->providerRegistrar,
+            $registry,
+            $registrar,
             $this->lifecycle,
         );
-
 
         Event::fake();
 
@@ -228,7 +225,6 @@ final class ModuleBootstrapIntegrationTest extends TestCase
         Event::assertDispatched(
             ModuleFailed::class,
             function (ModuleFailed $event) use ($manifest): bool {
-
                 return $event->moduleName === $manifest
                     && $event->exception instanceof \UnexpectedValueException;
             }

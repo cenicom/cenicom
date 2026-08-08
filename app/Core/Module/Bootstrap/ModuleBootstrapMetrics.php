@@ -56,7 +56,9 @@ final class ModuleBootstrapMetrics
 
     public function incrementRegistered(): void
     {
+
         $this->registered++;
+
     }
 
 

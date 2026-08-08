@@ -94,20 +94,22 @@ final class ModuleBootstrapMetricsIntegrationTest extends TestCase
             ->expects($this->exactly(2))
             ->method('process')
             ->willReturnCallback(
-                function (ModuleBootstrapContext $context): void
-                {
+                function (ModuleBootstrapContext $context): void {
                     $name = basename(dirname($context->manifestPath()));
 
                     $context->setDefinition(
                         new ModuleDefinition(
                             $name,
-                            'Modules\\{$name}',
-                            '/modules/{$name}',
+                            "Modules\\{$name}",
+                            "/modules/{$name}",
                             $context->manifestPath(),
                             [],
                             true
                         )
                     );
+
+                    // Simula RegisterModuleStage
+                    $context->markModuleRegistered();
                 }
             );
 

@@ -147,16 +147,7 @@ final class ModuleBootstrapTest extends TestCase
             ->willReturnCallback(
                 function (ModuleBootstrapContext $context): void {
 
-                    $context->setDefinition(
-                        new ModuleDefinition(
-                            name: 'Blog',
-                            namespace: 'Modules\\Blog',
-                            basePath: '/modules/Blog',
-                            manifestPath: $context->manifestPath(),
-                            providers: [],
-                            enabled: true,
-                        )
-                    );
+                    $this->registerModule($context, 'Inventory');
                 }
             );
 
@@ -165,6 +156,24 @@ final class ModuleBootstrapTest extends TestCase
         $this->assertTrue(
             $this->registry->has('Blog')
         );
+    }
+
+    private function registerModule(
+        ModuleBootstrapContext $context,
+        string $name
+    ): void {
+        $context->setDefinition(
+            new ModuleDefinition(
+                $name,
+                "Modules\\{$name}",
+                "/modules/{$name}",
+                "/modules/{$name}/module.php",
+                [],
+                true
+            )
+        );
+
+        $context->markModuleRegistered();
     }
 
     public function test_bootstrap_handles_empty_manifest_list(): void

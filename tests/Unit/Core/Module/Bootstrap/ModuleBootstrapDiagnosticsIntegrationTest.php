@@ -108,10 +108,12 @@ final class ModuleBootstrapDiagnosticsIntegrationTest extends TestCase
         $diagnostics = $context->diagnostics();
 
 
+        $exception = new \RuntimeException(
+            'Bootstrap error'
+        );
+
         $context->setException(
-            new \RuntimeException(
-                'Bootstrap error'
-            )
+            $exception
         );
 
 
@@ -125,6 +127,41 @@ final class ModuleBootstrapDiagnosticsIntegrationTest extends TestCase
             $context
                 ->diagnostics()
                 ->hasFailure()
+        );
+
+        self::assertSame(
+            $exception,
+            $diagnostics->exception()
+        );
+
+        self::assertSame(
+            'Bootstrap error',
+            $diagnostics->exception()->getMessage()
+        );
+    }
+
+    public function test_clearing_context_exception_updates_diagnostics(): void
+    {
+        $context = new ModuleBootstrapContext(
+            '/modules/Test/module.php'
+        );
+
+        $context->setException(
+            new \RuntimeException('Failure')
+        );
+
+        $context->clearException();
+
+        self::assertFalse(
+            $context
+                ->diagnostics()
+                ->hasFailure()
+        );
+
+        self::assertNull(
+            $context
+                ->diagnostics()
+                ->exception()
         );
     }
 }

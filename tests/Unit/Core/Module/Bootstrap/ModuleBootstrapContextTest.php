@@ -67,7 +67,7 @@ final class ModuleBootstrapContextTest extends TestCase
     //Como ModuleDefinition es un DTO readonly, podemos construir una instancia sencilla para la prueba.
     public function test_stores_definition(): void
     {
-        // Arrange MBC004
+        // Arrange MBC-004
         $context = new ModuleBootstrapContext(
             '/modules/Blog/module.php'
         );
@@ -279,11 +279,12 @@ final class ModuleBootstrapContextTest extends TestCase
         );
     }
 
-    /*🔴 MBC-011 — La primera excepción prevalece
-        Objetivo
-    **Una vez registrada una excepción, cualquier intento posterior de registrar otra no debe reemplazarla.
-        Paso 1 (RED)
-    */
+    /**
+     * MBC-011 — La primera excepción prevalece.
+     *
+     * Una vez registrada una excepción, cualquier intento posterior
+     * de registrar otra no debe reemplazarla.
+     */
     public function test_keeps_the_first_exception(): void
     {
         // Arrange
@@ -318,7 +319,7 @@ final class ModuleBootstrapContextTest extends TestCase
     public function test_starts_without_skipped_state(): void
     {
         $context = new ModuleBootstrapContext(
-            '/modules/Blog/module.json',
+            '/modules/Blog/module.php',
         );
 
         $this->assertFalse(
@@ -330,13 +331,73 @@ final class ModuleBootstrapContextTest extends TestCase
     public function test_marks_context_as_skipped(): void
     {
         $context = new ModuleBootstrapContext(
-            '/modules/DisabledModule/module.json'
+            '/modules/DisabledModule/module.php'
         );
 
         $context->markSkipped();
 
         $this->assertTrue(
             $context->isSkipped()
+        );
+    }
+
+    /**
+     * MBC-013 — El contexto inicia sin estado de registro.
+     */
+    public function test_starts_without_registered_module_state(): void
+    {
+        $context = new ModuleBootstrapContext(
+            '/modules/Blog/module.php'
+        );
+
+        $this->assertFalse(
+            $context->wasModuleRegistered()
+        );
+    }
+
+    public function test_marks_module_as_registered(): void
+    {
+        $context = new ModuleBootstrapContext(
+            '/modules/Blog/module.php'
+        );
+
+        $context->markModuleRegistered();
+
+        $this->assertTrue(
+            $context->wasModuleRegistered()
+        );
+    }
+
+    /**
+     * MBC-015 — El estado de registro se conserva después
+     * de asignar la definición.
+     */
+    public function test_preserves_registered_state_after_definition_assignment(): void
+    {
+        $context = new ModuleBootstrapContext(
+            '/modules/Blog/module.php'
+        );
+
+        $definition = new ModuleDefinition(
+            'Blog',
+            'Modules\\Blog',
+            '/modules/Blog',
+            '/modules/Blog/module.php',
+            [],
+            true
+        );
+
+        $context->setDefinition($definition);
+
+        $context->markModuleRegistered();
+
+        $this->assertSame(
+            $definition,
+            $context->definition()
+        );
+
+        $this->assertTrue(
+            $context->wasModuleRegistered()
         );
     }
 }

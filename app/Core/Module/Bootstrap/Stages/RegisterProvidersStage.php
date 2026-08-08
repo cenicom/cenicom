@@ -17,8 +17,7 @@ final class RegisterProvidersStage implements ModuleBootstrapStageInterface
 {
     public function __construct(
         private readonly ModuleProviderRegistrarInterface $registrar,
-    ) {
-    }
+    ) {}
 
     public function process(ModuleBootstrapContext $context): void
     {
@@ -27,22 +26,15 @@ final class RegisterProvidersStage implements ModuleBootstrapStageInterface
         }
 
         try {
-            if (! $context->hasDefinition()) {
+            $definition = $context->definition();
+
+            if ($definition === null) {
                 throw new RuntimeException(
                     'Module definition has not been created.'
                 );
             }
 
-            $definition = $context->definition();
-
-            if ($definition === null) {
-                throw new RuntimeException(
-                    'Module definition is null.'
-                );
-            }
-
             $this->registrar->registerDefinition($definition);
-
         } catch (Throwable $exception) {
             $context->setException($exception);
         }

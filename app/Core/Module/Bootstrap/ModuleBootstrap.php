@@ -52,12 +52,7 @@ final class ModuleBootstrap
 
         foreach ($manifests as $manifestPath) {
 
-            $context = new ModuleBootstrapContext(
-                $manifestPath
-            );
-
-            $this->pipeline->process($context);
-
+            $context = $this->processManifest($manifestPath);
 
             if ($context->isSkipped()) {
 
@@ -79,7 +74,6 @@ final class ModuleBootstrap
 
                 continue;
             }
-
 
             if ($context->hasException()) {
 
@@ -117,7 +111,7 @@ final class ModuleBootstrap
                 continue;
             }
 
-            if ($this->registry->has($definition->name)) {
+            if (! $context->wasModuleRegistered()) {
                 continue;
             }
 
@@ -174,4 +168,29 @@ final class ModuleBootstrap
 
         return $report;
     }
+
+    /**
+     * Summary of processManifest
+     * @param string $manifestPath
+     * @return ModuleBootstrapContext
+     */
+    private function processManifest(string $manifestPath): ModuleBootstrapContext
+    {
+
+        $context = new ModuleBootstrapContext(
+            $manifestPath
+        );
+
+        $this->pipeline->process($context);
+
+        return $context;
+    }
+
+    /**
+     *
+     * @param ModuleBootstrapReport $report
+     * @param int $registered
+     * @param int $failed
+     * @return void
+     */
 }

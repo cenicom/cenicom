@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Module\Bootstrap;
 
-use App\Core\Contracts\Module\ModuleManifestFinderInterface;
+use App\Core\Contracts\Events\EventDispatcherInterface;
 use App\Core\Contracts\Module\ModuleBootstrapPipelineInterface;
+use App\Core\Contracts\Module\ModuleManifestFinderInterface;
+use App\Core\Contracts\Module\ModuleProviderRegistrarInterface;
+use App\Core\Contracts\Module\ModuleRegistryInterface;
 use App\Core\Module\Bootstrap\ModuleBootstrap;
-use App\Core\Module\Bootstrap\ModuleBootstrapReport;
 use App\Core\Module\Bootstrap\ModuleBootstrapContext;
+use App\Core\Module\Bootstrap\ModuleBootstrapReport;
 use App\Core\Module\DTO\ModuleDefinition;
+use App\Core\Module\Lifecycle\ModuleLifecycleManager;
+use RuntimeException;
 use Tests\TestCase;
 
 final class ModuleBootstrapReportIntegrationTest extends TestCase
@@ -30,9 +35,29 @@ final class ModuleBootstrapReportIntegrationTest extends TestCase
             ->willReturn([]);
 
 
+        $registry = $this->createMock(
+            ModuleRegistryInterface::class
+        );
+
+        $providerRegistrar = $this->createMock(
+            ModuleProviderRegistrarInterface::class
+        );
+
+        $lifecycle = new ModuleLifecycleManager(
+            new class implements EventDispatcherInterface {
+                public function dispatch(object $event): void
+                {
+                    // no-op
+                }
+            }
+        );
+
         $bootstrap = new ModuleBootstrap(
             $finder,
-            $pipeline
+            $pipeline,
+            $registry,
+            $providerRegistrar,
+            $lifecycle,
         );
 
 
@@ -56,9 +81,24 @@ final class ModuleBootstrapReportIntegrationTest extends TestCase
             ModuleBootstrapPipelineInterface::class
         );
 
+        $registry = $this->createMock(
+            ModuleRegistryInterface::class
+        );
+
+        $providerRegistrar = $this->createMock(
+            ModuleProviderRegistrarInterface::class
+        );
+
+        $lifecycle = new ModuleLifecycleManager(
+            new class implements EventDispatcherInterface {
+                public function dispatch(object $event): void
+                {
+                    // no-op
+                }
+            }
+        );
 
         $manifest = '/modules/Inventory/module.php';
-
 
         $finder
             ->method('find')
@@ -66,43 +106,35 @@ final class ModuleBootstrapReportIntegrationTest extends TestCase
                 $manifest,
             ]);
 
-
         $pipeline
             ->expects($this->once())
             ->method('process')
             ->willReturnCallback(
-                function (
-                    ModuleBootstrapContext $context
-                ): void {
+                function (ModuleBootstrapContext $context): void {
 
-                    $context->setDefinition(
-                        new ModuleDefinition(
-                            'Inventory',
-                            'Modules\\Inventory',
-                            '/modules/Inventory',
-                            '/modules/Inventory/module.php',
-                            [],
-                            true
-                        )
+                    $this->registerModule(
+                        $context,
+                        'Inventory'
                     );
+
+                    $context->markModuleRegistered();
                 }
             );
 
-
         $bootstrap = new ModuleBootstrap(
             $finder,
-            $pipeline
+            $pipeline,
+            $registry,
+            $providerRegistrar,
+            $lifecycle,
         );
 
-
         $report = $bootstrap->bootstrap();
-
 
         self::assertCount(
             1,
             $report->registered()
         );
-
 
         self::assertSame(
             'Inventory',
@@ -110,6 +142,29 @@ final class ModuleBootstrapReportIntegrationTest extends TestCase
         );
     }
 
+    /**
+     * Summary of registerModule
+     * @param ModuleBootstrapContext $context
+     * @param string $name
+     * @return void
+     */
+    private function registerModule(
+        ModuleBootstrapContext $context,
+        string $name
+    ): void {
+        $context->setDefinition(
+            new ModuleDefinition(
+                $name,
+                "Modules\\{$name}",
+                "/modules/{$name}",
+                "/modules/{$name}/module.php",
+                [],
+                true
+            )
+        );
+
+        $context->markModuleRegistered();
+    }
 
     public function test_report_contains_skipped_module(): void
     {
@@ -136,18 +191,39 @@ final class ModuleBootstrapReportIntegrationTest extends TestCase
             ->expects($this->once())
             ->method('process')
             ->willReturnCallback(
-                function (
-                    ModuleBootstrapContext $context
-                ): void {
-
+                function (ModuleBootstrapContext $context): void {
                     $context->markSkipped();
+
+                    self::assertTrue(
+                        $context->isSkipped()
+                    );
                 }
             );
 
 
+        $registry = $this->createMock(
+            ModuleRegistryInterface::class
+        );
+
+        $providerRegistrar = $this->createMock(
+            ModuleProviderRegistrarInterface::class
+        );
+
+        $lifecycle = new ModuleLifecycleManager(
+            new class implements EventDispatcherInterface {
+                public function dispatch(object $event): void
+                {
+                    // no-op
+                }
+            }
+        );
+
         $bootstrap = new ModuleBootstrap(
             $finder,
-            $pipeline
+            $pipeline,
+            $registry,
+            $providerRegistrar,
+            $lifecycle,
         );
 
 
@@ -188,7 +264,7 @@ final class ModuleBootstrapReportIntegrationTest extends TestCase
             ]);
 
 
-        $exception = new \RuntimeException(
+        $exception = new RuntimeException(
             'Definition creation failed'
         );
 
@@ -208,9 +284,29 @@ final class ModuleBootstrapReportIntegrationTest extends TestCase
             );
 
 
+        $registry = $this->createMock(
+            ModuleRegistryInterface::class
+        );
+
+        $providerRegistrar = $this->createMock(
+            ModuleProviderRegistrarInterface::class
+        );
+
+        $lifecycle = new ModuleLifecycleManager(
+            new class implements EventDispatcherInterface {
+                public function dispatch(object $event): void
+                {
+                    // no-op
+                }
+            }
+        );
+
         $bootstrap = new ModuleBootstrap(
             $finder,
-            $pipeline
+            $pipeline,
+            $registry,
+            $providerRegistrar,
+            $lifecycle,
         );
 
 
@@ -258,11 +354,10 @@ final class ModuleBootstrapReportIntegrationTest extends TestCase
                     ModuleBootstrapContext $context
                 ): void {
 
-                    match ($context->manifestPath()) {
+                    if ($context->manifestPath() === '/modules/Inventory/module.php') {
 
-                        '/modules/Inventory/module.php'
-                        => $context->setDefinition(
-                            new \App\Core\Module\DTO\ModuleDefinition(
+                        $context->setDefinition(
+                            new ModuleDefinition(
                                 'Inventory',
                                 'Modules\\Inventory',
                                 '/modules/Inventory',
@@ -270,25 +365,48 @@ final class ModuleBootstrapReportIntegrationTest extends TestCase
                                 [],
                                 true
                             )
-                        ),
+                        );
 
-                        '/modules/Blog/module.php'
-                        => $context->markSkipped(),
+                        $context->markModuleRegistered();
 
-                        '/modules/Broken/module.php'
-                        => $context->setException(
-                            new \RuntimeException(
-                                'Broken module'
-                            )
-                        ),
-                    };
+                        return;
+                    }
+
+                    if ($context->manifestPath() === '/modules/Blog/module.php') {
+                        $context->markSkipped();
+                        return;
+                    }
+
+                    $context->setException(
+                        new RuntimeException('Broken module')
+                    );
                 }
             );
 
 
+        $registry = $this->createMock(
+            ModuleRegistryInterface::class
+        );
+
+        $providerRegistrar = $this->createMock(
+            ModuleProviderRegistrarInterface::class
+        );
+
+        $lifecycle = new ModuleLifecycleManager(
+            new class implements EventDispatcherInterface {
+                public function dispatch(object $event): void
+                {
+                    // no-op
+                }
+            }
+        );
+
         $bootstrap = new ModuleBootstrap(
             $finder,
-            $pipeline
+            $pipeline,
+            $registry,
+            $providerRegistrar,
+            $lifecycle,
         );
 
 

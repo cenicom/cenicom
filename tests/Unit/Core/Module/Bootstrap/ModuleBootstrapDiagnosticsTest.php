@@ -105,12 +105,24 @@ final class ModuleBootstrapDiagnosticsTest extends TestCase
             $exception,
             $diagnostics->exception()
         );
+
+        self::assertTrue(
+            $diagnostics->hasFailure()
+        );
     }
 
 
     public function test_reports_failure_state(): void
     {
         $diagnostics = new ModuleBootstrapDiagnostics();
+
+        $diagnostics->setException(
+            new \RuntimeException(
+                'Bootstrap failed'
+            )
+        );
+
+        $diagnostics->clearException();
 
 
         self::assertFalse(
@@ -180,6 +192,56 @@ final class ModuleBootstrapDiagnosticsTest extends TestCase
 
         self::assertTrue(
             $diagnostics->hasFailure()
+        );
+    }
+
+    /**
+     * Summary of test_setting_manifest_path_does_not_modify_module_name
+     * Mejora 2
+     * Agregar un test para comprobar que los setters no afectan otros datos.
+     * @return void
+     */
+    public function test_setting_manifest_path_does_not_modify_module_name(): void
+    {
+        $diagnostics = new ModuleBootstrapDiagnostics();
+
+        $diagnostics->setManifestPath(
+            '/modules/Inventory/module.php'
+        );
+
+        self::assertNull(
+            $diagnostics->moduleName()
+        );
+
+        self::assertNull(
+            $diagnostics->failedStage()
+        );
+
+        self::assertNull(
+            $diagnostics->exception()
+        );
+    }
+
+    /**
+     * Mejora 3 (la más importante)
+     * Agregar un test de actualización.
+     * Actualmente nunca verificas que un dato pueda cambiar.
+     */
+    public function test_updates_failed_stage(): void
+    {
+        $diagnostics = new ModuleBootstrapDiagnostics();
+
+        $diagnostics->setFailedStage(
+            'ValidationStage'
+        );
+
+        $diagnostics->setFailedStage(
+            'RegisterProvidersStage'
+        );
+
+        self::assertSame(
+            'RegisterProvidersStage',
+            $diagnostics->failedStage()
         );
     }
 }
