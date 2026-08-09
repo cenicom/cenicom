@@ -61,8 +61,6 @@ final class ModuleBootstrapMetricsIntegrationTest extends TestCase
         $this->bootstrap = new ModuleBootstrap(
             $this->finder,
             $this->pipeline,
-            $this->registry,
-            $this->providerRegistrar,
             $this->lifecycle,
         );
     }

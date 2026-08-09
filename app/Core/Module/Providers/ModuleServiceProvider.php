@@ -109,8 +109,6 @@ final class ModuleServiceProvider extends ServiceProvider
                 return new ModuleBootstrap(
                     $app->make(ModuleManifestFinderInterface::class),
                     $app->make(ModuleBootstrapPipelineInterface::class),
-                    $app->make(ModuleRegistryInterface::class),
-                    $app->make(ModuleProviderRegistrarInterface::class),
                     $app->make(ModuleLifecycleManager::class),
                 );
             }
@@ -129,6 +127,15 @@ final class ModuleServiceProvider extends ServiceProvider
         $this->app->singleton(
             EventDispatcherInterface::class,
             static fn() => new LaravelEventDispatcher()
+        );
+
+        $this->app->singleton(
+            ModuleLifecycleManager::class,
+            function ($app) {
+                return new ModuleLifecycleManager(
+                    $app->make(EventDispatcherInterface::class)
+                );
+            }
         );
     }
 

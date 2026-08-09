@@ -6,6 +6,7 @@ namespace App\Core\Module\Bootstrap;
 
 use App\Core\Contracts\Module\ModuleBootstrapPipelineInterface;
 use App\Core\Contracts\Module\ModuleBootstrapStageInterface;
+use Closure;
 
 final class ModuleBootstrapPipeline implements ModuleBootstrapPipelineInterface
 {
@@ -14,6 +15,7 @@ final class ModuleBootstrapPipeline implements ModuleBootstrapPipelineInterface
      */
     public function __construct(
         private readonly iterable $stages,
+        private readonly ?Closure $afterStage = null,
     ) {}
 
     public function process(ModuleBootstrapContext $context): void
@@ -28,6 +30,10 @@ final class ModuleBootstrapPipeline implements ModuleBootstrapPipelineInterface
             }
 
             $stage->process($context);
+
+            if ($this->afterStage !== null) {
+                ($this->afterStage)($stage, $context);
+            }
         }
     }
 }

@@ -17,17 +17,7 @@ use Throwable;
  */
 final class ValidationStage implements ModuleBootstrapStageInterface
 {
-    private bool $skipped = false;
 
-    public function markSkipped(): void
-    {
-        $this->skipped = true;
-    }
-
-    public function isSkipped(): bool
-    {
-        return $this->skipped;
-    }
     public function process(ModuleBootstrapContext $context): void
     {
 

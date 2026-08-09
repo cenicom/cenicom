@@ -157,6 +157,11 @@ final class ModuleBootstrapContext
         $this->moduleRegistered = true;
     }
 
+    public function isModuleRegistered(): bool
+    {
+        return $this->moduleRegistered;
+    }
+
     /**
      * Indicates whether the module was registered during
      * the current bootstrap execution.

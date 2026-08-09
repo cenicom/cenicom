@@ -7,14 +7,15 @@ namespace App\Core\Module\Bootstrap\Stages;
 use App\Core\Contracts\Module\ModuleBootstrapStageInterface;
 use App\Core\Contracts\Module\ModuleDefinitionFactoryInterface;
 use App\Core\Module\Bootstrap\ModuleBootstrapContext;
+use App\Core\Module\Lifecycle\ModuleLifecycleManager;
 use Throwable;
 
 final class CreateDefinitionStage implements ModuleBootstrapStageInterface
 {
     public function __construct(
         private readonly ModuleDefinitionFactoryInterface $factory,
-    ) {
-    }
+        private ModuleLifecycleManager $lifecycle,
+    ) {}
 
     public function process(ModuleBootstrapContext $context): void
     {
@@ -32,7 +33,6 @@ final class CreateDefinitionStage implements ModuleBootstrapStageInterface
             $context->setDefinition(
                 $definition
             );
-
         } catch (Throwable $exception) {
 
             $context->setException(

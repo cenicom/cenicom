@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Module\Bootstrap;
 
+use App\Core\Contracts\Events\EventDispatcherInterface;
 use App\Core\Contracts\Module\ModuleBootstrapPipelineInterface;
 use App\Core\Contracts\Module\ModuleManifestFinderInterface;
-use App\Core\Contracts\Module\ModuleRegistryInterface;
 use App\Core\Module\Bootstrap\ModuleBootstrap;
 use App\Core\Module\Bootstrap\ModuleBootstrapContext;
 use App\Core\Module\DTO\ModuleDefinition;
-use App\Core\Module\Registry\ModuleRegistry;
-use App\Core\Contracts\Events\EventDispatcherInterface;
-use App\Core\Contracts\Module\ModuleProviderRegistrarInterface;
 use App\Core\Module\Lifecycle\ModuleLifecycleManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
@@ -23,13 +20,9 @@ final class ModuleBootstrapTest extends TestCase
 
     private ModuleBootstrapPipelineInterface&MockObject $pipeline;
 
-    private ModuleBootstrap $bootstrap;
-
-    private ModuleRegistryInterface $registry;
-
-    private ModuleProviderRegistrarInterface&MockObject $providerRegistrar;
-
     private ModuleLifecycleManager $lifecycle;
+
+    private ModuleBootstrap $bootstrap;
 
     protected function setUp(): void
     {
@@ -43,10 +36,6 @@ final class ModuleBootstrapTest extends TestCase
             ModuleBootstrapPipelineInterface::class
         );
 
-        $this->providerRegistrar = $this->createMock(
-            ModuleProviderRegistrarInterface::class
-        );
-
         $this->lifecycle = new ModuleLifecycleManager(
             new class implements EventDispatcherInterface {
                 public function dispatch(object $event): void
@@ -56,27 +45,19 @@ final class ModuleBootstrapTest extends TestCase
             }
         );
 
-        $this->registry = new ModuleRegistry();
-
         $this->bootstrap = new ModuleBootstrap(
             $this->manifestFinder,
             $this->pipeline,
-            $this->registry,
-            $this->providerRegistrar,
             $this->lifecycle,
         );
     }
 
     public function test_bootstrap_processes_every_discovered_manifest(): void
     {
-        $this->providerRegistrar
-            ->expects($this->exactly(3))
-            ->method('registerDefinition');
-
         $manifests = [
-            '/modules/Blog/module.json',
-            '/modules/User/module.json',
-            '/modules/Inventory/module.json',
+            '/modules/Blog/module.php',
+            '/modules/User/module.php',
+            '/modules/Inventory/module.php',
         ];
 
         $this->manifestFinder
@@ -91,7 +72,6 @@ final class ModuleBootstrapTest extends TestCase
             ->method('process')
             ->willReturnCallback(
                 function (ModuleBootstrapContext $context) use (&$contexts): void {
-
                     $contexts[] = $context;
 
                     $context->setDefinition(
@@ -106,74 +86,79 @@ final class ModuleBootstrapTest extends TestCase
                             enabled: true,
                         )
                     );
+
+                    $context->markModuleRegistered();
                 }
             );
 
         $this->bootstrap->bootstrap();
-
 
         $this->assertCount(3, $contexts);
 
         $this->assertSame(
-            '/modules/Blog/module.json',
+            '/modules/Blog/module.php',
             $contexts[0]->manifestPath()
         );
 
         $this->assertSame(
-            '/modules/User/module.json',
+            '/modules/User/module.php',
             $contexts[1]->manifestPath()
         );
 
         $this->assertSame(
-            '/modules/Inventory/module.json',
+            '/modules/Inventory/module.php',
             $contexts[2]->manifestPath()
         );
     }
 
-    public function test_bootstrap_registers_modules(): void
+    public function test_bootstrap_processes_registered_module(): void
     {
-        $this->providerRegistrar
-            ->expects($this->once())
-            ->method('registerDefinition');
-
         $this->manifestFinder
+            ->expects($this->once())
             ->method('find')
             ->willReturn([
-                '/modules/Blog/module.json',
+                '/modules/Blog/module.php',
             ]);
 
+        $context = null;
+
         $this->pipeline
+            ->expects($this->once())
             ->method('process')
             ->willReturnCallback(
-                function (ModuleBootstrapContext $context): void {
+                function (ModuleBootstrapContext $bootstrapContext) use (&$context): void {
+                    $context = $bootstrapContext;
 
-                    $this->registerModule($context, 'Inventory');
+                    $bootstrapContext->setDefinition(
+                        new ModuleDefinition(
+                            name: 'Blog',
+                            namespace: 'Modules\\Blog',
+                            basePath: '/modules/Blog',
+                            manifestPath: $bootstrapContext->manifestPath(),
+                            providers: [],
+                            enabled: true,
+                        )
+                    );
+
+                    $bootstrapContext->markModuleRegistered();
                 }
             );
 
         $this->bootstrap->bootstrap();
 
+        $this->assertInstanceOf(
+            ModuleBootstrapContext::class,
+            $context
+        );
+
         $this->assertTrue(
-            $this->registry->has('Blog')
-        );
-    }
-
-    private function registerModule(
-        ModuleBootstrapContext $context,
-        string $name
-    ): void {
-        $context->setDefinition(
-            new ModuleDefinition(
-                $name,
-                "Modules\\{$name}",
-                "/modules/{$name}",
-                "/modules/{$name}/module.php",
-                [],
-                true
-            )
+            $context->isModuleRegistered()
         );
 
-        $context->markModuleRegistered();
+        $this->assertSame(
+            'Blog',
+            $context->definition()?->name
+        );
     }
 
     public function test_bootstrap_handles_empty_manifest_list(): void
@@ -195,7 +180,7 @@ final class ModuleBootstrapTest extends TestCase
     public function test_bootstrap_is_idempotent(): void
     {
         $manifests = [
-            '/modules/Blog/module.json',
+            '/modules/Blog/module.php',
         ];
 
         $this->manifestFinder

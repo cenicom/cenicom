@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Module\Bootstrap;
 
+use App\Core\Contracts\Events\EventDispatcherInterface;
 use App\Core\Contracts\Module\ModuleDefinitionFactoryInterface;
 use App\Core\Contracts\Module\ModuleManifestFinderInterface;
 use App\Core\Contracts\Module\ModuleProviderRegistrarInterface;
 use App\Core\Contracts\Module\ModuleRegistryInterface;
-use App\Core\Module\Bootstrap\Events\ModuleFailed;
 use App\Core\Module\Bootstrap\ModuleBootstrap;
 use App\Core\Module\Bootstrap\ModuleBootstrapPipeline;
 use App\Core\Module\Bootstrap\Stages\CreateDefinitionStage;
@@ -17,8 +17,6 @@ use App\Core\Module\Bootstrap\Stages\RegisterProvidersStage;
 use App\Core\Module\Bootstrap\Stages\ValidationStage;
 use App\Core\Module\Factory\ModuleDefinitionFactory;
 use App\Core\Module\Lifecycle\ModuleLifecycleManager;
-use App\Core\Contracts\Events\EventDispatcherInterface;
-use Illuminate\Support\Facades\Event;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 
@@ -52,7 +50,7 @@ final class ModuleBootstrapIntegrationTest extends TestCase
             new class implements EventDispatcherInterface {
                 public function dispatch(object $event): void
                 {
-                    // no-op
+                    // No-op para pruebas.
                 }
             }
         );
@@ -79,30 +77,39 @@ final class ModuleBootstrapIntegrationTest extends TestCase
 
         $pipeline = new ModuleBootstrapPipeline([
             new CreateDefinitionStage(
-                new ModuleDefinitionFactory()
+                new ModuleDefinitionFactory(),
+                $this->lifecycle,
             ),
             new ValidationStage(),
             new RegisterModuleStage(
-                $this->registry
+                $this->registry,
+                $this->lifecycle,
             ),
             new RegisterProvidersStage(
-                $this->providerRegistrar
+                $this->providerRegistrar,
             ),
         ]);
 
         $bootstrap = new ModuleBootstrap(
             $this->finder,
             $pipeline,
-            $this->registry,
-            $this->providerRegistrar,
             $this->lifecycle,
         );
 
-        $bootstrap->bootstrap();
+        $report = $bootstrap->bootstrap();
+
+        $this->assertNotNull($report);
+        $this->assertSame(
+            1,
+            $report->metrics()->registered()
+        );
     }
 
-    //🚢 ERP-INT-004.3.11.5 — Bootstrap Integration Hardening
-    //MBINT-002 — Certificación de módulo deshabilitado
+    /**
+     * 🚢 ERP-INT-004.3.11.5
+     *
+     * MBINT-002 — Certificación de módulo deshabilitado.
+     */
     public function test_bootstrap_skips_disabled_module(): void
     {
         $manifest = base_path(
@@ -121,25 +128,10 @@ final class ModuleBootstrapIntegrationTest extends TestCase
             ModuleProviderRegistrarInterface::class
         );
 
-        $pipeline = new ModuleBootstrapPipeline([
-            new CreateDefinitionStage(
-                app(ModuleDefinitionFactoryInterface::class)
-            ),
-            new ValidationStage(),
-            new RegisterModuleStage(
-                $registry
-            ),
-            new RegisterProvidersStage(
-                $registrar
-            ),
-        ]);
-
         $finder
             ->expects($this->once())
             ->method('find')
-            ->willReturn([
-                $manifest,
-            ]);
+            ->willReturn([$manifest]);
 
         $registry
             ->expects($this->never())
@@ -149,21 +141,41 @@ final class ModuleBootstrapIntegrationTest extends TestCase
             ->expects($this->never())
             ->method('registerDefinition');
 
+        $pipeline = new ModuleBootstrapPipeline([
+            new CreateDefinitionStage(
+                app(ModuleDefinitionFactoryInterface::class),
+                $this->lifecycle,
+            ),
+            new ValidationStage(),
+            new RegisterModuleStage(
+                $registry,
+                $this->lifecycle,
+            ),
+            new RegisterProvidersStage(
+                $registrar,
+            ),
+        ]);
+
         $bootstrap = new ModuleBootstrap(
             $finder,
             $pipeline,
-            $registry,
-            $registrar,
             $this->lifecycle,
         );
 
-        $bootstrap->bootstrap();
+        $report = $bootstrap->bootstrap();
+
+        $this->assertNotNull($report);
+        $this->assertSame(
+            1,
+            $report->metrics()->skipped()
+        );
     }
 
-    //🚢 ERP-INT-004.3.11.6 — MBINT-003
-    //Certificación de fallo controlado de Bootstrap
-    //Objetivo:
-    //Validar que un módulo con manifiesto inválido:
+    /**
+     * 🚢 ERP-INT-004.3.11.6
+     *
+     * MBINT-003 — Certificación de fallo controlado de Bootstrap.
+     */
     public function test_bootstrap_fails_when_definition_creation_fails(): void
     {
         $manifest = base_path(
@@ -185,9 +197,7 @@ final class ModuleBootstrapIntegrationTest extends TestCase
         $finder
             ->expects($this->once())
             ->method('find')
-            ->willReturn([
-                $manifest,
-            ]);
+            ->willReturn([$manifest]);
 
         $registry
             ->expects($this->never())
@@ -199,35 +209,31 @@ final class ModuleBootstrapIntegrationTest extends TestCase
 
         $pipeline = new ModuleBootstrapPipeline([
             new CreateDefinitionStage(
-                app(ModuleDefinitionFactoryInterface::class)
+                app(ModuleDefinitionFactoryInterface::class),
+                $this->lifecycle,
             ),
             new ValidationStage(),
             new RegisterModuleStage(
-                $registry
+                $registry,
+                $this->lifecycle,
             ),
             new RegisterProvidersStage(
-                $registrar
+                $registrar,
             ),
         ]);
 
         $bootstrap = new ModuleBootstrap(
             $finder,
             $pipeline,
-            $registry,
-            $registrar,
             $this->lifecycle,
         );
 
-        Event::fake();
+        $report = $bootstrap->bootstrap();
 
-        $bootstrap->bootstrap();
-
-        Event::assertDispatched(
-            ModuleFailed::class,
-            function (ModuleFailed $event) use ($manifest): bool {
-                return $event->moduleName === $manifest
-                    && $event->exception instanceof \UnexpectedValueException;
-            }
+        $this->assertNotNull($report);
+        $this->assertSame(
+            1,
+            $report->metrics()->failed()
         );
     }
 }

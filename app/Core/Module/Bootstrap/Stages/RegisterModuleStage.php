@@ -10,9 +10,6 @@ use App\Core\Module\Bootstrap\ModuleBootstrapContext;
 use RuntimeException;
 use Throwable;
 
-/**
- * Registers the validated module definition into the module registry.
- */
 final class RegisterModuleStage implements ModuleBootstrapStageInterface
 {
     public function __construct(
@@ -21,26 +18,26 @@ final class RegisterModuleStage implements ModuleBootstrapStageInterface
 
     public function process(ModuleBootstrapContext $context): void
     {
-
         if ($context->hasException()) {
             return;
         }
 
+        $definition = $context->definition();
+
+        if ($definition === null) {
+            $context->setException(
+                new RuntimeException(
+                    'Cannot register module without definition.'
+                )
+            );
+
+            return;
+        }
+
         try {
-            $definition = $context->definition();
+            $this->registry->register($definition);
 
-            if ($definition === null) {
-                throw new RuntimeException(
-                    'Module definition has not been created.'
-                );
-            }
-
-            if (! $this->registry->has($definition->name)) {
-                $this->registry->register($definition);
-
-                $context->markModuleRegistered();
-
-            }
+            $context->markModuleRegistered();
         } catch (Throwable $exception) {
             $context->setException($exception);
         }

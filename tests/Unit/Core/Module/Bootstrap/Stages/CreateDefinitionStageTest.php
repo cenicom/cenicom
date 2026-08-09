@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Module\Bootstrap\Stages;
 
+use App\Core\Contracts\Events\EventDispatcherInterface;
 use App\Core\Contracts\Module\ModuleDefinitionFactoryInterface;
 use App\Core\Module\Bootstrap\ModuleBootstrapContext;
 use App\Core\Module\Bootstrap\Stages\CreateDefinitionStage;
 use App\Core\Module\DTO\ModuleDefinition;
+use App\Core\Module\Lifecycle\ModuleLifecycleManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use RuntimeException;
 use Tests\TestCase;
@@ -15,6 +17,8 @@ use Tests\TestCase;
 final class CreateDefinitionStageTest extends TestCase
 {
     private ModuleDefinitionFactoryInterface&MockObject $factory;
+
+    private ModuleLifecycleManager $lifecycle;
 
     private CreateDefinitionStage $stage;
 
@@ -26,15 +30,25 @@ final class CreateDefinitionStageTest extends TestCase
             ModuleDefinitionFactoryInterface::class
         );
 
+        $this->lifecycle = new ModuleLifecycleManager(
+            new class implements EventDispatcherInterface {
+                public function dispatch(object $event): void
+                {
+                    // No-op para pruebas unitarias.
+                }
+            }
+        );
+
         $this->stage = new CreateDefinitionStage(
-            $this->factory
+            $this->factory,
+            $this->lifecycle,
         );
     }
 
     public function test_creates_definition_and_stores_it_in_context(): void
     {
         $context = new ModuleBootstrapContext(
-            '/modules/Blog/module.json'
+            '/modules/Blog/module.php'
         );
 
         $definition = new ModuleDefinition(
@@ -49,7 +63,7 @@ final class CreateDefinitionStageTest extends TestCase
         $this->factory
             ->expects($this->once())
             ->method('create')
-            ->with('/modules/Blog/module.json')
+            ->with('/modules/Blog/module.php')
             ->willReturn($definition);
 
         $this->stage->process($context);
@@ -62,14 +76,17 @@ final class CreateDefinitionStageTest extends TestCase
     public function test_stores_exception_when_factory_fails(): void
     {
         $context = new ModuleBootstrapContext(
-            '/modules/Broken/module.json'
+            '/modules/Broken/module.php'
         );
 
-        $exception = new RuntimeException('Invalid manifest.');
+        $exception = new RuntimeException(
+            'Invalid manifest.'
+        );
 
         $this->factory
             ->expects($this->once())
             ->method('create')
+            ->with('/modules/Broken/module.php')
             ->willThrowException($exception);
 
         $this->stage->process($context);
@@ -82,7 +99,7 @@ final class CreateDefinitionStageTest extends TestCase
     public function test_does_not_execute_when_context_already_contains_exception(): void
     {
         $context = new ModuleBootstrapContext(
-            '/modules/Blog/module.json'
+            '/modules/Blog/module.php'
         );
 
         $context->setException(

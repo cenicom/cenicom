@@ -61,17 +61,23 @@ final class ModuleBootstrapEndToEndTest extends TestCase
         $factory = new ModuleDefinitionFactory();
 
         $pipeline = new ModuleBootstrapPipeline([
-            new CreateDefinitionStage($factory),
+            new CreateDefinitionStage(
+                $factory,
+                $this->lifecycle,
+            ),
             new ValidationStage(),
-            new RegisterModuleStage($this->registry),
-            new RegisterProvidersStage($this->providerRegistrar),
+            new RegisterModuleStage(
+                $this->registry,
+                $this->lifecycle,
+            ),
+            new RegisterProvidersStage(
+                $this->providerRegistrar,
+            ),
         ]);
 
         $this->bootstrap = new ModuleBootstrap(
             $this->finder,
             $pipeline,
-            $this->registry,
-            $this->providerRegistrar,
             $this->lifecycle,
         );
     }

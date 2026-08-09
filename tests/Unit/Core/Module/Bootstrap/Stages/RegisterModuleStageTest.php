@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Module\Bootstrap\Stages;
 
+use App\Core\Contracts\Module\ModuleProviderRegistrarInterface;
 use App\Core\Contracts\Module\ModuleRegistryInterface;
 use App\Core\Module\Bootstrap\ModuleBootstrapContext;
 use App\Core\Module\Bootstrap\Stages\RegisterModuleStage;
@@ -14,34 +15,40 @@ use Tests\TestCase;
 
 final class RegisterModuleStageTest extends TestCase
 {
-    private ModuleRegistryInterface&MockObject $registry;
+    private ModuleProviderRegistrarInterface&MockObject $providerRegistrar;
 
     private RegisterModuleStage $stage;
+
+    private ModuleRegistryInterface&MockObject $registry;
 
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->providerRegistrar = $this->createMock(
+            ModuleProviderRegistrarInterface::class
+        );
 
         $this->registry = $this->createMock(
             ModuleRegistryInterface::class
         );
 
         $this->stage = new RegisterModuleStage(
-            $this->registry
+            $this->registry,
         );
     }
 
     public function test_registers_module_definition(): void
     {
         $context = new ModuleBootstrapContext(
-            '/modules/Blog/module.json'
+            '/modules/Blog/module.php'
         );
 
         $definition = new ModuleDefinition(
             name: 'Blog',
             namespace: 'Modules\\Blog',
             basePath: '/modules/Blog',
-            manifestPath: '/modules/Blog/module.json',
+            manifestPath: '/modules/Blog/module.php',
             providers: [],
             enabled: true,
         );
@@ -57,19 +64,20 @@ final class RegisterModuleStageTest extends TestCase
 
         $this->assertFalse($context->hasException());
         $this->assertSame($definition, $context->definition());
+        $this->assertTrue($context->isModuleRegistered());
     }
 
     public function test_does_not_register_when_context_contains_exception(): void
     {
         $context = new ModuleBootstrapContext(
-            '/modules/Blog/module.json'
+            '/modules/Blog/module.php'
         );
 
         $definition = new ModuleDefinition(
             name: 'Blog',
             namespace: 'Modules\\Blog',
             basePath: '/modules/Blog',
-            manifestPath: '/modules/Blog/module.json',
+            manifestPath: '/modules/Blog/module.php',
             providers: [],
             enabled: true,
         );
@@ -80,43 +88,45 @@ final class RegisterModuleStageTest extends TestCase
             new RuntimeException('Previous failure.')
         );
 
-        $this->registry
+        $this->providerRegistrar
             ->expects($this->never())
-            ->method('register');
+            ->method('registerDefinition');
 
         $this->stage->process($context);
 
         $this->assertTrue($context->hasException());
         $this->assertSame($definition, $context->definition());
+        $this->assertFalse($context->isModuleRegistered());
     }
 
     public function test_stores_exception_when_definition_is_missing(): void
     {
         $context = new ModuleBootstrapContext(
-            '/modules/Blog/module.json'
+            '/modules/Blog/module.php'
         );
 
-        $this->registry
+        $this->providerRegistrar
             ->expects($this->never())
-            ->method('register');
+            ->method('registerDefinition');
 
         $this->stage->process($context);
 
         $this->assertTrue($context->hasException());
         $this->assertNull($context->definition());
+        $this->assertFalse($context->isModuleRegistered());
     }
 
     public function test_stores_exception_when_registry_fails(): void
     {
         $context = new ModuleBootstrapContext(
-            '/modules/Blog/module.json'
+            '/modules/Blog/module.php'
         );
 
         $definition = new ModuleDefinition(
             name: 'Blog',
             namespace: 'Modules\\Blog',
             basePath: '/modules/Blog',
-            manifestPath: '/modules/Blog/module.json',
+            manifestPath: '/modules/Blog/module.php',
             providers: [],
             enabled: true,
         );
@@ -124,7 +134,7 @@ final class RegisterModuleStageTest extends TestCase
         $context->setDefinition($definition);
 
         $exception = new RuntimeException(
-            'Registry failure.'
+            'Provider registration failure.'
         );
 
         $this->registry
@@ -138,5 +148,6 @@ final class RegisterModuleStageTest extends TestCase
         $this->assertTrue($context->hasException());
         $this->assertSame($exception, $context->exception());
         $this->assertSame($definition, $context->definition());
+        $this->assertFalse($context->isModuleRegistered());
     }
 }

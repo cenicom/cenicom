@@ -55,8 +55,6 @@ final class ModuleBootstrapReportIntegrationTest extends TestCase
         $bootstrap = new ModuleBootstrap(
             $finder,
             $pipeline,
-            $registry,
-            $providerRegistrar,
             $lifecycle,
         );
 
@@ -124,8 +122,6 @@ final class ModuleBootstrapReportIntegrationTest extends TestCase
         $bootstrap = new ModuleBootstrap(
             $finder,
             $pipeline,
-            $registry,
-            $providerRegistrar,
             $lifecycle,
         );
 
@@ -221,8 +217,6 @@ final class ModuleBootstrapReportIntegrationTest extends TestCase
         $bootstrap = new ModuleBootstrap(
             $finder,
             $pipeline,
-            $registry,
-            $providerRegistrar,
             $lifecycle,
         );
 
@@ -304,8 +298,6 @@ final class ModuleBootstrapReportIntegrationTest extends TestCase
         $bootstrap = new ModuleBootstrap(
             $finder,
             $pipeline,
-            $registry,
-            $providerRegistrar,
             $lifecycle,
         );
 
@@ -404,8 +396,6 @@ final class ModuleBootstrapReportIntegrationTest extends TestCase
         $bootstrap = new ModuleBootstrap(
             $finder,
             $pipeline,
-            $registry,
-            $providerRegistrar,
             $lifecycle,
         );
 

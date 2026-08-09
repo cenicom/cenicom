@@ -4,18 +4,25 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Module\Bootstrap;
 
+use App\Core\Contracts\Events\EventDispatcherInterface;
 use App\Core\Contracts\Module\ModuleBootstrapPipelineInterface;
 use App\Core\Contracts\Module\ModuleManifestFinderInterface;
+use App\Core\Contracts\Module\ModuleProviderRegistrarInterface;
 use App\Core\Contracts\Module\ModuleRegistryInterface;
 use App\Core\Module\Bootstrap\ModuleBootstrap;
 use App\Core\Module\Bootstrap\ModuleBootstrapContext;
 use App\Core\Module\DTO\ModuleDefinition;
-use App\Core\Module\Registry\ModuleRegistry;
-use App\Core\Contracts\Events\EventDispatcherInterface;
-use App\Core\Contracts\Module\ModuleProviderRegistrarInterface;
-
+use App\Core\Module\Events\ModuleBooted;
+use App\Core\Module\Events\ModuleBooting;
+use App\Core\Module\Events\ModuleDiscovered;
+use App\Core\Module\Events\ModuleFailed;
+use App\Core\Module\Events\ModuleRegistered;
+use App\Core\Module\Events\ModuleRunning;
 use App\Core\Module\Lifecycle\ModuleLifecycleManager;
+use App\Core\Module\Lifecycle\ModuleState;
+use App\Core\Module\Registry\ModuleRegistry;
 use PHPUnit\Framework\MockObject\MockObject;
+use RuntimeException;
 use Tests\TestCase;
 
 final class ModuleBootstrapLifecycleTest extends TestCase
@@ -31,6 +38,9 @@ final class ModuleBootstrapLifecycleTest extends TestCase
     private ModuleProviderRegistrarInterface&MockObject $providerRegistrar;
 
     private ModuleLifecycleManager $lifecycle;
+
+    /*Agrega una propiedad para capturar los eventos:*/
+    private array $lifecycleEvents = [];
 
     protected function setUp(): void
     {
@@ -50,11 +60,17 @@ final class ModuleBootstrapLifecycleTest extends TestCase
             ModuleProviderRegistrarInterface::class
         );
 
+        $this->lifecycleEvents = [];
+
         $this->lifecycle = new ModuleLifecycleManager(
-            new class implements EventDispatcherInterface {
+            new class($this->lifecycleEvents) implements EventDispatcherInterface {
+                public function __construct(
+                    private array &$events,
+                ) {}
+
                 public function dispatch(object $event): void
                 {
-                    // No-op.
+                    $this->events[] = $event::class;
                 }
             }
         );
@@ -62,8 +78,6 @@ final class ModuleBootstrapLifecycleTest extends TestCase
         $this->bootstrap = new ModuleBootstrap(
             $this->manifestFinder,
             $this->pipeline,
-            $this->registry,
-            $this->providerRegistrar,
             $this->lifecycle,
         );
     }
@@ -243,6 +257,174 @@ final class ModuleBootstrapLifecycleTest extends TestCase
 
         $this->assertTrue(
             $registry->has('TestModule')
+        );
+    }
+
+    /*Agrega prueba de lifecycle exitoso*/
+    public function test_successful_bootstrap_follows_complete_lifecycle(): void
+    {
+        $manifest = '/tmp/TestModule/module.json';
+
+        $this->manifestFinder
+            ->expects($this->once())
+            ->method('find')
+            ->willReturn([$manifest]);
+
+        $this->pipeline
+            ->expects($this->once())
+            ->method('process')
+            ->willReturnCallback(
+                function (ModuleBootstrapContext $context) use ($manifest): void {
+                    $context->setDefinition(
+                        new ModuleDefinition(
+                            name: 'TestModule',
+                            namespace: 'Tests\\Fixtures\\Bootstrap',
+                            basePath: '/tmp/TestModule',
+                            manifestPath: $manifest,
+                            providers: [],
+                            enabled: true,
+                        )
+                    );
+
+                    $context->markModuleRegistered();
+                }
+            );
+
+        $this->bootstrap->bootstrap();
+
+        $this->assertSame(
+            ModuleDiscovered::class,
+            $this->lifecycleEvents[0]
+        );
+
+        $this->assertSame(
+            ModuleRegistered::class,
+            $this->lifecycleEvents[1]
+        );
+
+        $this->assertSame(
+            ModuleBooting::class,
+            $this->lifecycleEvents[2]
+        );
+
+        $this->assertSame(
+            ModuleBooted::class,
+            $this->lifecycleEvents[3]
+        );
+
+        $this->assertSame(
+           ModuleRunning::class,
+            $this->lifecycleEvents[4]
+        );
+
+        $this->assertSame(
+            ModuleState::RUNNING,
+            $this->lifecycle->state('TestModule')
+        );
+    }
+
+    /*Agrega la prueba de failure*/
+    public function test_failed_bootstrap_follows_failure_lifecycle(): void
+    {
+        $manifest = '/tmp/TestModule/module.json';
+
+        $exception = new RuntimeException(
+            'Bootstrap failed.'
+        );
+
+        $this->manifestFinder
+            ->expects($this->once())
+            ->method('find')
+            ->willReturn([$manifest]);
+
+        $this->pipeline
+            ->expects($this->once())
+            ->method('process')
+            ->willReturnCallback(
+                function (ModuleBootstrapContext $context) use (
+                    $manifest,
+                    $exception
+                ): void {
+                    $context->setDefinition(
+                        new ModuleDefinition(
+                            name: 'TestModule',
+                            namespace: 'Tests\\Fixtures\\Bootstrap',
+                            basePath: '/tmp/TestModule',
+                            manifestPath: $manifest,
+                            providers: [],
+                            enabled: true,
+                        )
+                    );
+
+                    $context->markModuleRegistered();
+
+                    $context->setException($exception);
+                }
+            );
+
+        $this->bootstrap->bootstrap();
+
+        $this->assertSame(
+            [
+                ModuleDiscovered::class,
+                ModuleRegistered::class,
+                ModuleBooting::class,
+                ModuleFailed::class,
+            ],
+            $this->lifecycleEvents
+        );
+
+        $this->assertSame(
+            ModuleState::FAILED,
+            $this->lifecycle->state('TestModule')
+        );
+    }
+
+    /* Agrega la prueba de skipped
+     * Aquí respetamos el contrato actual del Lifecycle:
+     * DISCOVERED
+     */
+    public function test_skipped_bootstrap_stops_lifecycle_before_registration(): void
+    {
+        $manifest = '/tmp/DisabledModule/module.json';
+
+        $this->manifestFinder
+            ->expects($this->once())
+            ->method('find')
+            ->willReturn([$manifest]);
+
+        $this->pipeline
+            ->expects($this->once())
+            ->method('process')
+            ->willReturnCallback(
+                function (ModuleBootstrapContext $context) use ($manifest): void {
+                    $context->setDefinition(
+                        new ModuleDefinition(
+                            name: 'DisabledModule',
+                            namespace: 'Tests\\Fixtures\\Bootstrap',
+                            basePath: '/tmp/DisabledModule',
+                            manifestPath: $manifest,
+                            providers: [],
+                            enabled: false,
+                        )
+                    );
+
+                    $context->markSkipped();
+                }
+            );
+
+        $this->bootstrap->bootstrap();
+
+        $this->assertSame(
+            [
+                ModuleDiscovered::class,
+            ],
+            $this->lifecycleEvents
+        );
+
+        $this->assertSame(
+            ModuleState::DISCOVERED,
+            $this->lifecycle->state('DisabledModule')
         );
     }
 }
