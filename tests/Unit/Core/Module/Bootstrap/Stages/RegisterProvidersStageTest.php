@@ -34,14 +34,14 @@ final class RegisterProvidersStageTest extends TestCase
     public function test_registers_module_providers(): void
     {
         $context = new ModuleBootstrapContext(
-            '/modules/Blog/module.json'
+            '/modules/Blog/module.php'
         );
 
         $definition = new ModuleDefinition(
             name: 'Blog',
             namespace: 'Modules\\Blog',
             basePath: '/modules/Blog',
-            manifestPath: '/modules/Blog/module.json',
+            manifestPath: '/modules/Blog/module.php',
             providers: [
                 'Modules\\Blog\\Providers\\BlogServiceProvider',
             ],
@@ -64,14 +64,14 @@ final class RegisterProvidersStageTest extends TestCase
     public function test_does_not_register_when_context_contains_exception(): void
     {
         $context = new ModuleBootstrapContext(
-            '/modules/Blog/module.json'
+            '/modules/Blog/module.php'
         );
 
         $definition = new ModuleDefinition(
             name: 'Blog',
             namespace: 'Modules\\Blog',
             basePath: '/modules/Blog',
-            manifestPath: '/modules/Blog/module.json',
+            manifestPath: '/modules/Blog/module.php',
             providers: [
                 'Modules\\Blog\\Providers\\BlogServiceProvider',
             ],
@@ -97,7 +97,7 @@ final class RegisterProvidersStageTest extends TestCase
     public function test_stores_exception_when_definition_is_missing(): void
     {
         $context = new ModuleBootstrapContext(
-            '/modules/Blog/module.json'
+            '/modules/Blog/module.php'
         );
 
         $this->registrar
@@ -113,14 +113,14 @@ final class RegisterProvidersStageTest extends TestCase
     public function test_stores_exception_when_registrar_fails(): void
     {
         $context = new ModuleBootstrapContext(
-            '/modules/Blog/module.json'
+            '/modules/Blog/module.php'
         );
 
         $definition = new ModuleDefinition(
             name: 'Blog',
             namespace: 'Modules\\Blog',
             basePath: '/modules/Blog',
-            manifestPath: '/modules/Blog/module.json',
+            manifestPath: '/modules/Blog/module.php',
             providers: [
                 'Modules\\Blog\\Providers\\BlogServiceProvider',
             ],

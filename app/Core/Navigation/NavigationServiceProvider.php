@@ -7,7 +7,6 @@ namespace App\Core\Navigation;
 
 
 use App\Core\Contracts\NavigationAuthorizationInterface;
-use App\Core\Contracts\TestFormRepositoryInterface;
 use App\Core\Navigation\Authorization\NavigationAuthorization;
 use App\Core\Navigation\Authorization\NavigationPermissionResolver;
 use App\Core\Navigation\Bootstrap\NavigationBootstrapper;
@@ -33,9 +32,7 @@ use App\Core\Navigation\Registrar\NavigationRegistrar;
 use App\Core\Navigation\Registry\NavigationDefinitionRegistry;
 use App\Core\Navigation\Registry\NavigationRegistry;
 use App\Core\Navigation\Resolver\NavigationActiveResolver;
-
-use App\Core\Repositories\TestFormRepository;
-use App\Support\Navigation\NavigationManager;
+use App\Core\Navigation\View\NavigationViewComposer;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -62,11 +59,6 @@ final class NavigationServiceProvider extends ServiceProvider
         $this->app->singleton(
             NavigationAuthorizationInterface::class,
             NavigationAuthorization::class
-        );
-
-        $this->app->bind(
-            TestFormRepositoryInterface::class,
-            TestFormRepository::class
         );
 
         $this->app->singleton(
@@ -180,16 +172,8 @@ final class NavigationServiceProvider extends ServiceProvider
         )->boot();
 
         View::composer(
-            'layouts.app',
-            function ($view) {
-
-                $nav = app(NavigationManager::class);
-
-                $view->with(
-                    'legacyNavigation',
-                    $nav->grouped()
-                );
-            }
+            'components.layouts.app',
+            NavigationViewComposer::class
         );
     }
 }

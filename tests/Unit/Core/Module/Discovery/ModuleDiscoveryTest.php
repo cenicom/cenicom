@@ -120,7 +120,7 @@ final class ModuleDiscoveryTest extends TestCase
         mkdir($module);
 
         file_put_contents(
-            $module . DIRECTORY_SEPARATOR . 'module.json',
+            $module . DIRECTORY_SEPARATOR . 'module.php',
             '{}'
         );
 
@@ -134,7 +134,7 @@ final class ModuleDiscoveryTest extends TestCase
     }
 
     /**
-     * Crea un módulo temporal con un module.json válido.
+     * Crea un módulo temporal con un module.php válido.
      */
     private function createModule(string $name): void
     {
@@ -147,7 +147,7 @@ final class ModuleDiscoveryTest extends TestCase
         file_put_contents(
             $module
             . DIRECTORY_SEPARATOR
-            . 'module.json',
+            . 'module.php',
             json_encode(
                 [
                     'name' => $name,

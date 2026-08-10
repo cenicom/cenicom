@@ -87,7 +87,7 @@ final class ModuleProviderRegistrarRejectInvalidProviderTest extends TestCase
             name: 'TestModule',
             namespace: 'Tests\\Fixtures\\Bootstrap',
             basePath: '/tmp/TestModule',
-            manifestPath: '/tmp/TestModule/module.json',
+            manifestPath: '/tmp/TestModule/module.php',
             providers: [
                 'App\\Modules\\Test\\MissingProvider',
                 FakeClass::class,

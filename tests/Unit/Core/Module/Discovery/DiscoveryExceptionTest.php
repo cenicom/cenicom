@@ -48,10 +48,12 @@ final class DiscoveryExceptionTest extends TestCase
 
     public function test_no_modules_found_factory(): void
     {
-        $exception = DiscoveryException::noModulesFound('/modules');
+        $exception = DiscoveryException::noModulesFound(
+            '/modules'
+        );
 
         $this->assertSame(
-            'No modules were discovered.',
+            'No modules were found in [/modules].',
             $exception->getMessage()
         );
     }

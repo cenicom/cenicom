@@ -45,7 +45,7 @@ final class NavigationManifestDiscoveryServiceTest extends TestCase
             NavigationManifestRegistrarInterface::class
         );
 
-        $path = base_path('modules/Test/navigation.php');
+        $path = '/modules/Test/navigation.php';
 
         $finder
             ->shouldReceive('discover')

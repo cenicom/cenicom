@@ -18,7 +18,7 @@ final class ModuleBootstrapPipelineTest extends TestCase
     public function test_executes_all_stages_in_order(): void
     {
         $context = new ModuleBootstrapContext(
-            '/modules/Blog/module.json'
+            '/modules/Blog/module.php'
         );
 
         $executionOrder = [];
@@ -58,7 +58,7 @@ final class ModuleBootstrapPipelineTest extends TestCase
     public function test_stops_pipeline_when_context_contains_exception(): void
     {
         $context = new ModuleBootstrapContext(
-            '/modules/Blog/module.json'
+            '/modules/Blog/module.php'
         );
 
         $executionOrder = [];
@@ -97,7 +97,7 @@ final class ModuleBootstrapPipelineTest extends TestCase
     public function test_uses_same_context_for_every_stage(): void
     {
         $context = new ModuleBootstrapContext(
-            '/modules/Blog/module.json'
+            '/modules/Blog/module.php'
         );
 
         $stage1 = $this->createMock(
@@ -289,7 +289,7 @@ final class ModuleBootstrapPipelineTest extends TestCase
     public function test_stops_pipeline_when_context_is_skipped(): void
     {
         $context = new ModuleBootstrapContext(
-            '/modules/DisabledModule/module.json'
+            '/modules/DisabledModule/module.php'
         );
 
         $executionOrder = [];

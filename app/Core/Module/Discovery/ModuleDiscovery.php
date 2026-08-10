@@ -9,6 +9,7 @@ use App\Core\Module\Discovery\ModuleFinder;
 use App\Core\Module\Manifest\ManifestException;
 use App\Core\Module\Manifest\ManifestReader;
 use App\Core\Module\Manifest\ManifestValidator;
+use App\Core\Module\Manifest\ModuleManifest;
 
 
 
@@ -41,7 +42,7 @@ final readonly class ModuleDiscovery
 
         foreach ($this->finder->find($directory) as $modulePath) {
 
-        $manifestPath = $modulePath . DIRECTORY_SEPARATOR . 'module.json';
+        $manifestPath = $modulePath . DIRECTORY_SEPARATOR . 'module.php';
 
         try {
             $modules[] = $this->reader->read($manifestPath);

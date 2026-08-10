@@ -50,8 +50,8 @@ final class NavigationManifestDiscoveryIntegrationTest extends TestCase
             NavigationManifestRegistrarInterface::class
         );
 
-        $pathA = base_path('modules/Users/navigation.php');
-        $pathB = base_path('modules/Inventory/navigation.php');
+        $pathA = '/modules/Users/navigation.php';
+        $pathB = '/modules/Inventory/navigation.php';
 
         $finder
             ->shouldReceive('discover')

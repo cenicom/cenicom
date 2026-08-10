@@ -76,7 +76,7 @@ final class ModuleProviderRegistrarTest extends TestCase
             name: 'Blog',
             namespace: 'Modules\\Blog',
             basePath: '/modules/Blog',
-            manifestPath: '/modules/Blog/module.json',
+            manifestPath: '/modules/Blog/module.php',
             providers: $providers,
             enabled: true,
         );

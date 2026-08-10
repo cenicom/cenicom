@@ -84,7 +84,7 @@ final class ModuleBootstrapLifecycleTest extends TestCase
 
     public function test_bootstrap_processes_single_manifest(): void
     {
-        $manifest = '/tmp/TestModule/module.json';
+        $manifest = '/tmp/TestModule/module.php';
 
         $this->manifestFinder
             ->expects($this->once())
@@ -106,9 +106,9 @@ final class ModuleBootstrapLifecycleTest extends TestCase
     public function test_bootstrap_processes_multiple_manifests(): void
     {
         $manifests = [
-            '/tmp/ModuleA/module.json',
-            '/tmp/ModuleB/module.json',
-            '/tmp/ModuleC/module.json',
+            '/tmp/ModuleA/module.php',
+            '/tmp/ModuleB/module.php',
+            '/tmp/ModuleC/module.php',
         ];
 
         $this->manifestFinder
@@ -135,8 +135,8 @@ final class ModuleBootstrapLifecycleTest extends TestCase
     public function test_bootstrap_creates_one_context_per_manifest(): void
     {
         $manifests = [
-            '/tmp/A/module.json',
-            '/tmp/B/module.json',
+            '/tmp/A/module.php',
+            '/tmp/B/module.php',
         ];
 
         $this->manifestFinder
@@ -165,12 +165,12 @@ final class ModuleBootstrapLifecycleTest extends TestCase
         );
 
         $this->assertSame(
-            '/tmp/A/module.json',
+            '/tmp/A/module.php',
             $contexts[0]->manifestPath()
         );
 
         $this->assertSame(
-            '/tmp/B/module.json',
+            '/tmp/B/module.php',
             $contexts[1]->manifestPath()
         );
     }
@@ -194,7 +194,7 @@ final class ModuleBootstrapLifecycleTest extends TestCase
     public function test_bootstrap_is_idempotent(): void
     {
         $manifests = [
-            '/tmp/TestModule/module.json',
+            '/tmp/TestModule/module.php',
         ];
 
         $this->manifestFinder
@@ -213,7 +213,7 @@ final class ModuleBootstrapLifecycleTest extends TestCase
 
     public function test_bootstrap_passes_manifest_path_to_context(): void
     {
-        $manifest = '/tmp/Inventory/module.json';
+        $manifest = '/tmp/Inventory/module.php';
 
         $this->manifestFinder
             ->expects($this->once())
@@ -242,7 +242,7 @@ final class ModuleBootstrapLifecycleTest extends TestCase
             name: 'TestModule',
             namespace: 'Tests\\Fixtures\\Bootstrap',
             basePath: '/tmp/TestModule',
-            manifestPath: '/tmp/TestModule/module.json',
+            manifestPath: '/tmp/TestModule/module.php',
             providers: [],
             enabled: true,
         );
@@ -263,7 +263,7 @@ final class ModuleBootstrapLifecycleTest extends TestCase
     /*Agrega prueba de lifecycle exitoso*/
     public function test_successful_bootstrap_follows_complete_lifecycle(): void
     {
-        $manifest = '/tmp/TestModule/module.json';
+        $manifest = '/tmp/TestModule/module.php';
 
         $this->manifestFinder
             ->expects($this->once())
@@ -326,7 +326,7 @@ final class ModuleBootstrapLifecycleTest extends TestCase
     /*Agrega la prueba de failure*/
     public function test_failed_bootstrap_follows_failure_lifecycle(): void
     {
-        $manifest = '/tmp/TestModule/module.json';
+        $manifest = '/tmp/TestModule/module.php';
 
         $exception = new RuntimeException(
             'Bootstrap failed.'
@@ -386,7 +386,7 @@ final class ModuleBootstrapLifecycleTest extends TestCase
      */
     public function test_skipped_bootstrap_stops_lifecycle_before_registration(): void
     {
-        $manifest = '/tmp/DisabledModule/module.json';
+        $manifest = '/tmp/DisabledModule/module.php';
 
         $this->manifestFinder
             ->expects($this->once())

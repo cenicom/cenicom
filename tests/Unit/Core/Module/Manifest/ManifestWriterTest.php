@@ -55,7 +55,7 @@ final class ManifestWriterTest extends TestCase
 
         $path = $this->directory
             . DIRECTORY_SEPARATOR
-            . 'module.json';
+            . 'module.php';
 
         $this->writer->write(
             $manifest,
@@ -80,7 +80,7 @@ final class ManifestWriterTest extends TestCase
             . DIRECTORY_SEPARATOR
             . 'Currency'
             . DIRECTORY_SEPARATOR
-            . 'module.json';
+            . 'module.php';
 
         $this->writer->write(
             $manifest,
@@ -102,7 +102,7 @@ final class ManifestWriterTest extends TestCase
 
         $path = $this->directory
             . DIRECTORY_SEPARATOR
-            . 'module.json';
+            . 'module.php';
 
         $this->writer->write(
             $manifest,
@@ -147,7 +147,7 @@ final class ManifestWriterTest extends TestCase
 
         $path = $this->directory
             . DIRECTORY_SEPARATOR
-            . 'module.json';
+            . 'module.php';
 
         $this->assertNotFalse(
             file_put_contents(

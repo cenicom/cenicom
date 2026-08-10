@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Navigation\View;
 
-use App\Core\Navigation\Contracts\NavigationActiveResolverInterface;
 use App\Core\Navigation\Contracts\NavigationServiceInterface;
 use App\Core\Navigation\DTO\NavigationTreeData;
-
 use App\Core\Navigation\View\NavigationViewComposer;
 use App\Core\Security\Contracts\IdentityInterface;
 use Illuminate\View\View;
@@ -33,24 +31,9 @@ final class NavigationViewComposerTest extends TestCase
             ->with($identity)
             ->willReturn($tree);
 
-        $resolver = $this->createMock(
-            NavigationActiveResolverInterface::class
-        );
-
-        $resolver
-            ->expects($this->once())
-            ->method('resolve')
-            ->with($tree)
-            ->willReturn($tree);
-
         $view = $this->createMock(
             View::class
         );
-
-        $view
-            ->expects($this->once())
-            ->method('getData')
-            ->willReturn([]);
 
         $view
             ->expects($this->once())
@@ -62,7 +45,6 @@ final class NavigationViewComposerTest extends TestCase
 
         $composer = new NavigationViewComposer(
             $service,
-            $resolver,
             $identity
         );
 

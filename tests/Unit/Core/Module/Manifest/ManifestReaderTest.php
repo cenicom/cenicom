@@ -217,7 +217,7 @@ final class ManifestReaderTest extends TestCase
     {
         return $this->directory
             . DIRECTORY_SEPARATOR
-            . 'module.json';
+            . 'module.php';
     }
 
     private function deleteDirectory(string $directory): void

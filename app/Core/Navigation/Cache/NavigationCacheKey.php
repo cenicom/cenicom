@@ -16,6 +16,11 @@ final class NavigationCacheKey
             . $identityId;
     }
 
+    public static function guest(): string
+    {
+        return self::PREFIX . '.tree.guest';
+    }
+
     public static function tree(): string
     {
         return self::PREFIX . '.tree';
