@@ -22,9 +22,8 @@ final readonly class NavigationService implements NavigationServiceInterface
     /**
      * Obtiene el árbol de navegación filtrado por identidad.
      */
-    public function tree(
-        IdentityInterface $identity
-    ): NavigationTreeData {
+    public function tree(IdentityInterface $identity): NavigationTreeData
+    {
         $key = $this->cacheKey($identity);
 
         $tree = $this->cache->get($key);
@@ -43,9 +42,8 @@ final readonly class NavigationService implements NavigationServiceInterface
         return $tree;
     }
 
-    private function cacheKey(
-        IdentityInterface $identity
-    ): string {
+    private function cacheKey(IdentityInterface $identity): string
+    {
         if (!$identity->authenticated()) {
             return NavigationCacheKey::guest();
         }

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Core\Navigation;
 
-
-
 use App\Core\Contracts\NavigationAuthorizationInterface;
 use App\Core\Navigation\Authorization\NavigationAuthorization;
 use App\Core\Navigation\Authorization\NavigationPermissionResolver;
@@ -23,6 +21,7 @@ use App\Core\Navigation\Contracts\NavigationManifestRegistrarInterface;
 use App\Core\Navigation\Contracts\NavigationPermissionResolverInterface;
 use App\Core\Navigation\Contracts\NavigationRegistrarInterface;
 use App\Core\Navigation\Contracts\NavigationRegistryInterface;
+use App\Core\Navigation\Contracts\NavigationServiceInterface;
 use App\Core\Navigation\Discovery\NavigationManifestDiscoveryService;
 use App\Core\Navigation\Discovery\NavigationManifestFinder;
 use App\Core\Navigation\Discovery\NavigationManifestLoader;
@@ -32,10 +31,15 @@ use App\Core\Navigation\Registrar\NavigationRegistrar;
 use App\Core\Navigation\Registry\NavigationDefinitionRegistry;
 use App\Core\Navigation\Registry\NavigationRegistry;
 use App\Core\Navigation\Resolver\NavigationActiveResolver;
-use App\Core\Navigation\View\NavigationViewComposer;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\ServiceProvider;
+use App\Core\Navigation\Services\NavigationService;
+use App\Core\Navigation\Cache\Contracts\NavigationCacheInvalidatorInterface;
+use App\Core\Navigation\Cache\NavigationCacheInvalidator;
+use App\Core\Navigation\Listeners\NavigationAuthorizationChangedListener;
+use App\Core\Security\Authorization\Events\AuthorizationChanged;
+use Illuminate\Support\Facades\Event;
 
+
+use Illuminate\Support\ServiceProvider;
 
 final class NavigationServiceProvider extends ServiceProvider
 {
@@ -75,7 +79,6 @@ final class NavigationServiceProvider extends ServiceProvider
         $this->app->singleton(
             NavigationBootstrapper::class,
             function ($app) {
-
                 return new NavigationBootstrapper(
                     $app->make(
                         NavigationDefinitionRegistry::class
@@ -84,38 +87,15 @@ final class NavigationServiceProvider extends ServiceProvider
                         NavigationRegistrarInterface::class
                     )
                 );
-            }
-        );
-
-        $this->app->singleton(
-            NavigationDefinitionRegistry::class,
-            function () {
-                return new NavigationDefinitionRegistry();
             }
         );
 
         $this->app->singleton(
             NavigationDefinitionLoader::class,
             function ($app) {
-
                 return new NavigationDefinitionLoader(
                     $app->make(
                         NavigationDefinitionRegistry::class
-                    )
-                );
-            }
-        );
-
-        $this->app->singleton(
-            NavigationBootstrapper::class,
-            function ($app) {
-
-                return new NavigationBootstrapper(
-                    $app->make(
-                        NavigationDefinitionRegistry::class
-                    ),
-                    $app->make(
-                        NavigationRegistrarInterface::class
                     )
                 );
             }
@@ -128,37 +108,52 @@ final class NavigationServiceProvider extends ServiceProvider
 
         $this->app->singleton(
             NavigationManifestFinderInterface::class,
-            NavigationManifestFinder::class,
+            NavigationManifestFinder::class
         );
 
         $this->app->singleton(
             NavigationManifestLoaderInterface::class,
-            NavigationManifestLoader::class,
+            NavigationManifestLoader::class
         );
 
         $this->app->singleton(
             NavigationManifestRegistrarInterface::class,
-            NavigationManifestRegistrar::class,
+            NavigationManifestRegistrar::class
         );
 
         $this->app->singleton(
             NavigationManifestDiscoveryInterface::class,
-            NavigationManifestDiscoveryService::class,
+            NavigationManifestDiscoveryService::class
         );
 
         $this->app->singleton(
             NavigationManifestBootstrapperInterface::class,
-            NavigationManifestBootstrapper::class,
+            NavigationManifestBootstrapper::class
         );
 
         $this->app->bind(
             NavigationCacheInterface::class,
             NavigationCache::class
         );
+
+        $this->app->singleton(
+            NavigationCacheInvalidatorInterface::class,
+            NavigationCacheInvalidator::class
+        );
+
+        $this->app->singleton(
+            NavigationServiceInterface::class,
+            NavigationService::class
+        );
     }
 
     public function boot(): void
     {
+        Event::listen(
+            AuthorizationChanged::class,
+            NavigationAuthorizationChangedListener::class
+        );
+
         app(
             NavigationDefinitionLoader::class
         )->load();
@@ -170,10 +165,5 @@ final class NavigationServiceProvider extends ServiceProvider
         app(
             NavigationManifestBootstrapperInterface::class
         )->boot();
-
-        View::composer(
-            'components.layouts.app',
-            NavigationViewComposer::class
-        );
     }
 }

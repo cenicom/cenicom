@@ -6,6 +6,7 @@ namespace App\Core\Security\Services;
 
 use App\Core\Security\DTO\IdentityData;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 final class IdentityService
 {
@@ -27,13 +28,12 @@ final class IdentityService
 
         return new IdentityData(
             id: $user->getAuthIdentifier(),
-            name: $user->name ?? 'Unknown',
+            name: $this->resolveName($user),
             roles: $this->resolveRoles($user),
             permissions: $this->resolvePermissions($user),
             authenticated: true,
         );
     }
-
 
     /**
      * Determina si existe identidad autenticada.
@@ -45,13 +45,31 @@ final class IdentityService
             ->check();
     }
 
+    /**
+     * Obtiene el nombre de la identidad.
+     */
+    private function resolveName(object $user): string
+    {
+        $firstName = $user->first_name ?? null;
+        $lastName = $user->last_name ?? null;
+
+        if ($firstName !== null || $lastName !== null) {
+            return trim(
+                sprintf(
+                    '%s %s',
+                    $firstName ?? '',
+                    $lastName ?? ''
+                )
+            );
+        }
+
+        return $user->name ?? 'Unknown';
+    }
 
     /**
      * Obtiene roles actuales.
      *
-     * Preparado para integración CN-SEC-003.
-     *
-     * @return array<int,string>
+     * @return array<int, string>
      */
     private function resolveRoles(object $user): array
     {
@@ -65,23 +83,56 @@ final class IdentityService
             ->toArray();
     }
 
-
     /**
-     * Obtiene permisos actuales.
+     * Obtiene permisos efectivos.
      *
-     * Preparado para integración CN-SEC-002.
+     * Combina permisos directos y permisos heredados
+     * desde los roles de la identidad.
      *
-     * @return array<int,string>
+     * @return array<int, string>
      */
     private function resolvePermissions(object $user): array
     {
-        if (!method_exists($user, 'permissions')) {
-            return [];
+        $permissions = [];
+
+        /*
+         * Permisos asignados directamente al usuario.
+         */
+        if (method_exists($user, 'permissions')) {
+            $permissions = $user
+                ->permissions()
+                ->pluck('name')
+                ->toArray();
         }
 
-        return $user
-            ->permissions()
-            ->pluck('name')
-            ->toArray();
+        /*
+         * Permisos heredados desde los roles.
+         */
+        if (method_exists($user, 'roles')) {
+            $roles = $user->roles();
+
+            /*
+             * Las relaciones Eloquent permiten cargar
+             * los permisos de los roles.
+             */
+            if ($roles instanceof BelongsToMany) {
+                $rolePermissions = $roles
+                    ->with('permissions')
+                    ->get()
+                    ->flatMap(
+                        fn ($role) => $role->permissions->pluck('name')
+                    )
+                    ->toArray();
+
+                $permissions = array_merge(
+                    $permissions,
+                    $rolePermissions
+                );
+            }
+        }
+
+        return array_values(
+            array_unique($permissions)
+        );
     }
 }

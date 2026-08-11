@@ -26,6 +26,8 @@ use App\Core\Security\Services\IdentityService;
 use Illuminate\Support\ServiceProvider;
 use App\Core\Security\Contracts\IdentityInterface;
 use App\Core\Security\Identity\Identity;
+use App\Core\Security\Authorization\AuthorizationAssignmentService;
+use App\Core\Security\Authorization\Contracts\AuthorizationAssignmentServiceInterface;
 
 final class SecurityServiceProvider extends ServiceProvider
 {
@@ -103,9 +105,25 @@ final class SecurityServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
-        IdentityInterface::class,
-        Identity::class
-    );
+            IdentityInterface::class,
+            function ($app): IdentityInterface {
+                $data = $app
+                    ->make(IdentityService::class)
+                    ->current();
+
+                return new Identity(
+                    id: $data->id,
+                    name: $data->name,
+                    roles: $data->roles,
+                    permissions: $data->permissions,
+                );
+            }
+        );
+
+        $this->app->singleton(
+            AuthorizationAssignmentServiceInterface::class,
+            AuthorizationAssignmentService::class
+        );
     }
 
 
