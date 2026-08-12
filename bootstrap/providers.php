@@ -25,7 +25,9 @@ return [
 
     App\Core\Security\Providers\SecurityServiceProvider::class,
 
-    App\Core\Navigation\NavigationServiceProvider::class,
+    //App\Core\Navigation\NavigationServiceProvider::class,
+
+    App\Core\Audit\Providers\AuditServiceProvider::class,
 
 
 ];
