@@ -110,7 +110,9 @@ final class InstitutionNavigationTest extends TestCase
                     &&
                     $item->label() === 'Instituciones'
                     &&
-                    $item->route() === 'institutions.index';
+                    $item->route() === 'institutions.index'
+                    &&
+                    $item->permission() === 'institutions.view';
             });
 
 

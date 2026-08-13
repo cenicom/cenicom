@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Core\Navigation\Authorization;
 
 use App\Core\Navigation\Authorization\NavigationPermissionResolver;
-use App\Core\Security\Authorization\Contracts\PermissionResolverInterface;
+use App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface;
 use App\Core\Security\Contracts\IdentityInterface;
 use Mockery;
 use Tests\TestCase;
@@ -14,16 +14,20 @@ final class NavigationPermissionResolverTest extends TestCase
 {
     public function test_allows_public_navigation_item(): void
     {
-        $permissionResolver = Mockery::mock(
-            PermissionResolverInterface::class
+        $authorization = Mockery::mock(
+            AuthorizationServiceInterface::class
         );
 
         $identity = Mockery::mock(
             IdentityInterface::class
         );
 
+        $authorization
+            ->shouldReceive('can')
+            ->never();
+
         $resolver = new NavigationPermissionResolver(
-            $permissionResolver
+            $authorization
         );
 
         $this->assertTrue(
@@ -40,11 +44,11 @@ final class NavigationPermissionResolverTest extends TestCase
             IdentityInterface::class
         );
 
-        $permissionResolver = Mockery::mock(
-            PermissionResolverInterface::class
+        $authorization = Mockery::mock(
+            AuthorizationServiceInterface::class
         );
 
-        $permissionResolver
+        $authorization
             ->shouldReceive('can')
             ->once()
             ->with(
@@ -54,7 +58,7 @@ final class NavigationPermissionResolverTest extends TestCase
             ->andReturn(true);
 
         $resolver = new NavigationPermissionResolver(
-            $permissionResolver
+            $authorization
         );
 
         $this->assertTrue(
@@ -71,11 +75,11 @@ final class NavigationPermissionResolverTest extends TestCase
             IdentityInterface::class
         );
 
-        $permissionResolver = Mockery::mock(
-            PermissionResolverInterface::class
+        $authorization = Mockery::mock(
+            AuthorizationServiceInterface::class
         );
 
-        $permissionResolver
+        $authorization
             ->shouldReceive('can')
             ->once()
             ->with(
@@ -85,7 +89,7 @@ final class NavigationPermissionResolverTest extends TestCase
             ->andReturn(false);
 
         $resolver = new NavigationPermissionResolver(
-            $permissionResolver
+            $authorization
         );
 
         $this->assertFalse(
@@ -98,11 +102,11 @@ final class NavigationPermissionResolverTest extends TestCase
 
     public function test_does_not_query_security_for_public_navigation(): void
     {
-        $permissionResolver = Mockery::mock(
-            PermissionResolverInterface::class
+        $authorization = Mockery::mock(
+            AuthorizationServiceInterface::class
         );
 
-        $permissionResolver
+        $authorization
             ->shouldReceive('can')
             ->never();
 
@@ -111,7 +115,7 @@ final class NavigationPermissionResolverTest extends TestCase
         );
 
         $resolver = new NavigationPermissionResolver(
-            $permissionResolver
+            $authorization
         );
 
         $this->assertTrue(

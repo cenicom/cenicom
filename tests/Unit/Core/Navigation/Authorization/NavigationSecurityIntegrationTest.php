@@ -9,7 +9,7 @@ use App\Core\Navigation\Builder\NavigationBuilder;
 use App\Core\Navigation\Contracts\NavigationRegistryInterface;
 use App\Core\Navigation\DTO\NavigationGroupData;
 use App\Core\Navigation\DTO\NavigationItemData;
-use App\Core\Security\Authorization\Contracts\PermissionResolverInterface;
+use App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface;
 use App\Core\Security\Contracts\IdentityInterface;
 use App\Core\Security\Roles\Contracts\RoleRegistryInterface;
 use App\Core\Security\Roles\DTO\RoleDefinition;
@@ -144,8 +144,12 @@ final class NavigationSecurityIntegrationTest extends TestCase
                 ),
             ]);
 
+        $authorization = app(
+            AuthorizationServiceInterface::class
+        );
+
         $permissionResolver = new NavigationPermissionResolver(
-            app(PermissionResolverInterface::class)
+            $authorization
         );
 
         return (new NavigationBuilder(
@@ -162,8 +166,7 @@ final class NavigationSecurityIntegrationTest extends TestCase
         return new class($roles) implements IdentityInterface {
             public function __construct(
                 private array $roles
-            ) {
-            }
+            ) {}
 
             public function id(): int|string|null
             {

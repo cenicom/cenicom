@@ -9,7 +9,7 @@ use App\Core\Security\Contracts\IdentityInterface;
 interface PermissionResolverInterface
 {
     /**
-     * Determina si una identidad posee un permiso.
+     * Determina si una identidad posee el permiso indicado.
      */
     public function can(
         IdentityInterface $identity,

@@ -77,12 +77,12 @@ final class EloquentAuditQueryTest extends TestCase
 
         $this->assertSame(
             'user',
-            $entry->subject_type
+            $entry->subjectType
         );
 
         $this->assertSame(
             15,
-            (int) $entry->subject_id
+            (int) $entry->subjectId
         );
     }
 
@@ -202,12 +202,12 @@ final class EloquentAuditQueryTest extends TestCase
 
         $this->assertSame(
             15,
-            (int) $entries[0]->actor_id
+            (int) $entries[0]->actorId
         );
 
         $this->assertSame(
             'Juan Pérez',
-            $entries[0]->actor_name
+            $entries[0]->actorName
         );
     }
 
@@ -262,16 +262,16 @@ final class EloquentAuditQueryTest extends TestCase
         $this->assertCount(1, $entries);
 
         $this->assertNull(
-            $entries[0]->actor_id
+            $entries[0]->actorId
         );
 
         $this->assertSame(
             'Guest',
-            $entries[0]->actor_name
+            $entries[0]->actorName
         );
 
         $this->assertFalse(
-            (bool) $entries[0]->actor_authenticated
+            (bool) $entries[0]->actorAuthenticated
         );
     }
 
@@ -342,7 +342,7 @@ final class EloquentAuditQueryTest extends TestCase
 
         $this->assertSame(
             '2026-08-11 12:00:00',
-            $entries[0]->occurred_at->format('Y-m-d H:i:s')
+            $entries[0]->occurredAt->format('Y-m-d H:i:s')
         );
     }
 }

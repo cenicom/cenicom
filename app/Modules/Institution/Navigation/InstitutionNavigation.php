@@ -36,6 +36,7 @@ implements NavigationDefinitionInterface
                 label: 'Instituciones',
                 icon: 'bi bi-building',
                 route: 'institutions.index',
+                permission: 'institutions.view',
                 order: 10,
             )
         );

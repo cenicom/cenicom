@@ -17,10 +17,6 @@ use Illuminate\Support\ServiceProvider;
 
 final class AuditServiceProvider extends ServiceProvider
 {
-    /**
-     * /🟢 Siguiente maniobra: implementar register()
-     * @return void
-     */
     public function register(): void
     {
         $this->app->bind(

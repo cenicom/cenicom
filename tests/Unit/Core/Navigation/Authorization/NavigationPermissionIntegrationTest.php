@@ -6,12 +6,11 @@ namespace Tests\Unit\Core\Navigation\Authorization;
 
 use App\Core\Navigation\Authorization\NavigationPermissionResolver;
 use App\Core\Navigation\Builder\NavigationBuilder;
-
 use App\Core\Navigation\Contracts\NavigationRegistryInterface;
 use App\Core\Navigation\DTO\NavigationGroupData;
 use App\Core\Navigation\DTO\NavigationItemData;
+use App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface;
 use App\Core\Security\Contracts\IdentityInterface;
-use App\Core\Security\Authorization\Contracts\PermissionResolverInterface;
 use PHPUnit\Framework\TestCase;
 
 final class NavigationPermissionIntegrationTest extends TestCase
@@ -22,25 +21,19 @@ final class NavigationPermissionIntegrationTest extends TestCase
             permissions: []
         );
 
-        $tree = $this->buildNavigation(
-            $identity
-        );
+        $tree = $this->buildNavigation($identity);
 
         $children = $tree
             ->nodes()[0]
             ->children();
 
-        $this->assertCount(
-            1,
-            $children
-        );
+        $this->assertCount(1, $children);
 
         $this->assertSame(
             'dashboard',
             $children[0]->id()
         );
     }
-
 
     public function test_partial_permissions_show_only_allowed_items(): void
     {
@@ -50,18 +43,13 @@ final class NavigationPermissionIntegrationTest extends TestCase
             ]
         );
 
-        $tree = $this->buildNavigation(
-            $identity
-        );
+        $tree = $this->buildNavigation($identity);
 
         $children = $tree
             ->nodes()[0]
             ->children();
 
-        $this->assertCount(
-            2,
-            $children
-        );
+        $this->assertCount(2, $children);
 
         $this->assertSame(
             'dashboard',
@@ -74,7 +62,6 @@ final class NavigationPermissionIntegrationTest extends TestCase
         );
     }
 
-
     public function test_admin_identity_sees_all_navigation_items(): void
     {
         $identity = $this->createIdentity(
@@ -85,20 +72,14 @@ final class NavigationPermissionIntegrationTest extends TestCase
             ]
         );
 
-        $tree = $this->buildNavigation(
-            $identity
-        );
+        $tree = $this->buildNavigation($identity);
 
         $children = $tree
             ->nodes()[0]
             ->children();
 
-        $this->assertCount(
-            4,
-            $children
-        );
+        $this->assertCount(4, $children);
     }
-
 
     private function buildNavigation(
         IdentityInterface $identity
@@ -114,9 +95,7 @@ final class NavigationPermissionIntegrationTest extends TestCase
             order: 1,
         );
 
-
         $items = [
-
             new NavigationItemData(
                 id: 'dashboard',
                 label: 'Dashboard',
@@ -125,7 +104,6 @@ final class NavigationPermissionIntegrationTest extends TestCase
                 group: 'administration',
                 order: 1,
             ),
-
             new NavigationItemData(
                 id: 'institutions',
                 label: 'Instituciones',
@@ -134,7 +112,6 @@ final class NavigationPermissionIntegrationTest extends TestCase
                 group: 'administration',
                 order: 2,
             ),
-
             new NavigationItemData(
                 id: 'users',
                 label: 'Usuarios',
@@ -143,7 +120,6 @@ final class NavigationPermissionIntegrationTest extends TestCase
                 group: 'administration',
                 order: 3,
             ),
-
             new NavigationItemData(
                 id: 'roles',
                 label: 'Roles',
@@ -154,40 +130,29 @@ final class NavigationPermissionIntegrationTest extends TestCase
             ),
         ];
 
-
         $registry
             ->method('groups')
             ->willReturn([
                 'administration' => $group,
             ]);
 
-
         $registry
             ->method('items')
             ->willReturn($items);
 
-
-        $permissionResolver = new NavigationPermissionResolver(
-            $this->createPermissionResolver()
+        $authorization = new NavigationPermissionResolver(
+            $this->createAuthorization()
         );
 
-
-        $builder = new NavigationBuilder(
+        return (new NavigationBuilder(
             $registry,
-            $permissionResolver,
-        );
-
-
-        return $builder->build(
-            $identity
-        );
+            $authorization,
+        ))->build($identity);
     }
 
-
-    private function createPermissionResolver(): PermissionResolverInterface
+    private function createAuthorization(): AuthorizationServiceInterface
     {
-        return new class implements PermissionResolverInterface {
-
+        return new class implements AuthorizationServiceInterface {
             public function can(
                 IdentityInterface $identity,
                 string $permission
@@ -201,42 +166,34 @@ final class NavigationPermissionIntegrationTest extends TestCase
         };
     }
 
-
     private function createIdentity(
         array $permissions
     ): IdentityInterface {
-
         return new class($permissions) implements IdentityInterface {
-
             public function __construct(
                 private array $permissions
             ) {
             }
-
 
             public function id(): int|string|null
             {
                 return 1;
             }
 
-
             public function name(): string
             {
                 return 'Test User';
             }
-
 
             public function roles(): array
             {
                 return [];
             }
 
-
             public function permissions(): array
             {
                 return $this->permissions;
             }
-
 
             public function can(
                 string $permission
@@ -247,7 +204,6 @@ final class NavigationPermissionIntegrationTest extends TestCase
                     true
                 );
             }
-
 
             public function authenticated(): bool
             {

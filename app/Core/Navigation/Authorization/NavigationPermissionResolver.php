@@ -5,14 +5,16 @@ declare(strict_types=1);
 namespace App\Core\Navigation\Authorization;
 
 use App\Core\Navigation\Contracts\NavigationPermissionResolverInterface;
-use App\Core\Security\Authorization\Contracts\PermissionResolverInterface;
+use App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface;
 use App\Core\Security\Contracts\IdentityInterface;
 
-final readonly class NavigationPermissionResolver implements NavigationPermissionResolverInterface
+final readonly class NavigationPermissionResolver
+    implements NavigationPermissionResolverInterface
 {
     public function __construct(
-        private PermissionResolverInterface $permissionResolver,
-    ) {}
+        private AuthorizationServiceInterface $authorization,
+    ) {
+    }
 
     /**
      * Determina si una identidad puede visualizar
@@ -22,14 +24,11 @@ final readonly class NavigationPermissionResolver implements NavigationPermissio
         IdentityInterface $identity,
         ?string $permission,
     ): bool {
-        /*
-         * Elementos públicos.
-         */
         if ($permission === null) {
             return true;
         }
 
-        return $this->permissionResolver->can(
+        return $this->authorization->can(
             $identity,
             $permission,
         );

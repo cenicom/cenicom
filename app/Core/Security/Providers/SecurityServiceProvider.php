@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace App\Core\Security\Providers;
 
-use App\Core\Security\Authorization\Contracts\PermissionResolverInterface;
 use App\Core\Security\Authorization\PermissionResolver;
 use App\Core\Security\Authorization\RolePermissionResolver;
 use App\Core\Security\Authorization\Contracts\RolePermissionResolverInterface;
 use App\Core\Security\Authorization\AuthorizationService;
 use App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface;
-use App\Core\Security\Permissions\Contracts\PermissionCheckerInterface;
+
 use App\Core\Security\Permissions\Contracts\PermissionRegistrarInterface;
 use App\Core\Security\Permissions\Contracts\PermissionRegistryInterface;
-use App\Core\Security\Permissions\PermissionChecker;
+
 use App\Core\Security\Permissions\PermissionRegistrar;
 use App\Core\Security\Permissions\PermissionRegistry;
 use App\Core\Security\Roles\Contracts\RoleCheckerInterface;
@@ -28,6 +27,13 @@ use App\Core\Security\Contracts\IdentityInterface;
 use App\Core\Security\Identity\Identity;
 use App\Core\Security\Authorization\AuthorizationAssignmentService;
 use App\Core\Security\Authorization\Contracts\AuthorizationAssignmentServiceInterface;
+use App\Core\Security\Authorization\Contracts\PermissionResolverInterface;
+use App\Core\Security\Permissions\Contracts\PermissionDefinitionRegistryInterface;
+use App\Core\Security\Permissions\PermissionDefinitionRegistry;
+use App\Core\Security\Permissions\Bootstrap\PermissionDefinitionBootstrapper;
+use App\Core\Security\Permissions\Loader\PermissionDefinitionLoader;
+use App\Core\Security\Policies\Contracts\PolicyRegistryInterface;
+use App\Core\Security\Policies\PolicyRegistry;
 
 final class SecurityServiceProvider extends ServiceProvider
 {
@@ -60,15 +66,6 @@ final class SecurityServiceProvider extends ServiceProvider
         );
 
         $this->app->singleton(
-            PermissionCheckerInterface::class,
-            fn($app) => new PermissionChecker(
-                $app->make(
-                    PermissionRegistryInterface::class
-                )
-            )
-        );
-
-        $this->app->singleton(
             RoleRegistryInterface::class,
             fn() => new RoleRegistry()
         );
@@ -86,13 +83,6 @@ final class SecurityServiceProvider extends ServiceProvider
         );
 
         $this->app->singleton(
-            AuthorizationServiceInterface::class,
-            fn($app) => new AuthorizationService(
-                $app->make(PermissionResolverInterface::class)
-            )
-        );
-
-        $this->app->singleton(
             RolePermissionResolverInterface::class,
             fn($app) => new RolePermissionResolver(
                 $app->make(RoleRegistryInterface::class)
@@ -100,8 +90,10 @@ final class SecurityServiceProvider extends ServiceProvider
         );
 
         $this->app->singleton(
-            PermissionResolverInterface::class,
-            PermissionResolver::class
+            AuthorizationServiceInterface::class,
+            fn($app) => new AuthorizationService(
+                $app->make(PermissionResolverInterface::class)
+            )
         );
 
         $this->app->bind(
@@ -124,6 +116,46 @@ final class SecurityServiceProvider extends ServiceProvider
             AuthorizationAssignmentServiceInterface::class,
             AuthorizationAssignmentService::class
         );
+
+        $this->app->singleton(
+            PermissionResolverInterface::class,
+            fn($app) => new PermissionResolver(
+                $app->make(
+                    RolePermissionResolverInterface::class
+                )
+            )
+        );
+
+        $this->app->singleton(
+            PermissionDefinitionRegistryInterface::class,
+            PermissionDefinitionRegistry::class
+        );
+
+        $this->app->singleton(
+            PermissionDefinitionLoader::class,
+            fn($app) => new PermissionDefinitionLoader(
+                $app->make(
+                    PermissionDefinitionRegistryInterface::class
+                )
+            )
+        );
+
+        $this->app->singleton(
+            PermissionDefinitionBootstrapper::class,
+            fn($app) => new PermissionDefinitionBootstrapper(
+                $app->make(
+                    PermissionDefinitionRegistryInterface::class
+                ),
+                $app->make(
+                    PermissionRegistrarInterface::class
+                )
+            )
+        );
+
+        $this->app->singleton(
+            PolicyRegistryInterface::class,
+            PolicyRegistry::class
+        );
     }
 
 
@@ -133,5 +165,12 @@ final class SecurityServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+        app(
+            PermissionDefinitionLoader::class
+        )->load();
+
+        app(
+            PermissionDefinitionBootstrapper::class
+        )->boot();
     }
 }

@@ -83,11 +83,6 @@ final class NavigationAuthorizationCacheConsistencyTest extends TestCase
      * Una navegación inicialmente autorizada no debe conservar
      * un permiso revocado en caché.
      */
-
-    /**
-     * Una navegación inicialmente autorizada no debe conservar
-     * un permiso revocado en caché.
-     */
     public function test_revoking_permission_rebuilds_cached_navigation(): void
     {
         $authorization = app(

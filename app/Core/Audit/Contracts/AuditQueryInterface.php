@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Core\Audit\Contracts;
 
 use App\Core\Audit\DTO\AuditActor;
+use App\Core\Audit\DTO\AuditEntryData;
 use App\Core\Audit\DTO\AuditSubject;
 use DateTimeImmutable;
 
@@ -26,4 +27,6 @@ interface AuditQueryInterface
         DateTimeImmutable $from,
         DateTimeImmutable $to
     ): iterable;
+
+    public function find(int $id): ?AuditEntryData;
 }

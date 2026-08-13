@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Core\Navigation;
 
-use App\Core\Contracts\NavigationAuthorizationInterface;
-use App\Core\Navigation\Authorization\NavigationAuthorization;
 use App\Core\Navigation\Authorization\NavigationPermissionResolver;
 use App\Core\Navigation\Bootstrap\NavigationBootstrapper;
 use App\Core\Navigation\Bootstrap\NavigationManifestBootstrapper;
 use App\Core\Navigation\Builder\NavigationBuilder;
 use App\Core\Navigation\Cache\Contracts\NavigationCacheInterface;
+use App\Core\Navigation\Cache\Contracts\NavigationCacheInvalidatorInterface;
 use App\Core\Navigation\Cache\NavigationCache;
+use App\Core\Navigation\Cache\NavigationCacheInvalidator;
 use App\Core\Navigation\Contracts\NavigationBuilderInterface;
 use App\Core\Navigation\Contracts\NavigationManifestBootstrapperInterface;
 use App\Core\Navigation\Contracts\NavigationManifestDiscoveryInterface;
@@ -26,19 +26,15 @@ use App\Core\Navigation\Discovery\NavigationManifestDiscoveryService;
 use App\Core\Navigation\Discovery\NavigationManifestFinder;
 use App\Core\Navigation\Discovery\NavigationManifestLoader;
 use App\Core\Navigation\Discovery\NavigationManifestRegistrar;
+use App\Core\Navigation\Listeners\NavigationAuthorizationChangedListener;
 use App\Core\Navigation\Loader\NavigationDefinitionLoader;
 use App\Core\Navigation\Registrar\NavigationRegistrar;
 use App\Core\Navigation\Registry\NavigationDefinitionRegistry;
 use App\Core\Navigation\Registry\NavigationRegistry;
 use App\Core\Navigation\Resolver\NavigationActiveResolver;
 use App\Core\Navigation\Services\NavigationService;
-use App\Core\Navigation\Cache\Contracts\NavigationCacheInvalidatorInterface;
-use App\Core\Navigation\Cache\NavigationCacheInvalidator;
-use App\Core\Navigation\Listeners\NavigationAuthorizationChangedListener;
 use App\Core\Security\Authorization\Events\AuthorizationChanged;
 use Illuminate\Support\Facades\Event;
-
-
 use Illuminate\Support\ServiceProvider;
 
 final class NavigationServiceProvider extends ServiceProvider
@@ -58,11 +54,6 @@ final class NavigationServiceProvider extends ServiceProvider
         $this->app->singleton(
             NavigationBuilderInterface::class,
             NavigationBuilder::class
-        );
-
-        $this->app->singleton(
-            NavigationAuthorizationInterface::class,
-            NavigationAuthorization::class
         );
 
         $this->app->singleton(
@@ -101,7 +92,7 @@ final class NavigationServiceProvider extends ServiceProvider
             }
         );
 
-        $this->app->bind(
+        $this->app->singleton(
             NavigationPermissionResolverInterface::class,
             NavigationPermissionResolver::class
         );
@@ -167,3 +158,4 @@ final class NavigationServiceProvider extends ServiceProvider
         )->boot();
     }
 }
+

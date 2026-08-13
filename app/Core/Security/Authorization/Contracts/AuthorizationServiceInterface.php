@@ -15,4 +15,6 @@ interface AuthorizationServiceInterface
         IdentityInterface $identity,
         string $permission
     ): bool;
+
+
 }
