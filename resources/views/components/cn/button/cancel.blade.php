@@ -4,6 +4,6 @@
 
     <i class="fas fa-times"></i>
 
-    {{ $slot ?? 'Cancelar' }}
+    {{ $slot->isEmpty() ? 'Cancelar' : $slot }}
 
 </x-cn.button>

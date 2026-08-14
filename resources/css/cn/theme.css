@@ -1,0 +1,55 @@
+:root {
+    /* Brand */
+    --cn-primary: #2563eb;
+    --cn-primary-hover: #1d4ed8;
+    --cn-on-primary: #ffffff;
+
+    /* Surfaces */
+    --cn-surface-muted: #f8fafc;
+    --cn-surface-hover: #f1f5f9;
+
+    /* Text */
+    --cn-text-primary: #111827;
+    --cn-text-secondary: #4b5563;
+    --cn-text-muted: #6b7280;
+
+    /* Border */
+    --cn-border: #e5e7eb;
+
+    /* Status */
+    --cn-success: #16a34a;
+    --cn-warning: #d97706;
+    --cn-danger: #dc2626;
+    --cn-info: #0284c7;
+    --cn-neutral: #64748b;
+
+    --cn-on-success: #ffffff;
+    --cn-on-warning: #ffffff;
+    --cn-on-danger: #ffffff;
+    --cn-on-info: #ffffff;
+    --cn-on-neutral: #ffffff;
+
+    /* Typography */
+    --cn-font-xs: 0.75rem;
+    --cn-font-sm: 0.875rem;
+
+    /* Spacing */
+    --cn-space-4: 1rem;
+
+    /* Radius */
+    --cn-radius: 0.5rem;
+    --cn-radius-md: 0.5rem;
+    --cn-radius-lg: 0.75rem;
+    --cn-radius-full: 9999px;
+
+    /* Effects */
+    --cn-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.05);
+    --cn-focus-ring: 0 0 0 3px rgb(37 99 235 / 0.2);
+
+    /* Navigation */
+    --cn-sidebar-background: #1f2937;
+
+    /* Layout */
+    --cn-topbar-height: 56px;
+    --cn-sidebar-width: 260px;
+}

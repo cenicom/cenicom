@@ -43,6 +43,6 @@ class Pagination extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.cn.pagination');
+        return view('components.cn.crud.pagination');
     }
 }

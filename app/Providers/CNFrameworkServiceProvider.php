@@ -7,7 +7,8 @@ use App\Support\Registries\ModuleRegistry;
 use App\Support\Registries\NavigationRegistry;
 use App\Support\Registries\PermissionRegistry;
 use Illuminate\Support\ServiceProvider;
-
+use App\View\Components\Cn\Crud\Modal;
+use Illuminate\Support\Facades\Blade;
 
 class CNFrameworkServiceProvider extends ServiceProvider
 {
@@ -19,7 +20,6 @@ class CNFrameworkServiceProvider extends ServiceProvider
         $this->app->singleton(ModuleRegistry::class, function () {
 
             return (new ModuleRegistry())->load();
-
         });
 
         $this->app->singleton(
@@ -37,6 +37,11 @@ class CNFrameworkServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->bootFramework();
+
+        Blade::component(
+            'components.cn.crud.modal',
+            Modal::class
+        );
     }
 
     /**

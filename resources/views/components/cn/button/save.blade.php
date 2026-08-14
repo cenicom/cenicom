@@ -5,6 +5,6 @@
 
     <i class="fas fa-save"></i>
 
-    {{ $slot ?? 'Guardar' }}
+    {{ $slot->isEmpty() ? 'Guardar' : $slot }}
 
 </x-cn.button>

@@ -1,4 +1,4 @@
-<x-cn.input
+<x-cn.forms.input
     :name="$name"
     :id="$id"
     :value="$value"

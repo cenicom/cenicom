@@ -16,7 +16,7 @@
     display: inline-block;
     font-weight: 600;
     margin-bottom: .5rem;
-    color: var(--cn-text-color);
+    color: var(--cn-text-primary);
     cursor:pointer;
 }
 
@@ -109,10 +109,10 @@
     min-height: 42px;
     width: 100%;
     padding: .625rem .875rem;
-    border: 1px solid var(--cn-border-color);
+    border: 1px solid var(--cn-border);
     border-radius: var(--cn-radius);
     background-color: var(--cn-surface);
-    color: var(--cn-text-color);
+    color: var(--cn-text-primary);
     line-height: 1.5;
     word-break: break-word;
 }

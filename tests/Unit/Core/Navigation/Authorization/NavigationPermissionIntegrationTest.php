@@ -163,6 +163,14 @@ final class NavigationPermissionIntegrationTest extends TestCase
                     true
                 );
             }
+
+            public function allows(
+                IdentityInterface $identity,
+                string $policy,
+                mixed $resource
+            ): bool {
+                return false;
+            }
         };
     }
 
@@ -172,8 +180,7 @@ final class NavigationPermissionIntegrationTest extends TestCase
         return new class($permissions) implements IdentityInterface {
             public function __construct(
                 private array $permissions
-            ) {
-            }
+            ) {}
 
             public function id(): int|string|null
             {

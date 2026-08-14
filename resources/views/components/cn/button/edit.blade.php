@@ -4,6 +4,6 @@
 
     <i class="fas fa-edit"></i>
 
-    {{ $slot ?? 'Editar' }}
+    {{ $slot->isEmpty() ? 'Editar' : $slot }}
 
 </x-cn.button>

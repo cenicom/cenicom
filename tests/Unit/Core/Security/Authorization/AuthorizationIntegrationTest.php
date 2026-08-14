@@ -8,6 +8,8 @@ use App\Core\Security\Authorization\AuthorizationService;
 use App\Core\Security\Authorization\PermissionResolver;
 use App\Core\Security\Authorization\RolePermissionResolver;
 use App\Core\Security\Contracts\IdentityInterface;
+use App\Core\Security\Policies\PolicyRegistry;
+use App\Core\Security\Policies\PolicyResolver;
 use App\Core\Security\Roles\DTO\RoleDefinition;
 use App\Core\Security\Roles\RoleRegistry;
 use PHPUnit\Framework\TestCase;
@@ -36,8 +38,15 @@ final class AuthorizationIntegrationTest extends TestCase
             $rolePermissionResolver
         );
 
+        $policyRegistry = new PolicyRegistry();
+
+        $policyResolver = new PolicyResolver(
+            $policyRegistry
+        );
+
         $authorization = new AuthorizationService(
-            $permissionResolver
+            $permissionResolver,
+            $policyResolver
         );
 
         $identity = new class implements IdentityInterface {
@@ -106,8 +115,15 @@ final class AuthorizationIntegrationTest extends TestCase
             $rolePermissionResolver
         );
 
+        $policyRegistry = new PolicyRegistry();
+
+        $policyResolver = new PolicyResolver(
+            $policyRegistry
+        );
+
         $authorization = new AuthorizationService(
-            $permissionResolver
+            $permissionResolver,
+            $policyResolver
         );
 
         $identity = new class implements IdentityInterface {

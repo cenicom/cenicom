@@ -4,6 +4,6 @@
 
     <i class="fas fa-plus"></i>
 
-    {{ $slot ?? 'Nuevo' }}
+    {{ $slot->isEmpty() ? 'Nuevo' : $slot }}
 
 </x-cn.button>

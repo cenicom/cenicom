@@ -5,6 +5,6 @@
 
     <i class="fas fa-trash"></i>
 
-    {{ $slot ?? 'Eliminar' }}
+    {{ $slot->isEmpty() ? 'Eliminar' : $slot }}
 
 </x-cn.button>

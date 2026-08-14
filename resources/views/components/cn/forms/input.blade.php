@@ -1,6 +1,6 @@
 @php
     $inputValue = old($name, $value);
-    $isInvalid = $errors->has($name);
+    $isInvalid = isset($errors) && $errors->has($name);
 
     $inputAttributes = $attributes->class(['cn-input', 'is-invalid' => $isInvalid]);
 @endphp
@@ -17,5 +17,4 @@
     @if ($maxlength) maxlength="{{ $maxlength }}" @endif
     aria-invalid="{{ $isInvalid ? 'true' : 'false' }}" @required($required) @readonly($readonly) @disabled($disabled)
     @autofocus($autofocus) {{ $inputAttributes }}
-    aria-describedby="currency_code_error"
     data-cn="input">

@@ -34,6 +34,8 @@ use App\Core\Security\Permissions\Bootstrap\PermissionDefinitionBootstrapper;
 use App\Core\Security\Permissions\Loader\PermissionDefinitionLoader;
 use App\Core\Security\Policies\Contracts\PolicyRegistryInterface;
 use App\Core\Security\Policies\PolicyRegistry;
+use App\Core\Security\Policies\Contracts\PolicyResolverInterface;
+use App\Core\Security\Policies\PolicyResolver;
 
 final class SecurityServiceProvider extends ServiceProvider
 {
@@ -92,7 +94,8 @@ final class SecurityServiceProvider extends ServiceProvider
         $this->app->singleton(
             AuthorizationServiceInterface::class,
             fn($app) => new AuthorizationService(
-                $app->make(PermissionResolverInterface::class)
+                $app->make(PermissionResolverInterface::class),
+                $app->make(PolicyResolverInterface::class),
             )
         );
 
@@ -155,6 +158,15 @@ final class SecurityServiceProvider extends ServiceProvider
         $this->app->singleton(
             PolicyRegistryInterface::class,
             PolicyRegistry::class
+        );
+
+        $this->app->singleton(
+            PolicyResolverInterface::class,
+            fn($app) => new PolicyResolver(
+                $app->make(
+                    PolicyRegistryInterface::class
+                )
+            )
         );
     }
 

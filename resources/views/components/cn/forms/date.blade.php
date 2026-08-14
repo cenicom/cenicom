@@ -1,6 +1,7 @@
-<x-cn.input
+<x-cn.forms.input
     :name="$name"
     :id="$id"
+    :type="$type"
     :value="$value"
     :placeholder="$placeholder"
     :autocomplete="$autocomplete"

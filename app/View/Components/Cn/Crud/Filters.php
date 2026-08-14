@@ -42,6 +42,6 @@ class Filters extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.cn.filters');
+        return view('components.cn.crud.filters');
     }
 }

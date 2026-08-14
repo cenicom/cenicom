@@ -5,11 +5,13 @@
 @endphp
 
 <small
-    @if($id)
+    @isset($id)
         id="{{ $id }}"
-    @endif
+    @endisset
 
-    {{ $helpAttributes }}
+    {{ $attributes->class([
+        'cn-help',
+    ]) }}
 >
     {{ $slot }}
 </small>

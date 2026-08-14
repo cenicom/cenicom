@@ -4,6 +4,6 @@
 
     <i class="fas fa-eye"></i>
 
-    {{ $slot ?? 'Ver' }}
+    {{ $slot->isEmpty() ? 'Ver' : $slot }}
 
 </x-cn.button>

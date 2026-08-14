@@ -37,6 +37,6 @@ class Toolbar extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.cn.toolbar');
+        return view('components.cn.crud.toolbar');
     }
 }

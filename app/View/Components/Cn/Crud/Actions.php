@@ -26,13 +26,12 @@ use Illuminate\View\Component;
 class Actions extends Component
 {
     public function __construct(
-        public ?string $id = null,
-        public string $align = 'end',
+
     ) {
     }
 
     public function render(): View|Closure|string
     {
-        return view('components.cn.actions');
+        return view('components.cn.crud.actions');
     }
 }

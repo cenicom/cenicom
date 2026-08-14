@@ -43,6 +43,6 @@ class Modal extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.cn.modal');
+        return view('components.cn.crud.modal');
     }
 }

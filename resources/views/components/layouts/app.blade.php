@@ -17,12 +17,21 @@
 
 <body>
 
-    <x-cn.navigation.sidebar
-        :navigation="$navigation"
-    />
+    <div class="cn-app">
 
-    {{ $slot }}
+        <x-layouts.topbar />
 
+        <div class="cn-shell">
+
+            <x-cn.navigation.sidebar :navigation="$navigation" />
+
+            <main class="cn-main">
+                {{ $slot }}
+            </main>
+
+        </div>
+
+    </div>
 </body>
 
 </html>

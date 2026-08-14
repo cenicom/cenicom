@@ -18,9 +18,7 @@
     }
 @endphp
 
-
 @if($href)
-
     <a
         href="{{ $disabled ? '#' : $href }}"
         {{ $attributes->class($classes) }}
@@ -29,24 +27,14 @@
             tabindex="-1"
         @endif
     >
-
         {{ $slot }}
-
     </a>
-
-
 @else
-
-
     <button
         type="{{ $type }}"
         {{ $attributes->class($classes) }}
         @disabled($disabled)
     >
-
         {{ $slot }}
-
     </button>
-
-
 @endif

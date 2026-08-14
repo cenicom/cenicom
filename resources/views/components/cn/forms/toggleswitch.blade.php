@@ -1,4 +1,4 @@
-<x-cn.checkbox
+<x-cn.forms.checkbox
     :name="$name"
     :id="$id"
     :value="$value"

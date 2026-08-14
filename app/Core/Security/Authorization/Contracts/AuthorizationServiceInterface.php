@@ -16,5 +16,16 @@ interface AuthorizationServiceInterface
         string $permission
     ): bool;
 
+     /**
+     * Determina si la identidad está autorizada
+     * mediante la Policy indicada para operar
+     * sobre el recurso.
+     */
+    public function allows(
+        IdentityInterface $identity,
+        string $policy,
+        mixed $resource
+    ): bool;
+
 
 }
