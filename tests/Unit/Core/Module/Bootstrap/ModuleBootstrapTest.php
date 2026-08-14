@@ -6,6 +6,7 @@ namespace Tests\Unit\Core\Module\Bootstrap;
 
 use App\Core\Contracts\Events\EventDispatcherInterface;
 use App\Core\Contracts\Module\ModuleBootstrapPipelineInterface;
+use App\Core\Contracts\Module\ModuleBootstrapReporterInterface;
 use App\Core\Contracts\Module\ModuleManifestFinderInterface;
 use App\Core\Module\Bootstrap\ModuleBootstrap;
 use App\Core\Module\Bootstrap\ModuleBootstrapContext;
@@ -24,9 +25,16 @@ final class ModuleBootstrapTest extends TestCase
 
     private ModuleBootstrap $bootstrap;
 
+    private ModuleBootstrapReporterInterface&MockObject $reporter;
+
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->reporter = $this->createMock(
+            ModuleBootstrapReporterInterface::class
+        );
+
 
         $this->manifestFinder = $this->createMock(
             ModuleManifestFinderInterface::class
@@ -49,6 +57,7 @@ final class ModuleBootstrapTest extends TestCase
             $this->manifestFinder,
             $this->pipeline,
             $this->lifecycle,
+            $this->reporter,
         );
     }
 

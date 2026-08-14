@@ -110,6 +110,7 @@ final class ModuleServiceProvider extends ServiceProvider
                     $app->make(ModuleManifestFinderInterface::class),
                     $app->make(ModuleBootstrapPipelineInterface::class),
                     $app->make(ModuleLifecycleManager::class),
+                    $app->make(ModuleBootstrapReporterInterface::class),
                 );
             }
         );

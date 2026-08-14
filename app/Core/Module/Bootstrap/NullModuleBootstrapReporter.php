@@ -8,10 +8,6 @@ use App\Core\Contracts\Module\ModuleBootstrapReporterInterface;
 use App\Core\Module\DTO\ModuleDefinition;
 
 
-
-
-
-
 final class NullModuleBootstrapReporter implements ModuleBootstrapReporterInterface
 {
     public function moduleDiscovered(string $manifest): void

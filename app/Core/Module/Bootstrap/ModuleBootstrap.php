@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Core\Module\Bootstrap;
 
 use App\Core\Contracts\Module\ModuleBootstrapPipelineInterface;
+use App\Core\Contracts\Module\ModuleBootstrapReporterInterface;
 use App\Core\Contracts\Module\ModuleManifestFinderInterface;
 use App\Core\Module\Lifecycle\ModuleLifecycleManager;
 
@@ -14,6 +15,7 @@ final class ModuleBootstrap
         private readonly ModuleManifestFinderInterface $manifestFinder,
         private readonly ModuleBootstrapPipelineInterface $pipeline,
         private readonly ModuleLifecycleManager $lifecycle,
+        private readonly ModuleBootstrapReporterInterface $reporter,
     ) {}
 
     public function bootstrap(): ModuleBootstrapReport
@@ -25,6 +27,10 @@ final class ModuleBootstrap
         $manifests = $this->manifestFinder->find();
 
         foreach ($manifests as $manifestPath) {
+            $this->reporter->moduleDiscovered(
+                $manifestPath
+            );
+
             $context = new ModuleBootstrapContext(
                 $manifestPath
             );
@@ -44,68 +50,69 @@ final class ModuleBootstrap
         return $report;
     }
 
-    private function recordResult(ModuleBootstrapContext $context,
-                    ModuleBootstrapReport $report): void
-    {
-    /*
+    private function recordResult(
+        ModuleBootstrapContext $context,
+        ModuleBootstrapReport $report
+    ): void {
+        /*
      * SKIPPED
      *
      * Un módulo puede ser skipped sin haber generado
      * una definición. Por eso esta comprobación debe
      * realizarse antes de consultar la definición.
      */
-    if ($context->isSkipped()) {
-        $moduleName = $context->definition()?->name
-            ?? $context->manifestPath();
+        if ($context->isSkipped()) {
+            $moduleName = $context->definition()?->name
+                ?? $context->manifestPath();
 
-        $report->addSkipped(
-            $moduleName,
-            'Module skipped during bootstrap.'
-        );
+            $report->addSkipped(
+                $moduleName,
+                'Module skipped during bootstrap.'
+            );
 
-        $report->metrics()->incrementSkipped();
+            $report->metrics()->incrementSkipped();
 
-        return;
-    }
-
-    /*
-     * FAILURE
-     */
-    if ($context->hasException()) {
-        $moduleName = $context->definition()?->name
-            ?? $context->manifestPath();
-
-        $exception = $context->exception();
-
-        if ($exception === null) {
             return;
         }
 
-        $report->addFailed(
-            $moduleName,
-            $exception
-        );
+        /*
+     * FAILURE
+     */
+        if ($context->hasException()) {
+            $moduleName = $context->definition()?->name
+                ?? $context->manifestPath();
 
-        $report->metrics()->incrementFailed();
+            $exception = $context->exception();
 
-        return;
-    }
+            if ($exception === null) {
+                return;
+            }
 
-    /*
+            $report->addFailed(
+                $moduleName,
+                $exception
+            );
+
+            $report->metrics()->incrementFailed();
+
+            return;
+        }
+
+        /*
      * REGISTERED
      */
-    if ($context->wasModuleRegistered()) {
-        $moduleName = $context->definition()?->name
-            ?? $context->manifestPath();
+        if ($context->wasModuleRegistered()) {
+            $moduleName = $context->definition()?->name
+                ?? $context->manifestPath();
 
-        $report->addRegistered(
-            $moduleName,
-            []
-        );
+            $report->addRegistered(
+                $moduleName,
+                []
+            );
 
-        $report->metrics()->incrementRegistered();
+            $report->metrics()->incrementRegistered();
+        }
     }
-}
 
     private function finalizeLifecycle(
         ModuleBootstrapContext $context
@@ -179,5 +186,37 @@ final class ModuleBootstrap
          * RUNNING
          */
         $this->lifecycle->running($module);
+    }
+
+    private function reportResult(
+        ModuleBootstrapContext $context
+    ): void {
+        if ($context->isSkipped()) {
+            $this->reporter->moduleSkipped(
+                $context->definition(),
+                'Module skipped during bootstrap.'
+            );
+
+            return;
+        }
+
+        if ($context->hasException()) {
+            $exception = $context->exception();
+
+            if ($exception !== null) {
+                $this->reporter->moduleFailed(
+                    $context->manifestPath(),
+                    $exception
+                );
+            }
+
+            return;
+        }
+
+        if ($context->definition() !== null) {
+            $this->reporter->moduleLoaded(
+                $context->definition()
+            );
+        }
     }
 }
