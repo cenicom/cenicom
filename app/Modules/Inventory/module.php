@@ -9,5 +9,9 @@ return [
 
     'providers' => [],
 
+    'permission_definitions' => [
+        \App\Modules\Inventory\Security\InventoryPermissionDefinition::class,
+    ],
+
     'enabled' => true,
 ];

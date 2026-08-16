@@ -11,5 +11,9 @@ return [
         \App\Modules\Institution\Providers\InstitutionServiceProvider::class,
     ],
 
+    'permission_definitions' => [
+        \App\Modules\Institution\Security\InstitutionPermissionDefinition::class,
+    ],
+
     'enabled' => true,
 ];

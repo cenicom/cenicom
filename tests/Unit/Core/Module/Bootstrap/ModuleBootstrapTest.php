@@ -205,4 +205,141 @@ final class ModuleBootstrapTest extends TestCase
 
         $this->bootstrap->bootstrap();
     }
+
+    public function test_bootstrap_reports_skipped_module_without_definition(): void
+    {
+        $this->manifestFinder
+            ->expects($this->once())
+            ->method('find')
+            ->willReturn([
+                '/modules/Disabled/module.php',
+            ]);
+
+        $this->pipeline
+            ->expects($this->once())
+            ->method('process')
+            ->willReturnCallback(
+                function (ModuleBootstrapContext $context): void {
+                    $context->markSkipped();
+                }
+            );
+
+        $this->reporter
+            ->expects($this->once())
+            ->method('moduleDiscovered')
+            ->with('/modules/Disabled/module.php');
+
+        $this->reporter
+            ->expects($this->once())
+            ->method('moduleSkipped')
+            ->with(
+                null,
+                'Module skipped during bootstrap.'
+            );
+
+        $this->reporter
+            ->expects($this->never())
+            ->method('moduleLoaded');
+
+        $this->reporter
+            ->expects($this->never())
+            ->method('moduleFailed');
+
+        $this->bootstrap->bootstrap();
+    }
+
+    public function test_bootstrap_reports_loaded_module(): void
+    {
+        $this->manifestFinder
+            ->expects($this->once())
+            ->method('find')
+            ->willReturn([
+                '/modules/Blog/module.php',
+            ]);
+
+        $definition = new ModuleDefinition(
+            name: 'Blog',
+            namespace: 'Modules\\Blog',
+            basePath: '/modules/Blog',
+            manifestPath: '/modules/Blog/module.php',
+            providers: [],
+            enabled: true,
+        );
+
+        $this->pipeline
+            ->expects($this->once())
+            ->method('process')
+            ->willReturnCallback(
+                function (ModuleBootstrapContext $context) use ($definition): void {
+                    $context->setDefinition($definition);
+                    $context->markModuleRegistered();
+                }
+            );
+
+        $this->reporter
+            ->expects($this->once())
+            ->method('moduleDiscovered')
+            ->with('/modules/Blog/module.php');
+
+        $this->reporter
+            ->expects($this->once())
+            ->method('moduleLoaded')
+            ->with($definition);
+
+        $this->reporter
+            ->expects($this->never())
+            ->method('moduleSkipped');
+
+        $this->reporter
+            ->expects($this->never())
+            ->method('moduleFailed');
+
+        $this->bootstrap->bootstrap();
+    }
+
+    public function test_bootstrap_reports_failed_module(): void
+    {
+        $this->manifestFinder
+            ->expects($this->once())
+            ->method('find')
+            ->willReturn([
+                '/modules/Blog/module.php',
+            ]);
+
+        $exception = new \RuntimeException(
+            'Bootstrap failure.'
+        );
+
+        $this->pipeline
+            ->expects($this->once())
+            ->method('process')
+            ->willReturnCallback(
+                function (ModuleBootstrapContext $context) use ($exception): void {
+                    $context->setException($exception);
+                }
+            );
+
+        $this->reporter
+            ->expects($this->once())
+            ->method('moduleDiscovered')
+            ->with('/modules/Blog/module.php');
+
+        $this->reporter
+            ->expects($this->once())
+            ->method('moduleFailed')
+            ->with(
+                '/modules/Blog/module.php',
+                $exception
+            );
+
+        $this->reporter
+            ->expects($this->never())
+            ->method('moduleSkipped');
+
+        $this->reporter
+            ->expects($this->never())
+            ->method('moduleLoaded');
+
+        $this->bootstrap->bootstrap();
+    }
 }

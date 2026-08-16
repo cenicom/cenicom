@@ -20,15 +20,16 @@ namespace App\Core\Module\DTO;
 final readonly class ModuleDefinition
 {
     /**
-     * @param array<class-string> $providers
-     */
+ * @param array<class-string> $providers
+ * @param array<class-string> $permissionDefinitions
+ */
     public function __construct(
         public string $name,
         public string $namespace,
         public string $basePath,
         public string $manifestPath,
         public array $providers,
+        public array $permissionDefinitions,
         public readonly bool $enabled,
-    ) {
-    }
+    ) {}
 }

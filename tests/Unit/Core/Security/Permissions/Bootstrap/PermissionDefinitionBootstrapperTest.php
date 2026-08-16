@@ -12,6 +12,46 @@ use PHPUnit\Framework\TestCase;
 
 final class PermissionDefinitionBootstrapperTest extends TestCase
 {
+    public function test_boot_executes_valid_definition_with_injected_registrar(): void
+    {
+        $registrar = $this->createMock(
+            PermissionRegistrarInterface::class
+        );
+
+        $definition = new class implements PermissionDefinitionInterface {
+            public static ?PermissionRegistrarInterface $receivedRegistrar = null;
+
+            public function register(
+                PermissionRegistrarInterface $permissions
+            ): void {
+                self::$receivedRegistrar = $permissions;
+            }
+        };
+
+        $registry = $this->createMock(
+            PermissionDefinitionRegistryInterface::class
+        );
+
+        $registry
+            ->expects(self::once())
+            ->method('definitions')
+            ->willReturn([
+                $definition::class,
+            ]);
+
+        $bootstrapper = new PermissionDefinitionBootstrapper(
+            $registry,
+            $registrar,
+        );
+
+        $bootstrapper->boot();
+
+        self::assertSame(
+            $registrar,
+            $definition::$receivedRegistrar
+        );
+    }
+
     public function test_boot_executes_valid_definition(): void
     {
         $registrar = $this->createMock(

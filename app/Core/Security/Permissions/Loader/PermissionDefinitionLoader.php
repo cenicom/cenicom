@@ -4,30 +4,27 @@ declare(strict_types=1);
 
 namespace App\Core\Security\Permissions\Loader;
 
+use App\Core\Contracts\Module\ModuleRegistryInterface;
 use App\Core\Security\Permissions\Contracts\PermissionDefinitionRegistryInterface;
-use App\Modules\Institution\Security\InstitutionPermissionDefinition;
-use App\Modules\Inventory\Security\InventoryPermissionDefinition;
-
 
 final readonly class PermissionDefinitionLoader
 {
     public function __construct(
         private PermissionDefinitionRegistryInterface $registry,
+        private ModuleRegistryInterface $modules,
     ) {
     }
 
     /**
-     * Carga las definiciones de permisos.
+     * Carga las definiciones de permisos declaradas
+     * por los módulos registrados.
      */
     public function load(): void
     {
-        // Las definiciones de los módulos se registrarán aquí.
-        $this->registry->add(
-            InstitutionPermissionDefinition::class
-        );
-
-        $this->registry->add(
-            InventoryPermissionDefinition::class
-        );
+        foreach ($this->modules->all() as $module) {
+            foreach ($module->permissionDefinitions as $definition) {
+                $this->registry->add($definition);
+            }
+        }
     }
 }

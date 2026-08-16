@@ -12,6 +12,7 @@ use App\Core\Contracts\Module\ModuleRegistryInterface;
 use App\Core\Module\Bootstrap\ModuleBootstrap;
 use App\Core\Module\Bootstrap\ModuleBootstrapContext;
 use App\Core\Module\Bootstrap\ModuleBootstrapReport;
+use App\Core\Module\Bootstrap\NullModuleBootstrapReporter;
 use App\Core\Module\DTO\ModuleDefinition;
 use App\Core\Module\Lifecycle\ModuleLifecycleManager;
 use RuntimeException;
@@ -56,6 +57,7 @@ final class ModuleBootstrapReportIntegrationTest extends TestCase
             $finder,
             $pipeline,
             $lifecycle,
+            new NullModuleBootstrapReporter(),
         );
 
 
@@ -123,6 +125,7 @@ final class ModuleBootstrapReportIntegrationTest extends TestCase
             $finder,
             $pipeline,
             $lifecycle,
+            new NullModuleBootstrapReporter(),
         );
 
         $report = $bootstrap->bootstrap();
@@ -218,6 +221,7 @@ final class ModuleBootstrapReportIntegrationTest extends TestCase
             $finder,
             $pipeline,
             $lifecycle,
+            new NullModuleBootstrapReporter(),
         );
 
 
@@ -299,6 +303,7 @@ final class ModuleBootstrapReportIntegrationTest extends TestCase
             $finder,
             $pipeline,
             $lifecycle,
+            new NullModuleBootstrapReporter(),
         );
 
 
@@ -397,6 +402,7 @@ final class ModuleBootstrapReportIntegrationTest extends TestCase
             $finder,
             $pipeline,
             $lifecycle,
+            new NullModuleBootstrapReporter(),
         );
 
 

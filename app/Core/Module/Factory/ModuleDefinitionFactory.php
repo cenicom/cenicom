@@ -29,8 +29,6 @@ final class ModuleDefinitionFactory implements ModuleDefinitionFactoryInterface
      */
     public function create(string $manifestPath): ModuleDefinition
     {
-
-        //code...
         if (! is_file($manifestPath)) {
             throw new \RuntimeException(
                 "Manifest not found: {$manifestPath}"
@@ -90,17 +88,28 @@ final class ModuleDefinitionFactory implements ModuleDefinitionFactoryInterface
             );
         }
 
+        if (
+            array_key_exists('permission_definitions', $manifest)
+            && ! is_array($manifest['permission_definitions'])
+        ) {
+            throw new \UnexpectedValueException(
+                'Module manifest "permission_definitions" must be an array.',
+            );
+        }
+
         $enabled = $manifest['enabled'] ?? true;
 
-        $definition = new ModuleDefinition(
+        $permissionDefinitions =
+            $manifest['permission_definitions'] ?? [];
+
+        return new ModuleDefinition(
             name: $manifest['name'],
             namespace: $manifest['namespace'],
             basePath: dirname($manifestPath),
             manifestPath: $manifestPath,
             providers: $manifest['providers'],
+            permissionDefinitions: $permissionDefinitions,
             enabled: $enabled,
         );
-
-        return $definition;
     }
 }

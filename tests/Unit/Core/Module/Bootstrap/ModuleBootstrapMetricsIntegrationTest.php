@@ -7,10 +7,11 @@ namespace Tests\Unit\Core\Module\Bootstrap;
 use App\Core\Contracts\Events\EventDispatcherInterface;
 use App\Core\Contracts\Module\ModuleBootstrapPipelineInterface;
 use App\Core\Contracts\Module\ModuleManifestFinderInterface;
-use App\Core\Contracts\Module\ModuleRegistryInterface;
 use App\Core\Contracts\Module\ModuleProviderRegistrarInterface;
+use App\Core\Contracts\Module\ModuleRegistryInterface;
 use App\Core\Module\Bootstrap\ModuleBootstrap;
 use App\Core\Module\Bootstrap\ModuleBootstrapContext;
+use App\Core\Module\Bootstrap\NullModuleBootstrapReporter;
 use App\Core\Module\DTO\ModuleDefinition;
 use App\Core\Module\Lifecycle\ModuleLifecycleManager;
 use App\Core\Module\Registry\ModuleRegistry;
@@ -62,6 +63,7 @@ final class ModuleBootstrapMetricsIntegrationTest extends TestCase
             $this->finder,
             $this->pipeline,
             $this->lifecycle,
+            new NullModuleBootstrapReporter(),
         );
     }
 

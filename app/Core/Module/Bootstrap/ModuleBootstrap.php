@@ -42,6 +42,10 @@ final class ModuleBootstrap
                 $report
             );
 
+            $this->reportResult(
+                $context
+            );
+
             $this->finalizeLifecycle($context);
         }
 

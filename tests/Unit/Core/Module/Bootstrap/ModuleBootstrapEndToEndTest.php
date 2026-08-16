@@ -10,6 +10,7 @@ use App\Core\Module\Bootstrap\ModuleBootstrap;
 use App\Core\Module\Bootstrap\ModuleBootstrapPipeline;
 use App\Core\Module\Bootstrap\ModuleProviderRegistrar;
 use App\Core\Module\Bootstrap\ModuleProviderValidator;
+use App\Core\Module\Bootstrap\NullModuleBootstrapReporter;
 use App\Core\Module\Bootstrap\Stages\CreateDefinitionStage;
 use App\Core\Module\Bootstrap\Stages\RegisterModuleStage;
 use App\Core\Module\Bootstrap\Stages\RegisterProvidersStage;
@@ -68,7 +69,6 @@ final class ModuleBootstrapEndToEndTest extends TestCase
             new ValidationStage(),
             new RegisterModuleStage(
                 $this->registry,
-                $this->lifecycle,
             ),
             new RegisterProvidersStage(
                 $this->providerRegistrar,
@@ -79,6 +79,7 @@ final class ModuleBootstrapEndToEndTest extends TestCase
             $this->finder,
             $pipeline,
             $this->lifecycle,
+            new NullModuleBootstrapReporter(),
         );
     }
 

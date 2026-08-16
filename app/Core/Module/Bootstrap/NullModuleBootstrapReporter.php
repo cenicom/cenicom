@@ -18,7 +18,7 @@ final class NullModuleBootstrapReporter implements ModuleBootstrapReporterInterf
     {
     }
 
-    public function moduleSkipped(ModuleDefinition $definition, string $reason): void
+    public function moduleSkipped(?ModuleDefinition $definition, string $reason): void
     {
     }
 

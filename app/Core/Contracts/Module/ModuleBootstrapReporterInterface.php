@@ -15,7 +15,7 @@ interface ModuleBootstrapReporterInterface
     public function moduleLoaded(ModuleDefinition $definition): void;
 
     public function moduleSkipped(
-        ModuleDefinition $definition,
+        ?ModuleDefinition $definition,
         string $reason
     ): void;
 

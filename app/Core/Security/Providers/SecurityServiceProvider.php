@@ -139,7 +139,10 @@ final class SecurityServiceProvider extends ServiceProvider
             fn($app) => new PermissionDefinitionLoader(
                 $app->make(
                     PermissionDefinitionRegistryInterface::class
-                )
+                ),
+                $app->make(
+                    \App\Core\Contracts\Module\ModuleRegistryInterface::class
+                ),
             )
         );
 

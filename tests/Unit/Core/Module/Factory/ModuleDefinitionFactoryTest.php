@@ -267,4 +267,50 @@ final class ModuleDefinitionFactoryTest extends TestCase
 
         $this->factory->create($manifest);
     }
+
+    public function test_creates_definition_with_permission_definitions(): void
+    {
+        $manifest = base_path(
+            'tests/Fixtures/ModuleDefinitionFactory/PermissionDefinitions/module.php'
+        );
+
+        $definition = $this->factory->create($manifest);
+
+        $this->assertSame(
+            [
+                \App\Modules\Institution\Security\InstitutionPermissionDefinition::class,
+                \App\Modules\Inventory\Security\InventoryPermissionDefinition::class,
+            ],
+            $definition->permissionDefinitions
+        );
+    }
+
+    public function test_permission_definitions_default_to_empty_array(): void
+    {
+        $manifest = base_path(
+            'tests/Fixtures/ModuleDefinitionFactory/EmptyProviders/module.php'
+        );
+
+        $definition = $this->factory->create($manifest);
+
+        $this->assertSame(
+            [],
+            $definition->permissionDefinitions
+        );
+    }
+
+    public function test_throws_exception_when_permission_definitions_is_not_array(): void
+    {
+        $manifest = base_path(
+            'tests/Fixtures/ModuleDefinitionFactory/InvalidPermissionDefinitions/module.php'
+        );
+
+        $this->expectException(\UnexpectedValueException::class);
+
+        $this->expectExceptionMessage(
+            'Module manifest "permission_definitions" must be an array.'
+        );
+
+        $this->factory->create($manifest);
+    }
 }

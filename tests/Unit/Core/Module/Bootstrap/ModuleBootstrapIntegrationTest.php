@@ -11,6 +11,7 @@ use App\Core\Contracts\Module\ModuleProviderRegistrarInterface;
 use App\Core\Contracts\Module\ModuleRegistryInterface;
 use App\Core\Module\Bootstrap\ModuleBootstrap;
 use App\Core\Module\Bootstrap\ModuleBootstrapPipeline;
+use App\Core\Module\Bootstrap\NullModuleBootstrapReporter;
 use App\Core\Module\Bootstrap\Stages\CreateDefinitionStage;
 use App\Core\Module\Bootstrap\Stages\RegisterModuleStage;
 use App\Core\Module\Bootstrap\Stages\RegisterProvidersStage;
@@ -83,7 +84,6 @@ final class ModuleBootstrapIntegrationTest extends TestCase
             new ValidationStage(),
             new RegisterModuleStage(
                 $this->registry,
-                $this->lifecycle,
             ),
             new RegisterProvidersStage(
                 $this->providerRegistrar,
@@ -94,6 +94,7 @@ final class ModuleBootstrapIntegrationTest extends TestCase
             $this->finder,
             $pipeline,
             $this->lifecycle,
+            new NullModuleBootstrapReporter(),
         );
 
         $report = $bootstrap->bootstrap();
@@ -149,7 +150,6 @@ final class ModuleBootstrapIntegrationTest extends TestCase
             new ValidationStage(),
             new RegisterModuleStage(
                 $registry,
-                $this->lifecycle,
             ),
             new RegisterProvidersStage(
                 $registrar,
@@ -160,6 +160,7 @@ final class ModuleBootstrapIntegrationTest extends TestCase
             $finder,
             $pipeline,
             $this->lifecycle,
+            new NullModuleBootstrapReporter(),
         );
 
         $report = $bootstrap->bootstrap();
@@ -215,7 +216,6 @@ final class ModuleBootstrapIntegrationTest extends TestCase
             new ValidationStage(),
             new RegisterModuleStage(
                 $registry,
-                $this->lifecycle,
             ),
             new RegisterProvidersStage(
                 $registrar,
@@ -226,6 +226,7 @@ final class ModuleBootstrapIntegrationTest extends TestCase
             $finder,
             $pipeline,
             $this->lifecycle,
+            new NullModuleBootstrapReporter(),
         );
 
         $report = $bootstrap->bootstrap();

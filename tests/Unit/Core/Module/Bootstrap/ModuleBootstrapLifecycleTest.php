@@ -11,6 +11,7 @@ use App\Core\Contracts\Module\ModuleProviderRegistrarInterface;
 use App\Core\Contracts\Module\ModuleRegistryInterface;
 use App\Core\Module\Bootstrap\ModuleBootstrap;
 use App\Core\Module\Bootstrap\ModuleBootstrapContext;
+use App\Core\Module\Bootstrap\NullModuleBootstrapReporter;
 use App\Core\Module\DTO\ModuleDefinition;
 use App\Core\Module\Events\ModuleBooted;
 use App\Core\Module\Events\ModuleBooting;
@@ -79,6 +80,7 @@ final class ModuleBootstrapLifecycleTest extends TestCase
             $this->manifestFinder,
             $this->pipeline,
             $this->lifecycle,
+            new NullModuleBootstrapReporter(),
         );
     }
 
