@@ -15,5 +15,9 @@ return [
         \App\Modules\Institution\Security\InstitutionPermissionDefinition::class,
     ],
 
+    'navigation_definitions' => [
+        \App\Modules\Institution\Navigation\InstitutionNavigation::class,
+    ],
+
     'enabled' => true,
 ];

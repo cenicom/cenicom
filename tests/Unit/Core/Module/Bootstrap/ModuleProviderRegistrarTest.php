@@ -157,6 +157,8 @@ final class ModuleProviderRegistrarTest extends TestCase
                 BlogServiceProvider::class,
                 UsersServiceProvider::class,
             ],
+            permissionDefinitions: [],
+            navigationDefinitions: [],
             enabled: true,
         );
 
@@ -199,6 +201,8 @@ final class ModuleProviderRegistrarTest extends TestCase
             providers: [
 
             ],
+            permissionDefinitions: [],
+            navigationDefinitions: [],
             enabled: true,
         );
 

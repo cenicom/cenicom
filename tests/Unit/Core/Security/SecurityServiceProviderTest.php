@@ -64,11 +64,15 @@ final class SecurityServiceProviderTest extends TestCase
 
     public function test_boot_loads_and_bootstraps_permission_definitions(): void
     {
-        $this->app->register(
-            SecurityServiceProvider::class
+        $this->app->make(
+            \App\Core\Module\Bootstrap\ModuleBootstrap::class
+        )->bootstrap();
+
+        $provider = new SecurityServiceProvider(
+            $this->app
         );
 
-        $this->app->boot();
+        $provider->boot();
 
         $registry = $this->app->make(
             \App\Core\Security\Permissions\Contracts\PermissionRegistryInterface::class

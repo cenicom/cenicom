@@ -63,6 +63,8 @@ final class NullModuleBootstrapReporterTest extends TestCase
             basePath: 'app/Modules/Example',
             manifestPath: 'app/Modules/Example/module.json',
             providers: [],
+            permissionDefinitions: [],
+            navigationDefinitions: [],
             enabled: true,
         );
     }

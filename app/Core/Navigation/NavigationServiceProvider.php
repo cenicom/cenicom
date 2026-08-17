@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\Navigation;
 
+use App\Core\Contracts\Module\ModuleRegistryInterface;
 use App\Core\Navigation\Authorization\NavigationPermissionResolver;
 use App\Core\Navigation\Bootstrap\NavigationBootstrapper;
 use App\Core\Navigation\Bootstrap\NavigationManifestBootstrapper;
@@ -85,9 +86,8 @@ final class NavigationServiceProvider extends ServiceProvider
             NavigationDefinitionLoader::class,
             function ($app) {
                 return new NavigationDefinitionLoader(
-                    $app->make(
-                        NavigationDefinitionRegistry::class
-                    )
+                    $app->make(NavigationDefinitionRegistry::class),
+                    $app->make(ModuleRegistryInterface::class),
                 );
             }
         );

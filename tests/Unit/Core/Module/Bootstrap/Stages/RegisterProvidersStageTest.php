@@ -45,6 +45,8 @@ final class RegisterProvidersStageTest extends TestCase
             providers: [
                 'Modules\\Blog\\Providers\\BlogServiceProvider',
             ],
+            permissionDefinitions: [],
+            navigationDefinitions: [],
             enabled: true,
         );
 
@@ -75,6 +77,8 @@ final class RegisterProvidersStageTest extends TestCase
             providers: [
                 'Modules\\Blog\\Providers\\BlogServiceProvider',
             ],
+            permissionDefinitions: [],
+            navigationDefinitions: [],
             enabled: true,
         );
 
@@ -124,6 +128,8 @@ final class RegisterProvidersStageTest extends TestCase
             providers: [
                 'Modules\\Blog\\Providers\\BlogServiceProvider',
             ],
+            permissionDefinitions: [],
+            navigationDefinitions: [],
             enabled: true,
         );
 

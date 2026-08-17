@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Security\Permissions;
 
+use App\Core\Module\DTO\ModuleDefinition;
+use App\Core\Module\Registry\ModuleRegistry;
 use App\Core\Security\Permissions\Bootstrap\PermissionDefinitionBootstrapper;
 use App\Core\Security\Permissions\Loader\PermissionDefinitionLoader;
 use App\Core\Security\Permissions\PermissionDefinitionRegistry;
@@ -25,8 +27,41 @@ final class PermissionDefinitionIntegrationTest extends TestCase
             $permissionRegistry
         );
 
+        $moduleRegistry = new ModuleRegistry();
+
+        $moduleRegistry->register(
+            new ModuleDefinition(
+                name: 'Institution',
+                namespace: 'App\\Modules\\Institution',
+                basePath: '/tmp/institution',
+                manifestPath: '/tmp/institution/module.php',
+                providers: [],
+                permissionDefinitions: [
+                    InstitutionPermissionDefinition::class,
+                ],
+                navigationDefinitions: [],
+                enabled: true,
+            )
+        );
+
+        $moduleRegistry->register(
+            new ModuleDefinition(
+                name: 'Inventory',
+                namespace: 'App\\Modules\\Inventory',
+                basePath: '/tmp/inventory',
+                manifestPath: '/tmp/inventory/module.php',
+                providers: [],
+                permissionDefinitions: [
+                    InventoryPermissionDefinition::class,
+                ],
+                navigationDefinitions: [],
+                enabled: true,
+            )
+        );
+
         $loader = new PermissionDefinitionLoader(
-            $definitionRegistry
+            $definitionRegistry,
+            $moduleRegistry,
         );
 
         $bootstrapper = new PermissionDefinitionBootstrapper(

@@ -97,6 +97,18 @@ final class ModuleDefinitionFactory implements ModuleDefinitionFactoryInterface
             );
         }
 
+        if (
+            array_key_exists('navigation_definitions', $manifest)
+            && ! is_array($manifest['navigation_definitions'])
+        ) {
+            throw new \UnexpectedValueException(
+                'Module manifest "navigation_definitions" must be an array.',
+            );
+        }
+
+        $navigationDefinitions =
+            $manifest['navigation_definitions'] ?? [];
+
         $enabled = $manifest['enabled'] ?? true;
 
         $permissionDefinitions =
@@ -109,6 +121,7 @@ final class ModuleDefinitionFactory implements ModuleDefinitionFactoryInterface
             manifestPath: $manifestPath,
             providers: $manifest['providers'],
             permissionDefinitions: $permissionDefinitions,
+            navigationDefinitions: $navigationDefinitions,
             enabled: $enabled,
         );
     }

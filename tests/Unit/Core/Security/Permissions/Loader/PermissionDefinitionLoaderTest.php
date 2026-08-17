@@ -34,6 +34,7 @@ final class PermissionDefinitionLoaderTest extends TestCase
             manifestPath: '/tmp/test-module/module.php',
             providers: [],
             permissionDefinitions: $definitions,
+            navigationDefinitions: [],
             enabled: true,
         );
 
@@ -89,6 +90,7 @@ final class PermissionDefinitionLoaderTest extends TestCase
             manifestPath: '/tmp/first-module/module.php',
             providers: [],
             permissionDefinitions: [$firstDefinition],
+            navigationDefinitions: [],
             enabled: true,
         );
 
@@ -99,6 +101,7 @@ final class PermissionDefinitionLoaderTest extends TestCase
             manifestPath: '/tmp/second-module/module.php',
             providers: [],
             permissionDefinitions: [$secondDefinition],
+            navigationDefinitions: [],
             enabled: true,
         );
 

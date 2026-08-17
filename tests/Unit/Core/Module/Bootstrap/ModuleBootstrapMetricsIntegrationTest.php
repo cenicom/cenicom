@@ -103,8 +103,10 @@ final class ModuleBootstrapMetricsIntegrationTest extends TestCase
                             "Modules\\{$name}",
                             "/modules/{$name}",
                             $context->manifestPath(),
-                            [],
-                            true
+                            providers: [],
+                            permissionDefinitions: [],
+                            navigationDefinitions: [],
+                            enabled: true
                         )
                     );
 

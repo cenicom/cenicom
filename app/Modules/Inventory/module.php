@@ -13,5 +13,9 @@ return [
         \App\Modules\Inventory\Security\InventoryPermissionDefinition::class,
     ],
 
+    'navigation_definitions' => [
+        \App\Modules\Inventory\Navigation\InventoryNavigation::class,
+    ],
+
     'enabled' => true,
 ];

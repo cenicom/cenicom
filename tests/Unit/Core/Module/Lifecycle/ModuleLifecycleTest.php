@@ -94,7 +94,9 @@ final class ModuleLifecycleTest extends TestCase
 
     public function test_empty_module_directory_completes_lifecycle(): void
     {
-        $finder = Mockery::mock(ModuleManifestFinderInterface::class);
+        $finder = Mockery::mock(
+            ModuleManifestFinderInterface::class
+        );
 
         $finder
             ->shouldReceive('find')
@@ -104,6 +106,10 @@ final class ModuleLifecycleTest extends TestCase
         $this->app->instance(
             ModuleManifestFinderInterface::class,
             $finder
+        );
+
+        $this->app->forgetInstance(
+            ModuleBootstrap::class
         );
 
         $bootstrap = app(ModuleBootstrap::class);

@@ -157,8 +157,10 @@ final class ModuleBootstrapReportIntegrationTest extends TestCase
                 "Modules\\{$name}",
                 "/modules/{$name}",
                 "/modules/{$name}/module.php",
-                [],
-                true
+                providers: [],
+                permissionDefinitions: [],
+                navigationDefinitions: [],
+                enabled: true,
             )
         );
 
@@ -359,8 +361,10 @@ final class ModuleBootstrapReportIntegrationTest extends TestCase
                                 'Modules\\Inventory',
                                 '/modules/Inventory',
                                 '/modules/Inventory/module.php',
-                                [],
-                                true
+                                providers: [],
+                                permissionDefinitions: [],
+                                navigationDefinitions: [],
+                                enabled: true,
                             )
                         );
 

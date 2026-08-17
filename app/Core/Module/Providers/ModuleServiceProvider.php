@@ -41,14 +41,9 @@ final class ModuleServiceProvider extends ServiceProvider
             ModuleManifestFinderInterface::class,
             function () {
                 return new ModuleManifestFinder(
-                    base_path('tests/Fixtures/Modules')
+                    base_path('app/Modules')
                 );
             }
-        );
-
-        $this->app->bind(
-            ModuleProviderRegistrarInterface::class,
-            ModuleProviderRegistrar::class,
         );
 
         $this->app->bind(
@@ -126,11 +121,6 @@ final class ModuleServiceProvider extends ServiceProvider
         );
 
         $this->app->singleton(
-            EventDispatcherInterface::class,
-            static fn() => new LaravelEventDispatcher()
-        );
-
-        $this->app->singleton(
             ModuleLifecycleManager::class,
             function ($app) {
                 return new ModuleLifecycleManager(
@@ -143,7 +133,7 @@ final class ModuleServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
-        if ($this->app->runningUnitTests()) {
+        if (! config('modules.bootstrap', true)) {
             return;
         }
 

@@ -246,6 +246,8 @@ final class ModuleBootstrapLifecycleTest extends TestCase
             basePath: '/tmp/TestModule',
             manifestPath: '/tmp/TestModule/module.php',
             providers: [],
+            permissionDefinitions: [],
+            navigationDefinitions: [],
             enabled: true,
         );
 
@@ -284,6 +286,8 @@ final class ModuleBootstrapLifecycleTest extends TestCase
                             basePath: '/tmp/TestModule',
                             manifestPath: $manifest,
                             providers: [],
+                            permissionDefinitions: [],
+                            navigationDefinitions: [],
                             enabled: true,
                         )
                     );
@@ -315,7 +319,7 @@ final class ModuleBootstrapLifecycleTest extends TestCase
         );
 
         $this->assertSame(
-           ModuleRunning::class,
+            ModuleRunning::class,
             $this->lifecycleEvents[4]
         );
 
@@ -354,6 +358,8 @@ final class ModuleBootstrapLifecycleTest extends TestCase
                             basePath: '/tmp/TestModule',
                             manifestPath: $manifest,
                             providers: [],
+                            permissionDefinitions: [],
+                            navigationDefinitions: [],
                             enabled: true,
                         )
                     );
@@ -407,6 +413,8 @@ final class ModuleBootstrapLifecycleTest extends TestCase
                             basePath: '/tmp/DisabledModule',
                             manifestPath: $manifest,
                             providers: [],
+                            permissionDefinitions: [],
+                            navigationDefinitions: [],
                             enabled: false,
                         )
                     );

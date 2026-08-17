@@ -57,6 +57,8 @@ final class CreateDefinitionStageTest extends TestCase
             basePath: '/modules/Blog',
             manifestPath: '/modules/Blog/module.php',
             providers: [],
+            permissionDefinitions: [],
+            navigationDefinitions: [],
             enabled: true,
         );
 

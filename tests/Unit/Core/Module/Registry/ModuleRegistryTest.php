@@ -32,6 +32,8 @@ final class ModuleRegistryTest extends TestCase
             basePath: base_path("tests/Fixtures/Modules/{$name}"),
             manifestPath: base_path("tests/Fixtures/Modules/{$name}/module.php"),
             providers: [],
+            permissionDefinitions: [],
+            navigationDefinitions: [],
             enabled: $enabled,
         );
     }

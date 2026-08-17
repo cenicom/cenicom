@@ -78,6 +78,8 @@ final class ModuleBootstrapContextTest extends TestCase
             basePath: '/modules/Blog',
             manifestPath: '/modules/Blog/module.php',
             providers: [],
+            permissionDefinitions: [],
+            navigationDefinitions: [],
             enabled: true,
         );
 
@@ -107,6 +109,8 @@ final class ModuleBootstrapContextTest extends TestCase
             basePath: '/modules/Blog',
             manifestPath: '/modules/Blog/module.php',
             providers: [],
+            permissionDefinitions: [],
+            navigationDefinitions: [],
             enabled: true,
         );
 
@@ -215,6 +219,8 @@ final class ModuleBootstrapContextTest extends TestCase
             basePath: '/modules/Blog',
             manifestPath: $manifestPath,
             providers: [],
+            permissionDefinitions: [],
+            navigationDefinitions: [],
             enabled: true,
         );
 
@@ -248,6 +254,8 @@ final class ModuleBootstrapContextTest extends TestCase
             basePath: '/modules/Blog',
             manifestPath: '/modules/Blog/module.php',
             providers: [],
+            permissionDefinitions: [],
+            navigationDefinitions: [],
             enabled: true,
         );
 
@@ -257,6 +265,8 @@ final class ModuleBootstrapContextTest extends TestCase
             basePath: '/modules/Users',
             manifestPath: '/modules/Users/module.php',
             providers: [],
+            permissionDefinitions: [],
+            navigationDefinitions: [],
             enabled: true,
         );
 
@@ -383,8 +393,10 @@ final class ModuleBootstrapContextTest extends TestCase
             'Modules\\Blog',
             '/modules/Blog',
             '/modules/Blog/module.php',
-            [],
-            true
+            providers: [],
+            permissionDefinitions: [],
+            navigationDefinitions: [],
+            enabled: true
         );
 
         $context->setDefinition($definition);

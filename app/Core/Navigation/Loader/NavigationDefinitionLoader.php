@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Core\Navigation\Loader;
 
+use App\Core\Contracts\Module\ModuleRegistryInterface;
 use App\Core\Navigation\Registry\NavigationDefinitionRegistry;
 
 final readonly class NavigationDefinitionLoader
 {
     public function __construct(
         private NavigationDefinitionRegistry $registry,
+        private ModuleRegistryInterface $modules,
     ) {}
 
 
@@ -18,12 +20,14 @@ final readonly class NavigationDefinitionLoader
      */
     public function load(): void
     {
-        $this->registry->add(
-            \App\Modules\Institution\Navigation\InstitutionNavigation::class
-        );
+        foreach ($this->modules->all() as $module) {
+            if (! $module->enabled) {
+                continue;
+            }
 
-        $this->registry->add(
-            \App\Modules\Inventory\Navigation\InventoryNavigation::class
-        );
+            foreach ($module->navigationDefinitions as $definition) {
+                $this->registry->add($definition);
+            }
+        }
     }
 }

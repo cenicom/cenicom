@@ -33,6 +33,8 @@ final class ValidationStageTest extends TestCase
             basePath: '/modules/Blog',
             manifestPath: '/modules/Blog/module.php',
             providers: [],
+            permissionDefinitions: [],
+            navigationDefinitions: [],
             enabled: true,
         );
 
@@ -66,6 +68,8 @@ final class ValidationStageTest extends TestCase
             basePath: '/modules/Blog',
             manifestPath: '/modules/Blog/module.php',
             providers: [],
+            permissionDefinitions: [],
+            navigationDefinitions: [],
             enabled: false,
         );
 

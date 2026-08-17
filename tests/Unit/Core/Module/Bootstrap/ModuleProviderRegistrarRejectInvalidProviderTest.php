@@ -92,6 +92,8 @@ final class ModuleProviderRegistrarRejectInvalidProviderTest extends TestCase
                 'App\\Modules\\Test\\MissingProvider',
                 FakeClass::class,
             ],
+            permissionDefinitions: [],
+            navigationDefinitions: [],
             enabled: true,
         );
 

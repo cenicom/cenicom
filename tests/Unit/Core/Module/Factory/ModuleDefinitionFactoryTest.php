@@ -313,4 +313,47 @@ final class ModuleDefinitionFactoryTest extends TestCase
 
         $this->factory->create($manifest);
     }
+
+    public function test_creates_definition_with_navigation_definitions(): void
+    {
+        $definition = $this->factory->create(
+            base_path('tests/Fixtures/ModuleDefinitionFactory/NavigationDefinitions/module.php')
+        );
+
+        self::assertSame(
+            [
+                \App\Modules\Institution\Navigation\InstitutionNavigation::class,
+            ],
+            $definition->navigationDefinitions
+        );
+    }
+
+    public function test_navigation_definitions_default_to_empty_array(): void
+    {
+        $manifest = base_path(
+            'tests/Fixtures/ModuleDefinitionFactory/EmptyNavigationDefinitions/module.php'
+        );
+
+        $definition = $this->factory->create($manifest);
+
+        $this->assertSame(
+            [],
+            $definition->navigationDefinitions
+        );
+    }
+
+    public function test_throws_exception_when_navigation_definitions_is_not_array(): void
+    {
+        $this->expectException(\UnexpectedValueException::class);
+
+        $this->expectExceptionMessage(
+            'Module manifest "navigation_definitions" must be an array.'
+        );
+
+        $this->factory->create(
+            base_path(
+                'tests/Fixtures/ModuleDefinitionFactory/InvalidNavigationDefinitions/module.php'
+            )
+        );
+    }
 }
