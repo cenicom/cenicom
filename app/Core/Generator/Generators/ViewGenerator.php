@@ -6,13 +6,11 @@ namespace App\Core\Generator\Generators;
 
 use App\Core\Generator\Contracts\GeneratorInterface;
 use App\Core\Generator\DTO\ModuleData;
-use App\Core\Generator\Presentation\Factory\PresentationFactory;
-use App\Core\Generator\Presentation\Renderers\ComponentRenderer;
+use App\Core\Generator\Builders\ViewBuilder;
 use App\Core\Generator\Results\GeneratorResult;
 use App\Core\Generator\Support\FileWriter;
 use App\Core\Generator\Support\StubManager;
-use App\Core\Generator\Presentation\Renderers\TableRenderer;
-use App\Core\Generator\Presentation\Renderers\ShowRenderer;
+
 
 /**
  * ==========================================================
@@ -93,10 +91,7 @@ final class ViewGenerator implements GeneratorInterface
     public function __construct(
         private readonly StubManager $stubManager,
         private readonly FileWriter $fileWriter,
-        private readonly PresentationFactory $presentationFactory,
-        private readonly ComponentRenderer $componentRenderer,
-        private readonly TableRenderer $tableRenderer,
-        private readonly ShowRenderer $showRenderer,
+        private readonly ViewBuilder $builder,
     ) {}
 
     public function supports(ModuleData $module): bool
@@ -104,37 +99,9 @@ final class ViewGenerator implements GeneratorInterface
         return true;
     }
 
-    public function generate(ModuleData $module,): GeneratorResult
+    public function generate(ModuleData $module): GeneratorResult
     {
-
-        $form = $this->presentationFactory->form($module);
-
-        $table = $this->presentationFactory->table($module);
-
-        $show = $this->presentationFactory->show($module);
-
-        $formFields = [];
-
-        foreach ($form->fields() as $input) {
-            $formFields[] = $this->componentRenderer->render($input);
-        }
-
-        $variables = $this->buildVariables($module);
-
-        $variables['form_fields'] = implode(
-            PHP_EOL . PHP_EOL,
-            $formFields,
-        );
-
-        $variables['table_columns'] =
-            $this->tableRenderer->render(
-                $table,
-            );
-
-        $variables['columns'] =
-            $this->showRenderer->render(
-                $show,
-            );
+        $variables = $this->builder->build($module);
 
         return $this->generateViews(
             $module,
@@ -169,9 +136,12 @@ final class ViewGenerator implements GeneratorInterface
      * @param array<string,string> $view
      * @param array<string,mixed>  $variables
      */
-    private function generateView(ModuleData $module, array $view,
-        array $variables, GeneratorResult $result,): void
-    {
+    private function generateView(
+        ModuleData $module,
+        array $view,
+        array $variables,
+        GeneratorResult $result,
+    ): void {
 
         $content = $this->stubManager->render(
             $view[self::VIEW__STUB],
@@ -190,7 +160,6 @@ final class ViewGenerator implements GeneratorInterface
             );
 
             $result->addCreated($path);
-
         } catch (\Throwable $exception) {
             $result->addError(
                 sprintf(
@@ -200,7 +169,6 @@ final class ViewGenerator implements GeneratorInterface
                 )
             );
         }
-
     }
 
     /**
@@ -208,7 +176,7 @@ final class ViewGenerator implements GeneratorInterface
      *
      * @return array<string,mixed>
      */
-    private function buildVariables( ModuleData $module,): array
+    private function buildVariables(ModuleData $module,): array
     {
         return $this->buildDomainVariables(
             $module,

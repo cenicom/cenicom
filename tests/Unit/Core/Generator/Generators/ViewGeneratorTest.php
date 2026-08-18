@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Generator\Generators;
 
+use App\Core\Generator\Builders\ViewBuilder;
 use App\Core\Generator\Factories\ModuleDataFactory;
 use App\Core\Generator\Generators\ViewGenerator;
 use App\Core\Generator\Presentation\Factory\PresentationFactory;
@@ -85,15 +86,17 @@ final class ViewGeneratorTest extends GeneratorTestCase
         return new ViewGenerator(
             new StubManager(),
             new FileWriter(),
-            new PresentationFactory(),
-            new ComponentRenderer(
-                new StubManager(),
-            ),
-            new TableRenderer(
-                new StubManager(),
-            ),
-            new ShowRenderer(
-                new StubManager(),
+            new ViewBuilder(
+                new PresentationFactory(),
+                new ComponentRenderer(
+                    new StubManager(),
+                ),
+                new TableRenderer(
+                    new StubManager(),
+                ),
+                new ShowRenderer(
+                    new StubManager(),
+                ),
             ),
         );
     }

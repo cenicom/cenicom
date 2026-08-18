@@ -61,9 +61,8 @@ final class ControllerGenerator extends BaseGenerator
     /**
      * Genera el controlador del módulo.
      */
-    public function generate(
-        ModuleData $module
-    ): GeneratorResult {
+    public function generate(ModuleData $module): GeneratorResult
+    {
 
         return $this->generateResult(
             self::STUB,
@@ -72,7 +71,7 @@ final class ControllerGenerator extends BaseGenerator
         );
     }
 
-    
+
 
 
 

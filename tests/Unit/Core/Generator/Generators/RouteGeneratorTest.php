@@ -75,6 +75,63 @@ final class RouteGeneratorTest extends GeneratorTestCase
         );
     }
 
+    public function test_generates_expected_route_content(): void
+    {
+        $generator = $this->createGenerator();
+
+        $module = $this->createModuleData([
+            'identity' => [
+                'name' => 'Test',
+                'singular' => 'test',
+                'plural' => 'tests',
+                'table' => 'tests',
+                'description' => 'Test module',
+            ],
+            'generation' => [
+                'routePrefix' => 'tests',
+                'routeName'   => 'tests',
+                'viewPrefix'  => 'tests',
+            ],
+        ]);
+
+        $result = $generator->generate($module);
+
+        $this->assertTrue($result->isSuccessful());
+
+        $path = $module->routePath();
+
+        $this->assertFileExists($path);
+
+        $content = file_get_contents($path);
+
+        $this->assertIsString($content);
+
+        $this->assertStringContainsString(
+            'use ' . $module->qualifiedController() . ';',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            'Route::resource(',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            "'{$module->plural()}'",
+            $content
+        );
+
+        $this->assertStringContainsString(
+            $module->controllerClass() . '::class',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            "->names('{$module->plural()}');",
+            $content
+        );
+    }
+
     private function createGenerator(): RouteGenerator
     {
         return new RouteGenerator(
@@ -83,10 +140,10 @@ final class RouteGeneratorTest extends GeneratorTestCase
             new PresentationFactory(),
             new GeneratorValidator([]),
             new RouteBuilder(
-                 new MiddlewareResolver(
-                new MiddlewareRegistry(),
-            ),
-            new PermissionResolver(),
+                new MiddlewareResolver(
+                    new MiddlewareRegistry(),
+                ),
+                new PermissionResolver(),
             ),
         );
     }

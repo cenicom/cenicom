@@ -5,8 +5,13 @@ declare(strict_types=1);
 namespace App\Core\Generator\Generators;
 
 use App\Core\Generator\BaseGenerator;
+use App\Core\Generator\Builders\RepositoryInterfaceBuilder;
 use App\Core\Generator\DTO\ModuleData;
+use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Results\GeneratorResult;
+use App\Core\Generator\Support\FileWriter;
+use App\Core\Generator\Support\StubManager;
+use App\Core\Generator\Validation\GeneratorValidator;
 
 /**
  * ==========================================================
@@ -25,6 +30,8 @@ use App\Core\Generator\Results\GeneratorResult;
  */
 final class RepositoryInterfaceGenerator extends BaseGenerator
 {
+    private readonly RepositoryInterfaceBuilder $builder;
+
     /**
      * Stub utilizado para la generación.
      */
@@ -38,44 +45,33 @@ final class RepositoryInterfaceGenerator extends BaseGenerator
         return true;
     }
 
+    public function __construct(
+        StubManager $stubManager,
+        FileWriter $fileWriter,
+        PresentationFactory $presentationFactory,
+        GeneratorValidator $validator,
+        RepositoryInterfaceBuilder $builder,
+    ) {
+        parent::__construct(
+            $stubManager,
+            $fileWriter,
+            $presentationFactory,
+            $validator,
+        );
+
+        $this->builder = $builder;
+    }
+
     /**
      * Genera la interfaz del repositorio.
      */
-    public function generate( ModuleData $module): GeneratorResult
+    public function generate(ModuleData $module): GeneratorResult
     {
 
         return $this->generateResult(
             self::STUB,
             $module->repositoryInterfacePath(),
-            $this->buildVariables($module)
+            $this->builder->build($module)
         );
-    }
-
-    /**
-     * Construye las variables utilizadas por el stub.
-     *
-     * @return array<string, string>
-     */
-    private function buildVariables(
-        ModuleData $module
-    ): array {
-
-        return [
-
-        'namespace' => $module->repositoryContractNamespace(),
-
-            'repositoryInterface'
-            => $module->repositoryInterface(),
-
-            'qualifiedModel'
-            => $module->qualifiedModel(),
-
-            'model'
-            => $module->modelClass(),
-
-            'variable'
-            => $module->variable(),
-
-        ];
     }
 }

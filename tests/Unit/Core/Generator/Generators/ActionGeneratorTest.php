@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Generator\Generators;
 
+use App\Core\Generator\Builders\ActionBuilder;
 use App\Core\Generator\Generators\ActionGenerator;
 use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Support\FileWriter;
@@ -90,7 +91,8 @@ final class ActionGeneratorTest extends GeneratorTestCase
             new StubManager(),
             new FileWriter(),
             new PresentationFactory(),
-            new GeneratorValidator([])
+            new GeneratorValidator([]),
+            new ActionBuilder(),
         );
     }
 }

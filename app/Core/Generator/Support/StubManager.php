@@ -115,11 +115,17 @@ final class StubManager
 
             $content = preg_replace(
                 '/\[\[\s*' . preg_quote($key, '/') . '\s*\]\]/',
-                str_replace(
-                    '$',
-                    '\$',
-                    (string) $value
-                ),
+                is_bool($value)
+                    ? var_export($value, true)
+                    : (
+                        $value === null
+                        ? 'null'
+                        : str_replace(
+                            '$',
+                            '\$',
+                            (string) $value
+                        )
+                    ),
                 $content
             );
         }

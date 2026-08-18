@@ -5,8 +5,13 @@ declare(strict_types=1);
 namespace App\Core\Generator\Generators;
 
 use App\Core\Generator\BaseGenerator;
+use App\Core\Generator\Builders\ServiceBuilder;
 use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\Results\GeneratorResult;
+use App\Core\Generator\Presentation\Factory\PresentationFactory;
+use App\Core\Generator\Support\FileWriter;
+use App\Core\Generator\Support\StubManager;
+use App\Core\Generator\Validation\GeneratorValidator;
 
 /**
  * ==========================================================
@@ -26,6 +31,25 @@ final class ServiceGenerator extends BaseGenerator
 {
     private const STUB = 'service.stub';
 
+    private readonly ServiceBuilder $builder;
+
+    public function __construct(
+        StubManager $stubManager,
+        FileWriter $fileWriter,
+        PresentationFactory $presentationFactory,
+        GeneratorValidator $validator,
+        ?ServiceBuilder $builder = null,
+    ) {
+        parent::__construct(
+            $stubManager,
+            $fileWriter,
+            $presentationFactory,
+            $validator,
+        );
+
+        $this->builder = $builder ?? new ServiceBuilder();
+    }
+
     /**
      * Determina si el generador aplica al módulo recibido.
      */
@@ -39,7 +63,6 @@ final class ServiceGenerator extends BaseGenerator
      */
     public function generate(ModuleData $module): GeneratorResult
     {
-
         return $this->generateResult(
             self::STUB,
             $module->servicePath(),
@@ -50,61 +73,13 @@ final class ServiceGenerator extends BaseGenerator
     /**
      * Construye las variables utilizadas por el stub.
      *
-     * @return array<string, string>
+     * @return array<string,mixed>
      */
     private function buildVariables(ModuleData $module): array
     {
         return array_merge(
             $this->defaultVariables($module),
-            [
-                // variables propias...
-                'namespace'
-                => $module->serviceNamespace(),
-
-                'service'
-                => $module->serviceClass(),
-
-                'serviceInterface'
-                => $module->serviceInterface(),
-
-                'qualifiedServiceInterface'
-                => $module->qualifiedServiceInterface(),
-
-                'qualifiedRepositoryInterface'
-                => $module->qualifiedRepositoryInterface(),
-
-                'qualifiedModel'
-                => $module->qualifiedModel(),
-
-                'repositoryInterface'
-                => $module->repositoryInterface(),
-
-                'model'
-                => $module->modelClass(),
-
-                'variable'
-                => $module->variable(),
-
-                'imports'
-                => $this->buildImports($module),
-            ]
-        );
-    }
-
-    /**
-     * Construye las declaraciones de importación para el stub.
-     */
-    private function buildImports(ModuleData $module): string
-    {
-
-        return implode(
-            PHP_EOL,
-            [
-                'use ' . $module->qualifiedModel() . ';',
-                'use ' . $module->qualifiedRepositoryInterface() . ';',
-                'use ' . $module->qualifiedServiceInterface() . ';',
-                'use Illuminate\Contracts\Pagination\LengthAwarePaginator;',
-            ]
+            $this->builder->build($module),
         );
     }
 }

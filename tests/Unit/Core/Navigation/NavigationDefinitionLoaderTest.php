@@ -71,4 +71,64 @@ final class NavigationDefinitionLoaderTest extends TestCase
             $registry->definitions()
         );
     }
+
+    public function test_does_not_load_navigation_definitions_from_disabled_modules(): void
+    {
+        $registry = new NavigationDefinitionRegistry();
+
+        $modules = new ModuleRegistry();
+
+        $modules->register(
+            new ModuleDefinition(
+                name: 'Institution',
+                namespace: 'App\\Modules\\Institution',
+                basePath: '/tmp/institution',
+                manifestPath: '/tmp/institution/module.php',
+                providers: [],
+                permissionDefinitions: [],
+                navigationDefinitions: [
+                    InstitutionNavigation::class,
+                ],
+                enabled: false,
+            )
+        );
+
+        $loader = new NavigationDefinitionLoader(
+            $registry,
+            $modules,
+        );
+
+        $loader->load();
+
+        $this->assertSame([], $registry->definitions());
+    }
+
+    public function test_load_does_nothing_when_modules_have_no_navigation_definitions(): void
+    {
+        $registry = new NavigationDefinitionRegistry();
+
+        $modules = new ModuleRegistry();
+
+        $modules->register(
+            new ModuleDefinition(
+                name: 'Institution',
+                namespace: 'App\\Modules\\Institution',
+                basePath: '/tmp/institution',
+                manifestPath: '/tmp/institution/module.php',
+                providers: [],
+                permissionDefinitions: [],
+                navigationDefinitions: [],
+                enabled: true,
+            )
+        );
+
+        $loader = new NavigationDefinitionLoader(
+            $registry,
+            $modules,
+        );
+
+        $loader->load();
+
+        $this->assertSame([], $registry->definitions());
+    }
 }

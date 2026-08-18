@@ -5,8 +5,13 @@ declare(strict_types=1);
 namespace App\Core\Generator\Generators;
 
 use App\Core\Generator\BaseGenerator;
+use App\Core\Generator\Builders\FactoryBuilder;
 use App\Core\Generator\DTO\ModuleData;
+use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Results\GeneratorResult;
+use App\Core\Generator\Support\FileWriter;
+use App\Core\Generator\Support\StubManager;
+use App\Core\Generator\Validation\GeneratorValidator;
 
 /**
  * ==========================================================
@@ -32,49 +37,33 @@ final class FactoryGenerator extends BaseGenerator
         return true;
     }
 
-
-    /**
-     * Genera la Factory del módulo.
-     */
-    public function generate(
-        ModuleData $module
-    ): GeneratorResult {
-
-        return $this->generateResult(
-            'factory.stub',
-            $module->factoryPath(),
-            $this->buildVariables($module)
+    public function __construct(
+        StubManager $stubManager,
+        FileWriter $fileWriter,
+        PresentationFactory $presentationFactory,
+        GeneratorValidator $validator,
+        private readonly FactoryBuilder $builder,
+    ) {
+        parent::__construct(
+            $stubManager,
+            $fileWriter,
+            $presentationFactory,
+            $validator,
         );
     }
 
 
     /**
-     * Construye las variables utilizadas por el stub.
-     *
-     * @return array<string, mixed>
+     * Genera la Factory del módulo.
      */
-    private function buildVariables(
-        ModuleData $module
-    ): array {
+    public function generate(ModuleData $module): GeneratorResult
+    {
 
-        return [
-
-            'namespace'
-            => $module->factoryNamespace(),
-
-            'factory'
-            => $module->factoryClass(),
-
-            'modelNamespace'
-            => $module->modelNamespace(),
-
-            'model'
-            => $module->modelClass(),
-
-            'qualifiedModel'
-            => $module->qualifiedModel(),
-
-
-        ];
+        return $this->generateResult(
+            'factory.stub',
+            $module->factoryPath(),
+            $this->builder->build($module)
+        );
     }
+
 }

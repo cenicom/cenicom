@@ -2,66 +2,75 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Core\Generator\Builders;
-
-use App\Core\Generator\Builders\RequestBuilder;
+namespace Tests\Unit\Core\Generator\Support\Request;
 
 use App\Core\Generator\DTO\ModuleData;
-
 use App\Core\Generator\Factories\ModuleDataFactory;
+use App\Core\Generator\Support\Request\RequestBuilder;
 use Tests\TestCase;
 
 final class RequestBuilderTest extends TestCase
 {
     public function test_build_generates_request_variables(): void
-    {
-        $builder = new RequestBuilder();
+{
+    $builder = new RequestBuilder();
 
-        $module = $this->module();
+    $variables = $builder->build(
+        $this->module()
+    );
 
-        $variables = $builder->build(
-            $module,
-            'StoreCurrencyRequest'
-        );
+    $this->assertArrayHasKey(
+        'namespace',
+        $variables
+    );
 
-        $this->assertArrayHasKey(
-            'namespace',
-            $variables
-        );
+    $this->assertArrayHasKey(
+        'singular',
+        $variables
+    );
 
-        $this->assertArrayHasKey(
-            'request',
-            $variables
-        );
+    $this->assertArrayHasKey(
+        'storeRequest',
+        $variables
+    );
 
-        $this->assertArrayHasKey(
-            'rules',
-            $variables
-        );
+    $this->assertArrayHasKey(
+        'updateRequest',
+        $variables
+    );
 
-        $this->assertSame(
-            'StoreCurrencyRequest',
-            $variables['request']
-        );
+    $this->assertArrayHasKey(
+        'rules',
+        $variables
+    );
 
-        $this->assertStringContainsString(
-            "'name'",
-            $variables['rules']
-        );
+    $this->assertSame(
+        'StoreCurrencyRequest',
+        $variables['storeRequest']
+    );
 
-        $this->assertStringContainsString(
-            "'symbol'",
-            $variables['rules']
-        );
-    }
+    $this->assertSame(
+        'UpdateCurrencyRequest',
+        $variables['updateRequest']
+    );
+
+    $this->assertStringContainsString(
+        "'name'",
+        $variables['rules']
+    );
+
+    $this->assertStringContainsString(
+        "'symbol'",
+        $variables['rules']
+    );
+}
 
     public function test_build_generates_required_rules(): void
     {
         $builder = new RequestBuilder();
 
         $variables = $builder->build(
-            $this->module(),
-            'StoreCurrencyRequest'
+            $this->module()
         );
 
         $rules = $variables['rules'];
@@ -105,10 +114,7 @@ final class RequestBuilderTest extends TestCase
             ],
         ]);
 
-        $variables = $builder->build(
-            $module,
-            'StoreCurrencyRequest'
-        );
+        $variables = $builder->build($module);
 
         $this->assertStringContainsString(
             'nullable',
@@ -134,7 +140,6 @@ final class RequestBuilderTest extends TestCase
             ],
 
             'fields' => [
-
                 [
                     'name' => 'name',
                     'type' => 'string',
@@ -144,16 +149,7 @@ final class RequestBuilderTest extends TestCase
                     'name' => 'symbol',
                     'type' => 'string',
                 ],
-
             ],
         ]);
-    }
-
-    public function test_laravel_is_booted(): void
-    {
-        $this->assertInstanceOf(
-            \Illuminate\Foundation\Application::class,
-            app()
-        );
     }
 }

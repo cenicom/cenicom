@@ -5,8 +5,13 @@ declare(strict_types=1);
 namespace App\Core\Generator\Generators;
 
 use App\Core\Generator\BaseGenerator;
+use App\Core\Generator\Builders\ActionBuilder;
 use App\Core\Generator\DTO\ModuleData;
+use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Results\GeneratorResult;
+use App\Core\Generator\Support\FileWriter;
+use App\Core\Generator\Support\StubManager;
+use App\Core\Generator\Validation\GeneratorValidator;
 
 /**
  * ==========================================================
@@ -31,45 +36,29 @@ final class ActionGenerator extends BaseGenerator
         return true;
     }
 
+    public function __construct(
+        StubManager $stubManager,
+        FileWriter $fileWriter,
+        PresentationFactory $presentationFactory,
+        GeneratorValidator $validator,
+        private readonly ActionBuilder $actionBuilder,
+    ) {
+        parent::__construct(
+            $stubManager,
+            $fileWriter,
+            $presentationFactory,
+            $validator,
+        );
+    }
+
     public function generate(ModuleData $module): GeneratorResult
     {
         return $this->generateResult(
             self::STUB,
             $module->actionPath(),
-            $this->buildVariables($module)
+            $this->actionBuilder->build($module)
         );
     }
 
-    /**
-     * @return array<string,string>
-     */
-    private function buildVariables(ModuleData $module): array
-    {
 
-        return array_merge(
-            $this->defaultVariables($module),
-            [
-                'namespace'
-                    => $module->actionNamespace(),
-
-                'action'
-                    => $module->actionClass(),
-
-                'qualifiedServiceInterface'
-                    => $module->qualifiedServiceInterface(),
-
-                'serviceInterface'
-                    => $module->serviceInterface(),
-
-                'qualifiedModel'
-                    => $module->qualifiedModel(),
-
-                'model'
-                    => $module->modelClass(),
-
-                'variable'
-                    => $module->variable(),
-            ]
-        );
-    }
 }

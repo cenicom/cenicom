@@ -1,0 +1,23 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'name' => '[[ name ]]',
+
+    'description' => '[[ description ]]',
+
+    'model' => '[[ model ]]',
+
+    'routePrefix' => '[[ routePrefix ]]',
+
+    'routeName' => '[[ routeName ]]',
+
+    'permissions' => [[ permissions ]],
+
+    'menu' => [[ menu ]],
+
+    'api' => [[ api ]],
+
+    'tests' => [[ tests ]],
+];

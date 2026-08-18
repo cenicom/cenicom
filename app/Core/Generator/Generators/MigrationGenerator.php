@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Core\Generator\Generators;
 
 use App\Core\Generator\BaseGenerator;
+use App\Core\Generator\Builders\MigrationBuilder;
 use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\Presentation\Factory\PresentationFactory;
-use App\Core\Generator\Processors\MigrationFieldProcessor;
 use App\Core\Generator\Results\GeneratorResult;
 use App\Core\Generator\Support\FileWriter;
 use App\Core\Generator\Support\StubManager;
@@ -24,9 +24,10 @@ final class MigrationGenerator extends BaseGenerator
 {
     private const STUB = 'migration.stub';
 
-    public function __construct(StubManager $stubManager, FileWriter $fileWriter,
+    public function __construct(
+        StubManager $stubManager, FileWriter $fileWriter,
         PresentationFactory $presentationFactory, GeneratorValidator $validator,
-        private readonly MigrationFieldProcessor $fieldProcessor,)
+        private readonly MigrationBuilder $builder,)
     {
         parent::__construct(
             $stubManager,
@@ -50,55 +51,14 @@ final class MigrationGenerator extends BaseGenerator
     public function generate(ModuleData $module,): GeneratorResult
     {
 
-        $variables = $this->buildVariables($module);
-
         return $this->generateResult(
             self::STUB,
             $module->migrationFile(),
-            $this->buildVariables($module)
+            $this->builder->build($module)
         );
 
 
     }
 
-    /**
-     * Construye las variables utilizadas por el stub de migración.
-     *
-     * @return array<string,string>
-     */
-    private function buildVariables(ModuleData $module, ): array
-    {
 
-        $columns = [];
-
-        if ($module->uuid()) {
-            $columns[] = "\$table->uuid('id')->primary();";
-        }
-
-        $fieldColumns = $this->fieldProcessor->process(
-            $module->columns()
-        );
-
-        if ($fieldColumns !== '') {
-            $columns[] = $fieldColumns;
-        }
-
-        $variables = $this->defaultVariables($module);
-
-        $variables['columns'] = implode(
-            PHP_EOL,
-            $columns
-        );
-
-        $variables['timestamps'] = $module->timestamps()
-            ? '$table->timestamps();'
-            : '';
-
-        $variables['softDeletes'] = $module->softDeletes()
-            ? '$table->softDeletes();'
-            : '';
-
-
-        return $variables;
-    }
 }

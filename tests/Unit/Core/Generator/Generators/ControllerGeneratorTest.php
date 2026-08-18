@@ -47,6 +47,88 @@ final class ControllerGeneratorTest extends GeneratorTestCase
         );
     }
 
+    public function test_generates_expected_controller_content(): void
+    {
+        $generator = $this->createGenerator();
+
+        $module = $this->createModuleData([
+            'identity' => [
+                'name' => 'Test',
+                'singular' => 'test',
+                'plural' => 'tests',
+                'table' => 'tests',
+                'description' => 'Test module',
+            ],
+            'generation' => [
+                'routePrefix' => 'tests',
+                'routeName'   => 'tests',
+                'viewPrefix'  => 'tests',
+            ],
+        ]);
+
+        $result = $generator->generate($module);
+
+        $this->assertTrue($result->isSuccessful());
+
+        $path = $module->controllerPath();
+
+        $this->assertFileExists($path);
+
+        $content = file_get_contents($path);
+
+        $this->assertIsString($content);
+
+        $this->assertStringContainsString(
+            'namespace ' . $module->controllerNamespace() . ';',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            'use ' . $module->qualifiedServiceInterface() . ';',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            'use ' . $module->qualifiedStoreRequest() . ';',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            'use ' . $module->qualifiedUpdateRequest() . ';',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            'use ' . $module->qualifiedModel() . ';',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            'final class ' . $module->controllerClass() . ' extends Controller',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            'private readonly ' . $module->serviceInterface() . ' $service',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            "return view('{$module->viewPrefix()}.index'",
+            $content
+        );
+
+        $this->assertStringContainsString(
+            "return view('{$module->viewPrefix()}.create')",
+            $content
+        );
+
+        $this->assertStringContainsString(
+            "->route('{$module->routeName()}.index')",
+            $content
+        );
+    }
+
     public function test_generator_supports_any_module(): void
     {
         $generator = $this->createGenerator();

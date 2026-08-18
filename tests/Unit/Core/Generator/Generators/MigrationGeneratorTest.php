@@ -11,6 +11,7 @@ use App\Core\Generator\Processors\MigrationFieldProcessor;
 use App\Core\Generator\Support\FileWriter;
 use App\Core\Generator\Support\StubManager;
 use App\Core\Generator\Validation\GeneratorValidator;
+use App\Core\Generator\Builders\MigrationBuilder;
 use Tests\Support\GeneratorTestCase;
 
 
@@ -136,7 +137,9 @@ final class MigrationGeneratorTest extends GeneratorTestCase
             new FileWriter(),
             new PresentationFactory(),
             new GeneratorValidator([]),
+            new MigrationBuilder(
             new MigrationFieldProcessor(),
+        ),
         );
     }
 }

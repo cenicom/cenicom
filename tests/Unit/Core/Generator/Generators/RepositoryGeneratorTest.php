@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Generator\Generators;
 
+use App\Core\Generator\Builders\RepositoryBuilder;
 use App\Core\Generator\Factories\ModuleDataFactory;
 use App\Core\Generator\Generators\RepositoryGenerator;
 use App\Core\Generator\Presentation\Factory\PresentationFactory;
@@ -127,7 +128,8 @@ final class RepositoryGeneratorTest extends GeneratorTestCase
             new StubManager(),
             new FileWriter(),
             new PresentationFactory(),
-            new GeneratorValidator([])
+            new GeneratorValidator([]),
+            new RepositoryBuilder(),
         );
     }
 }

@@ -36,12 +36,10 @@ final class RequestBuilder
      */
     public function build(
         ModuleData $module,
-        string $className,
     ): array {
 
         return $this->buildVariables(
             $module,
-            $className
         );
     }
 
@@ -53,14 +51,11 @@ final class RequestBuilder
      */
     private function buildVariables(
         ModuleData $module,
-        string $class
     ): array {
 
         return [
 
             'namespace' => $module->requestNamespace(),
-
-            'className' => $class,
 
             'singular'
             => $module->singular(),

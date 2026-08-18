@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Generator\Generators;
 
+use App\Core\Generator\Builders\RepositoryInterfaceBuilder;
 use App\Core\Generator\Factories\ModuleDataFactory;
 use App\Core\Generator\Generators\RepositoryInterfaceGenerator;
 use App\Core\Generator\Presentation\Factory\PresentationFactory;
@@ -121,14 +122,13 @@ final class RepositoryInterfaceGeneratorTest extends GeneratorTestCase
             new FileWriter(),
             new PresentationFactory(),
             new GeneratorValidator([]),
+            new RepositoryInterfaceBuilder(),
         );
     }
 
 
-    private function removeDirectory(
-        string $directory
-    ): void {
-
+    private function removeDirectory(string $directory): void
+    {
         foreach (
             glob($directory . '/*') ?: []
             as $file

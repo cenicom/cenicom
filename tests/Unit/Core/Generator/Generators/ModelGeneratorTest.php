@@ -9,6 +9,7 @@ use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Support\FileWriter;
 use App\Core\Generator\Support\StubManager;
 use App\Core\Generator\Validation\GeneratorValidator;
+use App\Core\Generator\Builders\ModelBuilder;
 use Tests\Support\GeneratorTestCase;
 
 
@@ -103,6 +104,7 @@ final class ModelGeneratorTest extends GeneratorTestCase
             new FileWriter(),
             new PresentationFactory(),
             new GeneratorValidator([]),
+            new ModelBuilder(),
         );
     }
 }

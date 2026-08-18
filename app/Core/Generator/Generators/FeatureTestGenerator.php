@@ -5,8 +5,13 @@ declare(strict_types=1);
 namespace App\Core\Generator\Generators;
 
 use App\Core\Generator\BaseGenerator;
+use App\Core\Generator\Builders\FeatureTestBuilder;
 use App\Core\Generator\DTO\ModuleData;
+use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Results\GeneratorResult;
+use App\Core\Generator\Support\FileWriter;
+use App\Core\Generator\Support\StubManager;
+use App\Core\Generator\Validation\GeneratorValidator;
 
 /**
  * ==========================================================
@@ -32,49 +37,32 @@ final class FeatureTestGenerator extends BaseGenerator
         return true;
     }
 
-    /**
-     * Genera la prueba Feature del módulo.
-     */
-    public function generate(
-        ModuleData $module
-    ): GeneratorResult {
-
-        return $this->generateResult(
-            'feature-test.stub',
-            $module->featureTestPath(),
-            $this->buildVariables($module),
+    public function __construct(
+        StubManager $stubManager,
+        FileWriter $fileWriter,
+        PresentationFactory $presentationFactory,
+        GeneratorValidator $validator,
+        private readonly FeatureTestBuilder $builder,
+    ) {
+        parent::__construct(
+            $stubManager,
+            $fileWriter,
+            $presentationFactory,
+            $validator,
         );
     }
 
     /**
-     * Construye las variables utilizadas por el stub.
-     *
-     * @return array<string,mixed>
+     * Genera la prueba Feature del módulo.
      */
-    private function buildVariables(
-        ModuleData $module
-    ): array {
+    public function generate(ModuleData $module): GeneratorResult
+    {
 
-        return [
-
-            'namespace'
-            => $module->testNamespace(),
-
-            'featureTest'
-            => $module->featureTestClass(),
-
-            'model'
-            => $module->modelClass(),
-
-            'qualifiedModel'
-            => $module->qualifiedModel(),
-
-            'route'
-            => $module->routeName(),
-
-            'viewPrefix'
-            => $module->viewPrefix(),
-
-        ];
+        return $this->generateResult(
+            'feature-test.stub',
+            $module->featureTestPath(),
+            $this->builder->build($module),
+        );
     }
+
 }

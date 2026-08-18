@@ -23,8 +23,7 @@ final class RouteBuilder
     public function __construct(
         private readonly MiddlewareResolver $middlewareResolver,
         private readonly PermissionResolver $permissionResolver,
-    ) {
-    }
+    ) {}
 
 
     /**
@@ -32,7 +31,8 @@ final class RouteBuilder
      *
      * @return array<string,string>
      */
-    public function build(ModuleData $module ): array {
+    public function build(ModuleData $module): array
+    {
 
         return $this->buildVariables($module);
     }
@@ -45,45 +45,23 @@ final class RouteBuilder
      */
     private function buildVariables(ModuleData $module): array
     {
-
         return [
-
-        'qualifiedController'
+            'qualifiedController'
             => $module->qualifiedController(),
 
-        'controllerNamespace'
-            => $module->qualifiedController(),
-
-        'controllerClass'
+            'controllerClass'
             => $module->controllerClass(),
 
-        'plural'
+            'plural'
             => $module->plural(),
 
-        'singular'
+            'singular'
             => $module->singular(),
 
-        'middleware'
+            'middleware'
             => $this->buildMiddleware($module),
-    ];
+        ];
     }
-
-
-    private function buildControllerNamespace(
-        ModuleData $module
-    ): string {
-
-        return $module->qualifiedController();
-    }
-
-
-    private function buildControllerClass(
-        ModuleData $module
-    ): string {
-
-        return $module->controllerClass();
-    }
-
 
     /**
      * Construye middleware dinámico.

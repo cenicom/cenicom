@@ -5,8 +5,13 @@ declare(strict_types=1);
 namespace App\Core\Generator\Generators;
 
 use App\Core\Generator\BaseGenerator;
+use App\Core\Generator\Builders\ModuleManifestBuilder;
 use App\Core\Generator\DTO\ModuleData;
+use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Results\GeneratorResult;
+use App\Core\Generator\Support\FileWriter;
+use App\Core\Generator\Support\StubManager;
+use App\Core\Generator\Validation\GeneratorValidator;
 
 /**
  * ==========================================================
@@ -31,17 +36,31 @@ final class ModuleManifestGenerator extends BaseGenerator
         return true;
     }
 
+    public function __construct(
+        StubManager $stubManager,
+        FileWriter $fileWriter,
+        PresentationFactory $presentationFactory,
+        GeneratorValidator $validator,
+        private readonly ModuleManifestBuilder $builder,
+    ) {
+        parent::__construct(
+            $stubManager,
+            $fileWriter,
+            $presentationFactory,
+            $validator,
+        );
+    }
+
 
     /**
      * Genera el manifiesto del módulo.
      */
-    public function generate(
-        ModuleData $module
-    ): GeneratorResult {
+    public function generate(ModuleData $module): GeneratorResult
+    {
 
         $content = $this->render(
             'module-manifest.stub',
-            $this->buildVariables($module)
+            $this->builder->build($module)
         );
 
 
@@ -55,46 +74,5 @@ final class ModuleManifestGenerator extends BaseGenerator
             ->addCreated(
                 $module->moduleManifestPath()
             );
-    }
-
-
-    /**
-     * Construye las variables utilizadas por el stub.
-     *
-     * @return array<string, mixed>
-     */
-    private function buildVariables(
-        ModuleData $module
-    ): array {
-
-        return [
-
-            'name'
-                => $module->name(),
-
-            'description'
-                => $module->description(),
-
-            'model'
-                => $module->modelClass(),
-
-            'routePrefix'
-                => $module->routePrefix(),
-
-            'routeName'
-                => $module->routeName(),
-
-            'permissions'
-                => $module->permissions(),
-
-            'menu'
-                => $module->menu(),
-
-            'api'
-                => $module->api(),
-
-            'tests'
-                => $module->tests(),
-        ];
     }
 }
