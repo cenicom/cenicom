@@ -6,7 +6,10 @@ namespace App\Providers;
 
 
 
+use App\Core\Generator\Contracts\GeneratorManagerInterface;
+use App\Core\Generator\GeneratorManager;
 use App\Core\Generator\GeneratorRegistry;
+use App\Core\Generator\Generators\ActionGenerator;
 use App\Core\Generator\Generators\BindingGenerator;
 use App\Core\Generator\Generators\ControllerGenerator;
 use App\Core\Generator\Generators\FactoryGenerator;
@@ -15,6 +18,7 @@ use App\Core\Generator\Generators\MiddlewareGenerator;
 use App\Core\Generator\Generators\MigrationGenerator;
 use App\Core\Generator\Generators\ModelGenerator;
 use App\Core\Generator\Generators\ModuleGenerator;
+use App\Core\Generator\Generators\ModuleManifestGenerator;
 use App\Core\Generator\Generators\ObserverGenerator;
 use App\Core\Generator\Generators\PermissionGenerator;
 use App\Core\Generator\Generators\PolicyGenerator;
@@ -27,7 +31,14 @@ use App\Core\Generator\Generators\ServiceGenerator;
 use App\Core\Generator\Generators\ServiceInterfaceGenerator;
 use App\Core\Generator\Generators\UnitTestGenerator;
 use App\Core\Generator\Generators\ViewGenerator;
-use App\Core\Generator\Validation\GeneratorTestSuite;
+use App\Core\Generator\Pipeline\Contracts\PipelineInterface;
+use App\Core\Generator\Pipeline\ExecuteGeneratorsStep;
+use App\Core\Generator\Pipeline\FinalizePipelineStep;
+use App\Core\Generator\Pipeline\Pipeline;
+use App\Core\Generator\Pipeline\RegisterNavigationStep;
+use App\Core\Generator\Pipeline\RegisterPermissionsStep;
+use App\Core\Generator\Pipeline\Steps\PrepareDirectoriesStep;
+use App\Core\Generator\Pipeline\Steps\ValidateModuleStep;
 use Illuminate\Support\ServiceProvider;
 //use MiddlewareGenerator;
 
@@ -54,9 +65,58 @@ final class CNGeneratorServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->tag(
+            [
+                ValidateModuleStep::class,
+                PrepareDirectoriesStep::class,
+                RegisterPermissionsStep::class,
+                RegisterNavigationStep::class,
+                ExecuteGeneratorsStep::class,
+                FinalizePipelineStep::class,
+            ],
+            'cn.generator.pipeline.steps'
+        );
+
         $this->registerGeneratorRegistry();
 
+        $this->registerGeneratorManager();
+
+        $this->registerGeneratorPipeline();
+
         $this->registerModuleGenerator();
+    }
+
+    private function registerGeneratorManager(): void
+    {
+        $this->app->singleton(
+            GeneratorManagerInterface::class,
+            function ($app): GeneratorManager {
+                return new GeneratorManager(
+                    $app->make(GeneratorRegistry::class)->all(),
+                );
+            }
+        );
+    }
+
+    private function registerGeneratorPipeline(): void
+    {
+        $this->app->singleton(
+            PipelineInterface::class,
+            function ($app): PipelineInterface {
+                return new Pipeline(
+                    iterator_to_array(
+                        $app->tagged('cn.generator.pipeline.steps')
+                    ),
+                );
+            }
+        );
+
+        $this->app->singleton(
+            Pipeline::class,
+            function ($app): Pipeline {
+                return $app->make(PipelineInterface::class);
+            }
+        );
     }
 
     /**
@@ -78,6 +138,8 @@ final class CNGeneratorServiceProvider extends ServiceProvider
 
                 return new GeneratorRegistry([
 
+                    $app->make(ModuleManifestGenerator::class),
+
                     $app->make(ModelGenerator::class),
 
                     $app->make(MigrationGenerator::class),
@@ -93,6 +155,8 @@ final class CNGeneratorServiceProvider extends ServiceProvider
                     $app->make(RequestGenerator::class),
 
                     $app->make(ControllerGenerator::class),
+
+                    $app->make(ActionGenerator::class),
 
                     $app->make(ViewGenerator::class),
 
@@ -129,8 +193,7 @@ final class CNGeneratorServiceProvider extends ServiceProvider
         $this->app->singleton(ModuleGenerator::class, function ($app) {
 
             return new ModuleGenerator(
-                $app->make(GeneratorRegistry::class)->all(),
-                $app->make(GeneratorTestSuite::class),
+                $app->make(Pipeline::class),
 
 
             );

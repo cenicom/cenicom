@@ -4,77 +4,46 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Generator\Generators;
 
-use App\Core\Generator\Contracts\GeneratorInterface;
 use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\Factories\ModuleDataFactory;
 use App\Core\Generator\Generators\ModuleGenerator;
 use App\Core\Generator\Results\GeneratorResult;
-use App\Core\Generator\Validation\GeneratorTestSuite;
-use Tests\Support\GeneratorTestCase;
+use App\Core\Generator\Pipeline\Contracts\PipelineInterface;
+use Mockery;
+use Tests\TestCase;
 
-
-final class ModuleGeneratorTest extends GeneratorTestCase
+final class ModuleGeneratorTest extends TestCase
 {
-    public function test_generates_complete_module(): void
+    protected function tearDown(): void
     {
-        $generator = new ModuleGenerator(
-            [
-                new FakeSupportedGenerator(),
-                new FakeSupportedGenerator(),
-            ],
-            new GeneratorTestSuite(),
-        );
+        Mockery::close();
 
-        $result = $generator->generate(
-            $this->module()
-        );
-
-        $this->assertTrue(
-            $result->isSuccessful()
-        );
-
-        $this->assertCount(
-            2,
-            $result->created()
-        );
+        parent::tearDown();
     }
 
-    public function test_skips_unsupported_generators(): void
+    public function test_delegates_generation_to_pipeline(): void
     {
-        $generator = new ModuleGenerator(
-            [
-                new FakeUnsupportedGenerator(),
-            ],
-            new GeneratorTestSuite(),
+        $pipeline = $this->createMock(PipelineInterface::class);
+
+        $module = $this->module();
+
+        $expected = GeneratorResult::success(
+            '/tmp/generated.php'
         );
 
-        $result = $generator->generate(
-            $this->module()
-        );
+        $pipeline
+            ->expects($this->once())
+            ->method('process')
+            ->with($module)
+            ->willReturn($expected);
 
-        $this->assertFalse(
-            $result->hasCreatedFiles()
-        );
-    }
+        $generator = new ModuleGenerator($pipeline);
 
-    public function test_merges_all_generator_results(): void
-    {
-        $generator = new ModuleGenerator(
-            [
-                new FakeSupportedGenerator(),
-                new FakeSupportedGenerator(),
-                new FakeSupportedGenerator(),
-            ],
-            new GeneratorTestSuite(),
-        );
+        $result = $generator->generate($module);
 
-        $result = $generator->generate(
-            $this->module()
-        );
-
-        $this->assertCount(
-            3,
-            $result->created()
+        $this->assertSame(
+            $expected,
+            $result
         );
     }
 
@@ -98,48 +67,5 @@ final class ModuleGeneratorTest extends GeneratorTestCase
             'fields' => [],
             'columns' => [],
         ]);
-    }
-}
-
-/*
-|--------------------------------------------------------------------------
-| Fakes
-|--------------------------------------------------------------------------
-*/
-
-final class FakeSupportedGenerator implements GeneratorInterface
-{
-    public function supports(ModuleData $module): bool
-    {
-        return true;
-    }
-
-    public function generate(ModuleData $module): GeneratorResult
-    {
-        $path = tempnam(
-            sys_get_temp_dir(),
-            'cn-generator-'
-        );
-
-        file_put_contents(
-            $path,
-            '<?php // generated file'
-        );
-
-        return (new GeneratorResult())
-            ->addCreated($path);
-    }
-}
-
-final class FakeUnsupportedGenerator implements GeneratorInterface
-{
-    public function supports(ModuleData $module): bool
-    {
-        return false;
-    }
-
-    public function generate(ModuleData $module): GeneratorResult
-    {
-        return new GeneratorResult();
     }
 }

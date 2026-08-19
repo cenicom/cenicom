@@ -13,9 +13,8 @@ final class ModuleDefinitionFactory
      *
      * @return array<string,mixed>
      */
-    public function create(
-        SpecificationInterface $specification
-    ): array {
+    public function create(SpecificationInterface $specification): array
+    {
 
         return [
 
@@ -41,18 +40,16 @@ final class ModuleDefinitionFactory
     /**
      * @return array<string,mixed>
      */
-    private function buildIdentity(
-        SpecificationInterface $specification
-    ): array {
+    private function buildIdentity(SpecificationInterface $specification): array
+    {
         return $specification->identity();
     }
 
     /**
      * @return array<string,mixed>
      */
-    private function buildFields(
-        SpecificationInterface $specification
-    ): array {
+    private function buildFields(SpecificationInterface $specification): array
+    {
         return [
             'fields' => $specification->fields(),
 
@@ -63,18 +60,16 @@ final class ModuleDefinitionFactory
     /**
      * @return array<string,mixed>
      */
-    private function buildGeneration(
-        SpecificationInterface $specification
-    ): array {
+    private function buildGeneration(SpecificationInterface $specification): array
+    {
         return $specification->generation();
     }
 
     /**
      * @return array<string,mixed>
      */
-    private function buildMetadata(
-        SpecificationInterface $specification
-    ): array {
+    private function buildMetadata(SpecificationInterface $specification): array
+    {
         return $specification->metadata();
     }
 }

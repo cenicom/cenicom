@@ -127,6 +127,26 @@ final class ControllerGeneratorTest extends GeneratorTestCase
             "->route('{$module->routeName()}.index')",
             $content
         );
+
+        $this->assertStringContainsString(
+            '$' . $module->variable() . '->getKey()',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            '$this->service->delete(',
+            $content
+        );
+
+        $this->assertStringNotContainsString(
+            '$this->service->destroy(',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            '$this->service->update(',
+            $content
+        );
     }
 
     public function test_generator_supports_any_module(): void

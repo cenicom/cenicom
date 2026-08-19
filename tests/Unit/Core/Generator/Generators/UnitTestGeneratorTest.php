@@ -4,18 +4,16 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Generator\Generators;
 
-use App\Core\Generator\Builders\ActionBuilder;
-use App\Core\Generator\Generators\ActionGenerator;
+use App\Core\Generator\Generators\UnitTestGenerator;
 use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Support\FileWriter;
 use App\Core\Generator\Support\StubManager;
 use App\Core\Generator\Validation\GeneratorValidator;
 use Tests\Support\GeneratorTestCase;
 
-
-final class ActionGeneratorTest extends GeneratorTestCase
+final class UnitTestGeneratorTest extends GeneratorTestCase
 {
-    public function test_generates_action_file(): void
+    public function test_generates_unit_test_file(): void
     {
         $generator = $this->createGenerator();
 
@@ -30,6 +28,11 @@ final class ActionGeneratorTest extends GeneratorTestCase
         $this->assertTrue(
             $result->hasCreatedFiles()
         );
+
+        $this->assertSame(
+            1,
+            $result->createdCount()
+        );
     }
 
     public function test_generator_supports_any_module(): void
@@ -43,15 +46,19 @@ final class ActionGeneratorTest extends GeneratorTestCase
         );
     }
 
-    public function test_generates_valid_action(): void
+    public function test_generates_valid_unit_test(): void
     {
         $generator = $this->createGenerator();
 
         $module = $this->createModuleData();
 
-        $generator->generate($module);
+        $result = $generator->generate($module);
 
-        $file = $module->actionPath();
+        $this->assertTrue(
+            $result->isSuccessful()
+        );
+
+        $file = $module->unitTestPath();
 
         $this->assertFileExists($file);
 
@@ -60,44 +67,38 @@ final class ActionGeneratorTest extends GeneratorTestCase
         $this->assertNotFalse($content);
 
         $this->assertStringContainsString(
-            'final readonly class CurrencyAction',
+            'final class CurrencyUnitTest',
             $content
         );
 
         $this->assertStringContainsString(
-            'CurrencyServiceInterface',
+            'extends TestCase',
             $content
         );
 
         $this->assertStringContainsString(
-            'public function create',
+            'use App\\Models\\Currency;',
             $content
         );
 
         $this->assertStringContainsString(
-            'public function update',
+            '$model = new Currency();',
             $content
         );
 
         $this->assertStringContainsString(
-            'public function delete',
-            $content
-        );
-
-        $this->assertStringContainsString(
-            '$' . $module->variable() . '->getKey()',
+            'Currency::class',
             $content
         );
     }
 
-    private function createGenerator(): ActionGenerator
+    private function createGenerator(): UnitTestGenerator
     {
-        return new ActionGenerator(
+        return new UnitTestGenerator(
             new StubManager(),
             new FileWriter(),
             new PresentationFactory(),
             new GeneratorValidator([]),
-            new ActionBuilder(),
         );
     }
 }

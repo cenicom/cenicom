@@ -23,6 +23,7 @@ final readonly class ModuleDefinition
  * @param array<class-string> $providers
  * @param array<class-string> $permissionDefinitions
  * @param array<class-string> $navigationDefinitions
+ * @param array<class-string> $crudDefinitions
  */
     public function __construct(
         public string $name,
@@ -33,5 +34,6 @@ final readonly class ModuleDefinition
         public array $permissionDefinitions,
         public array $navigationDefinitions,
         public readonly bool $enabled,
+        public array $crudDefinitions,
     ) {}
 }

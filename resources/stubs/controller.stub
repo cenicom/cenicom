@@ -101,7 +101,7 @@ final class [[ controller ]] extends Controller
     ): RedirectResponse {
 
         $this->service->update(
-            $[[ variable ]],
+            $[[ variable ]]->getKey(),
             $request->validated()
         );
 
@@ -117,7 +117,7 @@ final class [[ controller ]] extends Controller
         [[ model ]] $[[ variable ]]
     ): RedirectResponse {
 
-        $this->service->destroy($[[ variable ]]);
+        $this->service->delete($[[ variable ]]->getKey());
 
         return redirect()
             ->route('[[ routeName ]].index')

@@ -8,7 +8,7 @@ use App\Core\Generator\Contracts\GeneratorInterface;
 use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\Builders\ViewBuilder;
 use App\Core\Generator\Results\GeneratorResult;
-use App\Core\Generator\Support\FileWriter;
+use App\Core\Generator\Support\Contracts\FileWriterInterface;
 use App\Core\Generator\Support\StubManager;
 
 
@@ -90,7 +90,7 @@ final class ViewGenerator implements GeneratorInterface
 
     public function __construct(
         private readonly StubManager $stubManager,
-        private readonly FileWriter $fileWriter,
+        private readonly FileWriterInterface $fileWriter,
         private readonly ViewBuilder $builder,
     ) {}
 

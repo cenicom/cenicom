@@ -92,8 +92,7 @@ final class RequestGenerator extends BaseGenerator
             self::STORE_STUB,
             $file,
             $this->builder->build(
-                $module,
-                $module->storeRequestClass()
+                $module
             )
         );
     }
@@ -112,8 +111,7 @@ final class RequestGenerator extends BaseGenerator
             self::UPDATE_STUB,
             $file,
             $this->builder->build(
-                $module,
-                $module->updateRequestClass()
+                $module
             )
         );
     }

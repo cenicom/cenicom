@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace App\Core\Generator\Generators;
 
-use App\Core\Generator\Contracts\GeneratorInterface;
 use App\Core\Generator\DTO\ModuleData;
+use App\Core\Generator\Pipeline\Contracts\PipelineInterface;
 use App\Core\Generator\Results\GeneratorResult;
-use App\Core\Generator\Validation\GeneratorTestSuite;
 
 /**
  * Orquesta la ejecución de todos los generadores del CN Generator.
@@ -22,12 +21,9 @@ use App\Core\Generator\Validation\GeneratorTestSuite;
  */
 final class ModuleGenerator
 {
-    /**
-     * @param iterable<GeneratorInterface> $generators
-     */
+
     public function __construct(
-        private readonly iterable $generators,
-        private readonly GeneratorTestSuite $testSuite,
+        private PipelineInterface $pipeline,
     ) {}
 
     /**
@@ -35,21 +31,6 @@ final class ModuleGenerator
      */
     public function generate(ModuleData $module): GeneratorResult
     {
-        $result = new GeneratorResult();
-
-        foreach ($this->generators as $generator) {
-
-            if (! $generator->supports($module)) {
-                continue;
-            }
-
-            $result->merge(
-                $generator->generate($module)
-            );
-        }
-
-        $this->testSuite->validate($result);
-
-        return $result;
+        return $this->pipeline->process($module);
     }
 }

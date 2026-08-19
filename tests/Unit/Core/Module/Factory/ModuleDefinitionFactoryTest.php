@@ -356,4 +356,49 @@ final class ModuleDefinitionFactoryTest extends TestCase
             )
         );
     }
+
+    public function test_creates_definition_with_crud_definitions(): void
+    {
+        $manifest = base_path(
+            'tests/Fixtures/ModuleDefinitionFactory/CrudDefinitions/module.php'
+        );
+
+        $definition = $this->factory->create($manifest);
+
+        $this->assertSame(
+            [
+                \App\Core\Crud\Contracts\CrudDefinitionInterface::class,
+            ],
+            $definition->crudDefinitions
+        );
+    }
+
+    public function test_crud_definitions_default_to_empty_array(): void
+    {
+        $manifest = base_path(
+            'tests/Fixtures/ModuleDefinitionFactory/EmptyCrudDefinitions/module.php'
+        );
+
+        $definition = $this->factory->create($manifest);
+
+        $this->assertSame(
+            [],
+            $definition->crudDefinitions
+        );
+    }
+
+    public function test_throws_exception_when_crud_definitions_is_not_array(): void
+    {
+        $manifest = base_path(
+            'tests/Fixtures/ModuleDefinitionFactory/InvalidCrudDefinitions/module.php'
+        );
+
+        $this->expectException(\UnexpectedValueException::class);
+
+        $this->expectExceptionMessage(
+            'Module manifest "crud_definitions" must be an array.'
+        );
+
+        $this->factory->create($manifest);
+    }
 }

@@ -34,23 +34,30 @@
             <div class="cn-card-body">
 
 
-                <x-cn.form id="[[ singular ]]-form" :action="route('[[ routePrefix ]].store')" method="POST">
+                <x-cn.form
+    id="[[ singular ]]-form"
+    :action="route('[[ routePrefix ]].update', $[[ model ]])"
+    method="POST"
+>
+    @csrf
+    @method('PUT')
 
+    @include('[[ routePrefix ]]._form')
 
-                    @include('[[ routePrefix ]]._form')
+    {{-- Actions --}}
+    <x-cn.actions>
+        <x-cn.button type="submit">
+            Guardar
+        </x-cn.button>
 
-                    {{-- Actions --}}
-                    <x-cn.actions>
-                        {{-- Guardar --}}
-                        <x-cn.button type="submit">
-                            Guardar
-                        </x-cn.button>
-                        {{-- Regresar --}}
-                        <x-cn.button :href="route('[[ routePrefix ]].index')" variant="secondary">
-                            Regresar
-                        </x-cn.button>
-                    </x-cn.actions>
-                </x-cn.form>
+        <x-cn.button
+            :href="route('[[ routePrefix ]].index')"
+            variant="secondary"
+        >
+            Regresar
+        </x-cn.button>
+    </x-cn.actions>
+</x-cn.form>
             </div>
         </section>
     </div>

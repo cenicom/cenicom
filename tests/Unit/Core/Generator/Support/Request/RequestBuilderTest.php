@@ -12,58 +12,58 @@ use Tests\TestCase;
 final class RequestBuilderTest extends TestCase
 {
     public function test_build_generates_request_variables(): void
-{
-    $builder = new RequestBuilder();
+    {
+        $builder = new RequestBuilder();
 
-    $variables = $builder->build(
-        $this->module()
-    );
+        $variables = $builder->build(
+            $this->module()
+        );
 
-    $this->assertArrayHasKey(
-        'namespace',
-        $variables
-    );
+        $this->assertArrayHasKey(
+            'namespace',
+            $variables
+        );
 
-    $this->assertArrayHasKey(
-        'singular',
-        $variables
-    );
+        $this->assertArrayHasKey(
+            'singular',
+            $variables
+        );
 
-    $this->assertArrayHasKey(
-        'storeRequest',
-        $variables
-    );
+        $this->assertArrayHasKey(
+            'storeRequest',
+            $variables
+        );
 
-    $this->assertArrayHasKey(
-        'updateRequest',
-        $variables
-    );
+        $this->assertArrayHasKey(
+            'updateRequest',
+            $variables
+        );
 
-    $this->assertArrayHasKey(
-        'rules',
-        $variables
-    );
+        $this->assertArrayHasKey(
+            'rules',
+            $variables
+        );
 
-    $this->assertSame(
-        'StoreCurrencyRequest',
-        $variables['storeRequest']
-    );
+        $this->assertSame(
+            'StoreCurrencyRequest',
+            $variables['storeRequest']
+        );
 
-    $this->assertSame(
-        'UpdateCurrencyRequest',
-        $variables['updateRequest']
-    );
+        $this->assertSame(
+            'UpdateCurrencyRequest',
+            $variables['updateRequest']
+        );
 
-    $this->assertStringContainsString(
-        "'name'",
-        $variables['rules']
-    );
+        $this->assertStringContainsString(
+            "'name'",
+            $variables['rules']
+        );
 
-    $this->assertStringContainsString(
-        "'symbol'",
-        $variables['rules']
-    );
-}
+        $this->assertStringContainsString(
+            "'symbol'",
+            $variables['rules']
+        );
+    }
 
     public function test_build_generates_required_rules(): void
     {
@@ -151,5 +151,122 @@ final class RequestBuilderTest extends TestCase
                 ],
             ],
         ]);
+    }
+
+    public function test_build_accepts_only_module_data(): void
+    {
+        $builder = new RequestBuilder();
+
+        $variables = $builder->build(
+            $this->module()
+        );
+
+        $this->assertArrayHasKey(
+            'storeRequest',
+            $variables
+        );
+
+        $this->assertArrayHasKey(
+            'updateRequest',
+            $variables
+        );
+    }
+
+    public function test_build_signature(): void
+    {
+        $reflection = new \ReflectionMethod(
+            RequestBuilder::class,
+            'build'
+        );
+
+        $this->assertCount(
+            1,
+            $reflection->getParameters()
+        );
+
+        $this->assertSame(
+            'module',
+            $reflection->getParameters()[0]->getName()
+        );
+    }
+
+    public function test_build_generates_integer_rule(): void
+    {
+        $module = (new ModuleDataFactory())->create([
+            'identity' => [
+                'name' => 'Product',
+                'singular' => 'product',
+                'plural' => 'products',
+                'table' => 'products',
+                'description' => 'Product module',
+            ],
+            'fields' => [
+                [
+                    'name' => 'quantity',
+                    'type' => 'integer',
+                ],
+            ],
+        ]);
+
+        $variables = (new RequestBuilder())->build($module);
+
+        $this->assertStringContainsString(
+            "'quantity' => ['required', 'integer']",
+            $variables['rules']
+        );
+    }
+
+    public function test_build_generates_max_length_rule(): void
+    {
+        $module = (new ModuleDataFactory())->create([
+            'identity' => [
+                'name' => 'Currency',
+                'singular' => 'currency',
+                'plural' => 'currencies',
+                'table' => 'currencies',
+                'description' => 'Currency module',
+            ],
+            'fields' => [
+                [
+                    'name' => 'name',
+                    'type' => 'string',
+                    'length' => 100,
+                ],
+            ],
+        ]);
+
+        $variables = (new RequestBuilder())->build($module);
+
+        $this->assertStringContainsString(
+            "'name' => ['required', 'string', 'max:100']",
+            $variables['rules']
+        );
+    }
+
+    public function test_build_generates_unique_rule(): void
+    {
+        $module = (new ModuleDataFactory())->create([
+            'identity' => [
+                'name' => 'Currency',
+                'singular' => 'currency',
+                'plural' => 'currencies',
+                'table' => 'currencies',
+                'description' => 'Currency module',
+            ],
+            'fields' => [
+                [
+                    'name' => 'code',
+                    'type' => 'string',
+                    'unique' => true,
+                ],
+            ],
+        ]);
+
+        $variables = (new RequestBuilder())->build($module);
+
+        $this->assertStringContainsString(
+            "'code' => ['required', 'string', 'unique:currencies,code']",
+            $variables['rules']
+        );
     }
 }

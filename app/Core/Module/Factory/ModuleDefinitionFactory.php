@@ -97,6 +97,9 @@ final class ModuleDefinitionFactory implements ModuleDefinitionFactoryInterface
             );
         }
 
+        $permissionDefinitions =
+            $manifest['permission_definitions'] ?? [];
+
         if (
             array_key_exists('navigation_definitions', $manifest)
             && ! is_array($manifest['navigation_definitions'])
@@ -109,10 +112,19 @@ final class ModuleDefinitionFactory implements ModuleDefinitionFactoryInterface
         $navigationDefinitions =
             $manifest['navigation_definitions'] ?? [];
 
-        $enabled = $manifest['enabled'] ?? true;
+        if (
+            array_key_exists('crud_definitions', $manifest)
+            && ! is_array($manifest['crud_definitions'])
+        ) {
+            throw new \UnexpectedValueException(
+                'Module manifest "crud_definitions" must be an array.',
+            );
+        }
 
-        $permissionDefinitions =
-            $manifest['permission_definitions'] ?? [];
+        $crudDefinitions =
+            $manifest['crud_definitions'] ?? [];
+
+        $enabled = $manifest['enabled'] ?? true;
 
         return new ModuleDefinition(
             name: $manifest['name'],
@@ -122,6 +134,7 @@ final class ModuleDefinitionFactory implements ModuleDefinitionFactoryInterface
             providers: $manifest['providers'],
             permissionDefinitions: $permissionDefinitions,
             navigationDefinitions: $navigationDefinitions,
+            crudDefinitions: $crudDefinitions,
             enabled: $enabled,
         );
     }

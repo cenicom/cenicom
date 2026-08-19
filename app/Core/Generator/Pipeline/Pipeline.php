@@ -7,9 +7,10 @@ namespace App\Core\Generator\Pipeline;
 use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\Pipeline\Contracts\PipelineStepInterface;
 use App\Core\Generator\Results\GeneratorResult;
+use App\Core\Generator\Pipeline\Contracts\PipelineInterface;
 use Closure;
 
-final class Pipeline
+final class Pipeline implements PipelineInterface
 {
     /**
      * @param array<int, PipelineStepInterface> $steps

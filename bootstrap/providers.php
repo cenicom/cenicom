@@ -1,5 +1,10 @@
 <?php
 
+use App\Core\Audit\Providers\AuditServiceProvider;
+use App\Core\Module\Providers\ModuleServiceProvider;
+use App\Core\Navigation\NavigationServiceProvider;
+use App\Core\Security\Providers\SecurityServiceProvider;
+use App\Modules\Institution\Providers\InstitutionServiceProvider;
 use App\Providers\AppServiceProvider;
 use App\Providers\CNFrameworkServiceProvider;
 use App\Providers\CNGeneratorServiceProvider;
@@ -15,19 +20,15 @@ return [
 
     CNFrameworkServiceProvider::class,
 
-    //GeneratorServiceProvider::class,
+    NavigationServiceProvider::class,
 
-    App\Core\Navigation\NavigationServiceProvider::class,
+    InstitutionServiceProvider::class,
 
-    App\Modules\Institution\Providers\InstitutionServiceProvider::class,
+    ModuleServiceProvider::class,
 
-    App\Core\Module\Providers\ModuleServiceProvider::class,
+    SecurityServiceProvider::class,
 
-    App\Core\Security\Providers\SecurityServiceProvider::class,
-
-    //App\Core\Navigation\NavigationServiceProvider::class,
-
-    App\Core\Audit\Providers\AuditServiceProvider::class,
+    AuditServiceProvider::class,
 
 
 ];
