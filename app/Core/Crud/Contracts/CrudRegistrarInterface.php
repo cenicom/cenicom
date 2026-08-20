@@ -13,4 +13,5 @@ interface CrudRegistrarInterface
         string $resource,
         string $controller,
     ): void;
+
 }

@@ -80,6 +80,7 @@ final class ModuleBootstrapContextTest extends TestCase
             providers: [],
             permissionDefinitions: [],
             navigationDefinitions: [],
+            viewDefinitions: [],
             enabled: true,
         );
 
@@ -111,6 +112,7 @@ final class ModuleBootstrapContextTest extends TestCase
             providers: [],
             permissionDefinitions: [],
             navigationDefinitions: [],
+            viewDefinitions: [],
             enabled: true,
         );
 
@@ -221,6 +223,7 @@ final class ModuleBootstrapContextTest extends TestCase
             providers: [],
             permissionDefinitions: [],
             navigationDefinitions: [],
+            viewDefinitions: [],
             enabled: true,
         );
 
@@ -256,6 +259,7 @@ final class ModuleBootstrapContextTest extends TestCase
             providers: [],
             permissionDefinitions: [],
             navigationDefinitions: [],
+            viewDefinitions: [],
             enabled: true,
         );
 
@@ -267,6 +271,7 @@ final class ModuleBootstrapContextTest extends TestCase
             providers: [],
             permissionDefinitions: [],
             navigationDefinitions: [],
+            viewDefinitions: [],
             enabled: true,
         );
 
@@ -396,6 +401,7 @@ final class ModuleBootstrapContextTest extends TestCase
             providers: [],
             permissionDefinitions: [],
             navigationDefinitions: [],
+            viewDefinitions: [],
             enabled: true
         );
 

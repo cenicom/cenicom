@@ -248,6 +248,7 @@ final class ModuleBootstrapLifecycleTest extends TestCase
             providers: [],
             permissionDefinitions: [],
             navigationDefinitions: [],
+            viewDefinitions: [],
             enabled: true,
         );
 

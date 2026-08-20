@@ -126,6 +126,18 @@ final class ModuleDefinitionFactory implements ModuleDefinitionFactoryInterface
 
         $enabled = $manifest['enabled'] ?? true;
 
+        if (
+            array_key_exists('view_definitions', $manifest)
+            && ! is_array($manifest['view_definitions'])
+        ) {
+            throw new \UnexpectedValueException(
+                'Module manifest "view_definitions" must be an array.',
+            );
+        }
+
+        $viewDefinitions =
+            $manifest['view_definitions'] ?? [];
+
         return new ModuleDefinition(
             name: $manifest['name'],
             namespace: $manifest['namespace'],
@@ -135,6 +147,7 @@ final class ModuleDefinitionFactory implements ModuleDefinitionFactoryInterface
             permissionDefinitions: $permissionDefinitions,
             navigationDefinitions: $navigationDefinitions,
             crudDefinitions: $crudDefinitions,
+            viewDefinitions: $viewDefinitions,
             enabled: $enabled,
         );
     }

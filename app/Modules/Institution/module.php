@@ -19,5 +19,9 @@ return [
         \App\Modules\Institution\Navigation\InstitutionNavigation::class,
     ],
 
+    'view_definitions' => [
+        \App\Modules\Institution\View\InstitutionView::class,
+    ],
+
     'enabled' => true,
 ];

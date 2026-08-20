@@ -401,4 +401,51 @@ final class ModuleDefinitionFactoryTest extends TestCase
 
         $this->factory->create($manifest);
     }
+
+    public function test_creates_definition_with_view_definitions(): void
+    {
+        $manifest = base_path(
+            'tests/Fixtures/ModuleDefinitionFactory/ViewDefinitions/module.php'
+        );
+
+        $definition = $this->factory->create($manifest);
+
+        $this->assertSame(
+            [
+                \App\Modules\Institution\View\InstitutionView::class,
+            ],
+            $definition->viewDefinitions
+        );
+    }
+
+    public function test_view_definitions_default_to_empty_array(): void
+    {
+        $manifest = base_path(
+            'tests/Fixtures/ModuleDefinitionFactory/EmptyViewDefinitions/module.php'
+        );
+
+        $definition = $this->factory->create($manifest);
+
+        $this->assertSame(
+            [],
+            $definition->viewDefinitions
+        );
+    }
+
+    public function test_throws_exception_when_view_definitions_is_not_array(): void
+    {
+        $manifest = base_path(
+            'tests/Fixtures/ModuleDefinitionFactory/InvalidViewDefinitions/module.php'
+        );
+
+        $this->expectException(\UnexpectedValueException::class);
+
+        $this->expectExceptionMessage(
+            'Module manifest "view_definitions" must be an array.'
+        );
+
+        $this->factory->create($manifest);
+    }
+
+
 }
