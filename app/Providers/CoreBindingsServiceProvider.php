@@ -15,6 +15,14 @@ use App\Core\View\Contracts\ViewRegistrarInterface;
 use App\Core\View\Contracts\ViewRegistryInterface;
 use App\Core\View\Registrar\ViewRegistrar;
 use App\Core\View\ViewRegistry;
+use App\Core\View\Registry\ViewDefinitionRegistry;
+use App\Core\Crud\Contracts\CrudPermissionResolverInterface;
+use App\Core\Crud\CrudPermissionResolver;
+use App\Core\Crud\Contracts\CrudPermissionServiceInterface;
+use App\Core\Crud\CrudPermissionService;
+use App\Core\Crud\Contracts\CrudPermissionRegistrarInterface;
+use App\Core\Crud\CrudPermissionRegistrar;
+use App\Core\Security\Permissions\Contracts\PermissionRegistrarInterface;
 use Illuminate\Support\ServiceProvider;
 
 final class CoreBindingsServiceProvider extends ServiceProvider
@@ -47,6 +55,24 @@ final class CoreBindingsServiceProvider extends ServiceProvider
         );
 
         $this->app->singleton(
+            CrudPermissionResolverInterface::class,
+            CrudPermissionResolver::class,
+        );
+
+        $this->app->singleton(
+            CrudPermissionServiceInterface::class,
+            CrudPermissionService::class,
+        );
+
+        $this->app->singleton(
+            CrudPermissionRegistrarInterface::class,
+            fn($app) => new CrudPermissionRegistrar(
+                $app->make(CrudPermissionServiceInterface::class),
+                $app->make(PermissionRegistrarInterface::class),
+            )
+        );
+
+        $this->app->singleton(
             ViewRegistryInterface::class,
             ViewRegistry::class,
         );
@@ -68,5 +94,10 @@ final class CoreBindingsServiceProvider extends ServiceProvider
                 $concrete,
             );
         }
+
+        $this->app->singleton(
+            ViewDefinitionRegistry::class,
+            ViewDefinitionRegistry::class,
+        );
     }
 }

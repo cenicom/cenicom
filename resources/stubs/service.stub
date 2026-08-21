@@ -56,13 +56,13 @@ final readonly class [[ service ]]
      * {@inheritDoc}
      */
     public function update(
-        [[ model ]] $[[ variable ]],
-        array $data
+        int|string $id,
+        array $attributes
     ): bool {
 
         return $this->repository->update(
-            $[[ variable ]],
-            $data
+            $id,
+            $attributes
         );
     }
 
@@ -70,11 +70,11 @@ final readonly class [[ service ]]
      * {@inheritDoc}
      */
     public function destroy(
-        [[ model ]] $[[ variable ]]
+        int|string $id
     ): bool {
 
         return $this->repository->delete(
-            $[[ variable ]]
+            $id
         );
     }
 }

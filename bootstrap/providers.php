@@ -10,6 +10,8 @@ use App\Providers\CNFrameworkServiceProvider;
 use App\Providers\CNGeneratorServiceProvider;
 use App\Providers\RepositoryServiceProvider;
 use App\Providers\CoreBindingsServiceProvider;
+use App\Core\View\ViewServiceProvider;
+use App\Core\Crud\CrudServiceProvider;
 
 return [
 
@@ -18,6 +20,10 @@ return [
     RepositoryServiceProvider::class,
 
     CoreBindingsServiceProvider::class,
+
+    CrudServiceProvider::class,
+
+    ViewServiceProvider::class,
 
     CNGeneratorServiceProvider::class,
 

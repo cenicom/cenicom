@@ -46,35 +46,41 @@ final readonly class [[ repository ]]
     /**
      * Crea un nuevo registro.
      *
-     * @param array<string,mixed> $data
+     * @param array<string,mixed> $attributes
      */
     public function create(
-        array $data
+        array $attributes
     ): [[ model ]] {
 
-        return $this->model->create($data);
+        return $this->model->create($attributes);
     }
 
     /**
      * Actualiza un registro.
      *
-     * @param array<string,mixed> $data
+     * @param array<string,mixed> $attributes
      */
     public function update(
-        [[ model ]] $[[ variable ]],
+        int|string $id,
         array $data
     ): bool {
 
-        return $[[ variable ]]->update($data);
+        return $this->model
+        ->newQuery()
+        ->findOrFail($id)
+        ->update($attributes);
     }
 
     /**
      * Elimina un registro.
      */
     public function delete(
-        [[ model ]] $[[ variable ]]
+        int|string $id
     ): bool {
 
-        return $[[ variable ]]->delete();
+        return (bool) $this->model
+        ->newQuery()
+        ->findOrFail($id)
+        ->delete();
     }
 }

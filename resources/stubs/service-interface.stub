@@ -34,18 +34,18 @@ interface [[ serviceInterface ]]
      * @param array<string,mixed> $data
      */
     public function create(
-        array $data
+        array $attributes
     ): [[ model ]];
 
 
     /**
      * Actualiza un registro.
      *
-     * @param array<string,mixed> $data
+     * @param array<string,mixed> $attributes
      */
     public function update(
-        [[ model ]] $[[ variable ]],
-        array $data
+        int|string $id,
+        array $attributes
     ): bool;
 
 
@@ -53,6 +53,6 @@ interface [[ serviceInterface ]]
      * Elimina un registro.
      */
     public function destroy(
-        [[ model ]] $[[ variable ]]
+        int|string $id
     ): bool;
 }
