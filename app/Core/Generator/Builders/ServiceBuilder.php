@@ -68,10 +68,9 @@ final class ServiceBuilder
         return implode(
             PHP_EOL,
             [
-                'use ' . $module->qualifiedModel() . ';',
                 'use ' . $module->qualifiedRepositoryInterface() . ';',
                 'use ' . $module->qualifiedServiceInterface() . ';',
-                'use Illuminate\Contracts\Pagination\LengthAwarePaginator;',
+                'use App\Core\Services\BaseService;',
             ]
         );
     }

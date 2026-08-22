@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace [[ namespace ]];
 
-use [[ qualifiedModel ]];
-use [[ qualifiedRepositoryInterface ]];
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+[[ imports ]]
 
 /**
  * ==========================================================
@@ -15,72 +13,21 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
  *
  * Repositorio de [[ model ]].
  *
- * Encapsula el acceso a datos del modelo y centraliza
- * todas las operaciones de persistencia.
+ * Extiende el repositorio base del Core y utiliza el contrato
+ * específico del módulo.
  *
  * @package [[ namespace ]]
  */
-final readonly class [[ repository ]]
+class [[ repository ]]
+    extends BaseRepository
     implements [[ repositoryInterface ]]
 {
     /**
      * Constructor.
      */
     public function __construct(
-        private [[ model ]] $model,
+        [[ model ]] $model,
     ) {
-    }
-
-    /**
-     * Obtiene el listado paginado.
-     */
-    public function paginate(
-        int $perPage = 15
-    ): LengthAwarePaginator {
-
-        return $this->model
-            ->latest()
-            ->paginate($perPage);
-    }
-
-    /**
-     * Crea un nuevo registro.
-     *
-     * @param array<string,mixed> $attributes
-     */
-    public function create(
-        array $attributes
-    ): [[ model ]] {
-
-        return $this->model->create($attributes);
-    }
-
-    /**
-     * Actualiza un registro.
-     *
-     * @param array<string,mixed> $attributes
-     */
-    public function update(
-        int|string $id,
-        array $data
-    ): bool {
-
-        return $this->model
-        ->newQuery()
-        ->findOrFail($id)
-        ->update($attributes);
-    }
-
-    /**
-     * Elimina un registro.
-     */
-    public function delete(
-        int|string $id
-    ): bool {
-
-        return (bool) $this->model
-        ->newQuery()
-        ->findOrFail($id)
-        ->delete();
+        parent::__construct($model);
     }
 }

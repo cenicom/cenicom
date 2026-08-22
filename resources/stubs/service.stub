@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace [[ namespace ]];
 
-use [[ qualifiedModel ]];
-use [[ qualifiedRepositoryInterface ]];
-use [[ qualifiedServiceInterface ]];
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+[[ imports ]]
 
 /**
  * ==========================================================
@@ -16,65 +13,21 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
  *
  * Servicio del módulo [[ model ]].
  *
- * Centraliza la lógica de negocio y coordina las operaciones
- * sobre el repositorio.
+ * Extiende el servicio base del Core y utiliza el contrato
+ * específico del módulo.
  *
  * @package [[ namespace ]]
  */
-final readonly class [[ service ]]
+class [[ service ]]
+    extends BaseService
     implements [[ serviceInterface ]]
 {
     /**
      * Constructor.
      */
     public function __construct(
-        private [[ repositoryInterface ]] $repository,
+        [[ repositoryInterface ]] $repository,
     ) {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function paginate(
-        int $perPage = 15
-    ): LengthAwarePaginator {
-
-        return $this->repository->paginate($perPage);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function create(
-        array $data
-    ): [[ model ]] {
-
-        return $this->repository->create($data);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function update(
-        int|string $id,
-        array $attributes
-    ): bool {
-
-        return $this->repository->update(
-            $id,
-            $attributes
-        );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function destroy(
-        int|string $id
-    ): bool {
-
-        return $this->repository->delete(
-            $id
-        );
+        parent::__construct($repository);
     }
 }

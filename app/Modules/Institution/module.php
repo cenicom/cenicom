@@ -19,9 +19,14 @@ return [
         \App\Modules\Institution\Navigation\InstitutionNavigation::class,
     ],
 
+    'crud_definitions' => [
+        \App\Modules\Institution\Crud\InstitutionCrud::class,
+    ],
+
     'view_definitions' => [
         \App\Modules\Institution\View\InstitutionView::class,
     ],
+
 
     'enabled' => true,
 ];

@@ -92,7 +92,12 @@ final class RepositoryGeneratorTest extends GeneratorTestCase
         $this->assertNotFalse($content);
 
         $this->assertStringContainsString(
-            'final readonly class CurrencyRepository',
+            'class CurrencyRepository',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            'extends BaseRepository',
             $content
         );
 
@@ -102,22 +107,12 @@ final class RepositoryGeneratorTest extends GeneratorTestCase
         );
 
         $this->assertStringContainsString(
-            'public function paginate',
+            'Currency $model',
             $content
         );
 
         $this->assertStringContainsString(
-            'public function create',
-            $content
-        );
-
-        $this->assertStringContainsString(
-            'public function update',
-            $content
-        );
-
-        $this->assertStringContainsString(
-            'public function delete',
+            'parent::__construct($model)',
             $content
         );
     }

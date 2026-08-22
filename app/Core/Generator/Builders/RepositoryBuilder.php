@@ -67,7 +67,7 @@ final class RepositoryBuilder
             [
                 'use ' . $module->qualifiedModel() . ';',
                 'use ' . $module->qualifiedRepositoryInterface() . ';',
-                'use Illuminate\Contracts\Pagination\LengthAwarePaginator;',
+                'use App\Core\Repositories\BaseRepository;',
             ]
         );
     }

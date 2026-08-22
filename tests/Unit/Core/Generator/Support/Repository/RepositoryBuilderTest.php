@@ -101,7 +101,7 @@ final class RepositoryBuilderTest extends TestCase
         );
 
         $this->assertStringContainsString(
-            'use Illuminate\\Contracts\\Pagination\\LengthAwarePaginator;',
+            'use App\\Core\\Repositories\\BaseRepository;',
             $imports
         );
     }

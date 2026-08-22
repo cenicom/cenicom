@@ -89,7 +89,12 @@ final class ServiceGeneratorTest extends GeneratorTestCase
         $this->assertNotFalse($content);
 
         $this->assertStringContainsString(
-            'final readonly class CurrencyService',
+            'class CurrencyService',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            'extends BaseService',
             $content
         );
 
@@ -99,27 +104,12 @@ final class ServiceGeneratorTest extends GeneratorTestCase
         );
 
         $this->assertStringContainsString(
-            'CurrencyRepositoryInterface',
+            'CurrencyRepositoryInterface $repository',
             $content
         );
 
         $this->assertStringContainsString(
-            'public function paginate',
-            $content
-        );
-
-        $this->assertStringContainsString(
-            'public function create',
-            $content
-        );
-
-        $this->assertStringContainsString(
-            'public function update',
-            $content
-        );
-
-        $this->assertStringContainsString(
-            'public function destroy',
+            'parent::__construct($repository)',
             $content
         );
     }

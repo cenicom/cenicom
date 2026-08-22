@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace [[ namespace ]];
 
-use [[ qualifiedModel ]];
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use App\Core\Contracts\ServiceInterface;
 
 /**
  * ==========================================================
@@ -14,45 +13,10 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
  *
  * Contrato del servicio de [[ model ]].
  *
- * Define las operaciones de negocio del módulo.
+ * Especializa el contrato común de servicios del Core.
  *
  * @package [[ namespace ]]
  */
-interface [[ serviceInterface ]]
+interface [[ serviceInterface ]] extends ServiceInterface
 {
-    /**
-     * Obtiene registros paginados.
-     */
-    public function paginate(
-        int $perPage = 15
-    ): LengthAwarePaginator;
-
-
-    /**
-     * Crea un nuevo registro.
-     *
-     * @param array<string,mixed> $data
-     */
-    public function create(
-        array $attributes
-    ): [[ model ]];
-
-
-    /**
-     * Actualiza un registro.
-     *
-     * @param array<string,mixed> $attributes
-     */
-    public function update(
-        int|string $id,
-        array $attributes
-    ): bool;
-
-
-    /**
-     * Elimina un registro.
-     */
-    public function destroy(
-        int|string $id
-    ): bool;
 }
