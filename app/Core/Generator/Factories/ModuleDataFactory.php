@@ -712,7 +712,7 @@ final class ModuleDataFactory
 
             'moduleManifestPath'
             => $this->paths->app(
-                "modules/{$name}.php"
+                 "modules/{$name}.json"
             ), // o la ruta que hayas definido para el manifiesto
 
             // NUEVO
