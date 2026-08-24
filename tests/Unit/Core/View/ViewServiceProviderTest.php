@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tests\Unit\Core\View;
 
 use App\Core\View\Bootstrap\ViewBootstrapper;
+use App\Core\View\Contracts\ViewDefinitionRegistryInterface;
 use App\Core\View\Loader\ViewDefinitionLoader;
 use App\Core\View\Registry\ViewDefinitionRegistry;
-//use App\Core\View\ViewServiceProvider;
 use Tests\TestCase;
 
 final class ViewServiceProviderTest extends TestCase
@@ -27,11 +27,11 @@ final class ViewServiceProviderTest extends TestCase
     public function test_view_definition_registry_is_singleton(): void
     {
         $first = $this->app->make(
-            ViewDefinitionRegistry::class
+            ViewDefinitionRegistryInterface::class
         );
 
         $second = $this->app->make(
-            ViewDefinitionRegistry::class
+            ViewDefinitionRegistryInterface::class
         );
 
         self::assertSame(

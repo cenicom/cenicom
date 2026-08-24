@@ -6,12 +6,12 @@ namespace App\Core\View\Bootstrap;
 
 use App\Core\View\Contracts\ViewDefinitionInterface;
 use App\Core\View\Contracts\ViewRegistrarInterface;
-use App\Core\View\Registry\ViewDefinitionRegistry;
+use App\Core\View\Contracts\ViewDefinitionRegistryInterface;
 
 final readonly class ViewBootstrapper
 {
     public function __construct(
-        private ViewDefinitionRegistry $definitions,
+        private ViewDefinitionRegistryInterface $definitions,
         private ViewRegistrarInterface $registrar,
     ) {
     }

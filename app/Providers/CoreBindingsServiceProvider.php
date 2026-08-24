@@ -5,24 +5,25 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Core\Crud\Contracts\CrudDefinitionRegistryInterface;
+use App\Core\Crud\Contracts\CrudPermissionRegistrarInterface;
+use App\Core\Crud\Contracts\CrudPermissionResolverInterface;
+use App\Core\Crud\Contracts\CrudPermissionServiceInterface;
 use App\Core\Crud\Contracts\CrudRegistrarInterface;
 use App\Core\Crud\Contracts\ResourceRegistryInterface;
 use App\Core\Crud\Contracts\ResourceServiceInterface;
+use App\Core\Crud\CrudPermissionRegistrar;
+use App\Core\Crud\CrudPermissionResolver;
+use App\Core\Crud\CrudPermissionService;
 use App\Core\Crud\CrudRegistrar;
 use App\Core\Crud\Registry\CrudDefinitionRegistry;
 use App\Core\Crud\ResourceService;
+use App\Core\Security\Permissions\Contracts\PermissionRegistrarInterface;
+use App\Core\View\Contracts\ViewDefinitionRegistryInterface;
 use App\Core\View\Contracts\ViewRegistrarInterface;
 use App\Core\View\Contracts\ViewRegistryInterface;
 use App\Core\View\Registrar\ViewRegistrar;
-use App\Core\View\ViewRegistry;
 use App\Core\View\Registry\ViewDefinitionRegistry;
-use App\Core\Crud\Contracts\CrudPermissionResolverInterface;
-use App\Core\Crud\CrudPermissionResolver;
-use App\Core\Crud\Contracts\CrudPermissionServiceInterface;
-use App\Core\Crud\CrudPermissionService;
-use App\Core\Crud\Contracts\CrudPermissionRegistrarInterface;
-use App\Core\Crud\CrudPermissionRegistrar;
-use App\Core\Security\Permissions\Contracts\PermissionRegistrarInterface;
+use App\Core\View\ViewRegistry;
 use Illuminate\Support\ServiceProvider;
 
 final class CoreBindingsServiceProvider extends ServiceProvider
@@ -82,6 +83,11 @@ final class CoreBindingsServiceProvider extends ServiceProvider
             ViewRegistrar::class,
         );
 
+        $this->app->singleton(
+             ViewDefinitionRegistryInterface::class,
+            ViewDefinitionRegistry::class,
+        );
+
         $bindings = config('cn-bindings', []);
 
         if (! is_array($bindings)) {
@@ -95,9 +101,6 @@ final class CoreBindingsServiceProvider extends ServiceProvider
             );
         }
 
-        $this->app->singleton(
-            ViewDefinitionRegistry::class,
-            ViewDefinitionRegistry::class,
-        );
+
     }
 }

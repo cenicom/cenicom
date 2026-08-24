@@ -160,6 +160,8 @@ final class ModuleBootstrapReportIntegrationTest extends TestCase
                 providers: [],
                 permissionDefinitions: [],
                 navigationDefinitions: [],
+                crudDefinitions: [],
+                viewDefinitions: [],
                 enabled: true,
             )
         );
@@ -364,6 +366,8 @@ final class ModuleBootstrapReportIntegrationTest extends TestCase
                                 providers: [],
                                 permissionDefinitions: [],
                                 navigationDefinitions: [],
+                                crudDefinitions: [],
+                                viewDefinitions: [],
                                 enabled: true,
                             )
                         );

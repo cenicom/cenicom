@@ -40,6 +40,8 @@ final class PermissionDefinitionIntegrationTest extends TestCase
                     InstitutionPermissionDefinition::class,
                 ],
                 navigationDefinitions: [],
+                crudDefinitions: [],
+                viewDefinitions: [],
                 enabled: true,
             )
         );
@@ -55,6 +57,8 @@ final class PermissionDefinitionIntegrationTest extends TestCase
                     InventoryPermissionDefinition::class,
                 ],
                 navigationDefinitions: [],
+                crudDefinitions: [],
+                viewDefinitions: [],
                 enabled: true,
             )
         );

@@ -106,6 +106,8 @@ final class ModuleBootstrapMetricsIntegrationTest extends TestCase
                             providers: [],
                             permissionDefinitions: [],
                             navigationDefinitions: [],
+                            crudDefinitions: [],
+                            viewDefinitions: [],
                             enabled: true
                         )
                     );

@@ -249,6 +249,7 @@ final class ModuleBootstrapLifecycleTest extends TestCase
             permissionDefinitions: [],
             navigationDefinitions: [],
             viewDefinitions: [],
+            crudDefinitions: [],
             enabled: true,
         );
 
@@ -289,6 +290,8 @@ final class ModuleBootstrapLifecycleTest extends TestCase
                             providers: [],
                             permissionDefinitions: [],
                             navigationDefinitions: [],
+                            crudDefinitions: [],
+                            viewDefinitions: [],
                             enabled: true,
                         )
                     );
@@ -361,6 +364,8 @@ final class ModuleBootstrapLifecycleTest extends TestCase
                             providers: [],
                             permissionDefinitions: [],
                             navigationDefinitions: [],
+                            crudDefinitions: [],
+                            viewDefinitions: [],
                             enabled: true,
                         )
                     );
@@ -416,6 +421,8 @@ final class ModuleBootstrapLifecycleTest extends TestCase
                             providers: [],
                             permissionDefinitions: [],
                             navigationDefinitions: [],
+                            crudDefinitions: [],
+                            viewDefinitions: [],
                             enabled: false,
                         )
                     );

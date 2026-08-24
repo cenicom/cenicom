@@ -59,6 +59,8 @@ final class CreateDefinitionStageTest extends TestCase
             providers: [],
             permissionDefinitions: [],
             navigationDefinitions: [],
+            crudDefinitions: [],
+            viewDefinitions: [],
             enabled: true,
         );
 

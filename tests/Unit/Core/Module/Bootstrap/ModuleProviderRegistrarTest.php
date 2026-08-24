@@ -159,6 +159,8 @@ final class ModuleProviderRegistrarTest extends TestCase
             ],
             permissionDefinitions: [],
             navigationDefinitions: [],
+            crudDefinitions: [],
+            viewDefinitions: [],
             enabled: true,
         );
 
@@ -198,11 +200,11 @@ final class ModuleProviderRegistrarTest extends TestCase
             namespace: 'Tests\\Fixtures\\Modules\\EmptyModule',
             basePath: __DIR__,
             manifestPath: __FILE__,
-            providers: [
-
-            ],
+            providers: [],
             permissionDefinitions: [],
             navigationDefinitions: [],
+            crudDefinitions: [],
+            viewDefinitions: [],
             enabled: true,
         );
 

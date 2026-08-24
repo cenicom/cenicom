@@ -52,6 +52,8 @@ final class RegisterModuleStageTest extends TestCase
             providers: [],
             permissionDefinitions: [],
             navigationDefinitions: [],
+            crudDefinitions: [],
+            viewDefinitions: [],
             enabled: true,
         );
 
@@ -83,6 +85,8 @@ final class RegisterModuleStageTest extends TestCase
             providers: [],
             permissionDefinitions: [],
             navigationDefinitions: [],
+            crudDefinitions: [],
+            viewDefinitions: [],
             enabled: true,
         );
 
@@ -134,6 +138,8 @@ final class RegisterModuleStageTest extends TestCase
             providers: [],
             permissionDefinitions: [],
             navigationDefinitions: [],
+            crudDefinitions: [],
+            viewDefinitions: [],
             enabled: true,
         );
 

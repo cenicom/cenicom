@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Core\View\Registry;
 
-final class ViewDefinitionRegistry
+use App\Core\View\Contracts\ViewDefinitionRegistryInterface;
+
+final class ViewDefinitionRegistry implements ViewDefinitionRegistryInterface
 {
     /**
      * @var array<int, class-string>

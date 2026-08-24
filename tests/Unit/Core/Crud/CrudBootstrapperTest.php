@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Crud;
 
+use App\Core\Crud\Bootstrap\CrudBootstrapper;
 use App\Core\Crud\Contracts\CrudDefinitionInterface;
 use App\Core\Crud\Contracts\CrudDefinitionRegistryInterface;
 use App\Core\Crud\Contracts\CrudRegistrarInterface;
-use App\Core\Crud\CrudService;
 use PHPUnit\Framework\TestCase;
 
-final class CrudServiceTest extends TestCase
+final class CrudBootstrapperTest extends TestCase
 {
     public function test_boot_executes_valid_definition(): void
     {
@@ -39,12 +39,12 @@ final class CrudServiceTest extends TestCase
                 $definition::class,
             ]);
 
-        $service = new CrudService(
+        $bootstrapper = new CrudBootstrapper(
             $registry,
             $registrar,
         );
 
-        $service->boot();
+        $bootstrapper->boot();
 
         self::assertTrue(
             $definition::$registered
@@ -78,12 +78,12 @@ final class CrudServiceTest extends TestCase
                 $definition::class,
             ]);
 
-        $service = new CrudService(
+        $bootstrapper = new CrudBootstrapper(
             $registry,
             $registrar,
         );
 
-        $service->boot();
+        $bootstrapper->boot();
 
         self::assertSame(
             $registrar,
@@ -129,12 +129,12 @@ final class CrudServiceTest extends TestCase
                 $second::class,
             ]);
 
-        $service = new CrudService(
+        $bootstrapper = new CrudBootstrapper(
             $registry,
             $registrar,
         );
 
-        $service->boot();
+        $bootstrapper->boot();
 
         self::assertSame(1, $first::$calls);
         self::assertSame(1, $second::$calls);
@@ -157,12 +157,12 @@ final class CrudServiceTest extends TestCase
                 \stdClass::class,
             ]);
 
-        $service = new CrudService(
+        $bootstrapper = new CrudBootstrapper(
             $registry,
             $registrar,
         );
 
-        $service->boot();
+        $bootstrapper->boot();
 
         self::assertTrue(true);
     }
@@ -182,12 +182,12 @@ final class CrudServiceTest extends TestCase
             ->method('definitions')
             ->willReturn([]);
 
-        $service = new CrudService(
+        $bootstrapper = new CrudBootstrapper(
             $registry,
             $registrar,
         );
 
-        $service->boot();
+        $bootstrapper->boot();
 
         self::assertTrue(true);
     }

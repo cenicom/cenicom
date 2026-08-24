@@ -94,6 +94,8 @@ final class ModuleProviderRegistrarRejectInvalidProviderTest extends TestCase
             ],
             permissionDefinitions: [],
             navigationDefinitions: [],
+            crudDefinitions: [],
+            viewDefinitions: [],
             enabled: true,
         );
 

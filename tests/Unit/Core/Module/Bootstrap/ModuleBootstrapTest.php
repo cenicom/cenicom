@@ -93,7 +93,9 @@ final class ModuleBootstrapTest extends TestCase
                             manifestPath: $context->manifestPath(),
                             providers: [],
                             permissionDefinitions: [],
-            navigationDefinitions: [],
+                            navigationDefinitions: [],
+                            crudDefinitions: [],
+                            viewDefinitions: [],
                             enabled: true,
                         )
                     );
@@ -148,7 +150,9 @@ final class ModuleBootstrapTest extends TestCase
                             manifestPath: $bootstrapContext->manifestPath(),
                             providers: [],
                             permissionDefinitions: [],
-            navigationDefinitions: [],
+                            navigationDefinitions: [],
+                            crudDefinitions: [],
+                            viewDefinitions: [],
                             enabled: true,
                         )
                     );
@@ -269,6 +273,8 @@ final class ModuleBootstrapTest extends TestCase
             providers: [],
             permissionDefinitions: [],
             navigationDefinitions: [],
+            crudDefinitions: [],
+            viewDefinitions: [],
             enabled: true,
         );
 

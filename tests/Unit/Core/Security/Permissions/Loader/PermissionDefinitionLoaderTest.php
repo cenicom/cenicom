@@ -35,6 +35,8 @@ final class PermissionDefinitionLoaderTest extends TestCase
             providers: [],
             permissionDefinitions: $definitions,
             navigationDefinitions: [],
+            crudDefinitions: [],
+            viewDefinitions: [],
             enabled: true,
         );
 
@@ -91,6 +93,8 @@ final class PermissionDefinitionLoaderTest extends TestCase
             providers: [],
             permissionDefinitions: [$firstDefinition],
             navigationDefinitions: [],
+            crudDefinitions: [],
+            viewDefinitions: [],
             enabled: true,
         );
 
@@ -102,6 +106,8 @@ final class PermissionDefinitionLoaderTest extends TestCase
             providers: [],
             permissionDefinitions: [$secondDefinition],
             navigationDefinitions: [],
+            crudDefinitions: [],
+            viewDefinitions: [],
             enabled: true,
         );
 

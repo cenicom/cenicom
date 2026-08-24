@@ -65,6 +65,8 @@ final class NullModuleBootstrapReporterTest extends TestCase
             providers: [],
             permissionDefinitions: [],
             navigationDefinitions: [],
+            crudDefinitions: [],
+            viewDefinitions: [],
             enabled: true,
         );
     }

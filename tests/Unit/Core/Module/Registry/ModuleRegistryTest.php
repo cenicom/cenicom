@@ -34,6 +34,8 @@ final class ModuleRegistryTest extends TestCase
             providers: [],
             permissionDefinitions: [],
             navigationDefinitions: [],
+            crudDefinitions: [],
+            viewDefinitions: [],
             enabled: $enabled,
         );
     }

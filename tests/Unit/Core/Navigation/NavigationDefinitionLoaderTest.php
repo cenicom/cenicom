@@ -33,6 +33,8 @@ final class NavigationDefinitionLoaderTest extends TestCase
                 navigationDefinitions: [
                     InstitutionNavigation::class,
                 ],
+                crudDefinitions: [],
+                viewDefinitions: [],
                 enabled: true,
             )
         );
@@ -48,6 +50,8 @@ final class NavigationDefinitionLoaderTest extends TestCase
                 navigationDefinitions: [
                     InventoryNavigation::class,
                 ],
+                crudDefinitions: [],
+                viewDefinitions: [],
                 enabled: true,
             )
         );
@@ -89,6 +93,8 @@ final class NavigationDefinitionLoaderTest extends TestCase
                 navigationDefinitions: [
                     InstitutionNavigation::class,
                 ],
+                crudDefinitions: [],
+                viewDefinitions: [],
                 enabled: false,
             )
         );
@@ -118,6 +124,8 @@ final class NavigationDefinitionLoaderTest extends TestCase
                 providers: [],
                 permissionDefinitions: [],
                 navigationDefinitions: [],
+                crudDefinitions: [],
+                viewDefinitions: [],
                 enabled: true,
             )
         );

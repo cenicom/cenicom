@@ -86,4 +86,36 @@ final class CrudContainerBindingsTest extends TestCase
             )
         );
     }
+
+    public function test_crud_action_authorization_interface_resolves_to_crud_action_authorization(): void
+    {
+        $authorization = $this->app->make(
+            \App\Core\Crud\Contracts\CrudActionAuthorizationInterface::class
+        );
+
+        self::assertInstanceOf(
+            \App\Core\Crud\CrudActionAuthorization::class,
+            $authorization
+        );
+    }
+
+    public function test_crud_action_can_be_constructed_with_container_authorization(): void
+    {
+        $authorization = $this->app->make(
+            \App\Core\Crud\Contracts\CrudActionAuthorizationInterface::class
+        );
+
+        $action = new \App\Core\Crud\CrudAction(
+            'institutions',
+            new \App\Core\Crud\DTO\CrudOperation(
+                \App\Core\Crud\CrudOperations::CREATE
+            ),
+            $authorization,
+        );
+
+        $this->assertInstanceOf(
+            \App\Core\Crud\CrudAction::class,
+            $action
+        );
+    }
 }

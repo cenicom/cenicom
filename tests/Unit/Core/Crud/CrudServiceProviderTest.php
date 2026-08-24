@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Core\Crud;
 
 use App\Core\Contracts\Module\ModuleRegistryInterface;
+use App\Core\Crud\Bootstrap\CrudBootstrapper;
 use App\Core\Crud\Contracts\ResourceServiceInterface;
 use App\Core\Crud\CrudServiceProvider;
 use App\Core\Module\DTO\ModuleDefinition;
@@ -24,12 +25,12 @@ final class CrudServiceProviderTest extends TestCase
         );
     }
 
-    public function test_crud_service_resolves_from_container(): void
+    public function test_crud_bootstrapper_resolves_from_container(): void
     {
         self::assertInstanceOf(
-            \App\Core\Crud\CrudService::class,
+            CrudBootstrapper::class,
             $this->app->make(
-                \App\Core\Crud\CrudService::class
+                CrudBootstrapper::class
             )
         );
     }

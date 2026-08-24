@@ -6,15 +6,15 @@ namespace Tests\Unit\Core\Crud;
 
 //use App\Core\Crud\Contracts\CrudPermissionResolverInterface;
 //use App\Core\Crud\Contracts\CrudPermissionServiceInterface;
+use App\Core\Crud\Bootstrap\CrudBootstrapper;
+use App\Core\Crud\CrudPermissionRegistrar;
 use App\Core\Crud\CrudPermissionResolver;
 use App\Core\Crud\CrudPermissionService;
 use App\Core\Crud\CrudRegistrar;
-use App\Core\Crud\CrudService;
 use App\Core\Crud\Loader\CrudDefinitionLoader;
 use App\Core\Crud\Registry\CrudDefinitionRegistry;
 use App\Core\Module\DTO\ModuleDefinition;
 use App\Core\Module\Registry\ModuleRegistry;
-use App\Core\Crud\CrudPermissionRegistrar;
 use App\Core\Security\Permissions\PermissionRegistrar;
 use App\Core\Security\Permissions\PermissionRegistry;
 use Illuminate\Container\Container;
@@ -52,7 +52,7 @@ final class CrudModulePermissionIntegrationTest extends TestCase
 
         $registrar = new CrudRegistrar();
 
-        $service = new CrudService(
+        $bootstrapper = new CrudBootstrapper(
             $definitions,
             $registrar,
         );
@@ -81,7 +81,7 @@ final class CrudModulePermissionIntegrationTest extends TestCase
             fn() => new TestPermissionCrudDefinition()
         );
 
-        $service->boot();
+        $bootstrapper->boot();
 
         $permissionService = new CrudPermissionService(
             $registrar,

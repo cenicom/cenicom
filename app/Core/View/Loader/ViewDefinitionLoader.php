@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Core\View\Loader;
 
 use App\Core\Contracts\Module\ModuleRegistryInterface;
-use App\Core\View\Registry\ViewDefinitionRegistry;
+use App\Core\View\Contracts\ViewDefinitionRegistryInterface;
 
 final readonly class ViewDefinitionLoader
 {
     public function __construct(
-        private ViewDefinitionRegistry $registry,
+         private ViewDefinitionRegistryInterface $registry,
         private ModuleRegistryInterface $modules,
     ) {
     }

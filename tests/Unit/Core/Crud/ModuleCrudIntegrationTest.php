@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Crud;
 
+use App\Core\Crud\Bootstrap\CrudBootstrapper;
 use App\Core\Crud\CrudRegistrar;
-use App\Core\Crud\CrudService;
 use App\Core\Crud\Loader\CrudDefinitionLoader;
 use App\Core\Crud\Registry\CrudDefinitionRegistry;
 use App\Core\Module\DTO\ModuleDefinition;
 use App\Core\Module\Registry\ModuleRegistry;
 use Illuminate\Container\Container;
+use PHPUnit\Framework\TestCase;
 use Tests\Fixtures\Crud\TestCrudController;
 use Tests\Fixtures\Crud\TestCrudDefinition;
-use PHPUnit\Framework\TestCase;
 
 final class ModuleCrudIntegrationTest extends TestCase
 {
@@ -46,7 +46,7 @@ final class ModuleCrudIntegrationTest extends TestCase
 
         $registrar = new CrudRegistrar();
 
-        $service = new CrudService(
+        $bootstrapper = new CrudBootstrapper(
             $definitions,
             $registrar,
         );
@@ -82,7 +82,7 @@ final class ModuleCrudIntegrationTest extends TestCase
             fn() => new TestCrudDefinition()
         );
 
-        $service->boot();
+        $bootstrapper->boot();
 
         // Resolución individual
         self::assertSame(

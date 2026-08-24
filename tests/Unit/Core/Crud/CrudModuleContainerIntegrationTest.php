@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Tests\Unit\Core\Crud;
 
 use App\Core\Contracts\Module\ModuleRegistryInterface;
+use App\Core\Crud\Bootstrap\CrudBootstrapper;
 use App\Core\Crud\Contracts\CrudDefinitionRegistryInterface;
-//use App\Core\Crud\Contracts\CrudRegistrarInterface;
 use App\Core\Crud\Contracts\ResourceServiceInterface;
-use App\Core\Crud\CrudService;
 use App\Core\Crud\Loader\CrudDefinitionLoader;
 use App\Core\Module\DTO\ModuleDefinition;
 use Tests\Fixtures\Crud\TestCrudController;
@@ -62,11 +61,11 @@ final class CrudModuleContainerIntegrationTest extends TestCase
             fn() => new TestCrudDefinition()
         );
 
-        $service = $this->app->make(
-            CrudService::class
+        $bootstrapper = $this->app->make(
+            CrudBootstrapper::class
         );
 
-        $service->boot();
+        $bootstrapper->boot();
 
         $resources = $this->app->make(
             ResourceServiceInterface::class

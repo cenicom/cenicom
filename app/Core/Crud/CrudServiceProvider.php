@@ -5,7 +5,12 @@ declare(strict_types=1);
 namespace App\Core\Crud;
 
 use App\Core\Contracts\Module\ModuleRegistryInterface;
+use App\Core\Crud\Bootstrap\CrudBootstrapper;
+use App\Core\Crud\Contracts\CrudActionAuthorizationInterface;
 use App\Core\Crud\Contracts\CrudDefinitionRegistryInterface;
+use App\Core\Crud\Contracts\CrudRegistrarInterface;
+use App\Core\Crud\CrudActionAuthorization;
+
 use App\Core\Crud\Loader\CrudDefinitionLoader;
 use Illuminate\Support\ServiceProvider;
 
@@ -28,8 +33,18 @@ final class CrudServiceProvider extends ServiceProvider
         );
 
         $this->app->singleton(
-            CrudService::class,
-            CrudService::class,
+            CrudActionAuthorizationInterface::class,
+            CrudActionAuthorization::class,
+        );
+
+        $this->app->singleton(
+            CrudBootstrapper::class,
+            function ($app) {
+                return new CrudBootstrapper(
+                    $app->make(CrudDefinitionRegistryInterface::class),
+                    $app->make(CrudRegistrarInterface::class),
+                );
+            },
         );
     }
 
@@ -37,6 +52,6 @@ final class CrudServiceProvider extends ServiceProvider
     {
         app(CrudDefinitionLoader::class)->load();
 
-        app(CrudService::class)->boot();
+        app(CrudBootstrapper::class)->boot();
     }
 }

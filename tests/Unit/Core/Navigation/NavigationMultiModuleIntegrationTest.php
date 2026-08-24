@@ -35,6 +35,8 @@ final class NavigationMultiModuleIntegrationTest extends TestCase
                 navigationDefinitions: [
                     InstitutionNavigation::class,
                 ],
+                crudDefinitions: [],
+                viewDefinitions: [],
                 enabled: true,
             )
         );
@@ -50,6 +52,8 @@ final class NavigationMultiModuleIntegrationTest extends TestCase
                 navigationDefinitions: [
                     InventoryNavigation::class,
                 ],
+                crudDefinitions: [],
+                viewDefinitions: [],
                 enabled: true,
             )
         );

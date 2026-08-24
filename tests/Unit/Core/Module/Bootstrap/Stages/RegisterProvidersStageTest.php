@@ -47,6 +47,8 @@ final class RegisterProvidersStageTest extends TestCase
             ],
             permissionDefinitions: [],
             navigationDefinitions: [],
+            crudDefinitions: [],
+            viewDefinitions: [],
             enabled: true,
         );
 
@@ -79,6 +81,8 @@ final class RegisterProvidersStageTest extends TestCase
             ],
             permissionDefinitions: [],
             navigationDefinitions: [],
+            crudDefinitions: [],
+            viewDefinitions: [],
             enabled: true,
         );
 
@@ -130,6 +134,8 @@ final class RegisterProvidersStageTest extends TestCase
             ],
             permissionDefinitions: [],
             navigationDefinitions: [],
+            crudDefinitions: [],
+            viewDefinitions: [],
             enabled: true,
         );
 

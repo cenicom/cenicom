@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tests\Unit\Modules\Institution\Crud;
 
 use App\Core\Contracts\Module\ModuleRegistryInterface;
+use App\Core\Crud\Bootstrap\CrudBootstrapper;
 use App\Core\Crud\Contracts\CrudDefinitionRegistryInterface;
 use App\Core\Crud\Contracts\ResourceServiceInterface;
-use App\Core\Crud\CrudService;
 use App\Core\Crud\Loader\CrudDefinitionLoader;
 use App\Core\Module\Factory\ModuleDefinitionFactory;
 use App\Modules\Institution\Crud\InstitutionCrud;
@@ -51,7 +51,7 @@ final class InstitutionCrudIntegrationTest extends TestCase
             $definitions->definitions()
         );
 
-        $this->app->make(CrudService::class)->boot();
+        $this->app->make(CrudBootstrapper::class)->boot();
 
         $resources = $this->app->make(
             ResourceServiceInterface::class
