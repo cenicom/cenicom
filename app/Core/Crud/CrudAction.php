@@ -14,7 +14,16 @@ final readonly class CrudAction
         private string $resource,
         private CrudOperation $operation,
         private CrudActionAuthorizationInterface $authorization,
-    ) {
+    ) {}
+
+    public function resource(): string
+    {
+        return $this->resource;
+    }
+
+    public function operation(): CrudOperation
+    {
+        return $this->operation;
     }
 
     public function authorized(
@@ -26,4 +35,6 @@ final readonly class CrudAction
             $this->operation,
         );
     }
+
+
 }

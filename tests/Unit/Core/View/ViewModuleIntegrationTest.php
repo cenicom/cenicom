@@ -94,4 +94,159 @@ final class ViewModuleIntegrationTest extends TestCase
             $actualPath
         );
     }
+
+    public function test_disabled_module_view_definition_is_not_registered(): void
+    {
+        $modules = new ModuleRegistry();
+
+        $definitions = new ViewDefinitionRegistry();
+
+        $loader = new ViewDefinitionLoader(
+            $definitions,
+            $modules,
+        );
+
+        $registry = new ViewRegistry();
+
+        $registrar = new ViewRegistrar(
+            $registry
+        );
+
+        $bootstrapper = new ViewBootstrapper(
+            $definitions,
+            $registrar,
+        );
+
+        $module = new ModuleDefinition(
+            name: 'Disabled',
+            namespace: 'Tests\\Fixtures\\Modules\\Disabled',
+            basePath: __DIR__,
+            manifestPath: __FILE__,
+            providers: [],
+            permissionDefinitions: [],
+            navigationDefinitions: [],
+            crudDefinitions: [],
+            viewDefinitions: [
+                TestViewDefinition::class,
+            ],
+            enabled: false,
+        );
+
+        $modules->register($module);
+
+        Container::getInstance()->bind(
+            TestViewDefinition::class,
+            fn() => new TestViewDefinition()
+        );
+
+        $loader->load();
+
+        $bootstrapper->boot();
+
+        self::assertSame(
+            [],
+            $registry->all(),
+        );
+    }
+
+    public function test_multiple_modules_register_their_view_definitions_independently(): void
+    {
+        $modules = new ModuleRegistry();
+
+        $definitions = new ViewDefinitionRegistry();
+
+        $loader = new ViewDefinitionLoader(
+            $definitions,
+            $modules,
+        );
+
+        $registry = new ViewRegistry();
+
+        $registrar = new ViewRegistrar(
+            $registry
+        );
+
+        $bootstrapper = new ViewBootstrapper(
+            $definitions,
+            $registrar,
+        );
+
+        $secondDefinition = new class implements \App\Core\View\Contracts\ViewDefinitionInterface {
+            public function register(
+                \App\Core\View\Contracts\ViewRegistrarInterface $views
+            ): void {
+                $views->register(
+                    'second',
+                    __DIR__ . '/../../Fixtures/View/views',
+                );
+            }
+        };
+
+        $modules->register(
+            new ModuleDefinition(
+                name: 'First',
+                namespace: 'Tests\\Fixtures\\Modules\\First',
+                basePath: __DIR__,
+                manifestPath: __FILE__,
+                providers: [],
+                permissionDefinitions: [],
+                navigationDefinitions: [],
+                crudDefinitions: [],
+                viewDefinitions: [
+                    TestViewDefinition::class,
+                ],
+                enabled: true,
+            )
+        );
+
+        $modules->register(
+            new ModuleDefinition(
+                name: 'Second',
+                namespace: 'Tests\\Fixtures\\Modules\\Second',
+                basePath: __DIR__,
+                manifestPath: __FILE__,
+                providers: [],
+                permissionDefinitions: [],
+                navigationDefinitions: [],
+                crudDefinitions: [],
+                viewDefinitions: [
+                    $secondDefinition::class,
+                ],
+                enabled: true,
+            )
+        );
+
+        Container::getInstance()->bind(
+            TestViewDefinition::class,
+            fn() => new TestViewDefinition()
+        );
+
+        Container::getInstance()->bind(
+            $secondDefinition::class,
+            fn() => $secondDefinition
+        );
+
+        $loader->load();
+
+        $bootstrapper->boot();
+
+        $expectedPath = realpath(
+            __DIR__ . '/../../Fixtures/View/views'
+        );
+
+        self::assertSame(
+            $expectedPath,
+            realpath($registry->path('tests')),
+        );
+
+        self::assertSame(
+            $expectedPath,
+            realpath($registry->path('second')),
+        );
+
+        self::assertCount(
+            2,
+            $registry->all(),
+        );
+    }
 }

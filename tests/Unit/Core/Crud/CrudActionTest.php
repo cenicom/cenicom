@@ -114,4 +114,53 @@ final class CrudActionTest extends TestCase
             $action->authorized($identity)
         );
     }
+
+    public function test_exposes_resource(): void
+    {
+        $action = $this->createAction();
+
+        self::assertSame(
+            'institutions',
+            $action->resource(),
+        );
+    }
+
+    public function test_exposes_operation(): void
+    {
+        $operation = new CrudOperation(CrudOperations::UPDATE);
+
+        $action = new CrudAction(
+            'institutions',
+            $operation,
+            $this->createAuthorization(),
+        );
+
+        self::assertSame(
+            $operation,
+            $action->operation(),
+        );
+    }
+
+    private function createAction(): CrudAction
+    {
+        return new CrudAction(
+            'institutions',
+            new CrudOperation(CrudOperations::UPDATE),
+            $this->createAuthorization(),
+        );
+    }
+
+    private function createAuthorization(): CrudActionAuthorizationInterface
+    {
+        return new class implements CrudActionAuthorizationInterface
+        {
+            public function allows(
+                IdentityInterface $identity,
+                string $resource,
+                CrudOperation $operation,
+            ): bool {
+                return true;
+            }
+        };
+    }
 }
