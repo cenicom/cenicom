@@ -8,6 +8,9 @@ use App\Core\View\Contracts\ViewRegistrarInterface;
 use App\Core\View\Contracts\ViewRegistryInterface;
 use App\Core\View\Registrar\ViewRegistrar;
 use App\Core\View\ViewRegistry;
+use App\Core\Security\Authorization\Contracts\PermissionResolverInterface;
+use App\View\Contracts\ViewAuthorizationInterface;
+use App\View\ViewAuthorization;
 use Tests\TestCase;
 
 final class ViewContainerBindingsTest extends TestCase
@@ -86,6 +89,34 @@ final class ViewContainerBindingsTest extends TestCase
         self::assertSame(
             'app/Modules/Institution/resources/views',
             $registry->path('institutions'),
+        );
+    }
+
+    public function test_view_authorization_interface_resolves_to_view_authorization(): void
+    {
+        $authorization = $this->app->make(
+            ViewAuthorizationInterface::class
+        );
+
+        self::assertInstanceOf(
+            ViewAuthorization::class,
+            $authorization,
+        );
+    }
+
+    public function test_view_authorization_is_singleton(): void
+    {
+        $first = $this->app->make(
+            ViewAuthorizationInterface::class
+        );
+
+        $second = $this->app->make(
+            ViewAuthorizationInterface::class
+        );
+
+        self::assertSame(
+            $first,
+            $second,
         );
     }
 }

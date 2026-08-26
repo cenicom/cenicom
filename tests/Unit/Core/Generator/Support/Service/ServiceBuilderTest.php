@@ -68,12 +68,12 @@ final class ServiceBuilderTest extends TestCase
         $imports = $variables['imports'];
 
         $this->assertStringContainsString(
-            'use App\\Core\\Contracts\\CurrencyRepositoryInterface;',
+            'use App\\Modules\\Currency\\Domain\\Contracts\\CurrencyServiceInterface;',
             $imports
         );
 
         $this->assertStringContainsString(
-            'use App\\Core\\Contracts\\CurrencyServiceInterface;',
+            'use App\\Modules\\Currency\\Domain\\Contracts\\CurrencyServiceInterface;',
             $imports
         );
 

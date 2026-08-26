@@ -24,6 +24,12 @@ use App\Core\View\Contracts\ViewRegistryInterface;
 use App\Core\View\Registrar\ViewRegistrar;
 use App\Core\View\Registry\ViewDefinitionRegistry;
 use App\Core\View\ViewRegistry;
+use App\Core\Security\Authorization\Contracts\PermissionResolverInterface;
+use App\View\Contracts\ViewAuthorizationInterface;
+use App\View\Composition\Contracts\CrudActionViewComposerInterface;
+use App\View\Composition\CrudActionViewComposer;
+use App\View\ViewAuthorization;
+
 use Illuminate\Support\ServiceProvider;
 
 final class CoreBindingsServiceProvider extends ServiceProvider
@@ -84,8 +90,22 @@ final class CoreBindingsServiceProvider extends ServiceProvider
         );
 
         $this->app->singleton(
-             ViewDefinitionRegistryInterface::class,
+            ViewDefinitionRegistryInterface::class,
             ViewDefinitionRegistry::class,
+        );
+
+        $this->app->singleton(
+            ViewAuthorizationInterface::class,
+            fn($app) => new ViewAuthorization(
+                $app->make(
+                    PermissionResolverInterface::class
+                ),
+            ),
+        );
+
+        $this->app->singleton(
+            CrudActionViewComposerInterface::class,
+            CrudActionViewComposer::class,
         );
 
         $bindings = config('cn-bindings', []);
@@ -100,7 +120,5 @@ final class CoreBindingsServiceProvider extends ServiceProvider
                 $concrete,
             );
         }
-
-
     }
 }

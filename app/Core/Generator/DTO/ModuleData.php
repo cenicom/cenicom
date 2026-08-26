@@ -1186,6 +1186,7 @@ readonly class ModuleData
             dirname($this->repositoryInterfacePath),
             dirname($this->serviceInterfacePath),
             dirname($this->permissionPath),
+            dirname($this->actionPath),
         ]);
     }
 }

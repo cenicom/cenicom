@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Core\View;
 
 use App\Core\View\Contracts\ViewRegistryInterface;
+use LogicException;
 
 final class ViewRegistry implements ViewRegistryInterface
 {
@@ -17,6 +18,15 @@ final class ViewRegistry implements ViewRegistryInterface
         string $namespace,
         string $path,
     ): void {
+        if (isset($this->views[$namespace])) {
+            throw new LogicException(
+                sprintf(
+                    'View namespace [%s] is already registered.',
+                    $namespace,
+                ),
+            );
+        }
+
         $this->views[$namespace] = $path;
     }
 

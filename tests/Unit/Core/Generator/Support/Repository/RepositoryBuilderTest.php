@@ -96,7 +96,7 @@ final class RepositoryBuilderTest extends TestCase
         );
 
         $this->assertStringContainsString(
-            'use App\\Core\\Contracts\\CurrencyRepositoryInterface;',
+            'use App\\Modules\\Currency\\Domain\\Contracts\\CurrencyRepositoryInterface;',
             $imports
         );
 
@@ -120,7 +120,7 @@ final class RepositoryBuilderTest extends TestCase
         );
 
         $this->assertSame(
-            'App\\Core\\Contracts\\CurrencyRepositoryInterface',
+            'App\\Modules\\Currency\\Domain\\Contracts\\CurrencyRepositoryInterface',
             $variables['qualifiedRepositoryInterface']
         );
     }

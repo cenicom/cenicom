@@ -219,4 +219,70 @@ final class ModuleDataFactoryTest extends TestCase
         self::assertArrayHasKey('permissions', $options);
         self::assertArrayHasKey('menu', $options);
     }
+
+    public function test_builds_modular_repository_and_service_locations(): void
+    {
+        $module = $this->factory->create([
+            'identity' => [
+                'name' => 'Currency',
+                'singular' => 'currency',
+                'plural' => 'currencies',
+                'table' => 'currencies',
+                'description' => 'Currency module',
+            ],
+            'fields' => [],
+        ]);
+
+        /*
+    |--------------------------------------------------------------------------
+    | Namespaces
+    |--------------------------------------------------------------------------
+    */
+
+        self::assertSame(
+            'App\\Modules\\Currency\\Repositories',
+            $module->repositoryNamespace()
+        );
+
+        self::assertSame(
+            'App\\Modules\\Currency\\Domain\\Contracts',
+            $module->repositoryContractNamespace()
+        );
+
+        self::assertSame(
+            'App\\Modules\\Currency\\Services',
+            $module->serviceNamespace()
+        );
+
+        self::assertSame(
+            'App\\Modules\\Currency\\Domain\\Contracts',
+            $module->serviceContractNamespace()
+        );
+
+        /*
+    |--------------------------------------------------------------------------
+    | Paths
+    |--------------------------------------------------------------------------
+    */
+
+        self::assertStringEndsWith(
+            'app/Modules/Currency/Repositories/CurrencyRepository.php',
+            str_replace('\\', '/', $module->repositoryPath())
+        );
+
+        self::assertStringEndsWith(
+            'app/Modules/Currency/Domain/Contracts/CurrencyRepositoryInterface.php',
+            str_replace('\\', '/', $module->repositoryInterfacePath())
+        );
+
+        self::assertStringEndsWith(
+            'app/Modules/Currency/Services/CurrencyService.php',
+            str_replace('\\', '/', $module->servicePath())
+        );
+
+        self::assertStringEndsWith(
+            'app/Modules/Currency/Domain/Contracts/CurrencyServiceInterface.php',
+            str_replace('\\', '/', $module->serviceInterfacePath())
+        );
+    }
 }

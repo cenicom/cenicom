@@ -1,0 +1,23 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'name' => 'GeneratorProbe',
+
+    'description' => 'Module GeneratorProbe',
+
+    'model' => 'GeneratorProbe',
+
+    'routePrefix' => 'generator_probes',
+
+    'routeName' => 'generator_probes',
+
+    'permissions' => true,
+
+    'menu' => true,
+
+    'api' => false,
+
+    'tests' => true,
+];

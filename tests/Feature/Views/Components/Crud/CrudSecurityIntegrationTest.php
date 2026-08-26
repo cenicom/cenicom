@@ -12,6 +12,7 @@ use App\Core\Crud\CrudOperations;
 use App\Core\Crud\DTO\CrudOperation;
 use App\Core\Security\Contracts\IdentityInterface;
 use App\View\Components\Cn\Crud\CrudActionView;
+use App\View\Components\Cn\Crud\CrudActionViewAdapter;
 use Tests\TestCase;
 
 final class CrudSecurityIntegrationTest extends TestCase
@@ -21,26 +22,7 @@ final class CrudSecurityIntegrationTest extends TestCase
         $identity = $this->createIdentity();
 
         $authorizedAction = $this->createAction(true);
-
         $unauthorizedAction = $this->createAction(false);
-
-        $authorized = new CrudActionView(
-            action: $authorizedAction,
-            label: 'Editar institución',
-            href: '/institutions/1/edit',
-            variant: 'primary',
-            size: 'md',
-            icon: 'fas fa-edit',
-        );
-
-        $unauthorized = new CrudActionView(
-            action: $unauthorizedAction,
-            label: 'Eliminar institución',
-            href: '/institutions/1/delete',
-            variant: 'danger',
-            size: 'sm',
-            icon: 'fas fa-trash',
-        );
 
         /*
          * Security boundary:
@@ -48,7 +30,7 @@ final class CrudSecurityIntegrationTest extends TestCase
          */
         $filter = new CrudActionFilter();
 
-        $authorizedCrudActions = $filter->authorized(
+        $filtered = $filter->authorized(
             $identity,
             [
                 $authorizedAction,
@@ -56,31 +38,53 @@ final class CrudSecurityIntegrationTest extends TestCase
             ],
         );
 
-        /*
-         * Application layer maps authorized domain actions
-         * to their presentation models.
-         */
-        $actions = array_values(
-            array_filter(
-                [
-                    $authorized,
-                    $unauthorized,
-                ],
-                static fn (CrudActionView $view): bool =>
-                    in_array(
-                        $view->action,
-                        $authorizedCrudActions,
-                        true,
-                    ),
-            ),
+        self::assertCount(1, $filtered);
+
+        self::assertSame(
+            $authorizedAction,
+            $filtered[0],
         );
 
         /*
-         * Presentation layer does not authorize anything.
+         * Presentation layer:
+         * only authorized domain actions reach the Presenter.
          */
         $presenter = new CrudActionPresenter();
 
-        $actions = $presenter->present($actions);
+        $presentations = $presenter->present(
+            $filtered,
+        );
+
+        self::assertCount(1, $presentations);
+
+        self::assertSame(
+            $authorizedAction,
+            $presentations[0]->action(),
+        );
+
+        self::assertSame(
+            'Editar',
+            $presentations[0]->label(),
+        );
+
+        /*
+         * GUI boundary:
+         * Presentation models are adapted to GUI view models.
+         */
+        $adapter = new CrudActionViewAdapter();
+
+        $actions = array_map(
+            static fn ($presentation): CrudActionView =>
+                $adapter->adapt($presentation),
+            $presentations,
+        );
+
+        self::assertCount(1, $actions);
+
+        self::assertInstanceOf(
+            CrudActionView::class,
+            $actions[0],
+        );
 
         $view = $this->blade(
             <<<'BLADE'
@@ -91,13 +95,19 @@ BLADE,
             ],
         );
 
-        $view->assertSee('Editar institución');
-        $view->assertSee('/institutions/1/edit', false);
-        $view->assertSee('fa-edit', false);
+        $view->assertSee('Editar');
 
-        $view->assertDontSee('Eliminar institución');
-        $view->assertDontSee('/institutions/1/delete', false);
-        $view->assertDontSee('fa-trash', false);
+        $view->assertSee(
+            'cn-button--primary',
+            false,
+        );
+
+        $view->assertSee(
+            'cn-button--md',
+            false,
+        );
+
+        $view->assertDontSee('Eliminar');
     }
 
     public function test_authorization_is_resolved_before_gui_rendering(): void
@@ -105,25 +115,15 @@ BLADE,
         $identity = $this->createIdentity();
 
         $authorizedAction = $this->createAction(true);
-
         $unauthorizedAction = $this->createAction(false);
 
-        $authorized = new CrudActionView(
-            action: $authorizedAction,
-            label: 'Ver institución',
-        );
-
-        $unauthorized = new CrudActionView(
-            action: $unauthorizedAction,
-            label: 'Eliminar institución',
-        );
-
         /*
-         * Security layer.
+         * Security layer:
+         * unauthorized actions are removed before presentation.
          */
         $filter = new CrudActionFilter();
 
-        $authorizedCrudActions = $filter->authorized(
+        $filtered = $filter->authorized(
             $identity,
             [
                 $authorizedAction,
@@ -131,37 +131,58 @@ BLADE,
             ],
         );
 
-        /*
-         * Only authorized domain actions are allowed
-         * to reach presentation.
-         */
-        $actions = array_values(
-            array_filter(
-                [
-                    $authorized,
-                    $unauthorized,
-                ],
-                static fn (CrudActionView $view): bool =>
-                    in_array(
-                        $view->action,
-                        $authorizedCrudActions,
-                        true,
-                    ),
-            ),
+        self::assertCount(1, $filtered);
+
+        self::assertSame(
+            $authorizedAction,
+            $filtered[0],
         );
 
         /*
-         * Presentation layer.
+         * Presentation layer:
+         * only authorized CrudAction instances are presented.
          */
         $presenter = new CrudActionPresenter();
 
-        $actions = $presenter->present($actions);
+        $presentations = $presenter->present(
+            $filtered,
+        );
+
+        self::assertCount(1, $presentations);
+
+        self::assertSame(
+            $authorizedAction,
+            $presentations[0]->action(),
+        );
+
+        self::assertSame(
+            'Editar',
+            $presentations[0]->label(),
+        );
+
+        /*
+         * GUI boundary:
+         * presentation models are adapted only after authorization
+         * and presentation have completed.
+         */
+        $adapter = new CrudActionViewAdapter();
+
+        $actions = array_map(
+            static fn ($presentation): CrudActionView =>
+                $adapter->adapt($presentation),
+            $presentations,
+        );
 
         self::assertCount(1, $actions);
 
+        self::assertInstanceOf(
+            CrudActionView::class,
+            $actions[0],
+        );
+
         self::assertSame(
-            'Ver institución',
-            $actions[0]->label,
+            $authorizedAction,
+            $actions[0]->action,
         );
     }
 
@@ -186,7 +207,9 @@ BLADE,
 
         return new CrudAction(
             'institutions',
-            new CrudOperation(CrudOperations::UPDATE),
+            new CrudOperation(
+                CrudOperations::UPDATE,
+            ),
             $authorization,
         );
     }

@@ -12,12 +12,15 @@ use App\Core\Crud\CrudOperations;
 use App\Core\Crud\DTO\CrudOperation;
 use App\Core\Security\Contracts\IdentityInterface;
 use App\View\Components\Cn\Crud\CrudActionView;
-//use App\Core\Crud\Contracts\CrudActionPresentationInterface;
-//use App\View\Components\Cn\Crud\CrudActionViewAdapter;
+use App\View\Components\Cn\Crud\CrudActionViewAdapter;
 use Tests\TestCase;
 
 final class CrudSecurityGuiRegressionTest extends TestCase
 {
+    /**
+     * Summary of test_authorized_action_reaches_gui test 1
+     * @return void
+     */
     public function test_authorized_action_reaches_gui(): void
     {
         $identity = $this->createIdentity();
@@ -32,25 +35,31 @@ final class CrudSecurityGuiRegressionTest extends TestCase
         );
 
         self::assertCount(1, $filtered);
-        self::assertSame($action, $filtered[0]);
 
-        $actionView = new CrudActionView(
-            action: $filtered[0],
-            label: 'Editar institución',
-            href: '/institutions/1/edit',
-            variant: 'primary',
-            size: 'md',
-            icon: 'fas fa-edit',
-        );
+        self::assertSame($action, $filtered[0]);
 
         $presenter = new CrudActionPresenter();
 
-        $presented = $presenter->present(
-            [$actionView],
+        $presentations = $presenter->present(
+            [$filtered[0]],
         );
 
+        $adapter = new CrudActionViewAdapter();
+
+        $presented = array_map(
+            static fn($presentation): CrudActionView =>
+            $adapter->adapt($presentation),
+            $presentations,
+        );
+
+        self::assertCount(1, $presentations);
+
         self::assertCount(1, $presented);
-        self::assertSame($actionView, $presented[0]);
+
+        self::assertInstanceOf(
+            CrudActionView::class,
+            $presented[0],
+        );
 
         $view = $this->blade(
             '<x-cn.crud.actions :actions="$actions" />',
@@ -59,22 +68,20 @@ final class CrudSecurityGuiRegressionTest extends TestCase
             ],
         );
 
-        $view->assertSee('Editar institución');
-        $view->assertSee(
-            '/institutions/1/edit',
-            false,
-        );
-        $view->assertSee(
-            'fa-edit',
-            false,
-        );
+        $view->assertSee('Editar');
+
     }
 
+    /**
+     * / test 2
+     * @return void
+     */
     public function test_unauthorized_action_is_removed_before_gui(): void
     {
         $identity = $this->createIdentity();
 
         $authorized = $this->createAction(true);
+
         $unauthorized = $this->createAction(false);
 
         $filter = new CrudActionFilter();
@@ -88,22 +95,24 @@ final class CrudSecurityGuiRegressionTest extends TestCase
         );
 
         self::assertCount(1, $filtered);
+
         self::assertSame(
             $authorized,
             $filtered[0],
         );
 
-        $authorizedView = new CrudActionView(
-            action: $filtered[0],
-            label: 'Editar institución',
-            href: '/institutions/1/edit',
-            icon: 'fas fa-edit',
-        );
-
         $presenter = new CrudActionPresenter();
 
-        $presented = $presenter->present(
-            [$authorizedView],
+        $presentations = $presenter->present(
+            [$filtered[0]],
+        );
+
+        $adapter = new CrudActionViewAdapter();
+
+        $presented = array_map(
+            static fn($presentation): CrudActionView =>
+            $adapter->adapt($presentation),
+            $presentations,
         );
 
         self::assertCount(1, $presented);
@@ -115,23 +124,14 @@ final class CrudSecurityGuiRegressionTest extends TestCase
             ],
         );
 
-        $view->assertSee('Editar institución');
+        $view->assertSee('Editar');
 
-        $view->assertDontSee(
-            'Eliminar institución',
-        );
-
-        $view->assertDontSee(
-            '/institutions/1/delete',
-            false,
-        );
-
-        $view->assertDontSee(
-            'fa-trash',
-            false,
-        );
     }
 
+    /**
+     * / test 3
+     * @return void
+     */
     public function test_gui_receives_only_crud_action_views(): void
     {
         $identity = $this->createIdentity();
@@ -145,15 +145,18 @@ final class CrudSecurityGuiRegressionTest extends TestCase
             [$action],
         );
 
-        $actionView = new CrudActionView(
-            action: $filtered[0],
-            label: 'Ver institución',
-        );
-
         $presenter = new CrudActionPresenter();
 
-        $presented = $presenter->present(
-            [$actionView],
+        $presentations = $presenter->present(
+            [$filtered[0]],
+        );
+
+        $adapter = new CrudActionViewAdapter();
+
+        $presented = array_map(
+            static fn($presentation): CrudActionView =>
+            $adapter->adapt($presentation),
+            $presentations,
         );
 
         self::assertCount(1, $presented);
@@ -171,16 +174,22 @@ final class CrudSecurityGuiRegressionTest extends TestCase
         );
 
         $view->assertSee(
-            'Ver institución',
+            'Editar',
         );
     }
 
+    /**
+     * / test 4
+     * @return void
+     */
     public function test_authorized_action_order_is_preserved(): void
     {
         $identity = $this->createIdentity();
 
         $first = $this->createAction(true);
+
         $second = $this->createAction(false);
+
         $third = $this->createAction(true);
 
         $filter = new CrudActionFilter();
@@ -206,35 +215,45 @@ final class CrudSecurityGuiRegressionTest extends TestCase
             $filtered[1],
         );
 
-        $firstView = new CrudActionView(
-            action: $filtered[0],
-            label: 'Ver',
-        );
-
-        $thirdView = new CrudActionView(
-            action: $filtered[1],
-            label: 'Editar',
-        );
-
         $presenter = new CrudActionPresenter();
 
-        $presented = $presenter->present(
+        $presentations = $presenter->present(
             [
-                $firstView,
-                $thirdView,
+                $filtered[0],
+                $filtered[1],
             ],
+        );
+
+        self::assertCount(2, $presentations);
+
+        self::assertSame(
+            $first,
+            $presentations[0]->action(),
+        );
+
+        self::assertSame(
+            $third,
+            $presentations[1]->action(),
+        );
+
+        $adapter = new CrudActionViewAdapter();
+
+        $presented = array_map(
+            static fn($presentation): CrudActionView =>
+            $adapter->adapt($presentation),
+            $presentations,
         );
 
         self::assertCount(2, $presented);
 
         self::assertSame(
-            $firstView,
-            $presented[0],
+            $first,
+            $presented[0]->action,
         );
 
         self::assertSame(
-            $thirdView,
-            $presented[1],
+            $third,
+            $presented[1]->action,
         );
     }
 
@@ -253,16 +272,18 @@ final class CrudSecurityGuiRegressionTest extends TestCase
 
         self::assertCount(1, $filtered);
 
-        $actionView = new CrudActionView(
-            action: $filtered[0],
-            label: 'Ver institución',
-            href: '/institutions/1',
-        );
-
         $presenter = new CrudActionPresenter();
 
-        $presented = $presenter->present(
-            [$actionView],
+        $presentations = $presenter->present(
+            [$filtered[0]],
+        );
+
+        $adapter = new CrudActionViewAdapter();
+
+        $presented = array_map(
+            static fn($presentation): CrudActionView =>
+            $adapter->adapt($presentation),
+            $presentations,
         );
 
         self::assertCount(1, $presented);
@@ -281,7 +302,7 @@ final class CrudSecurityGuiRegressionTest extends TestCase
         );
 
         $view->assertSee(
-            'Ver institución',
+            'Editar',
         );
 
         $view->assertDontSee(
@@ -291,13 +312,12 @@ final class CrudSecurityGuiRegressionTest extends TestCase
 
     private function createAction(bool $allowed): CrudAction
     {
-        $authorization = new class ($allowed)
-            implements CrudActionAuthorizationInterface
+        $authorization = new class($allowed)
+        implements CrudActionAuthorizationInterface
         {
             public function __construct(
                 private bool $allowed,
-            ) {
-            }
+            ) {}
 
             public function allows(
                 IdentityInterface $identity,

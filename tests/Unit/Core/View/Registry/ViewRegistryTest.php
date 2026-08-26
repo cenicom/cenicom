@@ -67,7 +67,7 @@ final class ViewRegistryTest extends TestCase
         );
     }
 
-    public function test_register_replaces_path_for_existing_namespace(): void
+    public function test_register_rejects_duplicate_namespace(): void
     {
         $registry = new ViewRegistry();
 
@@ -76,14 +76,14 @@ final class ViewRegistryTest extends TestCase
             'app/Modules/Institution/resources/views',
         );
 
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage(
+            'View namespace [institutions] is already registered.'
+        );
+
         $registry->register(
             'institutions',
             'app/Modules/Institution/resources/custom-views',
-        );
-
-        self::assertSame(
-            'app/Modules/Institution/resources/custom-views',
-            $registry->path('institutions'),
         );
     }
 
@@ -105,6 +105,26 @@ final class ViewRegistryTest extends TestCase
 
         self::assertNull(
             $registry->path('institutions'),
+        );
+    }
+
+    public function test_register_rejects_duplicate_namespace_even_when_path_is_identical(): void
+    {
+        $registry = new ViewRegistry();
+
+        $registry->register(
+            'institutions',
+            'app/Modules/Institution/resources/views',
+        );
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage(
+            'View namespace [institutions] is already registered.'
+        );
+
+        $registry->register(
+            'institutions',
+            'app/Modules/Institution/resources/views',
         );
     }
 }

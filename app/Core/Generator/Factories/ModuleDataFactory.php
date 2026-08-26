@@ -582,13 +582,13 @@ final class ModuleDataFactory
 
             'modelNamespace' => 'App\\Models',
 
-            'repositoryNamespace' => 'App\\Core\\Repositories',
+            'repositoryNamespace' => "App\\Modules\\{$name}\\Repositories",
 
-            'repositoryContractNamespace' => 'App\\Core\\Contracts',
+            'repositoryContractNamespace' => "App\\Modules\\{$name}\\Domain\\Contracts",
 
-            'serviceNamespace' => 'App\\Core\\Services',
+            'serviceNamespace' => "App\\Modules\\{$name}\\Services",
 
-            'serviceContractNamespace' => 'App\\Core\\Contracts',
+            'serviceContractNamespace' => "App\\Modules\\{$name}\\Domain\\Contracts",
 
             'controllerNamespace' => 'App\\Http\\Controllers',
 
@@ -642,22 +642,22 @@ final class ModuleDataFactory
 
             'repositoryPath'
             => $this->paths->app(
-                "Core/Repositories/{$name}Repository.php"
+                "Modules/{$name}/Repositories/{$name}Repository.php"
             ),
 
             'repositoryInterfacePath'
             => $this->paths->app(
-                "Core/Contracts/{$name}RepositoryInterface.php"
+                "Modules/{$name}/Domain/Contracts/{$name}RepositoryInterface.php"
             ),
 
             'serviceInterfacePath'
             => $this->paths->app(
-                "Core/Contracts/{$name}ServiceInterface.php"
+                "Modules/{$name}/Domain/Contracts/{$name}ServiceInterface.php"
             ),
 
             'servicePath'
             => $this->paths->app(
-                "Core/Services/{$name}Service.php"
+                "Modules/{$name}/Services/{$name}Service.php"
             ),
 
             'controllerPath'

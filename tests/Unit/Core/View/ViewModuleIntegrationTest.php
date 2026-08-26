@@ -13,6 +13,7 @@ use App\Core\View\Registry\ViewDefinitionRegistry;
 use App\Core\View\ViewRegistry;
 use Illuminate\Container\Container;
 use Tests\Fixtures\View\TestViewDefinition;
+use Illuminate\Contracts\View\Factory as ViewFactory;
 use PHPUnit\Framework\TestCase;
 
 final class ViewModuleIntegrationTest extends TestCase
@@ -46,8 +47,11 @@ final class ViewModuleIntegrationTest extends TestCase
 
         $registry = new ViewRegistry();
 
+        $views = $this->createMock(ViewFactory::class);
+
         $registrar = new ViewRegistrar(
-            $registry
+            $registry,
+            $views,
         );
 
         $bootstrapper = new ViewBootstrapper(
@@ -108,8 +112,11 @@ final class ViewModuleIntegrationTest extends TestCase
 
         $registry = new ViewRegistry();
 
+        $views = $this->createMock(ViewFactory::class);
+
         $registrar = new ViewRegistrar(
-            $registry
+            $registry,
+            $views,
         );
 
         $bootstrapper = new ViewBootstrapper(
@@ -162,8 +169,11 @@ final class ViewModuleIntegrationTest extends TestCase
 
         $registry = new ViewRegistry();
 
+        $views = $this->createMock(ViewFactory::class);
+
         $registrar = new ViewRegistrar(
-            $registry
+            $registry,
+            $views,
         );
 
         $bootstrapper = new ViewBootstrapper(

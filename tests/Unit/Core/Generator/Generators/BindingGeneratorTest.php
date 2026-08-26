@@ -54,16 +54,16 @@ final class BindingGeneratorTest extends GeneratorTestCase
         $bindings = require $this->configPath;
 
         $this->assertSame(
-            'App\\Core\\Repositories\\CurrencyRepository',
+            'App\\Modules\\Currency\\Repositories\\CurrencyRepository',
             $bindings[
-                'App\\Core\\Contracts\\CurrencyRepositoryInterface'
+                'App\\Modules\\Currency\\Domain\\Contracts\\CurrencyRepositoryInterface'
             ]
         );
 
         $this->assertSame(
-            'App\\Core\\Services\\CurrencyService',
+            'App\\Modules\\Currency\\Services\\CurrencyService',
             $bindings[
-                'App\\Core\\Contracts\\CurrencyServiceInterface'
+                'App\\Modules\\Currency\\Domain\\Contracts\\CurrencyServiceInterface'
             ]
         );
     }

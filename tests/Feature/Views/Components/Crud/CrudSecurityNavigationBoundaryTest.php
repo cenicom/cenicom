@@ -12,55 +12,63 @@ use App\Core\Crud\CrudOperations;
 use App\Core\Crud\DTO\CrudOperation;
 use App\Core\Security\Contracts\IdentityInterface;
 use App\View\Components\Cn\Crud\CrudActionView;
+use App\View\Components\Cn\Crud\CrudActionViewAdapter;
 use Tests\TestCase;
 
 final class CrudSecurityNavigationBoundaryTest extends TestCase
 {
     private function presentActions(
         IdentityInterface $identity,
-        array $views,
+        array $actions,
     ): array {
         $filter = new CrudActionFilter();
 
-        $crudActions = array_map(
-            static fn(CrudActionView $view): CrudAction =>
-            $view->action,
-            $views,
-        );
-
-        $authorizedActions = $filter->authorized(
+        $filtered = $filter->authorized(
             $identity,
-            $crudActions,
+            $actions,
         );
 
-        return array_values(
-            array_filter(
-                $views,
-                static fn(CrudActionView $view): bool =>
-                in_array(
-                    $view->action,
-                    $authorizedActions,
-                    true,
-                ),
-            ),
+        $presenter = new CrudActionPresenter();
+
+        $presentations = $presenter->present(
+            $filtered,
+        );
+
+        $adapter = new CrudActionViewAdapter();
+
+        return array_map(
+            static fn ($presentation): CrudActionView =>
+                $adapter->adapt($presentation),
+            $presentations,
         );
     }
+
     public function test_authorized_crud_action_reaches_gui(): void
     {
         $identity = $this->createIdentity();
 
-        $authorized = new CrudActionView(
-            action: $this->createAction(true),
-            label: 'Editar institución',
-            href: '/institutions/1/edit',
-            variant: 'primary',
-            size: 'md',
-            icon: 'fas fa-edit',
-        );
+        $authorized = $this->createAction(true);
 
         $actions = $this->presentActions(
             $identity,
             [$authorized],
+        );
+
+        self::assertCount(1, $actions);
+
+        self::assertInstanceOf(
+            CrudActionView::class,
+            $actions[0],
+        );
+
+        self::assertSame(
+            $authorized,
+            $actions[0]->action,
+        );
+
+        self::assertSame(
+            'Editar',
+            $actions[0]->label,
         );
 
         $view = $this->blade(
@@ -70,23 +78,24 @@ final class CrudSecurityNavigationBoundaryTest extends TestCase
             ],
         );
 
-        $view->assertSee('Editar institución');
-        $view->assertSee('/institutions/1/edit', false);
-        $view->assertSee('fa-edit', false);
+        $view->assertSee('Editar');
+
+        $view->assertSee(
+            'cn-button--primary',
+            false,
+        );
+
+        $view->assertSee(
+            'cn-button--md',
+            false,
+        );
     }
 
     public function test_unauthorized_crud_action_never_reaches_gui(): void
     {
         $identity = $this->createIdentity();
 
-        $unauthorized = new CrudActionView(
-            action: $this->createAction(false),
-            label: 'Eliminar institución',
-            href: '/institutions/1/delete',
-            variant: 'danger',
-            size: 'sm',
-            icon: 'fas fa-trash',
-        );
+        $unauthorized = $this->createAction(false);
 
         $actions = $this->presentActions(
             $identity,
@@ -102,9 +111,8 @@ final class CrudSecurityNavigationBoundaryTest extends TestCase
             ],
         );
 
-        $view->assertDontSee('Eliminar institución');
-        $view->assertDontSee('/institutions/1/delete', false);
-        $view->assertDontSee('fa-trash', false);
+        $view->assertDontSee('Eliminar');
+        $view->assertDontSee('Editar');
     }
 
     public function test_navigation_does_not_grant_crud_authorization(): void
@@ -120,10 +128,7 @@ final class CrudSecurityNavigationBoundaryTest extends TestCase
         );
 
         // ...pero no concede automáticamente la operación CRUD.
-        $action = new CrudActionView(
-            action: $this->createAction(false),
-            label: 'Eliminar institución',
-        );
+        $action = $this->createAction(false);
 
         $actions = $this->presentActions(
             $identity,
@@ -137,58 +142,44 @@ final class CrudSecurityNavigationBoundaryTest extends TestCase
     {
         $identity = $this->createIdentity();
 
-        $authorized = new CrudActionView(
-            action: $this->createAction(true),
-            label: 'Ver institución',
-        );
+        $authorized = $this->createAction(true);
+        $unauthorized = $this->createAction(false);
 
-        $unauthorized = new CrudActionView(
-            action: $this->createAction(false),
-            label: 'Eliminar institución',
-        );
-
-        $filter = new CrudActionFilter();
-
-        $filtered = $filter->authorized(
+        $actions = $this->presentActions(
             $identity,
             [
-                $authorized->action,
-                $unauthorized->action,
+                $authorized,
+                $unauthorized,
             ],
         );
 
-        $presented = array_map(
-            static fn(CrudAction $action): CrudActionView =>
-            $action === $authorized->action
-                ? $authorized
-                : $unauthorized,
-            $filtered,
-        );
-
-        $presenter = new CrudActionPresenter();
-
-        $actions = $presenter->present($presented);
-
         self::assertCount(1, $actions);
+
         self::assertInstanceOf(
             CrudActionView::class,
             $actions[0],
         );
 
         self::assertSame(
-            'Ver institución',
+            $authorized,
+            $actions[0]->action,
+        );
+
+        self::assertSame(
+            'Editar',
             $actions[0]->label,
         );
     }
 
     private function createAction(bool $allowed): CrudAction
     {
-        $authorization = new class($allowed)
-        implements CrudActionAuthorizationInterface
+        $authorization = new class ($allowed)
+            implements CrudActionAuthorizationInterface
         {
             public function __construct(
                 private bool $allowed,
-            ) {}
+            ) {
+            }
 
             public function allows(
                 IdentityInterface $identity,
@@ -201,7 +192,9 @@ final class CrudSecurityNavigationBoundaryTest extends TestCase
 
         return new CrudAction(
             'institutions',
-            new CrudOperation(CrudOperations::UPDATE),
+            new CrudOperation(
+                CrudOperations::UPDATE,
+            ),
             $authorization,
         );
     }
