@@ -61,7 +61,7 @@ final class BindingGeneratorTest extends GeneratorTestCase
         );
 
         $this->assertSame(
-            'App\\Modules\\Currency\\Services\\CurrencyService',
+            'App\\Modules\\Currency\\Domain\\Services\\CurrencyService',
             $bindings[
                 'App\\Modules\\Currency\\Domain\\Contracts\\CurrencyServiceInterface'
             ]

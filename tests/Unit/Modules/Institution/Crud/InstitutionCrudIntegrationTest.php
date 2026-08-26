@@ -58,14 +58,14 @@ final class InstitutionCrudIntegrationTest extends TestCase
         );
 
         self::assertSame(
-            'App\\Http\\Controllers\\InstitutionController',
+            'App\\Modules\\Institution\\Http\\Controllers\\InstitutionController',
             $resources->controller('institutions')
         );
 
         self::assertSame(
             [
                 'institutions' =>
-                    'App\\Http\\Controllers\\InstitutionController',
+                    'App\\Modules\\Institution\\Http\\Controllers\\InstitutionController',
             ],
             $resources->all()
         );

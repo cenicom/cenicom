@@ -20,7 +20,7 @@ final class InstitutionCrudTest extends TestCase
         $definition->register($registrar);
 
         self::assertSame(
-            \App\Http\Controllers\InstitutionController::class,
+            \App\Modules\Institution\Http\Controllers\InstitutionController::class,
             $registrar->controller('institutions')
         );
     }

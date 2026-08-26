@@ -77,7 +77,7 @@ final class UnitTestGeneratorTest extends GeneratorTestCase
         );
 
         $this->assertStringContainsString(
-            'use App\\Models\\Currency;',
+            'use App\\Modules\\Currency\\Models\\Currency;',
             $content
         );
 

@@ -8,6 +8,8 @@ use App\Core\Crud\Contracts\CrudDefinitionInterface;
 use App\Core\Crud\Contracts\CrudRegistrarInterface;
 use App\Core\Crud\CrudOperations;
 use App\Core\Crud\DTO\CrudOperation;
+use App\Modules\Institution\Http\Controllers\InstitutionController;
+
 
 final class InstitutionCrud implements CrudDefinitionInterface
 {
@@ -16,7 +18,7 @@ final class InstitutionCrud implements CrudDefinitionInterface
     ): void {
         $crud->register(
             'institutions',
-            \App\Http\Controllers\InstitutionController::class,
+            InstitutionController::class,
             [
                 new CrudOperation(CrudOperations::VIEW),
                 new CrudOperation(CrudOperations::CREATE),

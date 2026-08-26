@@ -580,19 +580,19 @@ final class ModuleDataFactory
     {
         return [
 
-            'modelNamespace' => 'App\\Models',
+            'modelNamespace' => "App\\Modules\\{$name}\\Models",
 
             'repositoryNamespace' => "App\\Modules\\{$name}\\Repositories",
 
             'repositoryContractNamespace' => "App\\Modules\\{$name}\\Domain\\Contracts",
 
-            'serviceNamespace' => "App\\Modules\\{$name}\\Services",
+            'serviceNamespace' => "App\\Modules\\{$name}\\Domain\\Services",
 
             'serviceContractNamespace' => "App\\Modules\\{$name}\\Domain\\Contracts",
 
-            'controllerNamespace' => 'App\\Http\\Controllers',
+            'controllerNamespace' => "App\\Modules\\{$name}\\Http\\Controllers",
 
-            'requestNamespace' => "App\\Http\\Requests\\{$name}",
+            'requestNamespace' => "App\\Modules\\{$name}\\Http\\Requests",
 
             'policyNamespace' => 'App\\Policies',
 
@@ -602,7 +602,7 @@ final class ModuleDataFactory
 
             'middlewareNamespace' => 'App\\Http\\Middleware',
 
-            'actionNamespace' => 'App\\Core\\Actions',
+            'actionNamespace' => "App\\Modules\\{$name}\\Actions",
 
             'bindingNamespace' => 'App\\Providers',
 
@@ -632,12 +632,12 @@ final class ModuleDataFactory
 
             'modelPath'
             => $this->paths->app(
-                "Models/{$name}.php"
+                "Modules/{$name}/Models/{$name}.php"
             ),
 
             'migrationPath'
             => $this->paths->database(
-                "migrations/{$this->migrationName($plural)}.php"
+                'migrations'
             ),
 
             'repositoryPath'
@@ -657,17 +657,17 @@ final class ModuleDataFactory
 
             'servicePath'
             => $this->paths->app(
-                "Modules/{$name}/Services/{$name}Service.php"
+                "Modules/{$name}/Domain/Services/{$name}Service.php"
             ),
 
             'controllerPath'
             => $this->paths->app(
-                "Http/Controllers/{$name}Controller.php"
+                "Modules/{$name}/Http/Controllers/{$name}Controller.php"
             ),
 
             'requestPath'
             => $this->paths->app(
-                "Http/Requests/{$name}"
+                "Modules/{$name}/Http/Requests"
             ),
 
             'viewPath'
@@ -697,12 +697,12 @@ final class ModuleDataFactory
 
             'featureTestPath'
             => $this->paths->app(
-                "Tests/Feature/{$name}FeatureTest.php"
+                "tests/Feature/{$name}FeatureTest.php"
             ),
 
             'unitTestPath'
             => $this->paths->app(
-                "Tests/Unit/{$name}UnitTest.php"
+                "tests/Unit/{$name}UnitTest.php"
             ),
 
             'observerPath'
@@ -724,18 +724,9 @@ final class ModuleDataFactory
             => $this->paths->app("Core/Permissions/{$name}Permission.php"),
 
             'actionPath' => $this->paths->app(
-                "Core/Actions/{$name}Action.php"
+                "Modules/{$name}/Actions/{$name}Action.php"
             ),
         ];
-    }
-
-    private function migrationName(string $table): string
-    {
-        $timestamp = now()
-            ->addSeconds($this->migrationOffset++)
-            ->format('Y_m_d_His');
-
-        return "{$timestamp}_create_{$table}_table";
     }
 
     /*

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Generator\Generators;
 
+//use App\Core\Generator\Builders\SeederBuilder;
 use App\Core\Generator\Generators\SeederGenerator;
 use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Support\FileWriter;
@@ -77,7 +78,7 @@ final class SeederGeneratorTest extends GeneratorTestCase
         );
 
         $this->assertStringContainsString(
-            'use App\\Models\\Currency;',
+            'use App\\Modules\\Currency\\Models\\Currency;',
             $content
         );
 

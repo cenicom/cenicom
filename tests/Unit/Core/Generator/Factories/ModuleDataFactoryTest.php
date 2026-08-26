@@ -240,6 +240,26 @@ final class ModuleDataFactoryTest extends TestCase
     */
 
         self::assertSame(
+            'App\\Modules\\Currency\\Models',
+            $module->modelNamespace()
+        );
+
+        self::assertSame(
+            'App\\Modules\\Currency\\Actions',
+            $module->actionNamespace()
+        );
+
+        self::assertSame(
+            'App\\Modules\\Currency\\Http\\Controllers',
+            $module->controllerNamespace()
+        );
+
+        self::assertSame(
+            'App\\Modules\\Currency\\Http\\Requests',
+            $module->requestNamespace()
+        );
+
+        self::assertSame(
             'App\\Modules\\Currency\\Repositories',
             $module->repositoryNamespace()
         );
@@ -250,7 +270,7 @@ final class ModuleDataFactoryTest extends TestCase
         );
 
         self::assertSame(
-            'App\\Modules\\Currency\\Services',
+            'App\\Modules\\Currency\\Domain\\Services',
             $module->serviceNamespace()
         );
 
@@ -266,6 +286,26 @@ final class ModuleDataFactoryTest extends TestCase
     */
 
         self::assertStringEndsWith(
+            'app/Modules/Currency/Http/Controllers/CurrencyController.php',
+            str_replace('\\', '/', $module->controllerPath())
+        );
+
+        self::assertStringEndsWith(
+            'app/Modules/Currency/Http/Requests',
+            str_replace('\\', '/', $module->requestPath())
+        );
+
+        self::assertStringEndsWith(
+            'app/Modules/Currency/Models/Currency.php',
+            str_replace('\\', '/', $module->modelPath())
+        );
+
+        self::assertStringEndsWith(
+            'app/Modules/Currency/Actions/CurrencyAction.php',
+            str_replace('\\', '/', $module->actionPath())
+        );
+
+        self::assertStringEndsWith(
             'app/Modules/Currency/Repositories/CurrencyRepository.php',
             str_replace('\\', '/', $module->repositoryPath())
         );
@@ -276,7 +316,7 @@ final class ModuleDataFactoryTest extends TestCase
         );
 
         self::assertStringEndsWith(
-            'app/Modules/Currency/Services/CurrencyService.php',
+            'app/Modules/Currency/Domain/Services/CurrencyService.php',
             str_replace('\\', '/', $module->servicePath())
         );
 

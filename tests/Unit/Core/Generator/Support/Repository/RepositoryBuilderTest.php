@@ -91,7 +91,7 @@ final class RepositoryBuilderTest extends TestCase
         $imports = $variables['imports'];
 
         $this->assertStringContainsString(
-            'use App\\Models\\Currency;',
+            'use App\\Modules\\Currency\\Models\\Currency;',
             $imports
         );
 
@@ -115,7 +115,7 @@ final class RepositoryBuilderTest extends TestCase
         );
 
         $this->assertSame(
-            'App\\Models\\Currency',
+            'App\\Modules\\Currency\\Models\\Currency',
             $variables['qualifiedModel']
         );
 

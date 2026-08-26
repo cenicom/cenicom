@@ -320,6 +320,10 @@ final readonly class ColumnDefinition
             first: (bool) (
                 $definition['first'] ?? false
             ),
+
+            useCurrent: (bool) (
+                $definition['useCurrent'] ?? false
+            ),
         );
     }
 
@@ -384,7 +388,8 @@ final readonly class ColumnDefinition
             && isset($definition['scale'])
         ) {
 
-            if ((int) $definition['scale']>
+            if (
+                (int) $definition['scale'] >
                 (int) $definition['precision']
             ) {
 

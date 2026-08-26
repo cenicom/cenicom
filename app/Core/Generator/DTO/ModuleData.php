@@ -1168,12 +1168,16 @@ readonly class ModuleData
     {
         return array_unique([
             dirname($this->modelPath),
-            dirname($this->migrationPath),
+
+            $this->migrationPath,
+
             dirname($this->repositoryPath),
             dirname($this->servicePath),
             dirname($this->controllerPath),
-            dirname($this->requestPath),
-            dirname($this->viewPath),
+
+            $this->requestPath,
+            $this->viewPath,
+
             dirname($this->routePath),
             dirname($this->policyPath),
             dirname($this->middlewarePath),

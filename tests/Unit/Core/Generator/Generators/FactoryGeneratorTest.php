@@ -74,7 +74,7 @@ final class FactoryGeneratorTest extends GeneratorTestCase
         );
 
         $this->assertStringContainsString(
-            'use App\\Models\\Currency;',
+            'use App\\Modules\\Currency\\Models\\Currency;',
             $content
         );
 

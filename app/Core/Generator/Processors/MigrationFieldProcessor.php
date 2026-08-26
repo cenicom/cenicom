@@ -223,6 +223,8 @@ final class MigrationFieldProcessor
 
         $column = $this->applyFirst($column, $field);
 
+        $column = $this->applyUseCurrent($column, $field);
+
         return $column;
     }
 
@@ -483,5 +485,16 @@ final class MigrationFieldProcessor
             'updated_at',
             'deleted_at',
         ];
+    }
+
+    private function applyUseCurrent(
+        string $column,
+        ColumnDefinition $field
+    ): string {
+        if ($field->useCurrent()) {
+            $column .= '->useCurrent()';
+        }
+
+        return $column;
     }
 }
