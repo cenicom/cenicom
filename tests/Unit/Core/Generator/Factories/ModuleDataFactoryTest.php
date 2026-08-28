@@ -325,4 +325,34 @@ final class ModuleDataFactoryTest extends TestCase
             str_replace('\\', '/', $module->serviceInterfacePath())
         );
     }
+
+    public function test_preserves_custom_permissions_in_module_options(): void
+    {
+        $module = $this->factory->create([
+            'identity' => [
+                'name' => 'Currency',
+                'singular' => 'currency',
+                'plural' => 'currencies',
+                'table' => 'currencies',
+                'description' => 'Currency module',
+            ],
+
+            'generation' => [
+                'custom_permissions' => [
+                    'export',
+                    'import',
+                ],
+            ],
+
+            'fields' => [],
+        ]);
+
+        self::assertSame(
+            [
+                'export',
+                'import',
+            ],
+            $module->option('custom_permissions')
+        );
+    }
 }

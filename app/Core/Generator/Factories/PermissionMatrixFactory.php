@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Core\Generator\Support;
+namespace App\Core\Generator\Factories;
 
 use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\DTO\PermissionDefinition;

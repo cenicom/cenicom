@@ -6,7 +6,6 @@ namespace App\Core\Generator\Factories;
 
 use App\Core\Generator\DTO\ColumnDefinition;
 use App\Core\Generator\DTO\ModuleData;
-use App\Core\Generator\DTO\PermissionMatrix;
 use App\Core\Generator\DTO\SecurityDefinition;
 use App\Core\Generator\Support\Contracts\PathResolverInterface;
 use App\Core\Generator\Support\PathResolver;
@@ -80,8 +79,6 @@ final class ModuleDataFactory
         );
 
         $securityDefinition = $this->buildSecurity($definition);
-
-        $permissionMatrix = $this->buildPermissionMatrix($definition);
 
         $navigation = $this->buildNavigation($definition);
 
@@ -280,7 +277,7 @@ final class ModuleDataFactory
 
             security: $securityDefinition,
 
-            permissionMatrix: $permissionMatrix,
+            permissionMatrix: null,
 
             navigation: $navigation,
 
@@ -423,31 +420,6 @@ final class ModuleDataFactory
         );
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | buildPermissionMatrix(array $definition, ): PermissionMatrix
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * Construye la matriz de permisos del módulo.
-     *
-     * @param array<string,mixed> $definition
-     */
-    private function buildPermissionMatrix(array $definition,): PermissionMatrix
-    {
-
-        if (
-            ! isset($definition['permissions'])
-            || $definition['permissions'] === []
-        ) {
-            return new PermissionMatrix([]);
-        }
-
-        return PermissionMatrix::fromArray(
-            $definition['permissions']
-        );
-    }
 
     /*
     |--------------------------------------------------------------------------
@@ -594,13 +566,13 @@ final class ModuleDataFactory
 
             'requestNamespace' => "App\\Modules\\{$name}\\Http\\Requests",
 
-            'policyNamespace' => 'App\\Policies',
+            'policyNamespace' => "App\\Modules\\{$name}\\Policies",
 
-            'observerNamespace' => 'App\\Observers',
+            'observerNamespace' => "App\\Modules\\{$name}\\Observers",
 
-            'permissionNamespace' => 'App\\Core\\Permissions',
+            'permissionNamespace' => "App\\Modules\\{$name}\\Permissions",
 
-            'middlewareNamespace' => 'App\\Http\\Middleware',
+            'middlewareNamespace' => "App\\Modules\\{$name}\\Http\\Middleware",
 
             'actionNamespace' => "App\\Modules\\{$name}\\Actions",
 
@@ -682,7 +654,7 @@ final class ModuleDataFactory
 
             'policyPath'
             => $this->paths->app(
-                "Policies/{$name}Policy.php"
+                "Modules/{$name}/Policies/{$name}Policy.php"
             ),
 
             'factoryPath'
@@ -707,7 +679,7 @@ final class ModuleDataFactory
 
             'observerPath'
             => $this->paths->app(
-                "Observers/{$name}Observer.php"
+                "Modules/{$name}/Observers/{$name}Observer.php"
             ),
 
             'moduleManifestPath'
@@ -717,11 +689,13 @@ final class ModuleDataFactory
 
             // NUEVO
             'middlewarePath' => $this->paths->app(
-                "Http/Middleware/{$name}Middleware.php"
+                "Modules/{$name}/Http/Middleware/{$name}Middleware.php"
             ),
 
             'permissionPath'
-            => $this->paths->app("Core/Permissions/{$name}Permission.php"),
+            => $this->paths->app(
+                "Modules/{$name}//Permissions/{$name}Permission.php"
+            ),
 
             'actionPath' => $this->paths->app(
                 "Modules/{$name}/Actions/{$name}Action.php"
@@ -757,6 +731,8 @@ final class ModuleDataFactory
             'tests' => $generation['tests'] ?? true,
 
             'permissions' => $generation['permissions'] ?? true,
+
+            'custom_permissions' => $generation['custom_permissions'] ?? [],
 
             'menu' => $generation['menu'] ?? true,
 
