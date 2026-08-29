@@ -9,7 +9,7 @@ use App\Core\Generator\Factories\ModuleDataFactory;
 use App\Core\Generator\Generators\RouteGenerator;
 use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Security\MiddlewareRegistry;
-use App\Core\Generator\Security\PermissionResolver;
+
 use App\Core\Generator\Support\FileWriter;
 use App\Core\Generator\Support\MiddlewareResolver;
 use App\Core\Generator\Support\StubManager;
@@ -143,7 +143,6 @@ final class RouteGeneratorTest extends GeneratorTestCase
                 new MiddlewareResolver(
                     new MiddlewareRegistry(),
                 ),
-                new PermissionResolver(),
             ),
         );
     }

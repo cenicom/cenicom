@@ -83,18 +83,11 @@ final class MiddlewareBuilder
      */
     private function buildImports(ModuleData $module): string
     {
-        $imports = [
+        return implode("\n", [
             'use Closure;',
             'use Illuminate\Http\Request;',
             'use Symfony\Component\HttpFoundation\Response;',
-        ];
-
-        // Imports futuros según opciones del módulo
-        // if ($module->hasPermissions()) {
-        //     $imports[] = 'use Illuminate\Support\Facades\Auth;';
-        // }
-
-        return implode("\n", array_unique($imports));
+        ]);
     }
 
     /**
@@ -130,7 +123,7 @@ final class MiddlewareBuilder
      */
     private function buildHandleMethod(ModuleData $module): string
     {
-    return <<<PHP
+        return <<<PHP
     /**
      * Handle an incoming request.
      *
@@ -184,7 +177,6 @@ final class MiddlewareBuilder
     private function buildUnauthorizedResponse(): string
     {
         return $this->buildWebUnauthorizedResponse();
-
     }
 
     /**
@@ -238,10 +230,6 @@ final class MiddlewareBuilder
         ModuleData $module,
     ): ?string {
         $matrix = $module->permissionMatrix();
-
-        if ($matrix === null) {
-            return null;
-        }
 
         foreach ($matrix->permissions() as $permission) {
 

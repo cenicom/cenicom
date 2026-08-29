@@ -44,7 +44,7 @@ final readonly class [[ action ]]
     ): bool
     {
         return $this->service->update(
-            $[[ variable ]],
+            $[[ variable ]]->getKey(),
             $data
         );
     }

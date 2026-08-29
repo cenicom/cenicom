@@ -57,10 +57,6 @@ final class PermissionBuilder
     {
         $matrix = $module->permissionMatrix();
 
-        if ($matrix === null) {
-            return '';
-        }
-
         $constants = [];
 
         foreach ($matrix->permissions() as $permission) {
@@ -88,10 +84,6 @@ final class PermissionBuilder
     private function buildPermissionDefinitions(ModuleData $module): string
     {
         $matrix = $module->permissionMatrix();
-
-        if ($matrix === null) {
-            return '';
-        }
 
         $items = [];
 
@@ -125,10 +117,6 @@ final class PermissionBuilder
     {
         $matrix = $module->permissionMatrix();
 
-        if ($matrix === null) {
-            return '';
-        }
-
         $items = [];
 
         foreach ($matrix->permissions() as $permission) {
@@ -148,35 +136,4 @@ final class PermissionBuilder
         return implode(",\n", $items);
     }
 
-    /**
-     * Genera el nombre de una constante.
-     */
-    private function buildPermissionConstant(string $permission): string
-    {
-        return '';
-    }
-
-    /**
-     * Genera la etiqueta legible del permiso.
-     */
-    private function buildPermissionLabel(string $permission): string
-    {
-        return '';
-    }
-
-    /**
-     * Genera la descripción del permiso.
-     */
-    private function buildPermissionDescription(string $permission): string
-    {
-        return '';
-    }
-
-    /**
-     * Normaliza el nombre interno del permiso.
-     */
-    private function normalizePermission(string $permission): string
-    {
-        return $permission;
-    }
 }

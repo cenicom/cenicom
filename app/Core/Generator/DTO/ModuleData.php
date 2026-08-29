@@ -194,7 +194,7 @@ readonly class ModuleData
 
     private ?SecurityDefinition $security;
 
-    private ?PermissionMatrix $permissionMatrix;
+    private PermissionMatrix $permissionMatrix;
 
     private ?NavigationManifestData $navigation;
 
@@ -306,7 +306,7 @@ readonly class ModuleData
         bool $menu,
         ?string $icon,
         ?SecurityDefinition $security = null,
-        ?PermissionMatrix $permissionMatrix = null,
+        PermissionMatrix $permissionMatrix,
         ?NavigationManifestData $navigation = null,
 
     ) {
@@ -444,7 +444,7 @@ readonly class ModuleData
         return $this->security;
     }
 
-    public function permissionMatrix(): ?PermissionMatrix
+    public function permissionMatrix(): PermissionMatrix
     {
         return $this->permissionMatrix;
     }

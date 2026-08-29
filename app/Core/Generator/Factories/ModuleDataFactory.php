@@ -12,6 +12,8 @@ use App\Core\Generator\Support\PathResolver;
 use App\Core\Navigation\DTO\NavigationGroupData;
 use App\Core\Navigation\DTO\NavigationItemData;
 use App\Core\Navigation\DTO\NavigationManifestData;
+
+use App\Core\Generator\Factories\PermissionMatrixFactory;
 use Illuminate\Support\Str;
 
 /**
@@ -68,6 +70,11 @@ final class ModuleDataFactory
         $fields = $this->fields($definition);
 
         $options = $this->buildOptions($generation);
+
+        $permissionMatrix = PermissionMatrixFactory::build(
+            $name,
+            $options['custom_permissions'] ?? [],
+        );
 
         $classes = $this->buildClasses($name);
 
@@ -277,7 +284,7 @@ final class ModuleDataFactory
 
             security: $securityDefinition,
 
-            permissionMatrix: null,
+            permissionMatrix: $permissionMatrix,
 
             navigation: $navigation,
 
@@ -684,7 +691,7 @@ final class ModuleDataFactory
 
             'moduleManifestPath'
             => $this->paths->app(
-                 "modules/{$name}.json"
+                "modules/{$name}.json"
             ), // o la ruta que hayas definido para el manifiesto
 
             // NUEVO

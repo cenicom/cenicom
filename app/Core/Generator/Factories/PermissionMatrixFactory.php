@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Core\Generator\Factories;
 
-use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\DTO\PermissionDefinition;
 use App\Core\Generator\DTO\PermissionMatrix;
 
@@ -14,7 +13,7 @@ use App\Core\Generator\DTO\PermissionMatrix;
  * ==========================================================
  *
  * Construye una PermissionMatrix completamente normalizada
- * a partir de un ModuleData.
+ * a partir de los datos necesarios del módulo.
  *
  * Responsabilidades:
  *
@@ -27,33 +26,42 @@ use App\Core\Generator\DTO\PermissionMatrix;
  * No genera archivos.
  * No conoce stubs.
  * No conoce Laravel.
+ * No depende de ModuleData.
  *
- * Es la única fuente de verdad para los permisos.
+ * Es la única fuente de verdad para los permisos generados.
  */
 final class PermissionMatrixFactory
 {
     /**
      * Construye la matriz completa de permisos.
+     *
+     * @param string $moduleName
+     * @param string[] $customPermissions
      */
-    public static function build(ModuleData $module): PermissionMatrix
-    {
+    public static function build(
+        string $moduleName,
+        array $customPermissions = [],
+    ): PermissionMatrix {
         $permissions = [];
 
         $permissions = array_merge(
             $permissions,
-            self::resolveCrudPermissions($module)
+            self::resolveCrudPermissions($moduleName)
         );
 
         $permissions = array_merge(
             $permissions,
-            self::resolveCustomPermissions($module)
+            self::resolveCustomPermissions(
+                $moduleName,
+                $customPermissions
+            )
         );
 
         $permissions = self::normalizePermissions($permissions);
 
         $permissions = self::removeDuplicates($permissions);
 
-        return new PermissionMatrix($permissions);
+        return self::createMatrix($permissions);
     }
 
     /**
@@ -61,13 +69,14 @@ final class PermissionMatrixFactory
      *
      * @return PermissionDefinition[]
      */
-    private static function resolveCrudPermissions(ModuleData $module): array
-    {
+    private static function resolveCrudPermissions(
+        string $moduleName,
+    ): array {
         $permissions = [];
 
         foreach (self::crudActions() as $action) {
             $permissions[] = self::createPermissionDefinition(
-                $module,
+                $moduleName,
                 $action
             );
         }
@@ -78,15 +87,20 @@ final class PermissionMatrixFactory
     /**
      * Genera permisos personalizados.
      *
+     * @param string $moduleName
+     * @param string[] $customPermissions
+     *
      * @return PermissionDefinition[]
      */
-    private static function resolveCustomPermissions(ModuleData $module): array
-    {
+    private static function resolveCustomPermissions(
+        string $moduleName,
+        array $customPermissions,
+    ): array {
         $permissions = [];
 
-        foreach (self::customPermissions($module) as $permission) {
+        foreach ($customPermissions as $permission) {
             $permissions[] = self::createPermissionDefinition(
-                $module,
+                $moduleName,
                 $permission
             );
         }
@@ -98,10 +112,12 @@ final class PermissionMatrixFactory
      * Normaliza todas las definiciones.
      *
      * @param PermissionDefinition[] $permissions
+     *
      * @return PermissionDefinition[]
      */
-    private static function normalizePermissions(array $permissions): array
-    {
+    private static function normalizePermissions(
+        array $permissions,
+    ): array {
         $normalized = [];
 
         foreach ($permissions as $permission) {
@@ -115,10 +131,12 @@ final class PermissionMatrixFactory
      * Elimina permisos duplicados.
      *
      * @param PermissionDefinition[] $permissions
+     *
      * @return PermissionDefinition[]
      */
-    private static function removeDuplicates(array $permissions): array
-    {
+    private static function removeDuplicates(
+        array $permissions,
+    ): array {
         $unique = [];
         $seen = [];
 
@@ -136,8 +154,14 @@ final class PermissionMatrixFactory
         return $unique;
     }
 
-    private static function createMatrix(array $permissions): PermissionMatrix
-    {
+    /**
+     * Construye la matriz de permisos.
+     *
+     * @param PermissionDefinition[] $permissions
+     */
+    private static function createMatrix(
+        array $permissions,
+    ): PermissionMatrix {
         return new PermissionMatrix($permissions);
     }
 
@@ -156,26 +180,11 @@ final class PermissionMatrixFactory
         ];
     }
 
-    /**
-     * Obtiene los permisos personalizados del módulo.
-     *
-     * @return string[]
-     */
-    private static function customPermissions(ModuleData $module): array
-    {
-        return $module->option(
-            'custom_permissions',
-            []
-        );
-    }
-
     private static function createPermissionDefinition(
-        ModuleData $module,
+        string $moduleName,
         string $action,
     ): PermissionDefinition {
-        $name = self::normalizeName(
-            $module->name()
-        );
+        $name = self::normalizeName($moduleName);
 
         $group = $name;
 
@@ -215,8 +224,9 @@ final class PermissionMatrixFactory
         return PermissionDefinition::fromArray($definition);
     }
 
-    private static function normalizeName(string $value): string
-    {
+    private static function normalizeName(
+        string $value,
+    ): string {
         $value = trim($value);
 
         $value = strtolower($value);
@@ -230,13 +240,14 @@ final class PermissionMatrixFactory
         return $value;
     }
 
-    private static function normalizeGroup(string $group): string
-    {
+    private static function normalizeGroup(
+        string $group,
+    ): string {
         return self::normalizeName($group);
     }
 
     private static function normalizeAction(
-        string $action
+        string $action,
     ): string {
         return self::normalizeName($action);
     }

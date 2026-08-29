@@ -6,7 +6,6 @@ namespace App\Core\Generator\Builders;
 
 use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\Support\MiddlewareResolver;
-use App\Core\Generator\Security\PermissionResolver;
 
 /**
  * ==========================================================
@@ -22,9 +21,7 @@ final class RouteBuilder
 {
     public function __construct(
         private readonly MiddlewareResolver $middlewareResolver,
-        private readonly PermissionResolver $permissionResolver,
     ) {}
-
 
     /**
      * Punto de entrada.
@@ -33,10 +30,8 @@ final class RouteBuilder
      */
     public function build(ModuleData $module): array
     {
-
         return $this->buildVariables($module);
     }
-
 
     /**
      * Construye variables del stub.
@@ -47,19 +42,19 @@ final class RouteBuilder
     {
         return [
             'qualifiedController'
-            => $module->qualifiedController(),
+                => $module->qualifiedController(),
 
             'controllerClass'
-            => $module->controllerClass(),
+                => $module->controllerClass(),
 
             'plural'
-            => $module->plural(),
+                => $module->plural(),
 
             'singular'
-            => $module->singular(),
+                => $module->singular(),
 
             'middleware'
-            => $this->buildMiddleware($module),
+                => $this->buildMiddleware($module),
         ];
     }
 
@@ -69,37 +64,35 @@ final class RouteBuilder
     private function buildMiddleware(
         ModuleData $module
     ): string {
-
         $security = $module->security();
 
         if ($security === null) {
             return '';
         }
 
-
         $middlewares = $this
             ->middlewareResolver
             ->resolve($security);
 
-
         if ($security->usesPermissions()) {
-
             foreach (
-                $this->permissionResolver->resolve($module)
+                $module->permissionMatrix()->permissions()
                 as $permission
             ) {
+                if (
+                    ! $permission->isEnabled()
+                    || ! $permission->shouldGenerateMiddleware()
+                ) {
+                    continue;
+                }
 
                 $middlewares[] =
-                    'permission:' . $permission;
+                    'permission:' . $permission->permission();
             }
         }
 
-
-        return $this->formatMiddleware(
-            $middlewares
-        );
+        return $this->formatMiddleware($middlewares);
     }
-
 
     /**
      * Formatea middleware para Route.
@@ -109,11 +102,9 @@ final class RouteBuilder
     private function formatMiddleware(
         array $middlewares
     ): string {
-
         if ($middlewares === []) {
             return '';
         }
-
 
         return PHP_EOL .
             "->middleware([" .
