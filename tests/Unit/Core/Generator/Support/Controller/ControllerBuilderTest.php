@@ -20,7 +20,7 @@ final class ControllerBuilderTest extends TestCase
         );
 
         $this->assertCount(
-            15,
+            17,
             $variables
         );
 
@@ -98,6 +98,16 @@ final class ControllerBuilderTest extends TestCase
             'Currency',
             $variables['displayName']
         );
+
+        $this->assertSame(
+            $this->module()->qualifiedAction(),
+            $variables['qualifiedAction']
+        );
+
+        $this->assertSame(
+            'CurrencyAction',
+            $variables['action']
+        );
     }
 
     public function test_build_generates_variables_required_by_controller_stub(): void
@@ -117,6 +127,8 @@ final class ControllerBuilderTest extends TestCase
             'model',
             'controller',
             'serviceInterface',
+            'action',
+            'qualifiedAction',
             'viewPrefix',
             'pluralVariable',
             'storeRequest',

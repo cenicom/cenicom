@@ -15,8 +15,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::resource(
-    '[[ plural ]]',
+    '[[ routeResource ]]',
     [[ controllerClass ]]::class
 )
 [[ middleware ]]
-->names('[[ plural ]]');
+->names('[[ routeName ]]');

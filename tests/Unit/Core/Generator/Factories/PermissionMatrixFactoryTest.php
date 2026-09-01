@@ -40,7 +40,7 @@ final class PermissionMatrixFactoryTest extends TestCase
 
         $permissionNames = array_map(
             static fn(PermissionDefinition $permission): string =>
-                $permission->permission(),
+            $permission->permission(),
             $permissions
         );
 
@@ -71,7 +71,7 @@ final class PermissionMatrixFactoryTest extends TestCase
 
         $permissionNames = array_map(
             static fn(PermissionDefinition $permission): string =>
-                $permission->permission(),
+            $permission->permission(),
             $permissions
         );
 
@@ -102,7 +102,7 @@ final class PermissionMatrixFactoryTest extends TestCase
 
         $permissionNames = array_map(
             static fn(PermissionDefinition $permission): string =>
-                $permission->permission(),
+            $permission->permission(),
             $permissions
         );
 
@@ -135,7 +135,7 @@ final class PermissionMatrixFactoryTest extends TestCase
 
         $permissionNames = array_map(
             static fn(PermissionDefinition $permission): string =>
-                $permission->permission(),
+            $permission->permission(),
             $permissions
         );
 
@@ -150,5 +150,30 @@ final class PermissionMatrixFactoryTest extends TestCase
         );
 
         $this->assertCount(4, $permissions);
+    }
+
+    public function test_build_returns_empty_matrix_for_empty_module_name(): void
+    {
+        $matrix = PermissionMatrixFactory::build('');
+
+        $this->assertInstanceOf(
+            PermissionMatrix::class,
+            $matrix
+        );
+
+        $this->assertSame(
+            [],
+            $matrix->permissions()
+        );
+    }
+
+    public function test_build_returns_empty_matrix_for_blank_module_name(): void
+    {
+        $matrix = PermissionMatrixFactory::build('   ');
+
+        $this->assertSame(
+            [],
+            $matrix->permissions()
+        );
     }
 }

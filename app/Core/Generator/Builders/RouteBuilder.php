@@ -42,19 +42,25 @@ final class RouteBuilder
     {
         return [
             'qualifiedController'
-                => $module->qualifiedController(),
+            => $module->qualifiedController(),
 
             'controllerClass'
-                => $module->controllerClass(),
+            => $module->controllerClass(),
+
+            'routeResource'
+            => $module->routeResource(),
+
+            'routeName'
+            => $module->routeName(),
 
             'plural'
-                => $module->plural(),
+            => $module->plural(),
 
             'singular'
-                => $module->singular(),
+            => $module->singular(),
 
             'middleware'
-                => $this->buildMiddleware($module),
+            => $this->buildMiddleware($module),
         ];
     }
 

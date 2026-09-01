@@ -42,6 +42,12 @@ final class PermissionMatrixFactory
         string $moduleName,
         array $customPermissions = [],
     ): PermissionMatrix {
+        $moduleName = self::normalizeName($moduleName);
+
+        if ($moduleName === '') {
+            return new PermissionMatrix([]);
+        }
+
         $permissions = [];
 
         $permissions = array_merge(

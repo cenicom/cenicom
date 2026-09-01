@@ -27,49 +27,53 @@ final class ControllerBuilder
     {
         return [
             'namespace'
-                => $module->controllerNamespace(),
+            => $module->controllerNamespace(),
 
             'qualifiedServiceInterface'
-                => $module->qualifiedServiceInterface(),
+            => $module->qualifiedServiceInterface(),
 
             'qualifiedStoreRequest'
-                => $module->qualifiedStoreRequest(),
+            => $module->qualifiedStoreRequest(),
 
             'qualifiedUpdateRequest'
-                => $module->qualifiedUpdateRequest(),
+            => $module->qualifiedUpdateRequest(),
 
             'qualifiedModel'
-                => $module->qualifiedModel(),
+            => $module->qualifiedModel(),
 
             'model'
-                => $module->modelClass(),
+            => $module->modelClass(),
 
             'controller'
-                => $module->controllerClass(),
+            => $module->controllerClass(),
 
             'serviceInterface'
-                => $module->serviceInterface(),
+            => $module->serviceInterface(),
+
+            'action' => $module->actionClass(),
+
+            'qualifiedAction' => $module->qualifiedAction(),
 
             'viewPrefix'
-                => $module->viewPrefix(),
+            => $module->viewPrefix(),
 
             'pluralVariable'
-                => $module->pluralVariable(),
+            => $module->pluralVariable(),
 
             'storeRequest'
-                => $module->storeRequestClass(),
+            => $module->storeRequestClass(),
 
             'updateRequest'
-                => $module->updateRequestClass(),
+            => $module->updateRequestClass(),
 
             'routeName'
-                => $module->routeName(),
+            => $module->routeName(),
 
             'variable'
-                => $module->variable(),
+            => $module->variable(),
 
             'displayName'
-                => $module->displayName(),
+            => $module->displayName(),
         ];
     }
 }

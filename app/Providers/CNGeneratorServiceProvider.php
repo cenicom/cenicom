@@ -138,6 +138,18 @@ final class CNGeneratorServiceProvider extends ServiceProvider
 
                 return new GeneratorRegistry([
 
+                    $app->make(ServiceInterfaceGenerator::class),
+
+                    $app->make(ServiceGenerator::class),
+
+                    $app->make(RequestGenerator::class),
+
+                    $app->make(ActionGenerator::class),
+
+                    $app->make(ControllerGenerator::class),
+
+                    $app->make(ViewGenerator::class),
+
                     $app->make(ModuleManifestGenerator::class),
 
                     $app->make(ModelGenerator::class),
@@ -147,18 +159,6 @@ final class CNGeneratorServiceProvider extends ServiceProvider
                     $app->make(RepositoryInterfaceGenerator::class),
 
                     $app->make(RepositoryGenerator::class),
-
-                    $app->make(ServiceInterfaceGenerator::class),
-
-                    $app->make(ServiceGenerator::class),
-
-                    $app->make(RequestGenerator::class),
-
-                    $app->make(ControllerGenerator::class),
-
-                    $app->make(ActionGenerator::class),
-
-                    $app->make(ViewGenerator::class),
 
                     $app->make(RouteGenerator::class),
 

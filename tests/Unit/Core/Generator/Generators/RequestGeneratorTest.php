@@ -65,7 +65,7 @@ final class RequestGeneratorTest extends GeneratorTestCase
     protected function tearDown(): void
     {
         File::deleteDirectory(
-            app_path('Http/Requests/Currency')
+            app_path('Modules/Currency/Http/Requests')
         );
 
         parent::tearDown();

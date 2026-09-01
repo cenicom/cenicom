@@ -355,4 +355,33 @@ final class ModuleDataFactoryTest extends TestCase
             $module->option('custom_permissions')
         );
     }
+
+    public function test_builds_permission_location_and_class(): void
+    {
+        $module = $this->factory->create([
+            'identity' => [
+                'name' => 'Currency',
+                'singular' => 'currency',
+                'plural' => 'currencies',
+                'table' => 'currencies',
+                'description' => 'Currency module',
+            ],
+            'fields' => [],
+        ]);
+
+        self::assertSame(
+            'CurrencyPermissions',
+            $module->permissionClass()
+        );
+
+        self::assertSame(
+            'App\\Modules\\Currency\\Permissions',
+            $module->permissionNamespace()
+        );
+
+        self::assertStringEndsWith(
+            'app/Modules/Currency/Permissions/CurrencyPermissions.php',
+            str_replace('\\', '/', $module->permissionPath())
+        );
+    }
 }

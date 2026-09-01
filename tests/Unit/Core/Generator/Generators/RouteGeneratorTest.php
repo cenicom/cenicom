@@ -88,8 +88,8 @@ final class RouteGeneratorTest extends GeneratorTestCase
                 'description' => 'Test module',
             ],
             'generation' => [
-                'routePrefix' => 'tests',
-                'routeName'   => 'tests',
+                'routePrefix' => 'admin/tests',
+                'routeName'   => 'admin.tests',
                 'viewPrefix'  => 'tests',
             ],
         ]);
@@ -117,7 +117,7 @@ final class RouteGeneratorTest extends GeneratorTestCase
         );
 
         $this->assertStringContainsString(
-            "'{$module->plural()}'",
+            "'{$module->routeResource()}'",
             $content
         );
 
@@ -127,7 +127,7 @@ final class RouteGeneratorTest extends GeneratorTestCase
         );
 
         $this->assertStringContainsString(
-            "->names('{$module->plural()}');",
+            "->names('{$module->routeName()}');",
             $content
         );
     }

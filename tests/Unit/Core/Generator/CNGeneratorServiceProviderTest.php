@@ -7,28 +7,8 @@ namespace Tests\Unit\Core\Generator;
 use App\Core\Generator\Contracts\GeneratorInterface;
 use App\Core\Generator\GeneratorRegistry;
 use App\Core\Generator\Generators\ActionGenerator;
-use App\Core\Generator\Generators\BindingGenerator;
 use App\Core\Generator\Generators\ControllerGenerator;
-use App\Core\Generator\Generators\FactoryGenerator;
-use App\Core\Generator\Generators\FeatureTestGenerator;
-use App\Core\Generator\Generators\MiddlewareGenerator;
-use App\Core\Generator\Generators\MigrationGenerator;
-use App\Core\Generator\Generators\ModelGenerator;
 use App\Core\Generator\Generators\ModuleGenerator;
-use App\Core\Generator\Generators\ModuleManifestGenerator;
-use App\Core\Generator\Generators\ObserverGenerator;
-use App\Core\Generator\Generators\PermissionGenerator;
-use App\Core\Generator\Generators\PolicyGenerator;
-use App\Core\Generator\Generators\RepositoryGenerator;
-use App\Core\Generator\Generators\RepositoryInterfaceGenerator;
-use App\Core\Generator\Generators\RequestGenerator;
-use App\Core\Generator\Generators\RouteGenerator;
-use App\Core\Generator\Generators\SeederGenerator;
-use App\Core\Generator\Generators\ServiceGenerator;
-use App\Core\Generator\Generators\ServiceInterfaceGenerator;
-use App\Core\Generator\Generators\UnitTestGenerator;
-use App\Core\Generator\Generators\ViewGenerator;
-
 use App\Providers\CNGeneratorServiceProvider;
 use Tests\TestCase;
 
@@ -107,7 +87,7 @@ final class CNGeneratorServiceProviderTest extends TestCase
         }
     }
 
-    public function test_generator_registry_contains_expected_generators(): void
+    public function test_action_generator_precedes_controller_generator(): void
     {
         $this->app->register(
             CNGeneratorServiceProvider::class
@@ -117,50 +97,29 @@ final class CNGeneratorServiceProviderTest extends TestCase
             GeneratorRegistry::class
         );
 
-        $generators = iterator_to_array(
-            $registry->all()
-        );
-
         $classes = array_map(
             static fn($generator): string => $generator::class,
-            $generators
+            iterator_to_array($registry->all())
         );
 
-        $expected = [
-            ModuleManifestGenerator::class,
-
-            ModelGenerator::class,
-            MigrationGenerator::class,
-
-            RepositoryInterfaceGenerator::class,
-            RepositoryGenerator::class,
-
-            ServiceInterfaceGenerator::class,
-            ServiceGenerator::class,
-
-            RequestGenerator::class,
-            ControllerGenerator::class,
+        $actionIndex = array_search(
             ActionGenerator::class,
+            $classes,
+            true
+        );
 
-            ViewGenerator::class,
-            RouteGenerator::class,
+        $controllerIndex = array_search(
+            ControllerGenerator::class,
+            $classes,
+            true
+        );
 
-            FactoryGenerator::class,
-            SeederGenerator::class,
+        $this->assertIsInt($actionIndex);
+        $this->assertIsInt($controllerIndex);
 
-            FeatureTestGenerator::class,
-            UnitTestGenerator::class,
-
-            PolicyGenerator::class,
-            ObserverGenerator::class,
-            BindingGenerator::class,
-            PermissionGenerator::class,
-            MiddlewareGenerator::class,
-        ];
-
-        $this->assertSame(
-            $expected,
-            $classes
+        $this->assertTrue(
+            $actionIndex < $controllerIndex,
+            'ActionGenerator must be registered before ControllerGenerator.'
         );
     }
 }

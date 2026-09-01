@@ -12,8 +12,6 @@ use App\Core\Generator\Support\PathResolver;
 use App\Core\Navigation\DTO\NavigationGroupData;
 use App\Core\Navigation\DTO\NavigationItemData;
 use App\Core\Navigation\DTO\NavigationManifestData;
-
-use App\Core\Generator\Factories\PermissionMatrixFactory;
 use Illuminate\Support\Str;
 
 /**
@@ -91,7 +89,7 @@ final class ModuleDataFactory
 
         $generation = $this->buildGeneration(
             $identity['plural'],
-            $this->generation($definition),
+            $generation,
         );
 
         return new ModuleData(
@@ -520,7 +518,7 @@ final class ModuleDataFactory
             => "{$name}Policy",
 
             'permissionClass'
-            => "{$name}Permission",
+            => "{$name}Permissions",
 
             'factoryClass'
             => "{$name}Factory",
@@ -701,7 +699,7 @@ final class ModuleDataFactory
 
             'permissionPath'
             => $this->paths->app(
-                "Modules/{$name}//Permissions/{$name}Permission.php"
+                "Modules/{$name}/Permissions/{$name}Permissions.php"
             ),
 
             'actionPath' => $this->paths->app(

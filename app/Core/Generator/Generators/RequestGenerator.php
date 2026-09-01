@@ -29,7 +29,7 @@ use App\Core\Generator\Validation\GeneratorValidator;
  *
  * Ubicación destino:
  *
- * app/Http/Requests/{Module}
+ * app/Modules/{Module}/Http/Requests
  *
  * ==========================================================
  */

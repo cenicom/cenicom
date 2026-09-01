@@ -114,12 +114,37 @@ final class ControllerGeneratorTest extends GeneratorTestCase
         );
 
         $this->assertStringContainsString(
+            'private readonly ' . $module->actionClass() . ' $action',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            'use ' . $module->qualifiedAction() . ';',
+            $content
+        );
+
+        $this->assertStringContainsString(
             "return view('{$module->viewPrefix()}.index'",
             $content
         );
 
         $this->assertStringContainsString(
+            '$this->service->paginate(',
+            $content
+        );
+
+        $this->assertStringContainsString(
             "return view('{$module->viewPrefix()}.create')",
+            $content
+        );
+
+        $this->assertStringContainsString(
+            '$this->action->create(',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            '$request->validated()',
             $content
         );
 
@@ -134,17 +159,57 @@ final class ControllerGeneratorTest extends GeneratorTestCase
         );
 
         $this->assertStringContainsString(
-            '$this->service->delete(',
-            $content
-        );
-
-        $this->assertStringNotContainsString(
-            '$this->service->destroy(',
+            '$this->action->create(',
             $content
         );
 
         $this->assertStringContainsString(
+            '$this->action->update(',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            '$this->action->update(',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            '$' . $module->variable() . '->getKey(),',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            '$this->action->delete(',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            '$this->action->delete(',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            '$' . $module->variable() . '->getKey()',
+            $content
+        );
+
+        $this->assertStringNotContainsString(
+            '$this->service->create(',
+            $content
+        );
+
+        $this->assertStringNotContainsString(
             '$this->service->update(',
+            $content
+        );
+
+        $this->assertStringNotContainsString(
+            '$this->service->delete(',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            '$this->service->paginate(',
             $content
         );
     }

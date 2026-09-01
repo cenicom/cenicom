@@ -17,8 +17,12 @@ final class PermissionGeneratorTest extends GeneratorTestCase
     public function test_generates_permission_file(): void
     {
         $module = $this->createModuleData([
-            'name' => 'Currency',
-            'permissions' => true,
+            'identity' => [
+                'name' => 'Currency',
+            ],
+            'generation' => [
+                'permissions' => true,
+            ],
         ]);
 
         $generator = $this->createGenerator();
@@ -42,7 +46,12 @@ final class PermissionGeneratorTest extends GeneratorTestCase
     public function test_generator_supports_module_with_permissions(): void
     {
         $module = $this->createModuleData([
-            'permissions' => true,
+            'identity' => [
+                'name' => 'Currency',
+            ],
+            'generation' => [
+                'permissions' => true,
+            ],
         ]);
 
         $generator = $this->createGenerator();
@@ -54,8 +63,10 @@ final class PermissionGeneratorTest extends GeneratorTestCase
 
     public function test_generator_does_not_support_module_without_permissions(): void
     {
-        $module = $this->createModuleData([
-            'permissions' => false,
+        $module =  $this->createModuleData([
+            'generation' => [
+                'permissions' => false,
+            ],
         ]);
 
         $generator = $this->createGenerator();
@@ -68,8 +79,12 @@ final class PermissionGeneratorTest extends GeneratorTestCase
     public function test_generates_valid_permission(): void
     {
         $module = $this->createModuleData([
-            'name' => 'Currency',
-            'permissions' => true,
+            'identity' => [
+                'name' => 'Currency',
+            ],
+            'generation' => [
+                'permissions' => true,
+            ],
         ]);
 
         $generator = $this->createGenerator();
