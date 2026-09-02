@@ -6,7 +6,6 @@ namespace App\Core\Generator\Support\Request;
 
 use App\Core\Generator\DTO\ColumnDefinition;
 use App\Core\Generator\DTO\ModuleData;
-use App\Core\Generator\Enums\FieldType;
 
 /**
  * ==========================================================
@@ -34,9 +33,8 @@ final class RequestBuilder
      *
      * @return array<string,string>
      */
-    public function build(
-        ModuleData $module,
-    ): array {
+    public function build(ModuleData $module): array
+    {
 
         return $this->buildVariables(
             $module,
@@ -49,9 +47,8 @@ final class RequestBuilder
      *
      * @return array<string,string>
      */
-    private function buildVariables(
-        ModuleData $module,
-    ): array {
+    private function buildVariables(ModuleData $module): array
+    {
 
         return [
 
@@ -74,19 +71,16 @@ final class RequestBuilder
     /**
      * Determina si una columna debe generar regla.
      */
-    private function shouldGenerateRule(
-        ColumnDefinition $column
-    ): bool {
-
-        return $column->shouldAppearInForm();
+    private function shouldGenerateRule(ColumnDefinition $column): bool
+    {
+        return $column->shouldGenerateValidation();
     }
 
     /**
      * Construye las reglas Laravel del Request.
      */
-    private function buildRules(
-        ModuleData $module
-    ): string {
+    private function buildRules(ModuleData $module): string
+    {
 
         $rules = [];
 
@@ -144,63 +138,29 @@ final class RequestBuilder
         return "['" . implode("', '", $rules) . "']";
     }
 
-    private function resolveRequiredRule(
-        ColumnDefinition $column
-    ): string {
+    private function resolveRequiredRule(ColumnDefinition $column): string
+    {
 
         return $column->nullable()
             ? 'nullable'
             : 'required';
     }
 
-    private function resolveLengthRule(
-        ColumnDefinition $column
-    ): ?string {
+    private function resolveLengthRule(ColumnDefinition $column): ?string
+    {
 
         return $column->length() !== null
             ? 'max:' . $column->length()
             : null;
     }
 
-    private function resolveTypeRules(
-        ColumnDefinition $column
-    ): array {
-
-        return match ($column->type()) {
-
-            FieldType::STRING => ['string'],
-
-            FieldType::TEXT => ['string'],
-
-            FieldType::INTEGER => ['integer'],
-
-            FieldType::DECIMAL => ['numeric'],
-
-            FieldType::BOOLEAN => ['boolean'],
-
-            FieldType::DATE => ['date'],
-
-            FieldType::DATETIME => ['date'],
-
-            FieldType::UUID => ['uuid'],
-
-            FieldType::EMAIL => ['email'],
-
-            FieldType::BIG_INTEGER => ['integer'],
-
-            FieldType::FLOAT => ['float'],
-
-            FieldType::DOUBLE => ['double'],
-
-            FieldType::JSON => ['json'],
-
-            default => ['string'],
-        };
+    private function resolveTypeRules(ColumnDefinition $column): array
+    {
+        return $column->type()->defaultValidationRules();
     }
 
-    private function resolveForeignRule(
-        ColumnDefinition $column
-    ): ?string {
+    private function resolveForeignRule(ColumnDefinition $column): ?string
+    {
 
         if (!$column->isForeignKey()) {
             return null;

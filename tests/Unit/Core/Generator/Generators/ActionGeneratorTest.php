@@ -78,7 +78,12 @@ final class ActionGeneratorTest extends GeneratorTestCase
         $this->assertIsString($normalized);
 
         $this->assertStringContainsString(
-            'public function create( array $data ): ' . $module->modelClass(),
+            'use Illuminate\Database\Eloquent\Model;',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            'public function create( array $data ): Model',
             $normalized
         );
 
@@ -174,7 +179,6 @@ final class ActionGeneratorTest extends GeneratorTestCase
             'return $this->service->delete( $id );',
             $normalized
         );
-
     }
 
     public function test_action_depends_on_module_service_interface(): void
@@ -277,7 +281,7 @@ final class ActionGeneratorTest extends GeneratorTestCase
         );
     }
 
-    public function test_action_depends_only_on_service_and_model(): void
+    public function test_action_depends_only_on_service_and_eloquent_model(): void
     {
         $generator = $this->createGenerator();
 
@@ -297,7 +301,7 @@ final class ActionGeneratorTest extends GeneratorTestCase
         );
 
         $this->assertStringContainsString(
-            'use ' . $module->qualifiedModel() . ';',
+            'use Illuminate\Database\Eloquent\Model;',
             $content
         );
 

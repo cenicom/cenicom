@@ -20,7 +20,9 @@ final class ActionBuilderTest extends TestCase
         );
 
         $this->assertArrayHasKey('namespace', $variables);
+
         $this->assertArrayHasKey('action', $variables);
+
         $this->assertArrayHasKey(
             'qualifiedServiceInterface',
             $variables
@@ -29,12 +31,6 @@ final class ActionBuilderTest extends TestCase
             'serviceInterface',
             $variables
         );
-        $this->assertArrayHasKey(
-            'qualifiedModel',
-            $variables
-        );
-        $this->assertArrayHasKey('model', $variables);
-        $this->assertArrayHasKey('variable', $variables);
 
         $this->assertSame(
             $this->module()->actionNamespace(),
@@ -57,18 +53,13 @@ final class ActionBuilderTest extends TestCase
         );
 
         $this->assertSame(
-            $this->module()->qualifiedModel(),
-            $variables['qualifiedModel']
-        );
-
-        $this->assertSame(
-            'Currency',
-            $variables['model']
-        );
-
-        $this->assertSame(
-            'currency',
-            $variables['variable']
+            [
+                'namespace',
+                'action',
+                'qualifiedServiceInterface',
+                'serviceInterface',
+            ],
+            array_keys($variables)
         );
     }
 

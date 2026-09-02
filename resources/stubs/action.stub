@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace [[ namespace ]];
 
-use [[ qualifiedModel ]];
+use Illuminate\Database\Eloquent\Model;
 use [[ qualifiedServiceInterface ]];
-
 
 /**
  * ==========================================================
@@ -31,8 +30,7 @@ final readonly class [[ action ]]
      */
     public function create(
         array $data
-    ): [[ model ]]
-    {
+    ): Model {
         return $this->service->create($data);
     }
 
@@ -46,7 +44,7 @@ final readonly class [[ action ]]
         return $this->service->update(
             $id,
             $data
-            );
+        );
     }
 
     public function delete(

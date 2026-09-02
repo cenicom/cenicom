@@ -269,4 +269,94 @@ final class RequestBuilderTest extends TestCase
             $variables['rules']
         );
     }
+
+    public function test_build_uses_field_type_default_validation_rules(): void
+    {
+        $module = (new ModuleDataFactory())->create([
+            'identity' => [
+                'name' => 'ValidationSample',
+                'singular' => 'validationSample',
+                'plural' => 'validationSamples',
+                'table' => 'validation_samples',
+                'description' => 'Validation sample module',
+            ],
+
+            'fields' => [
+                [
+                    'name' => 'email',
+                    'type' => 'email',
+                ],
+                [
+                    'name' => 'amount',
+                    'type' => 'decimal',
+                ],
+                [
+                    'name' => 'active',
+                    'type' => 'boolean',
+                ],
+            ],
+        ]);
+
+        $rules = (new RequestBuilder())->build($module)['rules'];
+
+        $this->assertStringContainsString(
+            "'email' => ['required', 'email']",
+            $rules
+        );
+
+        $this->assertStringContainsString(
+            "'amount' => ['required', 'numeric']",
+            $rules
+        );
+
+        $this->assertStringContainsString(
+            "'active' => ['required', 'boolean']",
+            $rules
+        );
+    }
+
+    public function test_build_uses_canonical_rules_for_float_double_and_json(): void
+    {
+        $module = (new ModuleDataFactory())->create([
+            'identity' => [
+                'name' => 'NumericSample',
+                'singular' => 'numericSample',
+                'plural' => 'numericSamples',
+                'table' => 'numeric_samples',
+                'description' => 'Numeric sample module',
+            ],
+
+            'fields' => [
+                [
+                    'name' => 'float_value',
+                    'type' => 'float',
+                ],
+                [
+                    'name' => 'double_value',
+                    'type' => 'double',
+                ],
+                [
+                    'name' => 'metadata',
+                    'type' => 'json',
+                ],
+            ],
+        ]);
+
+        $rules = (new RequestBuilder())->build($module)['rules'];
+
+        $this->assertStringContainsString(
+            "'float_value' => ['required', 'numeric']",
+            $rules
+        );
+
+        $this->assertStringContainsString(
+            "'double_value' => ['required', 'numeric']",
+            $rules
+        );
+
+        $this->assertStringContainsString(
+            "'metadata' => ['required', 'array']",
+            $rules
+        );
+    }
 }

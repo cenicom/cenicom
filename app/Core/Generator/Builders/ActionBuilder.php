@@ -14,6 +14,7 @@ final class ActionBuilder
     public function build(ModuleData $module): array
     {
         return [
+
             'namespace' => $module->actionNamespace(),
 
             'action' => $module->actionClass(),
@@ -24,14 +25,6 @@ final class ActionBuilder
             'serviceInterface'
                 => $module->serviceInterface(),
 
-            'qualifiedModel'
-                => $module->qualifiedModel(),
-
-            'model'
-                => $module->modelClass(),
-
-            'variable'
-                => $module->variable(),
         ];
     }
 }

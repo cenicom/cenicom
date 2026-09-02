@@ -21,11 +21,6 @@ namespace App\Core\Generator\Enums;
 
 enum InputType: string
 {
-    public const SEARCH = 'bi bi-search';
-
-    public const EMAIL = 'bi bi-envelope';
-
-    public const CALENDAR = 'bi bi-calendar';
 
     /*
     |--------------------------------------------------------------------------

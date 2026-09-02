@@ -18,9 +18,8 @@ final readonly class InstitutionCreator implements InstitutionCreatorInterface
     ) {
     }
 
-    public function create(
-        InstitutionCreateData $data
-    ): Institution {
+    public function create(InstitutionCreateData $data): Institution
+    {
         return new Institution(
             id: $this->idGenerator->generate(),
             name: $data->name,

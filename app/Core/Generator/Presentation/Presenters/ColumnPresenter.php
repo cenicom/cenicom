@@ -8,6 +8,7 @@ use App\Core\Generator\DTO\ColumnDefinition;
 use App\Core\Generator\Presentation\Contracts\PresentationInterface;
 use App\Core\Generator\Presentation\DTO\ComponentMetadata;
 use App\Core\Generator\Presentation\DTO\InputPresentation;
+use App\Core\Generator\Presentation\Resolvers\ComponentResolver;
 
 /**
  * ==========================================================
@@ -39,34 +40,34 @@ final readonly class ColumnPresenter implements PresentationInterface
      * Genera la representación del campo.
      */
     public function present(): InputPresentation
-{
-    $component =
-        $this->buildComponent();
+    {
+        $component =
+            $this->buildComponent();
 
-    return new InputPresentation(
+        return new InputPresentation(
 
-        name: $this->column->name(),
+            name: $this->column->name(),
 
-        label: $this->buildLabel(),
+            label: $this->buildLabel(),
 
-        type: $this->column->type()->value,
+            type: $this->column->type()->value,
 
-        placeholder: $component->placeholder,
+            placeholder: $component->placeholder,
 
-        component: $component,
+            component: $component,
 
-        required: $this->isRequired(),
+            required: $this->isRequired(),
 
-        readonly: $this->isReadonly(),
+            readonly: $this->isReadonly(),
 
-        disabled: $this->isDisabled(),
+            disabled: $this->isDisabled(),
 
-        default: $this->column->default(),
+            default: $this->column->default(),
 
-        columnClass: $component->columnClass,
+            columnClass: $component->columnClass,
 
-    );
-}
+        );
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -89,38 +90,19 @@ final readonly class ColumnPresenter implements PresentationInterface
      */
     private function buildPlaceholder(): string
     {
-        return 'Enter '.$this->buildLabel();
+        return 'Enter ' . $this->buildLabel();
     }
+
 
     /**
      * Construye los metadatos del componente.
      */
     private function buildComponent(): ComponentMetadata
     {
-        /*
-         * En la siguiente misión este método delegará
-         * al ComponentResolver.
-         */
-
-        return new ComponentMetadata(
-
-            component: 'input',
-
-            bladeComponent: 'x-cn.input',
-
-            cssClass: '',
-
-            columnClass: ComponentMetadata::COL_HALF,
-
-            binding: '',
-
-            icon: '',
-
-            placeholder: $this->buildPlaceholder(),
-
-            attributes: [],
-        );
+        return (new ComponentResolver($this->column))->resolve();
     }
+
+
 
     /*
     |--------------------------------------------------------------------------
