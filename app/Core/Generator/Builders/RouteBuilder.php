@@ -67,9 +67,8 @@ final class RouteBuilder
     /**
      * Construye middleware dinámico.
      */
-    private function buildMiddleware(
-        ModuleData $module
-    ): string {
+    private function buildMiddleware(ModuleData $module): string
+    {
         $security = $module->security();
 
         if ($security === null) {
@@ -80,24 +79,56 @@ final class RouteBuilder
             ->middlewareResolver
             ->resolve($security);
 
-        if ($security->usesPermissions()) {
-            foreach (
-                $module->permissionMatrix()->permissions()
-                as $permission
-            ) {
-                if (
-                    ! $permission->isEnabled()
-                    || ! $permission->shouldGenerateMiddleware()
-                ) {
-                    continue;
-                }
+        return $this->formatMiddleware($middlewares)
+            . $this->buildCrudMiddleware($module);
+    }
 
-                $middlewares[] =
-                    'permission:' . $permission->permission();
-            }
+    private function buildCrudMiddleware(ModuleData $module): string
+    {
+        $security = $module->security();
+
+        if (
+            $security === null
+            || ! $security->usesPermissions()
+        ) {
+            return '';
         }
 
-        return $this->formatMiddleware($middlewares);
+        $middleware = [];
+
+        foreach (
+            $module->permissionMatrix()->permissions()
+            as $permission
+        ) {
+            if (
+                ! $permission->isEnabled()
+                || ! $permission->shouldGenerateMiddleware()
+            ) {
+                continue;
+            }
+
+            $permissionName = 'permission:' . $permission->permission();
+
+            match ($permission->action()) {
+                'view' => $middleware[] =
+                    "->middlewareFor(['index', 'show'], '{$permissionName}')",
+
+                'create' => $middleware[] =
+                    "->middlewareFor(['create', 'store'], '{$permissionName}')",
+
+                'update' => $middleware[] =
+                    "->middlewareFor(['edit', 'update'], '{$permissionName}')",
+
+                'delete' => $middleware[] =
+                    "->middlewareFor('destroy', '{$permissionName}')",
+
+                default => null,
+            };
+        }
+
+        return $middleware === []
+            ? ''
+            : PHP_EOL . implode(PHP_EOL, $middleware);
     }
 
     /**
@@ -105,9 +136,8 @@ final class RouteBuilder
      *
      * @param array<int,string> $middlewares
      */
-    private function formatMiddleware(
-        array $middlewares
-    ): string {
+    private function formatMiddleware(array $middlewares): string
+    {
         if ($middlewares === []) {
             return '';
         }

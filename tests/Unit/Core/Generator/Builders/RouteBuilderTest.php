@@ -107,6 +107,51 @@ final class RouteBuilderTest extends GeneratorTestCase
         );
     }
 
+    public function test_builds_crud_permissions_per_resource_method(): void
+    {
+        $module = $this->createModuleData([
+            'identity' => [
+                'name' => 'Institution',
+                'singular' => 'institution',
+                'plural' => 'institutions',
+                'table' => 'institutions',
+                'description' => 'Institution module',
+            ],
+            'generation' => [
+                'routePrefix' => 'admin/institutions',
+                'routeName'   => 'admin.institutions',
+                'viewPrefix'  => 'institutions',
+            ],
+            'security' => [
+                'permissions' => true,
+            ],
+        ]);
+
+        $builder = $this->createBuilder();
+
+        $variables = $builder->build($module);
+
+        $this->assertStringContainsString(
+            "->middlewareFor(['index', 'show'], 'permission:institution.view')",
+            $variables['middleware']
+        );
+
+        $this->assertStringContainsString(
+            "->middlewareFor(['create', 'store'], 'permission:institution.create')",
+            $variables['middleware']
+        );
+
+        $this->assertStringContainsString(
+            "->middlewareFor(['edit', 'update'], 'permission:institution.update')",
+            $variables['middleware']
+        );
+
+        $this->assertStringContainsString(
+            "->middlewareFor('destroy', 'permission:institution.delete')",
+            $variables['middleware']
+        );
+    }
+
     private function createBuilder(): RouteBuilder
     {
         return new RouteBuilder(
