@@ -32,13 +32,6 @@ final class ModuleDataFactory
 {
     private PathResolverInterface $paths;
 
-    /**
-     * Summary of migrationOffset
-     * @var int
-     */
-    private int $migrationOffset = 0;
-
-
     public function __construct(
         ?PathResolverInterface $paths = null
     ) {
@@ -70,7 +63,7 @@ final class ModuleDataFactory
         $options = $this->buildOptions($generation);
 
         $permissionMatrix = PermissionMatrixFactory::build(
-            $name,
+            $identity['plural'],
             $options['custom_permissions'] ?? [],
         );
 
@@ -139,7 +132,9 @@ final class ModuleDataFactory
 
             seederNamespace: $namespaces['seederNamespace'],
 
-            testNamespace: $namespaces['testNamespace'],
+            featureTestNamespace: $namespaces['featureTestNamespace'],
+
+            unitTestNamespace: $namespaces['unitTestNamespace'],
 
             observerNamespace: $namespaces['observerNamespace'],
 
@@ -226,8 +221,6 @@ final class ModuleDataFactory
             unitTestPath: $paths['unitTestPath'],
 
             observerPath: $paths['observerPath'],
-
-            moduleManifestPath: $paths['moduleManifestPath'],
 
             middlewarePath: $paths['middlewarePath'],
 
@@ -581,13 +574,13 @@ final class ModuleDataFactory
 
             'actionNamespace' => "App\\Modules\\{$name}\\Actions",
 
-            'bindingNamespace' => 'App\\Providers',
-
             'factoryNamespace' => 'Database\\Factories',
 
             'seederNamespace' => 'Database\\Seeders',
 
-            'testNamespace' => 'Tests\\Feature',
+            'featureTestNamespace' => 'Tests\\Feature',
+
+            'unitTestNamespace' => 'Tests\\Unit',
         ];
     }
 
@@ -673,12 +666,12 @@ final class ModuleDataFactory
             ),
 
             'featureTestPath'
-            => $this->paths->app(
+            => $this->paths->base(
                 "tests/Feature/{$name}FeatureTest.php"
             ),
 
             'unitTestPath'
-            => $this->paths->app(
+            => $this->paths->base(
                 "tests/Unit/{$name}UnitTest.php"
             ),
 
@@ -686,11 +679,6 @@ final class ModuleDataFactory
             => $this->paths->app(
                 "Modules/{$name}/Observers/{$name}Observer.php"
             ),
-
-            'moduleManifestPath'
-            => $this->paths->app(
-                "modules/{$name}.json"
-            ), // o la ruta que hayas definido para el manifiesto
 
             // NUEVO
             'middlewarePath' => $this->paths->app(

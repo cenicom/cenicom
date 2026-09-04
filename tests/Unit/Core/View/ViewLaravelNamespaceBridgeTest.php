@@ -65,14 +65,14 @@ final class ViewLaravelNamespaceBridgeTest extends TestCase
 
         self::assertSame(
             'app/Modules/Institution/resources/views',
-            $registry->path('institution'),
+            $registry->path('institutions'),
         );
 
         self::assertSame(
             'institution-view-bridge-ok',
             trim(
                 $views
-                    ->make('institution::bridge-test')
+                    ->make('institutions::bridge-test')
                     ->render()
             ),
         );

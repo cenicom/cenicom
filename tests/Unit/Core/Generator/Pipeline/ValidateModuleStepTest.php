@@ -212,7 +212,8 @@ final class ValidateModuleStepTest extends TestCase
             repositoryContractNamespace: $module->repositoryContractNamespace(),
             serviceContractNamespace: $module->serviceContractNamespace(),
             seederNamespace: $module->seederNamespace(),
-            testNamespace: $module->testNamespace(),
+            featureTestNamespace: $module->featureTestNamespace(),
+            unitTestNamespace: $module->unitTestNamespace(),
             observerNamespace: $module->observerNamespace(),
             permissionNamespace: $module->permissionNamespace(),
             middlewareNamespace: $module->middlewareNamespace(),
@@ -252,7 +253,7 @@ final class ValidateModuleStepTest extends TestCase
             featureTestPath: $module->featureTestPath(),
             unitTestPath: $module->unitTestPath(),
             observerPath: $module->observerPath(),
-            moduleManifestPath: $module->moduleManifestPath(),
+
             middlewarePath: $module->middlewarePath(),
             permissionPath: $module->permissionPath(),
             actionPath: $module->actionPath(),

@@ -13,7 +13,7 @@ final class InstitutionView implements ViewDefinitionInterface
         ViewRegistrarInterface $views
     ): void {
         $views->register(
-            'institution',
+            'institutions',
             'app/Modules/Institution/resources/views',
         );
     }

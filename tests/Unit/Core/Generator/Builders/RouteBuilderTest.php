@@ -132,22 +132,22 @@ final class RouteBuilderTest extends GeneratorTestCase
         $variables = $builder->build($module);
 
         $this->assertStringContainsString(
-            "->middlewareFor(['index', 'show'], 'permission:institution.view')",
+            "->middlewareFor(['index', 'show'], 'permission:institutions.view')",
             $variables['middleware']
         );
 
         $this->assertStringContainsString(
-            "->middlewareFor(['create', 'store'], 'permission:institution.create')",
+            "->middlewareFor(['create', 'store'], 'permission:institutions.create')",
             $variables['middleware']
         );
 
         $this->assertStringContainsString(
-            "->middlewareFor(['edit', 'update'], 'permission:institution.update')",
+            "->middlewareFor(['edit', 'update'], 'permission:institutions.update')",
             $variables['middleware']
         );
 
         $this->assertStringContainsString(
-            "->middlewareFor('destroy', 'permission:institution.delete')",
+            "->middlewareFor('destroy', 'permission:institutions.delete')",
             $variables['middleware']
         );
     }

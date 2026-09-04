@@ -90,7 +90,7 @@ final class MiddlewareBuilderTest extends GeneratorTestCase
         $variables = $builder->build($module);
 
         self::assertStringContainsString(
-            "can('currency.view')",
+            "can('currencies.view')",
             $variables['methods'],
         );
 

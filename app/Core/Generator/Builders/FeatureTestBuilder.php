@@ -14,7 +14,7 @@ final class FeatureTestBuilder
     public function build(ModuleData $module): array
     {
         return [
-            'namespace' => $module->testNamespace(),
+            'namespace' => $module->featureTestNamespace(),
             'featureTest' => $module->featureTestClass(),
             'model' => $module->modelClass(),
             'qualifiedModel' => $module->qualifiedModel(),

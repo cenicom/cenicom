@@ -18,7 +18,6 @@ use App\Core\Generator\Generators\MiddlewareGenerator;
 use App\Core\Generator\Generators\MigrationGenerator;
 use App\Core\Generator\Generators\ModelGenerator;
 use App\Core\Generator\Generators\ModuleGenerator;
-use App\Core\Generator\Generators\ModuleManifestGenerator;
 use App\Core\Generator\Generators\ObserverGenerator;
 use App\Core\Generator\Generators\PermissionGenerator;
 use App\Core\Generator\Generators\PolicyGenerator;
@@ -150,7 +149,6 @@ final class CNGeneratorServiceProvider extends ServiceProvider
 
                     $app->make(ViewGenerator::class),
 
-                    $app->make(ModuleManifestGenerator::class),
 
                     $app->make(ModelGenerator::class),
 

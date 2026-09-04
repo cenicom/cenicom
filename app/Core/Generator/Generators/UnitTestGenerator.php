@@ -58,7 +58,7 @@ final class UnitTestGenerator extends BaseGenerator
         return [
 
             'namespace'
-            => $module->testNamespace(),
+            => $module->unitTestNamespace(),
 
             'unitTest'
             => $module->unitTestClass(),

@@ -384,4 +384,33 @@ final class ModuleDataFactoryTest extends TestCase
             str_replace('\\', '/', $module->permissionPath())
         );
     }
+
+    public function test_builds_permission_matrix_using_module_plural(): void
+    {
+        $module = $this->factory->create([
+            'identity' => [
+                'name' => 'Currency',
+                'singular' => 'currency',
+                'plural' => 'currencies',
+                'table' => 'currencies',
+                'description' => 'Currency module',
+            ],
+            'fields' => [],
+        ]);
+
+        $permissions = array_map(
+            static fn($permission): string => $permission->permission(),
+            $module->permissionMatrix()->permissions(),
+        );
+
+        self::assertSame(
+            [
+                'currencies.view',
+                'currencies.create',
+                'currencies.update',
+                'currencies.delete',
+            ],
+            $permissions,
+        );
+    }
 }

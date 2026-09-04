@@ -20,7 +20,7 @@ final class InstitutionViewTest extends TestCase
             ->expects($this->once())
             ->method('register')
             ->with(
-                'institution',
+                'institutions',
                 'app/Modules/Institution/resources/views',
             );
 

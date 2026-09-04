@@ -81,6 +81,10 @@ final class PermissionGeneratorTest extends GeneratorTestCase
         $module = $this->createModuleData([
             'identity' => [
                 'name' => 'Currency',
+                'singular' => 'currency',
+                'plural' => 'currencies',
+                'table' => 'currencies',
+                'description' => 'Currency module',
             ],
             'generation' => [
                 'permissions' => true,
@@ -115,6 +119,46 @@ final class PermissionGeneratorTest extends GeneratorTestCase
 
         self::assertStringContainsString(
             'toArray(): array',
+            $content,
+        );
+
+        self::assertStringContainsString(
+            "public const VIEW = 'currencies.view';",
+            $content,
+        );
+
+        self::assertStringContainsString(
+            "public const CREATE = 'currencies.create';",
+            $content,
+        );
+
+        self::assertStringContainsString(
+            "public const UPDATE = 'currencies.update';",
+            $content,
+        );
+
+        self::assertStringContainsString(
+            "public const DELETE = 'currencies.delete';",
+            $content,
+        );
+
+        self::assertStringContainsString(
+            "'permission' => 'currencies.view'",
+            $content,
+        );
+
+        self::assertStringContainsString(
+            "'permission' => 'currencies.create'",
+            $content,
+        );
+
+        self::assertStringContainsString(
+            "'permission' => 'currencies.update'",
+            $content,
+        );
+
+        self::assertStringContainsString(
+            "'permission' => 'currencies.delete'",
             $content,
         );
     }

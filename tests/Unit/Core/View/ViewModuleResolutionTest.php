@@ -126,7 +126,7 @@ final class ViewModuleResolutionTest extends TestCase
         );
 
         $rendered = $views
-            ->make('institution::bridge-test')
+            ->make('institutions::bridge-test')
             ->render();
 
         self::assertSame(

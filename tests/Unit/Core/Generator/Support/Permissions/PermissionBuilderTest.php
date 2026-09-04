@@ -104,4 +104,56 @@ final class PermissionBuilderTest extends GeneratorTestCase
             $variables['permissionArray'],
         );
     }
+
+    /**
+     * Summary of test_preserves_plural_crud_permissions_from_module_data
+     * @return void
+     */
+    public function test_preserves_plural_crud_permissions_from_module_data(): void
+    {
+        $module = $this->createModuleData([
+            'identity' => [
+                'name' => 'Currency',
+                'singular' => 'currency',
+                'plural' => 'currencies',
+                'table' => 'currencies',
+                'description' => 'Currency module',
+            ],
+            'permissions' => true,
+        ]);
+
+        $builder = new PermissionBuilder();
+
+        $variables = $builder->build($module);
+
+        self::assertStringContainsString(
+            "public const VIEW = 'currencies.view';",
+            $variables['constants'],
+        );
+
+        self::assertStringContainsString(
+            "'permission' => 'currencies.view'",
+            $variables['permissionDefinitions'],
+        );
+
+        self::assertStringContainsString(
+            "'permission' => 'currencies.view'",
+            $variables['permissionArray'],
+        );
+
+        self::assertStringContainsString(
+            "public const CREATE = 'currencies.create';",
+            $variables['constants'],
+        );
+
+        self::assertStringContainsString(
+            "public const UPDATE = 'currencies.update';",
+            $variables['constants'],
+        );
+
+        self::assertStringContainsString(
+            "public const DELETE = 'currencies.delete';",
+            $variables['constants'],
+        );
+    }
 }

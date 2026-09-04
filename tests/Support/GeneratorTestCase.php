@@ -6,7 +6,8 @@ namespace Tests\Support;
 
 use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\Factories\ModuleDataFactory;
-use App\Core\Generator\Support\PathResolver;
+//use App\Core\Generator\Support\PathResolver;
+use Tests\Support\SandboxPathResolver;
 use Tests\TestCase;
 
 /**
@@ -68,11 +69,8 @@ abstract class GeneratorTestCase extends TestCase
         mkdir($this->databasePath(), 0777, true);
         mkdir($this->routesPath(), 0777, true);
 
-        $paths = new PathResolver(
-            appBase: $this->appPath(),
-            resourceBase: $this->resourcesPath(),
-            databaseBase: $this->databasePath(),
-            routesBase: $this->routesPath(),
+        $paths = new SandboxPathResolver(
+            $this->sandboxPath
         );
 
         $this->moduleDataFactory =

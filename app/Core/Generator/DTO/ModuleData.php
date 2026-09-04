@@ -64,7 +64,9 @@ readonly class ModuleData
 
     private string $seederNamespace;
 
-    private string $testNamespace;
+    private string $featureTestNamespace;
+
+    private string $unitTestNamespace;
 
     private string $observerNamespace;
 
@@ -154,8 +156,6 @@ readonly class ModuleData
 
     private string $observerPath;
 
-    private string $moduleManifestPath;
-
     private string $repositoryInterfacePath;
 
     private string $serviceInterfacePath;
@@ -241,7 +241,8 @@ readonly class ModuleData
         string $repositoryContractNamespace,
         string $serviceContractNamespace,
         string $seederNamespace,
-        string $testNamespace,
+        string $featureTestNamespace,
+        string $unitTestNamespace,
         string $observerNamespace,
         string $permissionNamespace,
         string $middlewareNamespace,
@@ -281,7 +282,6 @@ readonly class ModuleData
         string $featureTestPath,
         string $unitTestPath,
         string $observerPath,
-        string $moduleManifestPath,
         string $middlewarePath,
         string $permissionPath,
         string $actionPath,
@@ -325,7 +325,8 @@ readonly class ModuleData
         $this->policyNamespace = $policyNamespace;
         $this->factoryNamespace = $factoryNamespace;
         $this->seederNamespace = $seederNamespace;
-        $this->testNamespace = $testNamespace;
+        $this->featureTestNamespace = $featureTestNamespace;
+        $this->unitTestNamespace = $unitTestNamespace;
         $this->observerNamespace = $observerNamespace;
         $this->permissionNamespace = $permissionNamespace;
         $this->actionNamespace = $actionNamespace;
@@ -364,7 +365,6 @@ readonly class ModuleData
         $this->featureTestPath = $featureTestPath;
         $this->unitTestPath = $unitTestPath;
         $this->observerPath = $observerPath;
-        $this->moduleManifestPath = $moduleManifestPath;
         $this->middlewarePath = $middlewarePath;
         $this->permissionPath = $permissionPath;
         $this->actionPath = $actionPath;
@@ -497,9 +497,14 @@ readonly class ModuleData
         return $this->seederNamespace;
     }
 
-    public function testNamespace(): string
+    public function featureTestNamespace(): string
     {
-        return $this->testNamespace;
+        return $this->featureTestNamespace;
+    }
+
+    public function unitTestNamespace(): string
+    {
+        return $this->unitTestNamespace;
     }
 
     public function observerNamespace(): string
@@ -707,11 +712,6 @@ readonly class ModuleData
         return $this->observerPath;
     }
 
-    public function moduleManifestPath(): string
-    {
-        return $this->moduleManifestPath;
-    }
-
     public function repositoryInterfacePath(): string
     {
 
@@ -891,12 +891,12 @@ readonly class ModuleData
 
     public function qualifiedFeatureTest(): string
     {
-        return "{$this->testNamespace()}\\{$this->featureTestClass()}";
+        return "{$this->featureTestNamespace()}\\{$this->featureTestClass()}";
     }
 
     public function qualifiedUnitTest(): string
     {
-        return "{$this->testNamespace()}\\{$this->unitTestClass()}";
+        return "{$this->unitTestNamespace()}\\{$this->unitTestClass()}";
     }
 
     public function qualifiedObserver(): string
@@ -1186,7 +1186,6 @@ readonly class ModuleData
             dirname($this->featureTestPath),
             dirname($this->unitTestPath),
             dirname($this->observerPath),
-            dirname($this->moduleManifestPath),
             dirname($this->repositoryInterfacePath),
             dirname($this->serviceInterfacePath),
             dirname($this->permissionPath),

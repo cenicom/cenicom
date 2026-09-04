@@ -25,7 +25,7 @@ final class FeatureTestBuilderTest extends TestCase
         $this->assertArrayHasKey('viewPrefix', $variables);
 
         $this->assertSame(
-            $module->testNamespace(),
+            $module->featureTestNamespace(),
             $variables['namespace']
         );
 
