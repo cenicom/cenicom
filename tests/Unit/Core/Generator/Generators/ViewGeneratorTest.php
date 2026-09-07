@@ -181,6 +181,22 @@ final class ViewGeneratorTest extends GeneratorTestCase
             $index
         );
 
+        $tbody = substr(
+            $index,
+            strpos($index, '<tbody>'),
+            strpos($index, '</tbody>') - strpos($index, '<tbody>')
+        );
+
+        $this->assertStringContainsString(
+            '<td>',
+            $tbody
+        );
+
+        $this->assertStringNotContainsString(
+            '<th>',
+            $tbody
+        );
+
         $this->assertStringContainsString(
             'Crear currency',
             $create
@@ -197,7 +213,7 @@ final class ViewGeneratorTest extends GeneratorTestCase
         );
 
         $this->assertStringContainsString(
-            '<x-cn.group columns="2">',
+            '<x-cn.forms.group columns="2">',
             $form
         );
 
@@ -272,22 +288,22 @@ final class ViewGeneratorTest extends GeneratorTestCase
         );
 
         $this->assertStringContainsString(
-            "method=\"POST\"",
-            $content
-        );
-
-        $this->assertStringContainsString(
-            '@csrf',
-            $content
-        );
-
-        $this->assertStringContainsString(
-            "@method('PUT')",
+            'method="PUT"',
             $content
         );
 
         $this->assertStringNotContainsString(
             "route('currencies.store')",
+            $content
+        );
+
+        $this->assertStringNotContainsString(
+            '@csrf',
+            $content
+        );
+
+        $this->assertStringNotContainsString(
+            "@method('PUT')",
             $content
         );
     }

@@ -29,6 +29,9 @@ final class ModuleDefinitionFactory
 
             ...$this->buildFields($specification),
 
+            'navigation'
+            => $specification->navigation(),
+
             'generation'
             => $this->buildGeneration($specification),
 

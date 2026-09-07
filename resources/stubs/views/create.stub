@@ -40,7 +40,7 @@
                     @include('[[ routePrefix ]]._form')
 
                     {{-- Actions --}}
-                    <x-cn.actions>
+                    <x-cn-form-actions>
                         {{-- Guardar --}}
                         <x-cn.button type="submit">
                             Guardar
@@ -49,7 +49,7 @@
                         <x-cn.button :href="route('[[ routePrefix ]].index')" variant="secondary">
                             Regresar
                         </x-cn.button>
-                    </x-cn.actions>
+                    </x-cn-form-actions>
                 </x-cn.form>
             </div>
         </section>

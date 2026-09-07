@@ -86,15 +86,6 @@ final readonly class ColumnPresenter implements PresentationInterface
     }
 
     /**
-     * Construye el placeholder sugerido.
-     */
-    private function buildPlaceholder(): string
-    {
-        return 'Enter ' . $this->buildLabel();
-    }
-
-
-    /**
      * Construye los metadatos del componente.
      */
     private function buildComponent(): ComponentMetadata

@@ -3,8 +3,8 @@
      CN Generator - Export View
 ========================================================== --}}
 
-<x-cn.layout>
+<x-layout.app>
 
     <h1>Export [[ plural ]]</h1>
 
-</x-cn.layout>
+</x-layout.app>

@@ -141,8 +141,8 @@ final class ComponentResolverTest extends TestCase
             'type' => 'time',
         ]);
 
-        self::assertSame('time', $metadata->component);
-        self::assertSame('x-cn.time', $metadata->bladeComponent);
+        self::assertSame('input', $metadata->component);
+        self::assertSame('x-cn.input', $metadata->bladeComponent);
     }
 
     public function test_resolves_datetime_as_datetime_component(): void

@@ -78,6 +78,10 @@ final readonly class ComponentResolver
 
             InputType::TEXT => 'input',
 
+            InputType::EMAIL => 'email',
+
+            InputType::PASSWORD => 'password',
+
             InputType::NUMBER => 'number',
 
             InputType::TEXTAREA => 'textarea',
@@ -88,7 +92,7 @@ final readonly class ComponentResolver
 
             InputType::DATE => 'date',
 
-            InputType::TIME => 'time',
+            InputType::TIME => 'input',
 
             InputType::DATETIME_LOCAL => 'datetime',
 
@@ -126,10 +130,10 @@ final readonly class ComponentResolver
         return match ($this->column->inputType()) {
 
             InputType::TEXTAREA
-                => ComponentMetadata::COL_FULL,
+            => ComponentMetadata::COL_FULL,
 
             default
-                => ComponentMetadata::COL_HALF,
+            => ComponentMetadata::COL_HALF,
         };
     }
 
@@ -157,31 +161,37 @@ final readonly class ComponentResolver
         return match ($this->column->inputType()) {
 
             InputType::TEXT
-                => 'bi-type',
+            => 'bi-type',
+
+            InputType::EMAIL
+            => 'bi-envelope',
+
+            InputType::PASSWORD
+            => 'bi-key',
 
             InputType::NUMBER
-                => 'bi-123',
+            => 'bi-123',
 
             InputType::TEXTAREA
-                => 'bi-card-text',
+            => 'bi-card-text',
 
             InputType::SELECT
-                => 'bi-list',
+            => 'bi-list',
 
             InputType::CHECKBOX
-                => 'bi-check-square',
+            => 'bi-check-square',
 
             InputType::DATE
-                => 'bi-calendar',
+            => 'bi-calendar',
 
             InputType::TIME
-                => 'bi-clock',
+            => 'bi-clock',
 
             InputType::DATETIME_LOCAL
-                => 'bi-calendar-event',
+            => 'bi-calendar-event',
 
             default
-                => 'bi-input-cursor-text',
+            => 'bi-input-cursor-text',
         };
     }
 

@@ -60,9 +60,14 @@ final class ViewBuilder
                     $formFields
                 ),
 
-                'table_columns' => $this->tableRenderer->render(
-                    $table
+                'table_columns' => $this->tableRenderer
+                                        ->render($table),
+
+                'table_cells' => $this->tableRenderer->renderCells(
+                    $table,
+                    $module->variable(),
                 ),
+
 
                 'columns' => $this->showRenderer->render(
                     $show
@@ -106,7 +111,7 @@ final class ViewBuilder
             'columnCount' => count(
                 array_filter(
                     $module->columns(),
-                    fn ($column) => $column->shouldAppearInTable()
+                    fn($column) => $column->shouldAppearInTable()
                 )
             ) + 1,
         ];

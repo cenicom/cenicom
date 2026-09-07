@@ -48,6 +48,8 @@ final readonly class ComponentRenderer
 
     private const STUB_DATE = 'components/form/date.stub';
 
+    private const STUB_DATETIME = 'components/form/datetime.stub';
+
     private const STUB_NUMBER = 'components/form/number.stub';
 
     private const STUB_EMAIL = 'components/form/email.stub';
@@ -92,6 +94,8 @@ final readonly class ComponentRenderer
             'checkbox' => $this->renderCheckbox($input),
 
             'date' => $this->renderDate($input),
+
+            'datetime' => $this->renderDateTime($input),
 
             'number' => $this->renderNumber($input),
 
@@ -155,6 +159,15 @@ final readonly class ComponentRenderer
     ): string {
         return $this->renderStub(
             self::STUB_DATE,
+            $this->variables($input),
+        );
+    }
+
+    private function renderDateTime(
+        InputPresentation $input,
+    ): string {
+        return $this->renderStub(
+            self::STUB_DATETIME,
             $this->variables($input),
         );
     }

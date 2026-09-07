@@ -56,6 +56,28 @@ final readonly class TableRenderer
         );
     }
 
+    public function renderCells(
+        TablePresentation $table,
+        string $variable,
+    ): string {
+
+        $cells = [];
+
+        foreach ($table->columns() as $column) {
+
+            $cells[] = sprintf(
+                '<td>{{ $%s->%s }}</td>',
+                $variable,
+                $column->name,
+            );
+        }
+
+        return implode(
+            PHP_EOL,
+            $cells,
+        );
+    }
+
     /**
      * Renderiza una columna.
      */

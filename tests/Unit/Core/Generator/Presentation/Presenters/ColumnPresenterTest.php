@@ -152,8 +152,8 @@ final class ColumnPresenterTest extends TestCase
             'type' => 'time',
         ]);
 
-        self::assertSame('time', $presentation->component->component);
-        self::assertSame('x-cn.time', $presentation->component->bladeComponent);
+            self::assertSame('input', $presentation->component->component);
+            self::assertSame('x-cn.input', $presentation->component->bladeComponent);
     }
 
     public function test_resolves_datetime_component(): void

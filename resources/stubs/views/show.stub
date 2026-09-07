@@ -30,13 +30,13 @@
 
             <div class="cn-card-body">
 
-                <x-cn.group columns="2">
+                <x-cn.forms.group columns="2">
 
                     [[ columns ]]
 
-                </x-cn.group>
+                </x-cn.forms.group>
 
-                <x-cn.actions justify="between">
+                <x-cn-form-actions>
 
                     <x-cn.button
                         :href="route('[[ routePrefix ]].edit', $[[ model ]])">
@@ -53,7 +53,7 @@
 
                     </x-cn.button>
 
-                </x-cn.actions>
+                </x-cn-form-actions>
 
             </div>
 

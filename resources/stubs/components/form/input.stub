@@ -9,6 +9,7 @@
 <div class="[[ column_class ]]">
     <x-cn.input
         name="[[ name ]]"
+        type="[[ type ]]"
         label="[[ label ]]"
         placeholder="[[ placeholder ]]"
     />
