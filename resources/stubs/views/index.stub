@@ -11,16 +11,16 @@
 
             {{-- Toolbar --}}
             <x-slot:toolbar>
-                <x-cn.toolbar>
+                <x-cn.crud.toolbar>
 
-                    <x-cn.filters :action="route('[[ routeName ]].index')">
+                    <x-cn.crud.filters :action="route('[[ routeName ]].index')">
                         {{-- filtros personalizados --}}
-                    </x-cn.filters>
+                    </x-cn.crud.filters>
 
                     <x-cn.button.create
                         :href="route('[[ routeName ]].create')" />
 
-                </x-cn.toolbar>
+                </x-cn.crud.toolbar>
             </x-slot:toolbar>
 
             {{-- Tabla principal --}}
@@ -56,7 +56,7 @@
                                     <x-cn.button.edit
                                         :href="route('[[ routeName ]].edit', $[[ model ]])" />
 
-                                    <x-cn.confirm
+                                    <x-cn.crud.confirm
                                         id="delete-[[ model ]]-{{ $[[ model ]]->id }}"
                                         title="Eliminar [[ singular ]]"
                                         message="¿Está seguro de eliminar este registro?">
@@ -78,7 +78,7 @@
 
                                         </form>
 
-                                    </x-cn.confirm>
+                                    </x-cn.crud.confirm>
 
                                 </x-cn.crud.actions>
 
@@ -109,7 +109,7 @@
             {{-- Footer --}}
             <x-slot:footer>
 
-                <x-cn.pagination
+                <x-cn.crud.pagination
                     :paginator="$[[ collection ]]" />
 
             </x-slot:footer>

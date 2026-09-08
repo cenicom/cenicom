@@ -190,6 +190,128 @@ final class ViewBuilderTest extends TestCase
         );
     }
 
+    public function test_build_excludes_auto_generated_fields_from_table(): void
+    {
+        $builder = $this->createBuilder();
+
+        $variables = $builder->build(
+            $this->moduleWithTableFields()
+        );
+
+        $this->assertStringContainsString(
+            '$currency->name',
+            $variables['table_cells']
+        );
+
+        $this->assertStringContainsString(
+            '$currency->description',
+            $variables['table_cells']
+        );
+
+        $this->assertStringNotContainsString(
+            '$currency->id',
+            $variables['table_cells']
+        );
+
+        $this->assertStringNotContainsString(
+            '$currency->created_at',
+            $variables['table_cells']
+        );
+
+        $this->assertStringNotContainsString(
+            '$currency->updated_at',
+            $variables['table_cells']
+        );
+
+        $this->assertStringNotContainsString(
+            'deleted_at',
+            $variables['table_columns']
+        );
+
+        $this->assertStringContainsString(
+            '$currency->name',
+            $variables['table_cells']
+        );
+
+        $this->assertStringContainsString(
+            '$currency->description',
+            $variables['table_cells']
+        );
+
+        $this->assertStringNotContainsString(
+            '$currency->id',
+            $variables['table_cells']
+        );
+
+        $this->assertStringNotContainsString(
+            '$currency->created_at',
+            $variables['table_cells']
+        );
+
+        $this->assertStringNotContainsString(
+            '$currency->updated_at',
+            $variables['table_cells']
+        );
+
+        $this->assertStringNotContainsString(
+            '$currency->deleted_at',
+            $variables['table_cells']
+        );
+
+        $this->assertSame(
+            3,
+            $variables['columnCount']
+        );
+    }
+
+    private function moduleWithTableFields(): ModuleData
+    {
+        return (new ModuleDataFactory())->create([
+            'identity' => [
+                'name' => 'Currency',
+                'singular' => 'currency',
+                'plural' => 'currencies',
+                'table' => 'currencies',
+                'description' => 'Currency module',
+            ],
+
+            'generation' => [
+                'routePrefix' => 'currencies',
+                'routeName' => 'currencies',
+                'viewPrefix' => 'currencies',
+            ],
+
+            'fields' => [
+                [
+                    'name' => 'id',
+                    'type' => 'id',
+                ],
+                [
+                    'name' => 'name',
+                    'type' => 'string',
+                ],
+                [
+                    'name' => 'created_at',
+                    'type' => 'dateTime',
+                ],
+                [
+                    'name' => 'updated_at',
+                    'type' => 'dateTime',
+                ],
+                [
+                    'name' => 'deleted_at',
+                    'type' => 'dateTime',
+                ],
+                [
+                    'name' => 'description',
+                    'type' => 'text',
+                ],
+            ],
+        ]);
+    }
+
+
+
     private function createBuilder(): ViewBuilder
     {
         return new ViewBuilder(

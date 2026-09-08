@@ -64,7 +64,7 @@ final class ViewLaravelNamespaceBridgeTest extends TestCase
         $bootstrapper->boot();
 
         self::assertSame(
-            'app/Modules/Institution/resources/views',
+            'app/Modules/Institution/Resources/Views',
             $registry->path('institutions'),
         );
 

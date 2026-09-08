@@ -324,6 +324,11 @@ final class ModuleDataFactoryTest extends TestCase
             'app/Modules/Currency/Domain/Contracts/CurrencyServiceInterface.php',
             str_replace('\\', '/', $module->serviceInterfacePath())
         );
+
+        self::assertStringEndsWith(
+            'app/Modules/Currency/Resources/Views',
+            str_replace('\\', '/', $module->viewPath())
+        );
     }
 
     public function test_preserves_custom_permissions_in_module_options(): void

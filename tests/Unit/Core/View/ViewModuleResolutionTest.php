@@ -118,8 +118,8 @@ final class ViewModuleResolutionTest extends TestCase
 
         self::assertSame(
             [
-                'institution' => [
-                    dirname(__DIR__, 4) . '/app/Modules/Institution/resources/views',
+                'institutions' => [
+                    dirname(__DIR__, 4) . '/app/Modules/Institution/Resources/Views',
                 ],
             ],
             $finder->getHints(),

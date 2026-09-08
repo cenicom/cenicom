@@ -8,6 +8,7 @@ use App\Support\Registries\NavigationRegistry;
 use App\Support\Registries\PermissionRegistry;
 use Illuminate\Support\ServiceProvider;
 use App\View\Components\Cn\Crud\Modal;
+use App\View\Components\Layouts\App;
 use Illuminate\Support\Facades\Blade;
 
 class CNFrameworkServiceProvider extends ServiceProvider
@@ -41,6 +42,11 @@ class CNFrameworkServiceProvider extends ServiceProvider
         Blade::component(
             'components.cn.crud.modal',
             Modal::class
+        );
+
+        Blade::component(
+            'layout.app',
+            App::class
         );
     }
 

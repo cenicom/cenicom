@@ -8,7 +8,7 @@ use App\Core\View\Contracts\ViewRegistrarInterface;
 use App\Core\View\Contracts\ViewRegistryInterface;
 use App\Core\View\Registrar\ViewRegistrar;
 use App\Core\View\ViewRegistry;
-use App\Core\Security\Authorization\Contracts\PermissionResolverInterface;
+//use App\Core\Security\Authorization\Contracts\PermissionResolverInterface;
 use App\View\Contracts\ViewAuthorizationInterface;
 use App\View\ViewAuthorization;
 use Tests\TestCase;
@@ -83,11 +83,11 @@ final class ViewContainerBindingsTest extends TestCase
 
         $registrar->register(
             'institutions',
-            'app/Modules/Institution/resources/views',
+            'app/Modules/Institution/Resources/Views',
         );
 
         self::assertSame(
-            'app/Modules/Institution/resources/views',
+            'app/Modules/Institution/Resources/Views',
             $registry->path('institutions'),
         );
     }

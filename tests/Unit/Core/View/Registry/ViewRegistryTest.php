@@ -26,11 +26,11 @@ final class ViewRegistryTest extends TestCase
 
         $registry->register(
             'institutions',
-            'app/Modules/Institution/resources/views',
+            'app/Modules/Institution/Resources/Views',
         );
 
         self::assertSame(
-            'app/Modules/Institution/resources/views',
+            'app/Modules/Institution/Resources/Views',
             $registry->path('institutions'),
         );
     }
@@ -50,18 +50,18 @@ final class ViewRegistryTest extends TestCase
 
         $registry->register(
             'institutions',
-            'app/Modules/Institution/resources/views',
+            'app/Modules/Institution/Resources/Views',
         );
 
         $registry->register(
             'inventory',
-            'app/Modules/Inventory/resources/views',
+            'app/Modules/Inventory/Resources/Views',
         );
 
         self::assertSame(
             [
-                'institutions' => 'app/Modules/Institution/resources/views',
-                'inventory' => 'app/Modules/Inventory/resources/views',
+                'institutions' => 'app/Modules/Institution/Resources/Views',
+                'inventory' => 'app/Modules/Inventory/Resources/Views',
             ],
             $registry->all(),
         );
@@ -73,7 +73,7 @@ final class ViewRegistryTest extends TestCase
 
         $registry->register(
             'institutions',
-            'app/Modules/Institution/resources/views',
+            'app/Modules/Institution/Resources/Views',
         );
 
         $this->expectException(\LogicException::class);
@@ -83,7 +83,7 @@ final class ViewRegistryTest extends TestCase
 
         $registry->register(
             'institutions',
-            'app/Modules/Institution/resources/custom-views',
+            'app/Modules/Institution/Resources/Views',
         );
     }
 
@@ -93,7 +93,7 @@ final class ViewRegistryTest extends TestCase
 
         $registry->register(
             'institutions',
-            'app/Modules/Institution/resources/views',
+            'app/Modules/Institution/Resources/Views',
         );
 
         $registry->clear();
@@ -114,7 +114,7 @@ final class ViewRegistryTest extends TestCase
 
         $registry->register(
             'institutions',
-            'app/Modules/Institution/resources/views',
+            'app/Modules/Institution/Resources/Views',
         );
 
         $this->expectException(\LogicException::class);
@@ -124,7 +124,7 @@ final class ViewRegistryTest extends TestCase
 
         $registry->register(
             'institutions',
-            'app/Modules/Institution/resources/views',
+            'app/Modules/Institution/Resources/Views',
         );
     }
 }

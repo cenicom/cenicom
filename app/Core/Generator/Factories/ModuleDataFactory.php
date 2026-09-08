@@ -641,8 +641,8 @@ final class ModuleDataFactory
             ),
 
             'viewPath'
-            => $this->paths->resource(
-                "views/{$plural}"
+            => $this->paths->app(
+                "Modules/{$name}/Resources/Views"
             ),
 
             'routePath'

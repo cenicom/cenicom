@@ -23,7 +23,7 @@ final class ViewRegistrarTest extends TestCase
             ->method('register')
             ->with(
                 'institutions',
-                'app/Modules/Institution/resources/views',
+                'app/Modules/Institution/Resources/Views',
             );
 
         $views = $this->createMock(
@@ -37,7 +37,7 @@ final class ViewRegistrarTest extends TestCase
 
         $registrar->register(
             'institutions',
-            'app/Modules/Institution/resources/views',
+            'app/Modules/Institution/Resources/Views',
         );
     }
 
@@ -73,7 +73,7 @@ final class ViewRegistrarTest extends TestCase
             ->method('register')
             ->with(
                 'institutions',
-                'app/Modules/Institution/resources/views',
+                'app/Modules/Institution/Resources/Views',
             );
 
         $views = $this->createMock(
@@ -85,7 +85,7 @@ final class ViewRegistrarTest extends TestCase
             ->method('replaceNamespace')
             ->with(
                 'institutions',
-                'app/Modules/Institution/resources/views',
+                'app/Modules/Institution/Resources/Views',
             );
 
         $registrar = new ViewRegistrar(
@@ -95,7 +95,7 @@ final class ViewRegistrarTest extends TestCase
 
         $registrar->register(
             'institutions',
-            'app/Modules/Institution/resources/views',
+            'app/Modules/Institution/Resources/Views',
         );
     }
 

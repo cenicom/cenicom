@@ -21,7 +21,7 @@ final class InstitutionViewTest extends TestCase
             ->method('register')
             ->with(
                 'institutions',
-                'app/Modules/Institution/resources/views',
+                'app/Modules/Institution/Resources/Views',
             );
 
         $definition = new InstitutionView();

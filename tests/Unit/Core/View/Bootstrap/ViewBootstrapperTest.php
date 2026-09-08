@@ -42,7 +42,7 @@ final class ViewBootstrapperTest extends TestCase
         );
 
         $this->assertSame(
-            'app/Modules/Institution/resources/views',
+            'app/Modules/Institution/Resources/Views',
             $registry->path('institutions'),
         );
     }

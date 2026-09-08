@@ -23,7 +23,7 @@ final class ViewRegistrarInterfaceTest extends TestCase
             }
         };
 
-        $path = 'app/Modules/Institution/resources/views';
+        $path = 'app/Modules/Institution/Resources/Views';
 
         $registrar->register(
             'institutions',

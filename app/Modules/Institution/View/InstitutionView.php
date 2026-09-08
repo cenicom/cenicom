@@ -14,7 +14,7 @@ final class InstitutionView implements ViewDefinitionInterface
     ): void {
         $views->register(
             'institutions',
-            'app/Modules/Institution/resources/views',
+            'app/Modules/Institution/Resources/Views',
         );
     }
 }
