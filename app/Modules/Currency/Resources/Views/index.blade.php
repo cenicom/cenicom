@@ -1,31 +1,27 @@
 <x-layout.app>
     <x-slot:title>
-        [[ title ]]
+        currencies
     </x-slot:title>
 
     <div class="cn-page">
 
         <x-cn.crud
-            title="[[ plural ]]"
-            subtitle="[[ description ]]">
+            title="currencies"
+            subtitle="Currency module">
 
             {{-- Toolbar --}}
             <x-slot:toolbar>
                 <x-cn.crud.toolbar>
 
+                    <x-cn.crud.filters :action="route('admin.currencies.index')">
+                        {{-- filtros personalizados --}}
+                    </x-cn.crud.filters>
+
                     <x-cn.button.create
-                        :href="route('[[ routeName ]].create')" />
+                        :href="route('admin.currencies.create')" />
 
                 </x-cn.crud.toolbar>
             </x-slot:toolbar>
-            {{-- Filters --}}
-            <x-slot:filters>
-
-                <x-cn.crud.filters :action="route('[[ routeName ]].index')">
-                    {{-- filtros personalizados --}}
-                </x-cn.crud.filters>
-
-            </x-slot:filters>
 
             {{-- Tabla principal --}}
             <x-cn.table>
@@ -33,7 +29,7 @@
                 <thead>
                     <tr>
 
-[[ table_columns ]]
+
 
                         <th class="text-center">
                             Acciones
@@ -44,35 +40,41 @@
 
                 <tbody>
 
-                    @forelse ($[[ collection ]] as $[[ model ]])
+                    @forelse ($currencies as $currency)
 
                         <tr>
 
-[[ table_cells ]]
+
 
                             <td class="text-center">
 
                                 <x-cn.crud.actions>
 
                                     <x-cn.button.show
-                                        :href="route('[[ routeName ]].show', $[[ model ]])" />
+                                        :href="route('admin.currencies.show', $currency)" />
 
                                     <x-cn.button.edit
-                                        :href="route('[[ routeName ]].edit', $[[ model ]])" />
+                                        :href="route('admin.currencies.edit', $currency)" />
 
                                     <x-cn.crud.confirm
-                                        id="delete-[[ model ]]-{{ $[[ model ]]->id }}"
-                                        form-id="delete-[[ model ]]-{{ $[[ model ]]->id }}-form"
-                                        title="Eliminar [[ singular ]]"
+                                        id="delete-currency-{{ $currency->id }}"
+                                        title="Eliminar currency"
                                         message="¿Está seguro de eliminar este registro?">
 
                                         <form
-                                            id="delete-[[ model ]]-{{ $[[ model ]]->id }}-form"
-                                            action="{{ route('[[ routeName ]].destroy', $[[ model ]]) }}"
+                                            action="{{ route('admin.currencies.destroy', $currency) }}"
                                             method="POST">
 
                                             @csrf
                                             @method('DELETE')
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger">
+
+                                                Confirmar
+
+                                            </button>
 
                                         </form>
 
@@ -88,7 +90,7 @@
 
                         <tr>
 
-                            <td colspan="[[ columnCount ]]">
+                            <td colspan="1">
 
                                 <x-cn.empty-state>
                                     No existen registros.
@@ -108,7 +110,7 @@
             <x-slot:footer>
 
                 <x-cn.crud.pagination
-                    :paginator="$[[ collection ]]" />
+                    :paginator="$currencies" />
 
             </x-slot:footer>
 

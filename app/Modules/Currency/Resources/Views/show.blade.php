@@ -1,7 +1,7 @@
 <x-layout.app>
 
     <x-slot:title>
-        Ver [[ singular ]]
+        Ver currency
     </x-slot>
 
     <div class="cn-page">
@@ -13,7 +13,7 @@
                 <div>
 
                     <h1>
-                        Detalle de [[ singular ]]
+                        Detalle de currency
                     </h1>
 
                     <p>
@@ -32,21 +32,21 @@
 
                 <x-cn.forms.group columns="2">
 
-                    [[ columns ]]
+                    
 
                 </x-cn.forms.group>
 
                 <x-cn-form-actions>
 
                     <x-cn.button
-                        :href="route('[[ routeName ]].edit', $[[ model ]])">
+                        :href="route('admin/currencies.edit', $currency)">
 
                         Actualizar
 
                     </x-cn.button>
 
                     <x-cn.button
-                        :href="route('[[ routeName ]].index')"
+                        :href="route('admin/currencies.index')"
                         variant="secondary">
 
                         Regresar

@@ -223,6 +223,104 @@ final class ViewGeneratorTest extends GeneratorTestCase
         );
     }
 
+    public function test_index_view_places_filters_in_crud_filters_slot(): void
+    {
+        $generator = $this->createGenerator();
+
+        $module = $this->createModuleData();
+
+        $generator->generate($module);
+
+        $index = file_get_contents(
+            $module->viewPath()
+                . DIRECTORY_SEPARATOR
+                . 'index.blade.php'
+        );
+
+        $this->assertNotFalse($index);
+
+        $toolbarStart = strpos($index, '<x-slot:toolbar>');
+        $toolbarEnd = strpos($index, '</x-slot:toolbar>');
+
+        $filtersSlot = strpos($index, '<x-slot:filters>');
+        $filtersSlotEnd = strpos($index, '</x-slot:filters>');
+
+        $this->assertNotFalse($toolbarStart);
+        $this->assertNotFalse($toolbarEnd);
+
+        $this->assertNotFalse($filtersSlot);
+        $this->assertNotFalse($filtersSlotEnd);
+
+        $toolbar = substr(
+            $index,
+            $toolbarStart,
+            $toolbarEnd - $toolbarStart
+        );
+
+        $filters = substr(
+            $index,
+            $filtersSlot,
+            $filtersSlotEnd - $filtersSlot
+        );
+
+        $this->assertStringContainsString(
+            '<x-cn.crud.toolbar>',
+            $toolbar
+        );
+
+        $this->assertStringNotContainsString(
+            '<x-cn.crud.filters',
+            $toolbar
+        );
+
+        $this->assertStringContainsString(
+            '<x-cn.crud.filters',
+            $filters
+        );
+    }
+
+    public function test_index_view_generates_confirm_with_associated_delete_form(): void
+    {
+        $generator = $this->createGenerator();
+
+        $module = $this->createModuleData();
+
+        $generator->generate($module);
+
+        $index = file_get_contents(
+            $module->viewPath()
+                . DIRECTORY_SEPARATOR
+                . 'index.blade.php'
+        );
+
+        $this->assertNotFalse($index);
+
+        $this->assertStringContainsString(
+            'form-id="delete-currency-{{ $currency->id }}-form"',
+            $index
+        );
+
+        $this->assertStringContainsString(
+            'id="delete-currency-{{ $currency->id }}-form"',
+            $index
+        );
+
+        $this->assertStringContainsString(
+            "route('currencies.destroy', \$currency)",
+            $index
+        );
+
+        $this->assertStringContainsString(
+            "@method('DELETE')",
+            $index
+        );
+
+        $this->assertStringNotContainsString(
+            '>Confirmar</button>',
+            $index
+        );
+    }
+
     public function test_write_errors_are_added_to_generator_result(): void
     {
         $fileWriter = $this->createMock(
@@ -305,6 +403,156 @@ final class ViewGeneratorTest extends GeneratorTestCase
         $this->assertStringNotContainsString(
             "@method('PUT')",
             $content
+        );
+    }
+
+    public function test_create_and_edit_views_use_view_prefix_for_form_include(): void
+    {
+        $generator = $this->createGenerator();
+
+        $module = $this->moduleDataFactory->create([
+            'identity' => [
+                'name' => 'Currency',
+                'singular' => 'currency',
+                'plural' => 'currencies',
+                'table' => 'currencies',
+                'description' => 'Currency module',
+            ],
+
+            'generation' => [
+                'routePrefix' => 'admin/currencies',
+                'routeName'   => 'admin.currencies',
+                'viewPrefix'  => 'backoffice.currencies',
+            ],
+        ]);
+
+        $generator->generate($module);
+
+        $viewPath = $module->viewPath();
+
+        $create = file_get_contents(
+            $viewPath . DIRECTORY_SEPARATOR . 'create.blade.php'
+        );
+
+        $edit = file_get_contents(
+            $viewPath . DIRECTORY_SEPARATOR . 'edit.blade.php'
+        );
+
+        $this->assertNotFalse($create);
+        $this->assertNotFalse($edit);
+
+        $this->assertStringContainsString(
+            "@include('backoffice.currencies._form')",
+            $create
+        );
+
+        $this->assertStringContainsString(
+            "@include('backoffice.currencies._form')",
+            $edit
+        );
+
+        $this->assertStringNotContainsString(
+            "@include('admin/currencies._form')",
+            $create
+        );
+
+        $this->assertStringNotContainsString(
+            "@include('admin/currencies._form')",
+            $edit
+        );
+    }
+
+    public function test_create_edit_and_show_views_use_route_name_for_named_routes(): void
+    {
+        $generator = $this->createGenerator();
+
+        $module = $this->moduleDataFactory->create([
+            'identity' => [
+                'name' => 'Currency',
+                'singular' => 'currency',
+                'plural' => 'currencies',
+                'table' => 'currencies',
+                'description' => 'Currency module',
+            ],
+
+            'generation' => [
+                'routePrefix' => 'admin/currencies',
+                'routeName' => 'admin.currencies',
+                'viewPrefix' => 'backoffice.currencies',
+            ],
+        ]);
+
+        $generator->generate($module);
+
+        $viewPath = $module->viewPath();
+
+        $create = file_get_contents(
+            $viewPath . DIRECTORY_SEPARATOR . 'create.blade.php'
+        );
+
+        $edit = file_get_contents(
+            $viewPath . DIRECTORY_SEPARATOR . 'edit.blade.php'
+        );
+
+        $show = file_get_contents(
+            $viewPath . DIRECTORY_SEPARATOR . 'show.blade.php'
+        );
+
+        $this->assertNotFalse($create);
+        $this->assertNotFalse($edit);
+        $this->assertNotFalse($show);
+
+        // CREATE
+        $this->assertStringContainsString(
+            "route('admin.currencies.store')",
+            $create
+        );
+
+        $this->assertStringNotContainsString(
+            "route('admin/currencies.store')",
+            $create
+        );
+
+        // EDIT
+        $this->assertStringContainsString(
+            "route('admin.currencies.update'",
+            $edit
+        );
+
+        $this->assertStringContainsString(
+            "route('admin.currencies.index')",
+            $edit
+        );
+
+        $this->assertStringNotContainsString(
+            "route('admin/currencies.update'",
+            $edit
+        );
+
+        $this->assertStringNotContainsString(
+            "route('admin/currencies.index')",
+            $edit
+        );
+
+        // SHOW
+        $this->assertStringContainsString(
+            "route('admin.currencies.edit'",
+            $show
+        );
+
+        $this->assertStringContainsString(
+            "route('admin.currencies.index')",
+            $show
+        );
+
+        $this->assertStringNotContainsString(
+            "route('admin/currencies.edit'",
+            $show
+        );
+
+        $this->assertStringNotContainsString(
+            "route('admin/currencies.index')",
+            $show
         );
     }
 

@@ -12,7 +12,7 @@
    Filters
    ============================================================================= */
 
-.cn-filters {
+.cn-crud__filters {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;

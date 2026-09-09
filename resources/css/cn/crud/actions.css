@@ -1,36 +1,11 @@
-/* ==========================================================================
-   CENICOM ERP
-   CN UI Framework
-   Component: Actions
-   ========================================================================== */
+/* CENICOM ERP
+ * CN UI Framework
+ * Component: x-cn.crud.actions
+ */
 
-/* ==========================================================================
-   Actions
-   ========================================================================== */
-
-.cn-actions {
+.cn-crud__actions {
     display: flex;
     align-items: center;
     justify-content: flex-end;
     gap: 0.5rem;
-}
-
-/* ==========================================================================
-   Variants
-   ========================================================================== */
-
-.cn-actions--start {
-    justify-content: flex-start;
-}
-
-.cn-actions--center {
-    justify-content: center;
-}
-
-.cn-actions--end {
-    justify-content: flex-end;
-}
-
-.cn-actions--between {
-    justify-content: space-between;
 }

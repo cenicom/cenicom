@@ -1,6 +1,6 @@
 <x-layout.app>
     <x-slot:title>
-        [[ title ]]
+        currencies
     </x-slot:title>
 
 
@@ -14,7 +14,7 @@
                 <div>
 
                     <h1>
-                        Crear [[ singular ]]
+                        Crear currency
                     </h1>
 
                     <p>
@@ -34,10 +34,10 @@
             <div class="cn-card-body">
 
 
-                <x-cn.form id="[[ singular ]]-form" :action="route('[[ routeName ]].store')" method="POST">
+                <x-cn.form id="currency-form" :action="route('admin/currencies.store')" method="POST">
 
 
-                    @include('[[ viewPrefix ]]._form')
+                    @include('backoffice.currencies._form')
 
                     {{-- Actions --}}
                     <x-cn-form-actions>
@@ -46,7 +46,7 @@
                             Guardar
                         </x-cn.button>
                         {{-- Regresar --}}
-                        <x-cn.button :href="route('[[ routeName ]].index')" variant="secondary">
+                        <x-cn.button :href="route('admin/currencies.index')" variant="secondary">
                             Regresar
                         </x-cn.button>
                     </x-cn-form-actions>

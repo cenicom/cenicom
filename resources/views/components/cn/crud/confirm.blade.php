@@ -8,16 +8,21 @@
 
     </x-slot:body>
 
-
     <x-slot:footer>
 
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+        <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal">
 
             {{ $cancelText }}
 
         </button>
 
-        <button type="button" class="btn btn-primary">
+        <button
+            type="submit"
+            form="{{ $formId }}"
+            class="btn btn-primary">
 
             {{ $confirmText }}
 

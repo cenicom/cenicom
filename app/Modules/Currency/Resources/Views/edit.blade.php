@@ -1,6 +1,6 @@
 <x-layout.app>
     <x-slot:title>
-        [[ title ]]
+        currencies
     </x-slot:title>
 
 
@@ -14,7 +14,7 @@
                 <div>
 
                     <h1>
-                        Editar [[ singular ]]
+                        Editar currency
                     </h1>
 
                     <p>
@@ -35,11 +35,11 @@
 
 
 <x-cn.form
-    id="[[ singular ]]-form"
-    :action="route('[[ routeName ]].update', $[[ model ]])"
+    id="currency-form"
+    :action="route('admin/currencies.update', $currency)"
     method="PUT"
 >
-    @include('[[ viewPrefix ]]._form')
+    @include('backoffice.currencies._form')
 
     <x-cn-form-actions>
         <x-cn.button type="submit">
@@ -47,7 +47,7 @@
         </x-cn.button>
 
         <x-cn.button
-            :href="route('[[ routeName ]].index')"
+            :href="route('admin/currencies.index')"
             variant="secondary"
         >
             Regresar

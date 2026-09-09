@@ -33,6 +33,7 @@ class Confirm extends Component
      */
     public function __construct(
         public string $id,
+        public string $formId,
         public string $title = 'Confirmar acción',
         public string $message = '¿Está seguro de continuar?',
         public string $confirmText = 'Confirmar',

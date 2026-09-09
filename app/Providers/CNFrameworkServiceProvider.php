@@ -9,6 +9,7 @@ use App\Support\Registries\PermissionRegistry;
 use Illuminate\Support\ServiceProvider;
 use App\View\Components\Cn\Crud\Modal;
 use App\View\Components\Layouts\App;
+use App\View\Components\Cn\FormActions;
 use Illuminate\Support\Facades\Blade;
 
 class CNFrameworkServiceProvider extends ServiceProvider
@@ -47,6 +48,11 @@ class CNFrameworkServiceProvider extends ServiceProvider
         Blade::component(
             'layout.app',
             App::class
+        );
+
+        Blade::component(
+            'cn-form-actions',
+            FormActions::class
         );
     }
 

@@ -222,4 +222,18 @@ final class ModalComponentTest extends TestCase
             false
         );
     }
+
+    public function test_title_generates_bootstrap_close_button(): void
+    {
+        $view = $this->blade(
+            '<x-cn.crud.modal
+            id="test-modal"
+            title="Confirmar acción"
+        />'
+        );
+
+        $view->assertSee('class="btn-close"', false);
+        $view->assertSee('data-bs-dismiss="modal"', false);
+        $view->assertSee('aria-label="Cerrar"', false);
+    }
 }
