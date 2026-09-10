@@ -18,6 +18,6 @@ class Button extends Component
 
     public function render(): View|Closure|string
     {
-        return view('components.ui.button');
+        return view('components.cn.button.button');
     }
 }

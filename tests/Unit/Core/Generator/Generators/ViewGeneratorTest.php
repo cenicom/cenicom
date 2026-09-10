@@ -213,6 +213,31 @@ final class ViewGeneratorTest extends GeneratorTestCase
         );
 
         $this->assertStringContainsString(
+            '<x-cn.forms.field>',
+            $show
+        );
+
+        $this->assertStringContainsString(
+            '<x-cn.forms.label>',
+            $show
+        );
+
+        $this->assertStringContainsString(
+            '<x-cn.forms.field>',
+            $show
+        );
+
+        $this->assertStringContainsString(
+            '<x-cn.forms.label>',
+            $show
+        );
+
+        $this->assertStringContainsString(
+            '<x-cn.forms.display :value="$currency->name" />',
+            $show
+        );
+
+        $this->assertStringContainsString(
             '<x-cn.forms.group columns="2">',
             $form
         );

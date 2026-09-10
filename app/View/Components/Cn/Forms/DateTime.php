@@ -1,0 +1,62 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\View\Components\Cn\Forms;
+
+use Closure;
+use Illuminate\Contracts\View\View;
+
+/**
+ * -----------------------------------------------------------------------------
+ * CENICOM ERP
+ * CN UI Framework
+ * -----------------------------------------------------------------------------
+ *
+ * ID          : CN-FORMS-006
+ * Componente  : x-cn.datetime
+ * Categoría   : Forms
+ * Versión     : 1.0.0
+ * Estado      : Gold Standard
+ *
+ * Responsabilidad:
+ * Campo especializado para captura de fecha y hora local.
+ *
+ * Extiende:
+ * - x-cn.input
+ *
+ * @package App\View\Components\Cn\Forms
+ */
+
+class DateTime extends Input
+{
+    public function __construct(
+        string $name,
+        ?string $id = null,
+        mixed $value = null,
+        ?string $placeholder = null,
+        ?string $autocomplete = null,
+        bool $required = false,
+        bool $readonly = false,
+        bool $disabled = false,
+        bool $autofocus = false,
+    ) {
+        parent::__construct(
+            name: $name,
+            id: $id,
+            type: 'datetime-local',
+            value: $value,
+            placeholder: $placeholder,
+            autocomplete: $autocomplete,
+            required: $required,
+            readonly: $readonly,
+            disabled: $disabled,
+            autofocus: $autofocus,
+        );
+    }
+
+    public function render(): View|Closure|string
+    {
+        return view('components.cn.forms.datetime');
+    }
+}

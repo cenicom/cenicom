@@ -340,12 +340,35 @@ final class FormFieldProcessor
         string $variable
     ): string {
 
-        return sprintf(
-            "<%s\n    name=\"%s\"\n    label=\"%s\">\n\n    {{-- Opciones generadas posteriormente --}}\n\n</%s>",
+        $options = array_combine(
+            $field->enumValues(),
+            $field->enumValues(),
+        );
+
+        $attributes = [
+
+            'name' => $field->name(),
+
+            ':options' => var_export(
+                $options,
+                true
+            ),
+
+            ':value' => $this->value(
+                $field,
+                $variable
+            ),
+
+        ];
+
+        if ($this->isRequired($field)) {
+
+            $attributes['required'] = null;
+        }
+
+        return $this->component(
             $metadata->blade(),
-            $field->name(),
-            $this->label($field),
-            $metadata->blade()
+            $attributes
         );
     }
 

@@ -7,8 +7,14 @@
 
 <div class="[[ column_class ]]">
 
-    <x-cn.field
-        label="[[ label ]]"
-        :value="[[ binding ]]" />
+    <x-cn.forms.field>
+
+        <x-cn.forms.label>
+            [[ label ]]
+        </x-cn.forms.label>
+
+        <x-cn.forms.display :value="[[ binding ]]" />
+
+    </x-cn.forms.field>
 
 </div>

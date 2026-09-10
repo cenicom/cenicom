@@ -34,7 +34,7 @@
             <div class="cn-card-body">
 
 
-<x-cn.form
+<x-cn.forms.form
     id="[[ singular ]]-form"
     :action="route('[[ routeName ]].update', $[[ model ]])"
     method="PUT"
@@ -53,7 +53,7 @@
             Regresar
         </x-cn.button>
     </x-cn-form-actions>
-</x-cn.form>
+</x-cn.forms.form>
             </div>
         </section>
     </div>
