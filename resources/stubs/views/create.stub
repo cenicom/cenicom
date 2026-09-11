@@ -6,6 +6,12 @@
 
     <div class="cn-page">
 
+        <x-cn.navigation.breadcrumb :items="[
+            ['label' => 'Inicio', 'url' => '/', 'current' => false],
+            ['label' => '[[ plural ]]', 'url' => null, 'current' => false],
+            ['label' => 'Crear [[ singular ]]', 'url' => null, 'current' => true],
+        ]" />
+
 
         <header class="cn-page-header">
 

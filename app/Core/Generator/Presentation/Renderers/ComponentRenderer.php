@@ -56,10 +56,6 @@ final readonly class ComponentRenderer
 
     private const STUB_PASSWORD = 'components/form/password.stub';
 
-    private const STUB_COLUMN = 'components/table/column.stub';
-
-    private const STUB_FIELD = 'components/show/field.stub';
-
     /*
     |--------------------------------------------------------------------------
     | Constructor

@@ -8,6 +8,8 @@
 
 @import './forms.css';
 
-@import './table.css';
+@import './crud/table.css';
 
 @import './crud.css';
+
+@import './navigation/breadcrumb.css';

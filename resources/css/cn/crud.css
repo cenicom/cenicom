@@ -1,6 +1,7 @@
-@import '../crud/crud.css';
-@import '../crud/header.css';
-@import '../crud/toolbar.css';
-@import '../crud/filters.css';
-@import '../crud/actions.css';
-@import '../crud/table.css';
+@import './crud/crud.css';
+@import './crud/header.css';
+@import './crud/toolbar.css';
+@import './crud/filters.css';
+@import './crud/actions.css';
+@import './crud/table.css';
+@import './crud/datatables.css';

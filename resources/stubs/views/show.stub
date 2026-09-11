@@ -2,9 +2,15 @@
 
     <x-slot:title>
         Ver [[ singular ]]
-    </x-slot>
+    </x-slot:title>
 
     <div class="cn-page">
+
+        <x-cn.navigation.breadcrumb :items="[
+            ['label' => 'Inicio', 'url' => '/', 'current' => false],
+            ['label' => '[[ plural ]]', 'url' => null, 'current' => false],
+            ['label' => 'Detalle de [[ singular ]]', 'url' => null, 'current' => true],
+        ]" />
 
         <header class="cn-page-header">
 

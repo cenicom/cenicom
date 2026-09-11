@@ -14,5 +14,3 @@ Route::get('/', function () {
 foreach (glob(base_path('routes/modules/*.php')) as $routeFile) {
     require $routeFile;
 }
-
-Route::view('/__audit/datatable', '__audit.datatable');

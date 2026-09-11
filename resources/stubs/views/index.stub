@@ -5,6 +5,11 @@
 
     <div class="cn-page">
 
+        <x-cn.navigation.breadcrumb :items="[
+            ['label' => 'Inicio', 'url' => '/', 'current' => false],
+            ['label' => '[[ plural ]]', 'url' => null, 'current' => true],
+        ]" />
+
         <x-cn.crud
             title="[[ plural ]]"
             subtitle="[[ description ]]">
@@ -28,7 +33,7 @@
             </x-slot:filters>
 
             {{-- Tabla principal --}}
-            <x-cn.table>
+            <x-cn.table data-cn-datatable>
 
                 <thead>
                     <tr>

@@ -24,7 +24,7 @@
             </x-slot:toolbar>
 
             {{-- Tabla principal --}}
-            <x-cn.table>
+            <x-cn.table data-cn-datatable>
 
                 <thead>
                     <tr>
