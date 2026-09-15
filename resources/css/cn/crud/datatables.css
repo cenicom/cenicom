@@ -1,27 +1,28 @@
+/* =========================================================
+   CN UI — DataTables Buttons
+   ========================================================= */
+
 .cn-page .dt-buttons {
     display: flex;
     flex-wrap: wrap;
-    gap: .35rem;
+    gap: .5rem;
+    margin-bottom: .75rem;
 }
 
-.cn-page .dt-buttons .dt-button {
+.cn-page .dt-buttons .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
 
-    gap: .35rem;
+    gap: .4rem;
 
     min-height: 2.5rem;
     padding: .625rem 1rem;
 
+    border: 1px solid transparent;
     border-radius: var(--cn-radius-md);
 
-    border: 1px solid var(--cn-primary);
-
-    background: var(--cn-primary);
-    color: var(--cn-on-primary);
-
-    font-size: .875rem;
+    font-size: var(--cn-font-sm);
     font-weight: 500;
     line-height: 1;
 
@@ -37,24 +38,70 @@
         transform .1s ease;
 }
 
-.cn-page .dt-buttons .dt-button:hover {
+/* Copiar */
+.cn-page .dt-buttons .buttons-copy {
+    background: var(--cn-primary);
+    border-color: var(--cn-primary);
+    color: var(--cn-on-primary);
+}
+
+/* Excel */
+.cn-page .dt-buttons .buttons-excel {
+    background: var(--cn-success);
+    border-color: var(--cn-success);
+    color: var(--cn-on-success);
+}
+
+/* CSV */
+.cn-page .dt-buttons .buttons-csv {
+    background: var(--cn-info);
+    border-color: var(--cn-info);
+    color: var(--cn-on-info);
+}
+
+/* PDF */
+.cn-page .dt-buttons .buttons-pdf {
+    background: var(--cn-danger);
+    border-color: var(--cn-danger);
+    color: var(--cn-on-danger);
+}
+
+/* Imprimir */
+.cn-page .dt-buttons .buttons-print {
+    background: var(--cn-neutral);
+    border-color: var(--cn-neutral);
+    color: var(--cn-on-neutral);
+}
+
+/* Hover */
+.cn-page .dt-buttons .buttons-copy:hover {
     background: var(--cn-primary-hover);
     border-color: var(--cn-primary-hover);
     color: var(--cn-on-primary);
+}
+
+.cn-page .dt-buttons .buttons-excel:hover,
+.cn-page .dt-buttons .buttons-csv:hover,
+.cn-page .dt-buttons .buttons-pdf:hover,
+.cn-page .dt-buttons .buttons-print:hover {
+    filter: brightness(.92);
+}
+
+.cn-page .dt-buttons .btn:hover {
     transform: translateY(-1px);
 }
 
-.cn-page .dt-buttons .dt-button:active {
+.cn-page .dt-buttons .btn:active {
     transform: translateY(0);
 }
 
-.cn-page .dt-buttons .dt-button:focus-visible {
+.cn-page .dt-buttons .btn:focus-visible {
     outline: none;
     box-shadow: var(--cn-focus-ring);
 }
 
-.cn-page .dt-buttons .dt-button i {
-    font-size: .875rem;
+.cn-page .dt-buttons .btn i {
+    font-size: var(--cn-font-sm);
 }
 
 .cn-page .dt-search {

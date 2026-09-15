@@ -9,6 +9,9 @@
 <div class="[[ column_class ]]">
     <x-cn.select
         name="[[ name ]]"
+        :value="[[ value ]]"
         label="[[ label ]]"
+        placeholder="[[ placeholder ]]"
+        :required="[[ required ]]"
     />
 </div>

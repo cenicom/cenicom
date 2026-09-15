@@ -75,9 +75,8 @@ final readonly class ComponentRenderer
     /**
      * Renderiza un componente Blade a partir de un InputPresentation.
      */
-    public function render(
-        InputPresentation $input,
-    ): string {
+    public function render(InputPresentation $input): string
+    {
 
         return match ($input->component->component) {
 
@@ -114,81 +113,72 @@ final readonly class ComponentRenderer
     |--------------------------------------------------------------------------
     */
 
-    private function renderInput(
-        InputPresentation $input,
-    ): string {
+    private function renderInput(InputPresentation $input): string
+    {
         return $this->renderStub(
             self::STUB_INPUT,
             $this->variables($input),
         );
     }
 
-    private function renderTextarea(
-        InputPresentation $input,
-    ): string {
+    private function renderTextarea(InputPresentation $input): string
+    {
         return $this->renderStub(
             self::STUB_TEXTAREA,
             $this->variables($input),
         );
     }
 
-    private function renderSelect(
-        InputPresentation $input,
-    ): string {
+    private function renderSelect(InputPresentation $input): string
+    {
         return $this->renderStub(
             self::STUB_SELECT,
             $this->variables($input),
         );
     }
 
-    private function renderCheckbox(
-        InputPresentation $input,
-    ): string {
+    private function renderCheckbox(InputPresentation $input): string
+    {
         return $this->renderStub(
             self::STUB_CHECKBOX,
             $this->variables($input),
         );
     }
 
-    private function renderDate(
-        InputPresentation $input,
-    ): string {
+    private function renderDate(InputPresentation $input): string
+    {
         return $this->renderStub(
             self::STUB_DATE,
             $this->variables($input),
         );
     }
 
-    private function renderDateTime(
-        InputPresentation $input,
-    ): string {
+    private function renderDateTime(InputPresentation $input): string
+    {
         return $this->renderStub(
             self::STUB_DATETIME,
             $this->variables($input),
         );
     }
 
-    private function renderNumber(
-        InputPresentation $input,
-    ): string {
+    private function renderNumber(InputPresentation $input): string
+    {
         return $this->renderStub(
             self::STUB_NUMBER,
             $this->variables($input),
         );
     }
 
-    private function renderEmail(
-        InputPresentation $input,
-    ): string {
+    private function renderEmail(InputPresentation $input): string
+    {
         return $this->renderStub(
             self::STUB_EMAIL,
             $this->variables($input),
         );
     }
 
-    private function renderPassword(
-        InputPresentation $input,
-    ): string {
+    private function renderPassword(InputPresentation $input): string
+    {
         return $this->renderStub(
             self::STUB_PASSWORD,
             $this->variables($input),
@@ -204,10 +194,8 @@ final readonly class ComponentRenderer
     /**
      * Renderiza un stub utilizando StubManager.
      */
-    private function renderStub(
-        string $stub,
-        array $variables,
-    ): string {
+    private function renderStub(string $stub, array $variables): string
+    {
         return $this->stubManager->render(
             $stub,
             $variables,
@@ -219,9 +207,8 @@ final readonly class ComponentRenderer
      *
      * @return array<string,mixed>
      */
-    private function variables(
-        InputPresentation $input,
-    ): array {
+    private function variables(InputPresentation $input): array
+    {
 
         return [
 
@@ -239,7 +226,7 @@ final readonly class ComponentRenderer
 
             'placeholder' => $input->placeholder,
 
-            'default' => $input->default,
+            'value' => $this->serializeValue($input->default),
 
             /*
             |--------------------------------------------------------------------------
@@ -279,6 +266,15 @@ final readonly class ComponentRenderer
 
             'attributes' => $input->component->attributes,
 
+            'maxlength' => $input->component->attributes['maxlength'] ?? null,
+
+            'step' => $input->component->attributes['step'] ?? null,
+
         ];
+    }
+
+    private function serializeValue(mixed $value): string
+    {
+        return var_export($value, true);
     }
 }

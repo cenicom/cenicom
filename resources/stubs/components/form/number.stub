@@ -10,5 +10,9 @@
     <x-cn.number
         name="[[ name ]]"
         label="[[ label ]]"
+        :value="[[ value ]]"
+        :required="[[ required ]]"
+        :readonly="[[ readonly ]]"
+        :step="[[ step ]]"
     />
 </div>

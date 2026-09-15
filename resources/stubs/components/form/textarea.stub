@@ -9,7 +9,11 @@
 <div class="[[ column_class ]]">
     <x-cn.textarea
         name="[[ name ]]"
+        :value="[[ value ]]"
         label="[[ label ]]"
         placeholder="[[ placeholder ]]"
+        :required="[[ required ]]"
+        :readonly="[[ readonly ]]"
+        :maxlength="[[ maxlength ]]"
     />
 </div>

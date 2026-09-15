@@ -9,6 +9,10 @@
 <div class="[[ column_class ]]">
     <x-cn.email
         name="[[ name ]]"
+        :value="[[ value ]]"
         label="[[ label ]]"
+        :required="[[ required ]]"
+        :readonly="[[ readonly ]]"
+        :maxlength="[[ maxlength ]]"
     />
 </div>

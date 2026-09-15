@@ -9,6 +9,9 @@
 <div class="[[ column_class ]]">
     <x-cn.datetime
         name="[[ name ]]"
+        :value="[[ value ]]"
         label="[[ label ]]"
+        :required="[[ required ]]"
+        :readonly="[[ readonly ]]"
     />
 </div>

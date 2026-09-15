@@ -10,5 +10,6 @@
     <x-cn.checkbox
         name="[[ name ]]"
         label="[[ label ]]"
+        :required="[[ required ]]"
     />
 </div>

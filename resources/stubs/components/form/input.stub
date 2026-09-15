@@ -12,5 +12,10 @@
         type="[[ type ]]"
         label="[[ label ]]"
         placeholder="[[ placeholder ]]"
+        :value="[[ value ]]"
+        :required="[[ required ]]"
+        :readonly="[[ readonly ]]"
+        :maxlength="[[ maxlength ]]"
+        :step="[[ step ]]"
     />
 </div>
