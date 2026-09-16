@@ -86,7 +86,10 @@ final class CoreBindingsServiceProvider extends ServiceProvider
 
         $this->app->singleton(
             ViewRegistrarInterface::class,
-            ViewRegistrar::class,
+            fn($app) => new ViewRegistrar(
+                $app->make(ViewRegistryInterface::class),
+                $app->make('view')->getFinder(),
+            ),
         );
 
         $this->app->singleton(

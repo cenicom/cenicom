@@ -6,18 +6,18 @@ namespace App\Core\View\Registrar;
 
 use App\Core\View\Contracts\ViewRegistrarInterface;
 use App\Core\View\Contracts\ViewRegistryInterface;
-use Illuminate\Contracts\View\Factory as ViewFactory;
+use Illuminate\View\ViewFinderInterface;
 
 final readonly class ViewRegistrar implements ViewRegistrarInterface
 {
     public function __construct(
         private ViewRegistryInterface $registry,
-        private ViewFactory $views,
+        private ViewFinderInterface $finder,
     ) {
     }
 
     /**
-     * Registra un namespace de vistas.
+     * Registra un namespace y su ubicación física de vistas.
      */
     public function register(
         string $namespace,
@@ -28,7 +28,11 @@ final readonly class ViewRegistrar implements ViewRegistrarInterface
             $path,
         );
 
-        $this->views->replaceNamespace(
+        $this->finder->addLocation(
+            $path,
+        );
+
+        $this->finder->replaceNamespace(
             $namespace,
             $path,
         );

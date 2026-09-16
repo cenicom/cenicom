@@ -4,19 +4,18 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\View\Registrar;
 
+use App\Core\View\Contracts\ViewRegistrarInterface;
 use App\Core\View\Contracts\ViewRegistryInterface;
 use App\Core\View\Registrar\ViewRegistrar;
 use App\Core\View\ViewRegistry;
-use Illuminate\Contracts\View\Factory as ViewFactory;
+use Illuminate\View\ViewFinderInterface;
 use PHPUnit\Framework\TestCase;
 
 final class ViewRegistrarTest extends TestCase
 {
     public function test_delegates_registration_to_registry(): void
     {
-        $registry = $this->createMock(
-            ViewRegistryInterface::class
-        );
+        $registry = $this->createMock(ViewRegistryInterface::class);
 
         $registry
             ->expects($this->once())
@@ -26,13 +25,26 @@ final class ViewRegistrarTest extends TestCase
                 'app/Modules/Institution/Resources/Views',
             );
 
-        $views = $this->createMock(
-            \Illuminate\Contracts\View\Factory::class
-        );
+        $finder = $this->createMock(ViewFinderInterface::class);
+
+        $finder
+            ->expects($this->once())
+            ->method('addLocation')
+            ->with(
+                'app/Modules/Institution/Resources/Views',
+            );
+
+        $finder
+            ->expects($this->once())
+            ->method('replaceNamespace')
+            ->with(
+                'institutions',
+                'app/Modules/Institution/Resources/Views',
+            );
 
         $registrar = new ViewRegistrar(
             $registry,
-            $views,
+            $finder,
         );
 
         $registrar->register(
@@ -43,30 +55,23 @@ final class ViewRegistrarTest extends TestCase
 
     public function test_implements_contract(): void
     {
-        $registry = $this->createMock(
-            ViewRegistryInterface::class
-        );
-
-        $views = $this->createMock(
-            \Illuminate\Contracts\View\Factory::class
-        );
+        $registry = $this->createMock(ViewRegistryInterface::class);
+        $finder = $this->createMock(ViewFinderInterface::class);
 
         $registrar = new ViewRegistrar(
             $registry,
-            $views,
+            $finder,
         );
 
         self::assertInstanceOf(
-            \App\Core\View\Contracts\ViewRegistrarInterface::class,
+            ViewRegistrarInterface::class,
             $registrar,
         );
     }
 
-    public function test_registers_namespace_in_laravel_view_factory(): void
+    public function test_registers_namespace_in_laravel_view_finder(): void
     {
-        $registry = $this->createMock(
-            ViewRegistryInterface::class
-        );
+        $registry = $this->createMock(ViewRegistryInterface::class);
 
         $registry
             ->expects($this->once())
@@ -76,11 +81,16 @@ final class ViewRegistrarTest extends TestCase
                 'app/Modules/Institution/Resources/Views',
             );
 
-        $views = $this->createMock(
-            ViewFactory::class
-        );
+        $finder = $this->createMock(ViewFinderInterface::class);
 
-        $views
+        $finder
+            ->expects($this->once())
+            ->method('addLocation')
+            ->with(
+                'app/Modules/Institution/Resources/Views',
+            );
+
+        $finder
             ->expects($this->once())
             ->method('replaceNamespace')
             ->with(
@@ -90,7 +100,7 @@ final class ViewRegistrarTest extends TestCase
 
         $registrar = new ViewRegistrar(
             $registry,
-            $views,
+            $finder,
         );
 
         $registrar->register(
@@ -103,9 +113,14 @@ final class ViewRegistrarTest extends TestCase
     {
         $registry = new ViewRegistry();
 
-        $views = $this->createMock(ViewFactory::class);
+        $finder = $this->createMock(ViewFinderInterface::class);
 
-        $views
+        $finder
+            ->expects($this->once())
+            ->method('addLocation')
+            ->with('path/one');
+
+        $finder
             ->expects($this->once())
             ->method('replaceNamespace')
             ->with(
@@ -115,7 +130,7 @@ final class ViewRegistrarTest extends TestCase
 
         $registrar = new ViewRegistrar(
             $registry,
-            $views,
+            $finder,
         );
 
         $registrar->register(
@@ -128,6 +143,46 @@ final class ViewRegistrarTest extends TestCase
         $registrar->register(
             'institution',
             'path/two',
+        );
+    }
+
+    public function test_registers_view_path_as_normal_laravel_location(): void
+    {
+        $registry = $this->createMock(ViewRegistryInterface::class);
+
+        $registry
+            ->expects($this->once())
+            ->method('register')
+            ->with(
+                'institutions',
+                'app/Modules/Institution/Resources/Views',
+            );
+
+        $finder = $this->createMock(ViewFinderInterface::class);
+
+        $finder
+            ->expects($this->once())
+            ->method('addLocation')
+            ->with(
+                'app/Modules/Institution/Resources/Views',
+            );
+
+        $finder
+            ->expects($this->once())
+            ->method('replaceNamespace')
+            ->with(
+                'institutions',
+                'app/Modules/Institution/Resources/Views',
+            );
+
+        $registrar = new ViewRegistrar(
+            $registry,
+            $finder,
+        );
+
+        $registrar->register(
+            'institutions',
+            'app/Modules/Institution/Resources/Views',
         );
     }
 }

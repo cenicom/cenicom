@@ -21,6 +21,8 @@ return [
 
     CoreBindingsServiceProvider::class,
 
+    ModuleServiceProvider::class,
+
     CrudServiceProvider::class,
 
     ViewServiceProvider::class,
@@ -33,11 +35,8 @@ return [
 
     InstitutionServiceProvider::class,
 
-    ModuleServiceProvider::class,
-
     SecurityServiceProvider::class,
 
     AuditServiceProvider::class,
-
 
 ];
