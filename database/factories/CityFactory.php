@@ -6,26 +6,26 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-use App\Models\GeneratorProbe;
+use App\Modules\City\Models\City;
 
 /**
  * ==========================================================
  * CENICOM ERP
  * ==========================================================
  *
- * Factory del modelo GeneratorProbe.
+ * Factory del modelo City.
  *
- * @extends Factory<GeneratorProbe>
+ * @extends Factory<City>
  */
-final class GeneratorProbeFactory
+final class CityFactory
     extends Factory
 {
     /**
      * Modelo asociado.
      *
-     * @var class-string<GeneratorProbe>
+     * @var class-string<City>
      */
-    protected $model = GeneratorProbe::class;
+    protected $model = City::class;
 
     /**
      * Define el estado por defecto del modelo.

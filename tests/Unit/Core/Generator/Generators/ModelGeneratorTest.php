@@ -96,6 +96,60 @@ final class ModelGeneratorTest extends GeneratorTestCase
         );
     }
 
+    public function test_generates_has_many_relationship_with_imported_model(): void
+    {
+        $generator = $this->createGenerator();
+
+        $module = $this->createModuleData([
+            'identity' => [
+                'name' => 'Country',
+                'singular' => 'country',
+                'plural' => 'countries',
+                'table' => 'countries',
+                'description' => 'Country module',
+            ],
+            'relations' => [
+                [
+                    'type' => 'hasMany',
+                    'method' => 'states',
+                    'model' => 'App\\Modules\\State\\Models\\State',
+                ],
+            ],
+        ]);
+
+        $result = $generator->generate($module);
+
+        $this->assertTrue($result->isSuccessful());
+
+        $file = $module->modelPath();
+
+        $this->assertFileExists($file);
+
+        $content = file_get_contents($file);
+
+        $this->assertNotFalse($content);
+
+        $this->assertStringContainsString(
+            'use App\\Modules\\State\\Models\\State;',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            'public function states(): HasMany',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            'return $this->hasMany(State::class);',
+            $content
+        );
+
+        $this->assertStringNotContainsString(
+            'return $this->hasMany(App\\Modules\\State\\Models\\State::class);',
+            $content
+        );
+    }
+
 
     private function createGenerator(): ModelGenerator
     {

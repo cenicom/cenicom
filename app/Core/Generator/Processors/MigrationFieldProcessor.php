@@ -70,10 +70,15 @@ final class MigrationFieldProcessor
         return match ($field->type()) {
 
             FieldType::UUID =>
-            sprintf(
-                "\$table->uuid('%s')",
-                $field->name()
-            ),
+            $field->isForeignKey()
+                ? sprintf(
+                    "\$table->foreignUuid('%s')",
+                    $field->name()
+                )
+                : sprintf(
+                    "\$table->uuid('%s')",
+                    $field->name()
+                ),
 
             FieldType::STRING =>
             sprintf(

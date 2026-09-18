@@ -104,6 +104,7 @@ BLADE
             <<<'BLADE'
 <x-cn.crud.confirm
     id="delete-confirm"
+    form-id="delete-form"
     title="Confirmar eliminación"
     message="¿Desea eliminar este registro?"
     confirm-text="Eliminar"

@@ -11,6 +11,7 @@ use App\Core\Generator\Validation\Validators\FieldsValidator;
 use App\Core\Navigation\Contracts\NavigationServiceInterface;
 use App\Core\Navigation\Services\NavigationService;
 use App\Support\Navigation\NavigationManager;
+use App\Core\Generator\Support\GeneratorExecutionContext;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -48,6 +49,13 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             FileWriterInterface::class,
             FileWriter::class
+        );
+
+        $this->app->scoped(
+            GeneratorExecutionContext::class,
+            function () {
+                return new GeneratorExecutionContext();
+            }
         );
     }
 

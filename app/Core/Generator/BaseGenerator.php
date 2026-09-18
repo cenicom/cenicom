@@ -11,6 +11,7 @@ use App\Core\Generator\Results\GeneratorResult;
 use App\Core\Generator\Support\FileWriter;
 use App\Core\Generator\Support\StubManager;
 use App\Core\Generator\Validation\GeneratorValidator;
+use App\Core\Generator\Support\GeneratorExecutionContext;
 
 /**
  * Clase base para los generadores del CN Generator.
@@ -66,13 +67,16 @@ abstract class BaseGenerator implements GeneratorInterface
         );
     }
 
-    protected function generateResult(string $stub, string $path, array $variables): GeneratorResult
-    {
-
+    protected function generateResult(
+        string $stub,
+        string $path,
+        array $variables
+    ): GeneratorResult {
         $result = new GeneratorResult();
 
-        if ($this->fileWriter->exists($path)) {
+        $force = app(GeneratorExecutionContext::class)->force();
 
+        if ($this->fileWriter->exists($path) && ! $force) {
             return $result->addSkipped($path);
         }
 
@@ -87,12 +91,17 @@ abstract class BaseGenerator implements GeneratorInterface
 
         $this->fileWriter->write(
             $path,
-            $content
+            $content,
+            overwrite: $force
         );
 
         $this->validateGeneratedFile($path);
 
-        $result->addCreated($path);
+        if ($force) {
+            $result->addUpdated($path);
+        } else {
+            $result->addCreated($path);
+        }
 
         return $result;
     }

@@ -37,6 +37,8 @@ final class ModuleDefinitionFactory
 
             'metadata'
             => $this->buildMetadata($specification),
+
+            'relations' => $specification->relations(),
         ];
     }
 

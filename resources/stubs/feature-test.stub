@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace [[ namespace ]];
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\User;
 
 use Tests\TestCase;
 
@@ -24,6 +25,8 @@ final class [[ featureTest ]]
 
     public function test_index_page_can_be_displayed(): void
     {
+        [[ authentication ]]
+
         $response = $this->get(
             route('[[ route ]].index')
         );
@@ -33,6 +36,8 @@ final class [[ featureTest ]]
 
     public function test_create_page_can_be_displayed(): void
     {
+        [[ authentication ]]
+
         $response = $this->get(
             route('[[ route ]].create')
         );

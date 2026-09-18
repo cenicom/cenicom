@@ -14,6 +14,8 @@ use App\Core\Generator\Presentation\Renderers\TableRenderer;
 use App\Core\Generator\Support\FileWriter;
 use App\Core\Generator\Support\StubManager;
 use App\Core\Generator\Support\Contracts\FileWriterInterface;
+use App\Core\Generator\Support\GeneratorExecutionContext;
+//use App\Core\Generator\Support\GeneratorExecutionContext;
 use RuntimeException;
 use Tests\Support\GeneratorTestCase;
 
@@ -373,6 +375,7 @@ final class ViewGeneratorTest extends GeneratorTestCase
                     new StubManager(),
                 ),
             ),
+            new GeneratorExecutionContext(),
         );
 
         $result = $generator->generate(
@@ -581,6 +584,99 @@ final class ViewGeneratorTest extends GeneratorTestCase
         );
     }
 
+    public function test_force_updates_existing_views(): void
+    {
+        $executionContext = new GeneratorExecutionContext();
+
+        $generator = new ViewGenerator(
+            new StubManager(),
+            new FileWriter(),
+            new ViewBuilder(
+                new PresentationFactory(),
+                new ComponentRenderer(
+                    new StubManager(),
+                ),
+                new TableRenderer(
+                    new StubManager(),
+                ),
+                new ShowRenderer(
+                    new StubManager(),
+                ),
+            ),
+            $executionContext,
+        );
+
+        $module = $this->createModuleData();
+
+        // Primera ejecución: los archivos deben crearse.
+        $first = $generator->generate($module);
+
+        $this->assertTrue(
+            $first->isSuccessful()
+        );
+
+        $this->assertSame(
+            6,
+            $first->createdCount()
+        );
+
+        $this->assertSame(
+            0,
+            $first->skippedCount()
+        );
+
+        $this->assertSame(
+            0,
+            $first->updatedCount()
+        );
+
+        // Segunda ejecución sin force: los archivos deben omitirse.
+        $second = $generator->generate($module);
+
+        $this->assertTrue(
+            $second->isSuccessful()
+        );
+
+        $this->assertSame(
+            0,
+            $second->createdCount()
+        );
+
+        $this->assertSame(
+            6,
+            $second->skippedCount()
+        );
+
+        $this->assertSame(
+            0,
+            $second->updatedCount()
+        );
+
+        // Tercera ejecución con force: los archivos deben actualizarse.
+        $executionContext->setForce(true);
+
+        $third = $generator->generate($module);
+
+        $this->assertTrue(
+            $third->isSuccessful()
+        );
+
+        $this->assertSame(
+            0,
+            $third->createdCount()
+        );
+
+        $this->assertSame(
+            0,
+            $third->skippedCount()
+        );
+
+        $this->assertSame(
+            6,
+            $third->updatedCount()
+        );
+    }
+
     private function createGenerator(): ViewGenerator
     {
         return new ViewGenerator(
@@ -598,6 +694,7 @@ final class ViewGeneratorTest extends GeneratorTestCase
                     new StubManager(),
                 ),
             ),
+            new GeneratorExecutionContext(),
         );
     }
 }

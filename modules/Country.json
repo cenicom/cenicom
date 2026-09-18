@@ -1,0 +1,44 @@
+{
+    "identity": {
+        "name": "Country",
+        "singular": "country",
+        "plural": "countries",
+        "table": "countries",
+        "description": "Country module"
+    },
+    "security": {
+        "auth": true,
+        "verified": true,
+        "middleware": [],
+        "permissions": false
+    },
+    "database": [],
+    "fields": [],
+    "relations": [
+        {
+            "type": "has_many",
+            "method": "states",
+            "model": "App\\Modules\\State\\Models\\State"
+        }
+    ],
+    "validation": [],
+    "permissions": [],
+    "navigation": [],
+    "generation": {
+        "routePrefix": "countries",
+        "routeName": "countries",
+        "viewPrefix": "countries",
+        "timestamps": true,
+        "softDeletes": false,
+        "uuid": true,
+        "api": false,
+        "tests": true,
+        "permissions": true,
+        "menu": true,
+        "icon": "bi-globe"
+    },
+    "metadata": {
+        "version": "1.0.0",
+        "source": "generator"
+    }
+}

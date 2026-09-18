@@ -1,0 +1,50 @@
+{
+    "identity": {
+        "name": "City",
+        "singular": "city",
+        "plural": "cities",
+        "table": "cities",
+        "description": "City module"
+    },
+    "security": {
+        "auth": true,
+        "verified": true,
+        "middleware": [],
+        "permissions": false
+    },
+    "database": [],
+    "fields": [
+        {
+            "name": "state_id",
+            "type": "uuid",
+            "constrained": "states"
+        }
+    ],
+    "relations": [
+        {
+            "type": "belongs_to",
+            "method": "state",
+            "model": "App\\Modules\\State\\Models\\State"
+        }
+    ],
+    "validation": [],
+    "permissions": [],
+    "navigation": [],
+    "generation": {
+        "routePrefix": "cities",
+        "routeName": "cities",
+        "viewPrefix": "cities",
+        "timestamps": true,
+        "softDeletes": false,
+        "uuid": true,
+        "api": false,
+        "tests": true,
+        "permissions": true,
+        "menu": true,
+        "icon": "bi-buildings"
+    },
+    "metadata": {
+        "version": "1.0.0",
+        "source": "generator"
+    }
+}

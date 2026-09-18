@@ -1,0 +1,55 @@
+{
+    "identity": {
+        "name": "State",
+        "singular": "state",
+        "plural": "states",
+        "table": "states",
+        "description": "State module"
+    },
+    "security": {
+        "auth": true,
+        "verified": true,
+        "middleware": [],
+        "permissions": false
+    },
+    "database": [],
+    "fields": [
+        {
+            "name": "country_id",
+            "type": "uuid",
+            "constrained": "countries"
+        }
+    ],
+    "relations": [
+        {
+            "type": "belongs_to",
+            "method": "country",
+            "model": "App\\Modules\\Country\\Models\\Country"
+        },
+        {
+            "type": "has_many",
+            "method": "cities",
+            "model": "App\\Modules\\City\\Models\\City"
+        }
+    ],
+    "validation": [],
+    "permissions": [],
+    "navigation": [],
+    "generation": {
+        "routePrefix": "states",
+        "routeName": "states",
+        "viewPrefix": "states",
+        "timestamps": true,
+        "softDeletes": false,
+        "uuid": true,
+        "api": false,
+        "tests": true,
+        "permissions": true,
+        "menu": true,
+        "icon": "bi-map"
+    },
+    "metadata": {
+        "version": "1.0.0",
+        "source": "generator"
+    }
+}

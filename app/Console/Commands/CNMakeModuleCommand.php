@@ -11,6 +11,7 @@ use App\Core\Generator\Results\GeneratorResult;
 use App\Core\Generator\Specifications\ModuleSpecification;
 use App\Core\Generator\Support\ManifestGenerator;
 use App\Core\Generator\Support\ManifestLoader;
+use App\Core\Generator\Support\GeneratorExecutionContext;
 use Illuminate\Console\Command;
 use Throwable;
 
@@ -54,6 +55,7 @@ final class CNMakeModuleCommand extends Command
         private readonly ModuleDefinitionFactory $definitionFactory,
         private readonly ModuleDataFactory $moduleDataFactory,
         private readonly ModuleGenerator $moduleGenerator,
+        private readonly GeneratorExecutionContext $executionContext,
     ) {
         parent::__construct();
     }
@@ -91,6 +93,11 @@ final class CNMakeModuleCommand extends Command
                 $definition
             );
 
+            $this->executionContext->setForce(
+                (bool) $this->option('force')
+            );
+
+
             $result = $this->moduleGenerator->generate(
                 $module
             );
@@ -103,7 +110,6 @@ final class CNMakeModuleCommand extends Command
             return $result->hasErrors()
                 ? self::FAILURE
                 : self::SUCCESS;
-
         } catch (Throwable $exception) {
 
             $this->error(

@@ -88,9 +88,8 @@ final class ModelBuilder
         );
     }
 
-    private function resolveCast(
-        ColumnDefinition $column
-    ): ?string {
+    private function resolveCast(ColumnDefinition $column): ?string
+    {
         return $column->type()->cast();
     }
 
@@ -177,7 +176,7 @@ final class ModelBuilder
             PHP_EOL,
             array_map(
                 static fn(string $trait): string =>
-                    "    use {$trait};",
+                "    use {$trait};",
                 $traits
             )
         );
@@ -227,9 +226,8 @@ final class ModelBuilder
     /**
      * @return array<int,array<string,mixed>>
      */
-    private function resolveRelationships(
-        ModuleData $module
-    ): array {
+    private function resolveRelationships(ModuleData $module): array
+    {
         if (!method_exists($module, 'relationships')) {
             return [];
         }
@@ -240,22 +238,21 @@ final class ModelBuilder
     /**
      * @param array<string,mixed> $relationship
      */
-    private function buildRelationship(
-        array $relationship
-    ): string {
+    private function buildRelationship(array $relationship): string
+    {
         return match ($relationship['type']) {
 
             'belongsTo' =>
-                $this->buildBelongsTo($relationship),
+            $this->buildBelongsTo($relationship),
 
             'hasOne' =>
-                $this->buildHasOne($relationship),
+            $this->buildHasOne($relationship),
 
             'hasMany' =>
-                $this->buildHasMany($relationship),
+            $this->buildHasMany($relationship),
 
             'belongsToMany' =>
-                $this->buildBelongsToMany($relationship),
+            $this->buildBelongsToMany($relationship),
 
             default => throw new RuntimeException(
                 sprintf(
@@ -269,9 +266,10 @@ final class ModelBuilder
     /**
      * @param array<string,mixed> $relationship
      */
-    private function buildBelongsTo(
-        array $relationship
-    ): string {
+    private function buildBelongsTo(array $relationship): string
+    {
+        $model = class_basename($relationship['model']);
+
         return sprintf(
             <<<'PHP'
     public function %s(): BelongsTo
@@ -280,16 +278,17 @@ final class ModelBuilder
     }
 PHP,
             $relationship['method'],
-            $relationship['model'],
+            $model,
         );
     }
 
     /**
      * @param array<string,mixed> $relationship
      */
-    private function buildHasOne(
-        array $relationship
-    ): string {
+    private function buildHasOne(array $relationship): string
+    {
+       $model = class_basename($relationship['model']);
+
         return sprintf(
             <<<'PHP'
     public function %s(): HasOne
@@ -298,16 +297,17 @@ PHP,
     }
 PHP,
             $relationship['method'],
-            $relationship['model'],
+            $model,
         );
     }
 
     /**
      * @param array<string,mixed> $relationship
      */
-    private function buildHasMany(
-        array $relationship
-    ): string {
+    private function buildHasMany(array $relationship): string
+    {
+        $model = class_basename($relationship['model']);
+
         return sprintf(
             <<<'PHP'
     public function %s(): HasMany
@@ -316,16 +316,17 @@ PHP,
     }
 PHP,
             $relationship['method'],
-            $relationship['model'],
+            $model,
         );
     }
 
     /**
      * @param array<string,mixed> $relationship
      */
-    private function buildBelongsToMany(
-        array $relationship
-    ): string {
+    private function buildBelongsToMany(array $relationship): string
+    {
+        $model = class_basename($relationship['model']);
+
         return sprintf(
             <<<'PHP'
     public function %s(): BelongsToMany
@@ -334,16 +335,15 @@ PHP,
     }
 PHP,
             $relationship['method'],
-            $relationship['model'],
+            $model,
         );
     }
 
-    private function buildRelationships(
-        ModuleData $module
-    ): string {
+    private function buildRelationships(ModuleData $module): string
+    {
         $relationships = array_map(
             fn(array $relationship): string =>
-                $this->buildRelationship($relationship),
+            $this->buildRelationship($relationship),
             $this->resolveRelationships($module),
         );
 
@@ -353,12 +353,11 @@ PHP,
         );
     }
 
-    private function buildScopes(
-        ModuleData $module
-    ): string {
+    private function buildScopes(ModuleData $module): string
+    {
         $scopes = array_map(
             fn(array $scope): string =>
-                $this->buildScope($scope),
+            $this->buildScope($scope),
             $this->resolveScopes($module)
         );
 
@@ -371,9 +370,8 @@ PHP,
     /**
      * @return array<int,array<string,mixed>>
      */
-    private function resolveScopes(
-        ModuleData $module
-    ): array {
+    private function resolveScopes(ModuleData $module): array
+    {
         if (!method_exists($module, 'scopes')) {
             return [];
         }
@@ -384,9 +382,8 @@ PHP,
     /**
      * @param array<string,mixed> $scope
      */
-    private function buildScope(
-        array $scope
-    ): string {
+    private function buildScope(array $scope): string
+    {
         return sprintf(
             <<<'PHP'
     public function scope%s(Builder $query): Builder
@@ -402,9 +399,8 @@ PHP,
     /**
      * @return array<int,string>
      */
-    private function resolveRelationshipImports(
-        ModuleData $module
-    ): array {
+    private function resolveRelationshipImports(ModuleData $module): array
+    {
         if (!method_exists($module, 'relationships')) {
             return [];
         }

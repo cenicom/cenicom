@@ -60,6 +60,9 @@ final class ModuleDataFactory
 
         $fields = $this->fields($definition);
 
+        $relations = $this->buildRelations(
+            $definition['relations'] ?? []
+        );
         $options = $this->buildOptions($generation);
 
         $permissionMatrix = PermissionMatrixFactory::build(
@@ -250,6 +253,7 @@ final class ModuleDataFactory
                 $fields
             ),
 
+            relationships: $relations,
 
             /*
             |--------------------------------------------------------------------------
@@ -811,5 +815,35 @@ final class ModuleDataFactory
         return [
             'menu' => true,
         ];
+    }
+
+    /**
+     * Normaliza los tipos de relación del contrato de definición
+     * a los nombres de métodos Eloquent consumidos por ModelBuilder.
+     *
+     * @param array<int,array<string,mixed>> $relations
+     * @return array<int,array<string,mixed>>
+     */
+    private function buildRelations(array $relations): array
+    {
+        $types = [
+            'belongs_to' => 'belongsTo',
+            'has_one' => 'hasOne',
+            'has_many' => 'hasMany',
+            'belongs_to_many' => 'belongsToMany',
+        ];
+
+        return array_map(
+            static function (array $relation) use ($types): array {
+                $type = $relation['type'] ?? null;
+
+                if ($type !== null && isset($types[$type])) {
+                    $relation['type'] = $types[$type];
+                }
+
+                return $relation;
+            },
+            $relations,
+        );
     }
 }

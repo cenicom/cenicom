@@ -207,4 +207,64 @@ final class ModelBuilderTest extends TestCase
             )
         );
     }
+
+    public function test_build_generates_belongs_to_relationship(): void
+    {
+        $variables = (new ModelBuilder())->build(
+            $this->module([
+                'relations' => [
+                    [
+                        'type' => 'belongsTo',
+                        'method' => 'country',
+                        'model' => 'App\\Modules\\Country\\Models\\Country',
+                    ],
+                ],
+            ])
+        );
+
+        self::assertStringContainsString(
+            'public function country(): BelongsTo',
+            $variables['relationships']
+        );
+
+        self::assertStringContainsString(
+            'return $this->belongsTo(Country::class);',
+            $variables['relationships']
+        );
+
+        self::assertStringContainsString(
+            'use App\\Modules\\Country\\Models\\Country;',
+            $variables['imports']
+        );
+    }
+
+    public function test_build_generates_has_many_relationship(): void
+    {
+        $variables = (new ModelBuilder())->build(
+            $this->module([
+                'relations' => [
+                    [
+                        'type' => 'hasMany',
+                        'method' => 'states',
+                        'model' => 'App\\Modules\\State\\Models\\State',
+                    ],
+                ],
+            ])
+        );
+
+        self::assertStringContainsString(
+            'public function states(): HasMany',
+            $variables['relationships']
+        );
+
+        self::assertStringContainsString(
+            'return $this->hasMany(State::class);',
+            $variables['relationships']
+        );
+
+        self::assertStringContainsString(
+            'use App\\Modules\\State\\Models\\State;',
+            $variables['imports']
+        );
+    }
 }

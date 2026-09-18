@@ -20,6 +20,22 @@ final class FeatureTestBuilder
             'qualifiedModel' => $module->qualifiedModel(),
             'route' => $module->routeName(),
             'viewPrefix' => $module->viewPrefix(),
+            'authentication' => $this->buildAuthentication($module),
         ];
+    }
+
+    private function buildAuthentication(ModuleData $module): string
+    {
+        $security = $module->security();
+
+        if ($security === null || ! $security->requiresAuth()) {
+            return '';
+        }
+
+        return <<<'PHP'
+        $user = User::factory()->create();
+
+        $this->actingAs($user);
+    PHP;
     }
 }

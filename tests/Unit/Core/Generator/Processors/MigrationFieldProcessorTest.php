@@ -341,6 +341,20 @@ final class MigrationFieldProcessorTest extends TestCase
     |--------------------------------------------------------------------------
     */
 
+    public function test_builds_uuid_foreign_key(): void
+    {
+        $column = $this->column(
+            name: 'country_id',
+            type: FieldType::UUID,
+            constrained: 'countries',
+        );
+
+        $this->assertSame(
+            "\$table->foreignUuid('country_id')->constrained('countries');",
+            $this->processor->build($column)
+        );
+    }
+
     public function test_applies_constrained(): void
     {
         $column = $this->column(

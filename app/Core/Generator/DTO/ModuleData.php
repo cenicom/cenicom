@@ -188,6 +188,11 @@ readonly class ModuleData
     private array $columns;
 
     /**
+     * @var array<int,array<string,mixed>>
+     */
+    private array $relationships;
+
+    /**
      * @var array<string,mixed>
      */
     private array $options;
@@ -308,6 +313,7 @@ readonly class ModuleData
         ?SecurityDefinition $security = null,
         PermissionMatrix $permissionMatrix,
         ?NavigationManifestData $navigation = null,
+        array $relationships = [],
 
     ) {
         $this->name = $name;
@@ -387,6 +393,7 @@ readonly class ModuleData
             ?? new NavigationManifestData(
                 module: $this->name,
             );
+        $this->relationships = $relationships;
         $this->menu = $menu;
         $this->icon = $icon;
         $this->security = $security;
@@ -1118,9 +1125,12 @@ readonly class ModuleData
         return Str::kebab($this->plural());
     }
 
+    /**
+     * @return array<int,array<string,mixed>>
+     */
     public function relationships(): array
     {
-        return [];
+        return $this->relationships;
     }
 
     public function scopes(): array

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Generator\Factories;
 
+use App\Core\Generator\Enums\FieldType;
 use App\Core\Generator\Factories\ModuleDataFactory;
 use Tests\TestCase;
 
@@ -416,6 +417,166 @@ final class ModuleDataFactoryTest extends TestCase
                 'currencies.delete',
             ],
             $permissions,
+        );
+    }
+
+    public function test_transports_relations_to_module_data(): void
+    {
+        $relations = [
+            [
+                'type' => 'belongsTo',
+                'method' => 'country',
+                'model' => 'App\\Modules\\Country\\Models\\Country',
+            ],
+        ];
+
+        $module = $this->factory->create([
+            'identity' => [
+                'name' => 'Currency',
+                'singular' => 'currency',
+                'plural' => 'currencies',
+                'table' => 'currencies',
+                'description' => 'Currency module',
+            ],
+            'fields' => [],
+            'relations' => $relations,
+        ]);
+
+        self::assertSame(
+            $relations,
+            $module->relationships()
+        );
+    }
+
+    public function test_normalizes_relation_types_to_eloquent_methods(): void
+    {
+        $module = $this->factory->create([
+            'identity' => [
+                'name' => 'State',
+                'singular' => 'state',
+                'plural' => 'states',
+                'table' => 'states',
+                'description' => 'State module',
+            ],
+            'fields' => [],
+            'relations' => [
+                [
+                    'type' => 'belongs_to',
+                    'method' => 'country',
+                    'model' => 'App\\Modules\\Country\\Models\\Country',
+                ],
+            ],
+        ]);
+
+        self::assertSame(
+            [
+                [
+                    'type' => 'belongsTo',
+                    'method' => 'country',
+                    'model' => 'App\\Modules\\Country\\Models\\Country',
+                ],
+            ],
+            $module->relationships()
+        );
+    }
+
+    public function test_normalizes_supported_relation_types_to_eloquent_methods(): void
+    {
+        $module = $this->factory->create([
+            'identity' => [
+                'name' => 'State',
+                'singular' => 'state',
+                'plural' => 'states',
+                'table' => 'states',
+                'description' => 'State module',
+            ],
+            'fields' => [],
+            'relations' => [
+                [
+                    'type' => 'belongs_to',
+                    'method' => 'country',
+                    'model' => 'App\\Modules\\Country\\Models\\Country',
+                ],
+                [
+                    'type' => 'has_many',
+                    'method' => 'cities',
+                    'model' => 'App\\Modules\\City\\Models\\City',
+                ],
+                [
+                    'type' => 'has_one',
+                    'method' => 'capitalCity',
+                    'model' => 'App\\Modules\\City\\Models\\City',
+                ],
+                [
+                    'type' => 'belongs_to_many',
+                    'method' => 'currencies',
+                    'model' => 'App\\Modules\\Currency\\Models\\Currency',
+                ],
+            ],
+        ]);
+
+        self::assertSame(
+            [
+                [
+                    'type' => 'belongsTo',
+                    'method' => 'country',
+                    'model' => 'App\\Modules\\Country\\Models\\Country',
+                ],
+                [
+                    'type' => 'hasMany',
+                    'method' => 'cities',
+                    'model' => 'App\\Modules\\City\\Models\\City',
+                ],
+                [
+                    'type' => 'hasOne',
+                    'method' => 'capitalCity',
+                    'model' => 'App\\Modules\\City\\Models\\City',
+                ],
+                [
+                    'type' => 'belongsToMany',
+                    'method' => 'currencies',
+                    'model' => 'App\\Modules\\Currency\\Models\\Currency',
+                ],
+            ],
+            $module->relationships()
+        );
+    }
+
+    public function test_builds_uuid_foreign_key_column(): void
+    {
+        $module = $this->factory->create([
+            'identity' => [
+                'name' => 'State',
+                'singular' => 'state',
+                'plural' => 'states',
+                'table' => 'states',
+                'description' => 'State module',
+            ],
+            'fields' => [
+                [
+                    'name' => 'country_id',
+                    'type' => 'uuid',
+                    'constrained' => 'countries',
+                ],
+            ],
+        ]);
+
+        $columns = $module->columns();
+
+        self::assertCount(1, $columns);
+
+        self::assertSame(
+            FieldType::UUID,
+            $columns[0]->type()
+        );
+
+        self::assertSame(
+            'countries',
+            $columns[0]->constrained()
+        );
+
+        self::assertTrue(
+            $columns[0]->isForeignKey()
         );
     }
 }

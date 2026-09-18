@@ -10,7 +10,7 @@ use App\Core\Generator\Builders\ViewBuilder;
 use App\Core\Generator\Results\GeneratorResult;
 use App\Core\Generator\Support\Contracts\FileWriterInterface;
 use App\Core\Generator\Support\StubManager;
-
+use App\Core\Generator\Support\GeneratorExecutionContext;
 
 /**
  * ==========================================================
@@ -92,6 +92,7 @@ final class ViewGenerator implements GeneratorInterface
         private readonly StubManager $stubManager,
         private readonly FileWriterInterface $fileWriter,
         private readonly ViewBuilder $builder,
+        private readonly GeneratorExecutionContext $executionContext,
     ) {}
 
     public function supports(ModuleData $module): bool
@@ -136,6 +137,12 @@ final class ViewGenerator implements GeneratorInterface
      * @param array<string,string> $view
      * @param array<string,mixed>  $variables
      */
+    /**
+     * Genera una vista individual.
+     *
+     * @param array<string,string> $view
+     * @param array<string,mixed>  $variables
+     */
     private function generateView(
         ModuleData $module,
         array $view,
@@ -152,15 +159,30 @@ final class ViewGenerator implements GeneratorInterface
             . DIRECTORY_SEPARATOR
             . $view[self::VIEW__TARGET];
 
+        $exists = $this->fileWriter->exists($path);
+        $force = $this->executionContext->force();
+
+        if ($exists && ! $force) {
+            $result->addSkipped($path);
+
+            return;
+        }
+
         try {
 
             $this->fileWriter->write(
                 $path,
                 $content,
+                overwrite: $exists && $force,
             );
 
-            $result->addCreated($path);
+            if ($exists && $force) {
+                $result->addUpdated($path);
+            } else {
+                $result->addCreated($path);
+            }
         } catch (\Throwable $exception) {
+
             $result->addError(
                 sprintf(
                     '[%s] %s',

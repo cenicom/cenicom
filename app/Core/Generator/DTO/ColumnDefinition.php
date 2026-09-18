@@ -645,7 +645,8 @@ final readonly class ColumnDefinition
     {
         return
             $this->type === FieldType::FOREIGN_ID
-            || $this->references !== null;
+            || $this->references !== null
+            || $this->constrained !== false;
     }
 
     /**
