@@ -1,10 +1,10 @@
 {
     "identity": {
-        "name": "Country",
-        "singular": "country",
-        "plural": "countries",
-        "table": "countries",
-        "description": "Country module"
+        "name": "Currency",
+        "singular": "currency",
+        "plural": "currencies",
+        "table": "currencies",
+        "description": "Module Currency"
     },
     "security": {
         "auth": true,
@@ -19,32 +19,30 @@
             "type": "string"
         },
         {
-            "name": "iso2",
-            "type": "string",
-            "length": 2,
-            "unique": true
+            "name": "precision",
+            "type": "integer"
         },
         {
-            "name": "iso3",
-            "type": "string",
-            "length": 3,
-            "unique": true
-        }
-    ],
-    "relations": [
+            "name": "symbol",
+            "type": "string"
+        },
         {
-            "type": "has_many",
-            "method": "states",
-            "model": "App\\Modules\\State\\Models\\State"
+            "name": "decimal_mark",
+            "type": "string"
+        },
+        {
+            "name": "thousands_separator",
+            "type": "string"
         }
     ],
+    "relations": [],
     "validation": [],
     "permissions": [],
     "navigation": [],
     "generation": {
-        "routePrefix": "countries",
-        "routeName": "countries",
-        "viewPrefix": "countries",
+        "routePrefix": "currencies",
+        "routeName": "currencies",
+        "viewPrefix": "currencies",
         "timestamps": true,
         "softDeletes": false,
         "uuid": true,
@@ -52,7 +50,7 @@
         "tests": true,
         "permissions": true,
         "menu": true,
-        "icon": "bi-globe"
+        "icon": "bi-grid"
     },
     "metadata": {
         "version": "1.0.0",

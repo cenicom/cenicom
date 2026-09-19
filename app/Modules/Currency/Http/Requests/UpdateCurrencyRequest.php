@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Country\Http\Requests;
+namespace App\Modules\Currency\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -11,15 +11,15 @@ use Illuminate\Foundation\Http\FormRequest;
  * CENICOM ERP
  * ==========================================================
  *
- * Request para crear un country.
+ * Request para actualizar un currency.
  *
- * Gestiona la autorización y validación de la creación
+ * Gestiona la autorización y validación de la actualización
  * de registros del módulo.
  *
- * @package App\Modules\Country\Http\Requests
+ * @package App\Modules\Currency\Http\Requests
  */
-final class StoreCountryRequest
-extends FormRequest
+final class UpdateCurrencyRequest
+    extends FormRequest
 {
     /**
      * Determina si el usuario está autorizado.
@@ -36,11 +36,9 @@ extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'name' => ['required', 'string'],
-            'iso2' => ['required', 'string', 'max:2', 'unique:countries,iso2'],
-            'iso3' => ['required', 'string', 'max:3', 'unique:countries,iso3'],
-        ];
+    return [
+    
+    ];
     }
 
     /**
@@ -50,7 +48,7 @@ extends FormRequest
      */
     public function messages(): array
     {
-        return [];
+        return [ ];
     }
 
     /**
@@ -60,6 +58,6 @@ extends FormRequest
      */
     public function attributes(): array
     {
-        return [];
+        return [ ];
     }
 }

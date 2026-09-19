@@ -1,0 +1,55 @@
+{
+  "identity": {
+    "name": "RequestMaterializationProbe",
+    "singular": "request_materialization_probe",
+    "plural": "request_materialization_probes",
+    "table": "request_materialization_probes",
+    "description": "Country module"
+  },
+  "security": {
+    "auth": true,
+    "verified": true,
+    "middleware": [],
+    "permissions": false
+  },
+  "database": [],
+  "fields": [
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "iso2",
+      "type": "string",
+      "length": 2,
+      "unique": true
+    },
+    {
+      "name": "iso3",
+      "type": "string",
+      "length": 3,
+      "unique": true
+    }
+  ],
+  "relations": [],
+  "validation": [],
+  "permissions": [],
+  "navigation": [],
+  "generation": {
+    "routePrefix": "request-materialization-probes",
+    "routeName": "request_materialization_probes",
+    "viewPrefix": "request_materialization_probes",
+    "timestamps": true,
+    "softDeletes": false,
+    "uuid": true,
+    "api": false,
+    "tests": true,
+    "permissions": true,
+    "menu": true,
+    "icon": "bi-check2-square"
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "source": "materialization-probe"
+  }
+}

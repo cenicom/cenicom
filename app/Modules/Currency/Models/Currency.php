@@ -2,26 +2,24 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Country\Models;
+namespace App\Modules\Currency\Models;
 
-use App\Modules\Currency\Models\Currency;
-use App\Modules\State\Models\State;
+use App\Modules\Country\Models\Country;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * ==========================================================
  * CENICOM ERP
  * ==========================================================
  *
- * Country module
+ * Module Currency
  *
- * @package App\Modules\Country\Models
+ * @package App\Modules\Currency\Models
  */
-final class Country extends Model
+final class Currency extends Model
 {
     use HasFactory;
     use HasUuids;
@@ -29,14 +27,21 @@ final class Country extends Model
     /**
      * Tabla asociada al modelo.
      */
-    protected $table = 'countries';
+    protected $table = 'currencies';
 
     /**
      * Atributos asignables masivamente.
      *
      * @var array<int,string>
      */
-    protected $fillable = ['name', 'iso2', 'iso3'];
+    protected $fillable = [
+        'name',
+        'code',
+        'precision',
+        'symbol',
+        'decimal_mark',
+        'thousands_separator',
+    ];
 
     /**
      * Conversión automática de atributos.
@@ -54,14 +59,9 @@ final class Country extends Model
     |--------------------------------------------------------------------------
     */
 
-    public function states(): HasMany
+    public function countries(): BelongsToMany
     {
-        return $this->hasMany(State::class);
-    }
-
-    public function currencies(): BelongsToMany
-    {
-        return $this->belongsToMany(Currency::class);
+        return $this->belongsToMany(Country::class);
     }
 
     /*

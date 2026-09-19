@@ -9,24 +9,22 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Ejecuta la migración.
+     * Agrega el nombre de los estados.
      */
     public function up(): void
     {
-        Schema::create('cities', function (Blueprint $table) {
-
-            $table->uuid('id')->primary();
-            $table->foreignUuid('state_id')->constrained('states');
-
-            $table->timestamps();
+        Schema::table('states', function (Blueprint $table) {
+            $table->string('name');
         });
     }
 
     /**
-     * Revierte la migración.
+     * Revierte el campo agregado.
      */
     public function down(): void
     {
-        Schema::dropIfExists('cities');
+        Schema::table('states', function (Blueprint $table) {
+            $table->dropColumn('name');
+        });
     }
 };

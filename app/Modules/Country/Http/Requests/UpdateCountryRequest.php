@@ -19,7 +19,7 @@ use Illuminate\Foundation\Http\FormRequest;
  * @package App\Modules\Country\Http\Requests
  */
 final class UpdateCountryRequest
-    extends FormRequest
+extends FormRequest
 {
     /**
      * Determina si el usuario está autorizado.
@@ -36,9 +36,11 @@ final class UpdateCountryRequest
      */
     public function rules(): array
     {
-    return [
-    
-    ];
+        return [
+            'name' => ['required', 'string'],
+            'iso2' => ['required', 'string', 'max:2', 'unique:countries,iso2'],
+            'iso3' => ['required', 'string', 'max:3', 'unique:countries,iso3'],
+        ];
     }
 
     /**
@@ -48,7 +50,7 @@ final class UpdateCountryRequest
      */
     public function messages(): array
     {
-        return [ ];
+        return [];
     }
 
     /**
@@ -58,6 +60,6 @@ final class UpdateCountryRequest
      */
     public function attributes(): array
     {
-        return [ ];
+        return [];
     }
 }

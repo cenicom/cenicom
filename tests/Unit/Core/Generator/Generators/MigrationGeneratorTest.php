@@ -99,9 +99,14 @@ final class MigrationGeneratorTest extends GeneratorTestCase
 
         $module = $this->createModuleData();
 
-        $generator->generate($module);
+        $result = $generator->generate($module);
 
-        $file = $module->migrationFile();
+        $this->assertCount(
+            1,
+            $result->created()
+        );
+
+        $file = $result->created()[0];
 
         $this->assertFileExists($file);
 
@@ -138,8 +143,8 @@ final class MigrationGeneratorTest extends GeneratorTestCase
             new PresentationFactory(),
             new GeneratorValidator([]),
             new MigrationBuilder(
-            new MigrationFieldProcessor(),
-        ),
+                new MigrationFieldProcessor(),
+            ),
         );
     }
 }
