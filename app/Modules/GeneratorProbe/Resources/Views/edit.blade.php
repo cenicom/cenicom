@@ -1,6 +1,6 @@
 <x-layout.app>
     <x-slot:title>
-        [[ title ]]
+        generator_probes
     </x-slot:title>
 
 
@@ -8,8 +8,8 @@
 
         <x-cn.navigation.breadcrumb :items="[
             ['label' => 'Inicio', 'url' => '/', 'current' => false],
-            ['label' => '[[ plural ]]', 'url' => null, 'current' => false],
-            ['label' => 'Editar [[ singular ]]', 'url' => null, 'current' => true],
+            ['label' => 'generator_probes', 'url' => null, 'current' => false],
+            ['label' => 'Editar generator_probe', 'url' => null, 'current' => true],
         ]" />
 
 
@@ -20,7 +20,7 @@
                 <div>
 
                     <h1>
-                        Editar [[ singular ]]
+                        Editar generator_probe
                     </h1>
 
                     <p>
@@ -41,11 +41,11 @@
 
 
 <x-cn.forms.form
-    id="[[ singular ]]-form"
-    :action="route('[[ routeName ]].update', $[[ model ]])"
+    id="generator_probe-form"
+    :action="route('generator_probes.update', $generatorProbe)"
     method="PUT"
 >
-    @include('[[ viewPrefix ]]::_form')
+    @include('generator_probes::_form')
 
     <x-cn-form-actions>
         <x-cn.button type="submit">
@@ -53,7 +53,7 @@
         </x-cn.button>
 
         <x-cn.button
-            :href="route('[[ routeName ]].index')"
+            :href="route('generator_probes.index')"
             variant="secondary"
         >
             Regresar

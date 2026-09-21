@@ -1,0 +1,13 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'name' => '[[ name ]]',
+    'namespace' => '[[ moduleNamespace ]]',
+    'providers' => [],
+    'view_definitions' => [
+        [[ qualifiedViewDefinition ]]::class,
+    ],
+    'enabled' => true,
+];

@@ -124,7 +124,7 @@ final class ControllerGeneratorTest extends GeneratorTestCase
         );
 
         $this->assertStringContainsString(
-            "return view('{$module->viewPrefix()}.index'",
+            "return view('{$module->indexView()}'",
             $content
         );
 
@@ -134,12 +134,22 @@ final class ControllerGeneratorTest extends GeneratorTestCase
         );
 
         $this->assertStringContainsString(
-            "return view('{$module->viewPrefix()}.create')",
+            "return view('{$module->createView()}')",
             $content
         );
 
         $this->assertStringContainsString(
             '$this->action->create(',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            "return view('{$module->showView()}'",
+            $content
+        );
+
+        $this->assertStringContainsString(
+            "return view('{$module->editView()}'",
             $content
         );
 

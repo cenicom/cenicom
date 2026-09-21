@@ -140,6 +140,10 @@ readonly class ModuleData
 
     private string $viewPath;
 
+    private string $moduleManifestPath;
+
+    private string $viewDefinitionPath;
+
     private string $routePath;
 
     private string $policyPath;
@@ -282,6 +286,8 @@ readonly class ModuleData
         string $requestPath,
         string $factoryPath,
         string $viewPath,
+        string $moduleManifestPath,
+        string $viewDefinitionPath,
         string $routePath,
         string $seederPath,
         string $featureTestPath,
@@ -364,6 +370,8 @@ readonly class ModuleData
         $this->controllerPath = $controllerPath;
         $this->requestPath = $requestPath;
         $this->viewPath = $viewPath;
+        $this->moduleManifestPath = $moduleManifestPath;
+        $this->viewDefinitionPath = $viewDefinitionPath;
         $this->routePath = $routePath;
         $this->policyPath = $policyPath;
         $this->factoryPath = $factoryPath;
@@ -463,6 +471,11 @@ readonly class ModuleData
     |--------------------------------------------------------------------------
     */
 
+    public function moduleNamespace(): string
+    {
+        return 'App\\Modules\\' . $this->name();
+    }
+
     public function modelNamespace(): string
     {
         return $this->modelNamespace;
@@ -542,6 +555,11 @@ readonly class ModuleData
     public function actionNamespace(): string
     {
         return $this->actionNamespace;
+    }
+
+    public function viewDefinitionNamespace(): string
+    {
+        return $this->moduleNamespace() . '\\View';
     }
 
     /*
@@ -640,6 +658,11 @@ readonly class ModuleData
         return $this->actionClass;
     }
 
+    public function viewDefinitionClass(): string
+    {
+        return $this->name() . 'View';
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Getters - Paths
@@ -682,6 +705,11 @@ readonly class ModuleData
     {
 
         return $this->viewPath;
+    }
+
+    public function moduleManifestPath(): string
+    {
+        return $this->moduleManifestPath;
     }
 
     public function routePath(): string
@@ -743,6 +771,11 @@ readonly class ModuleData
     public function actionPath(): string
     {
         return $this->actionPath;
+    }
+
+    public function viewDefinitionPath(): string
+    {
+        return $this->viewDefinitionPath;
     }
 
     /*
@@ -928,6 +961,13 @@ readonly class ModuleData
             . $this->actionClass();
     }
 
+    public function qualifiedViewDefinition(): string
+    {
+        return $this->viewDefinitionNamespace()
+            . '\\'
+            . $this->viewDefinitionClass();
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Métodos filename*
@@ -983,22 +1023,22 @@ readonly class ModuleData
 
     public function indexView(): string
     {
-        return "{$this->viewPrefix()}.index";
+        return "{$this->viewPrefix()}::index";
     }
 
     public function createView(): string
     {
-        return "{$this->viewDirectory()}.create";
+        return "{$this->viewDirectory()}::create";
     }
 
     public function editView(): string
     {
-        return "{$this->viewDirectory()}.edit";
+        return "{$this->viewDirectory()}::edit";
     }
 
     public function showView(): string
     {
-        return "{$this->viewDirectory()}.show";
+        return "{$this->viewDirectory()}::show";
     }
 
     public function routeResource(): string

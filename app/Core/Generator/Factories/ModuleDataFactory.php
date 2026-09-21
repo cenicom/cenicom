@@ -211,6 +211,8 @@ final class ModuleDataFactory
 
             viewPath: $paths['viewPath'],
 
+            moduleManifestPath: $paths['moduleManifestPath'],
+
             routePath: $paths['routePath'],
 
             policyPath: $paths['policyPath'],
@@ -230,6 +232,8 @@ final class ModuleDataFactory
             permissionPath: $paths['permissionPath'],
 
             actionPath: $paths['actionPath'],
+
+            viewDefinitionPath: $paths['viewDefinitionPath'],
 
             /*
             |--------------------------------------------------------------------------
@@ -649,6 +653,11 @@ final class ModuleDataFactory
                 "Modules/{$name}/Resources/Views"
             ),
 
+            'moduleManifestPath'
+            => $this->paths->app(
+                "Modules/{$name}/module.php"
+            ),
+
             'routePath'
             => $this->paths->routes(
                 "modules/{$plural}.php"
@@ -696,6 +705,11 @@ final class ModuleDataFactory
 
             'actionPath' => $this->paths->app(
                 "Modules/{$name}/Actions/{$name}Action.php"
+            ),
+
+            'viewDefinitionPath'
+            => $this->paths->app(
+                "Modules/{$name}/View/{$name}View.php"
             ),
         ];
     }

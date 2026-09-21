@@ -10,6 +10,8 @@ return [
     App\Modules\Country\Domain\Contracts\CountryServiceInterface::class => App\Modules\Country\Domain\Services\CountryService::class,
     App\Modules\Currency\Domain\Contracts\CurrencyRepositoryInterface::class => App\Modules\Currency\Repositories\CurrencyRepository::class,
     App\Modules\Currency\Domain\Contracts\CurrencyServiceInterface::class => App\Modules\Currency\Domain\Services\CurrencyService::class,
+    App\Modules\GeneratorProbe\Domain\Contracts\GeneratorProbeRepositoryInterface::class => App\Modules\GeneratorProbe\Repositories\GeneratorProbeRepository::class,
+    App\Modules\GeneratorProbe\Domain\Contracts\GeneratorProbeServiceInterface::class => App\Modules\GeneratorProbe\Domain\Services\GeneratorProbeService::class,
     App\Modules\State\Domain\Contracts\StateRepositoryInterface::class => App\Modules\State\Repositories\StateRepository::class,
     App\Modules\State\Domain\Contracts\StateServiceInterface::class => App\Modules\State\Domain\Services\StateService::class,
 

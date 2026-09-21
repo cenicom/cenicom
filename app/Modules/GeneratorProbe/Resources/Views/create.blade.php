@@ -1,6 +1,6 @@
 <x-layout.app>
     <x-slot:title>
-        [[ title ]]
+        generator_probes
     </x-slot:title>
 
 
@@ -8,8 +8,8 @@
 
         <x-cn.navigation.breadcrumb :items="[
             ['label' => 'Inicio', 'url' => '/', 'current' => false],
-            ['label' => '[[ plural ]]', 'url' => null, 'current' => false],
-            ['label' => 'Crear [[ singular ]]', 'url' => null, 'current' => true],
+            ['label' => 'generator_probes', 'url' => null, 'current' => false],
+            ['label' => 'Crear generator_probe', 'url' => null, 'current' => true],
         ]" />
 
 
@@ -20,7 +20,7 @@
                 <div>
 
                     <h1>
-                        Crear [[ singular ]]
+                        Crear generator_probe
                     </h1>
 
                     <p>
@@ -40,10 +40,10 @@
             <div class="cn-card-body">
 
 
-                <x-cn.forms.form id="[[ singular ]]-form" :action="route('[[ routeName ]].store')" method="POST">
+                <x-cn.forms.form id="generator_probe-form" :action="route('generator_probes.store')" method="POST">
 
 
-                    @include('[[ viewPrefix ]]::_form')
+                    @include('generator_probes::_form')
 
                     {{-- Actions --}}
                     <x-cn-form-actions>
@@ -52,7 +52,7 @@
                             Guardar
                         </x-cn.button>
                         {{-- Regresar --}}
-                        <x-cn.button :href="route('[[ routeName ]].index')" variant="secondary">
+                        <x-cn.button :href="route('generator_probes.index')" variant="secondary">
                             Regresar
                         </x-cn.button>
                     </x-cn-form-actions>

@@ -38,6 +38,8 @@ use App\Core\Generator\Pipeline\RegisterNavigationStep;
 use App\Core\Generator\Pipeline\RegisterPermissionsStep;
 use App\Core\Generator\Pipeline\Steps\PrepareDirectoriesStep;
 use App\Core\Generator\Pipeline\Steps\ValidateModuleStep;
+use App\Core\Generator\Generators\ModuleManifestGenerator;
+use App\Core\Generator\Generators\ViewDefinitionGenerator;
 use Illuminate\Support\ServiceProvider;
 //use MiddlewareGenerator;
 
@@ -149,6 +151,9 @@ final class CNGeneratorServiceProvider extends ServiceProvider
 
                     $app->make(ViewGenerator::class),
 
+                    $app->make(ViewDefinitionGenerator::class),
+
+                    $app->make(ModuleManifestGenerator::class),
 
                     $app->make(ModelGenerator::class),
 

@@ -39,7 +39,7 @@ final class [[ controller ]] extends Controller
      */
     public function index(): View
     {
-        return view('[[ viewPrefix ]].index', [
+        return view('[[ indexView ]]', [
             '[[ pluralVariable ]]' => $this->service->paginate(
                 perPage: self::PER_PAGE,
             ),
@@ -51,7 +51,7 @@ final class [[ controller ]] extends Controller
      */
     public function create(): View
     {
-        return view('[[ viewPrefix ]].create');
+        return view('[[ createView ]]');
     }
 
     /**
@@ -77,7 +77,7 @@ final class [[ controller ]] extends Controller
         [[ model ]] $[[ variable ]]
     ): View {
 
-        return view('[[ viewPrefix ]].show', [
+        return view('[[ showView ]]', [
             '[[ variable ]]' => $[[ variable ]],
         ]);
     }
@@ -89,7 +89,7 @@ final class [[ controller ]] extends Controller
         [[ model ]] $[[ variable ]]
     ): View {
 
-        return view('[[ viewPrefix ]].edit', [
+        return view('[[ editView ]]', [
             '[[ variable ]]' => $[[ variable ]],
         ]);
     }

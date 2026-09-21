@@ -470,12 +470,12 @@ final class ViewGeneratorTest extends GeneratorTestCase
         $this->assertNotFalse($edit);
 
         $this->assertStringContainsString(
-            "@include('backoffice.currencies._form')",
+            "@include('backoffice.currencies::_form')",
             $create
         );
 
         $this->assertStringContainsString(
-            "@include('backoffice.currencies._form')",
+            "@include('backoffice.currencies::_form')",
             $edit
         );
 

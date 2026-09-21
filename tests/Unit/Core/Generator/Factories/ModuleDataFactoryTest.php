@@ -579,4 +579,97 @@ final class ModuleDataFactoryTest extends TestCase
             $columns[0]->isForeignKey()
         );
     }
+
+    public function test_builds_runtime_module_manifest_and_view_definition_locations(): void
+    {
+        $module = $this->factory->create([
+            'identity' => [
+                'name' => 'City',
+                'singular' => 'city',
+                'plural' => 'cities',
+                'table' => 'cities',
+                'description' => 'City module',
+            ],
+            'fields' => [],
+        ]);
+
+        self::assertSame(
+            'App\\Modules\\City',
+            $module->moduleNamespace()
+        );
+
+        /*
+    |--------------------------------------------------------------------------
+    | Runtime module manifest
+    |--------------------------------------------------------------------------
+    */
+
+        self::assertStringEndsWith(
+            'app/Modules/City/module.php',
+            str_replace('\\', '/', $module->moduleManifestPath())
+        );
+
+        /*
+    |--------------------------------------------------------------------------
+    | ViewDefinition namespace / class
+    |--------------------------------------------------------------------------
+    */
+
+        self::assertSame(
+            'App\\Modules\\City\\View',
+            $module->viewDefinitionNamespace()
+        );
+
+        self::assertSame(
+            'CityView',
+            $module->viewDefinitionClass()
+        );
+
+        self::assertSame(
+            'App\\Modules\\City\\View\\CityView',
+            $module->qualifiedViewDefinition()
+        );
+
+        /*
+    |--------------------------------------------------------------------------
+    | ViewDefinition physical path
+    |--------------------------------------------------------------------------
+    */
+
+        self::assertStringEndsWith(
+            'app/Modules/City/View/CityView.php',
+            str_replace('\\', '/', $module->viewDefinitionPath())
+        );
+
+        /*
+    |--------------------------------------------------------------------------
+    | Existing Blade view contract remains unchanged
+    |--------------------------------------------------------------------------
+    */
+
+        self::assertStringEndsWith(
+            'app/Modules/City/Resources/Views',
+            str_replace('\\', '/', $module->viewPath())
+        );
+
+        self::assertSame(
+            'cities::index',
+            $module->indexView()
+        );
+
+        self::assertSame(
+            'cities::create',
+            $module->createView()
+        );
+
+        self::assertSame(
+            'cities::edit',
+            $module->editView()
+        );
+
+        self::assertSame(
+            'cities::show',
+            $module->showView()
+        );
+    }
 }

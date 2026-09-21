@@ -108,6 +108,11 @@ final class PermissionGeneratorTest extends GeneratorTestCase
         self::assertNotFalse($content);
 
         self::assertStringContainsString(
+            'namespace App\\Modules\\Currency\\Permissions;',
+            $content,
+        );
+
+        self::assertStringContainsString(
             'final class CurrencyPermissions',
             $content,
         );
