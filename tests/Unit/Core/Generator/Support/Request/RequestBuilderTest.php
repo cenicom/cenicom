@@ -359,4 +359,32 @@ final class RequestBuilderTest extends TestCase
             $rules
         );
     }
+
+    public function test_build_generates_exists_rule_for_constrained_foreign_key(): void
+    {
+        $module = (new ModuleDataFactory())->create([
+            'identity' => [
+                'name' => 'State',
+                'singular' => 'state',
+                'plural' => 'states',
+                'table' => 'states',
+                'description' => 'State module',
+            ],
+
+            'fields' => [
+                [
+                    'name' => 'country_id',
+                    'type' => 'uuid',
+                    'constrained' => 'countries',
+                ],
+            ],
+        ]);
+
+        $rules = (new RequestBuilder())->build($module)['rules'];
+
+        $this->assertStringContainsString(
+            "'country_id' => ['required', 'uuid', 'exists:countries,id']",
+            $rules
+        );
+    }
 }

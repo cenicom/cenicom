@@ -19,20 +19,32 @@
             "type": "string"
         },
         {
+            "name": "code",
+            "type": "string",
+            "length": 3
+        },
+        {
             "name": "precision",
-            "type": "integer"
+            "type": "tinyInteger",
+            "unsigned": true,
+            "default": 2
         },
         {
             "name": "symbol",
-            "type": "string"
+            "type": "string",
+            "length": 10
         },
         {
             "name": "decimal_mark",
-            "type": "string"
+            "type": "string",
+            "length": 1,
+            "default": "."
         },
         {
             "name": "thousands_separator",
-            "type": "string"
+            "type": "string",
+            "length": 1,
+            "default": ","
         }
     ],
     "relations": [],

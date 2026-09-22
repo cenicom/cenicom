@@ -5,13 +5,15 @@ declare(strict_types=1);
 namespace Tests\Unit\Core\Generator\Generators;
 
 
+use App\Core\Generator\Builders\MigrationBuilder;
 use App\Core\Generator\Generators\MigrationGenerator;
 use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Processors\MigrationFieldProcessor;
 use App\Core\Generator\Support\FileWriter;
+use App\Core\Generator\Support\GeneratorExecutionContext;
+use App\Core\Generator\Support\MigrationFileResolver;
 use App\Core\Generator\Support\StubManager;
 use App\Core\Generator\Validation\GeneratorValidator;
-use App\Core\Generator\Builders\MigrationBuilder;
 use Tests\Support\GeneratorTestCase;
 
 
@@ -135,6 +137,95 @@ final class MigrationGeneratorTest extends GeneratorTestCase
         );
     }
 
+    public function test_force_updates_existing_migration_instead_of_creating_duplicate(): void
+    {
+        $generator = $this->createGenerator();
+
+        $module = $this->createModuleData();
+
+        $firstResult = $generator->generate($module);
+
+        $this->assertSame(
+            1,
+            $firstResult->createdCount()
+        );
+
+        $this->assertSame(
+            0,
+            $firstResult->updatedCount()
+        );
+
+        $this->assertCount(
+            1,
+            $firstResult->created()
+        );
+
+        $generatedMigration = $firstResult->created()[0];
+
+        $this->assertFileExists(
+            $generatedMigration
+        );
+
+        $existingMigration = $this->migrationsPath()
+            . DIRECTORY_SEPARATOR
+            . '2020_01_01_000000_create_currencies_table.php';
+
+        $this->assertTrue(
+            rename(
+                $generatedMigration,
+                $existingMigration
+            )
+        );
+
+        $this->assertFileExists(
+            $existingMigration
+        );
+
+        $this->assertFileDoesNotExist(
+            $generatedMigration
+        );
+
+        $context = app(GeneratorExecutionContext::class);
+
+        $context->setForce(true);
+
+        $secondResult = $generator->generate($module);
+
+        $this->assertSame(
+            0,
+            $secondResult->createdCount()
+        );
+
+        $this->assertSame(
+            1,
+            $secondResult->updatedCount()
+        );
+
+        $this->assertSame(
+            $existingMigration,
+            $secondResult->updated()[0]
+        );
+
+        $this->assertFileExists(
+            $existingMigration
+        );
+
+        $migrationFiles = glob(
+            $this->migrationsPath()
+                . DIRECTORY_SEPARATOR
+                . '*_create_currencies_table.php'
+        );
+
+        $this->assertNotFalse(
+            $migrationFiles
+        );
+
+        $this->assertCount(
+            1,
+            $migrationFiles
+        );
+    }
+
     private function createGenerator(): MigrationGenerator
     {
         return new MigrationGenerator(
@@ -145,6 +236,7 @@ final class MigrationGeneratorTest extends GeneratorTestCase
             new MigrationBuilder(
                 new MigrationFieldProcessor(),
             ),
+            new MigrationFileResolver(),
         );
     }
 }

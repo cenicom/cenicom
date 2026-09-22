@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature;
+namespace Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 
@@ -15,7 +15,7 @@ use App\Modules\Currency\Models\Currency;
  *
  * Prueba unitaria del módulo Currency.
  *
- * @package Tests\Feature
+ * @package Tests\Unit
  * @since 1.0.0
  */
 final class CurrencyUnitTest

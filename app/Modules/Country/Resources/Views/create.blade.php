@@ -43,7 +43,7 @@
                 <x-cn.forms.form id="country-form" :action="route('countries.store')" method="POST">
 
 
-                    @include('countries._form')
+                    @include('countries::_form')
 
                     {{-- Actions --}}
                     <x-cn-form-actions>

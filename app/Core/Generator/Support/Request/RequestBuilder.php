@@ -161,15 +161,24 @@ final class RequestBuilder
 
     private function resolveForeignRule(ColumnDefinition $column): ?string
     {
-
-        if (!$column->isForeignKey()) {
+        if (! $column->isForeignKey()) {
             return null;
         }
 
+        $table = is_string($column->constrained())
+            ? $column->constrained()
+            : $column->on();
+
+        if ($table === null) {
+            return null;
+        }
+
+        $reference = $column->references() ?? 'id';
+
         return sprintf(
             'exists:%s,%s',
-            $column->on(),
-            $column->references()
+            $table,
+            $reference
         );
     }
 

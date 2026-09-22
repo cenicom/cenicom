@@ -38,6 +38,35 @@
                 <thead>
                     <tr>
 
+{{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     column.stub
+========================================================== --}}
+
+<th
+    @class([
+        '',
+        'text-start',
+    ])
+>
+    Name
+</th>
+
+{{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     column.stub
+========================================================== --}}
+
+<th
+    @class([
+        '',
+        'text-start',
+    ])
+>
+    Country Id
+</th>
 
 
                         <th class="text-center">
@@ -53,7 +82,8 @@
 
                         <tr>
 
-
+<td>{{ $state->name }}</td>
+<td>{{ $state->country_id }}</td>
 
                             <td class="text-center">
 
@@ -93,7 +123,7 @@
 
                         <tr>
 
-                            <td colspan="1">
+                            <td colspan="3">
 
                                 <x-cn.empty-state>
                                     No existen registros.

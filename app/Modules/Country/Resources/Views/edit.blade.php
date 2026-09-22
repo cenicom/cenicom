@@ -45,7 +45,7 @@
     :action="route('countries.update', $country)"
     method="PUT"
 >
-    @include('countries._form')
+    @include('countries::_form')
 
     <x-cn-form-actions>
         <x-cn.button type="submit">

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Currency\Security;
+namespace App\Modules\Currency\Permissions;
 
 use App\Core\Generator\DTO\PermissionDefinition;
 

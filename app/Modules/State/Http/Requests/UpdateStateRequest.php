@@ -37,7 +37,8 @@ final class UpdateStateRequest
     public function rules(): array
     {
     return [
-    
+                'name' => ['required', 'string'],
+            'country_id' => ['required', 'uuid', 'exists:countries,id'],
     ];
     }
 

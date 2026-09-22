@@ -13,9 +13,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('generator_probes', function (Blueprint $table) {
+        Schema::create('states', function (Blueprint $table) {
 
             $table->uuid('id')->primary();
+$table->string('name');
+
+$table->foreignUuid('country_id')->constrained('countries');
 
             $table->timestamps();
 
@@ -28,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('generator_probes');
+        Schema::dropIfExists('states');
     }
 };

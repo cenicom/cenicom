@@ -50,6 +50,28 @@
     <x-cn.forms.field>
 
         <x-cn.forms.label>
+            Name
+        </x-cn.forms.label>
+
+        <x-cn.forms.display :value="$city->name" />
+
+    </x-cn.forms.field>
+
+</div>
+
+
+{{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     field.stub
+========================================================== --}}
+
+
+<div class="col-md-6">
+
+    <x-cn.forms.field>
+
+        <x-cn.forms.label>
             State Id
         </x-cn.forms.label>
 

@@ -38,7 +38,71 @@
 
                 <x-cn.forms.group columns="2">
 
-                    
+                    {{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     field.stub
+========================================================== --}}
+
+
+<div class="col-md-6">
+
+    <x-cn.forms.field>
+
+        <x-cn.forms.label>
+            Name
+        </x-cn.forms.label>
+
+        <x-cn.forms.display :value="$country->name" />
+
+    </x-cn.forms.field>
+
+</div>
+
+
+{{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     field.stub
+========================================================== --}}
+
+
+<div class="col-md-6">
+
+    <x-cn.forms.field>
+
+        <x-cn.forms.label>
+            Iso2
+        </x-cn.forms.label>
+
+        <x-cn.forms.display :value="$country->iso2" />
+
+    </x-cn.forms.field>
+
+</div>
+
+
+{{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     field.stub
+========================================================== --}}
+
+
+<div class="col-md-6">
+
+    <x-cn.forms.field>
+
+        <x-cn.forms.label>
+            Iso3
+        </x-cn.forms.label>
+
+        <x-cn.forms.display :value="$country->iso3" />
+
+    </x-cn.forms.field>
+
+</div>
+
 
                 </x-cn.forms.group>
 

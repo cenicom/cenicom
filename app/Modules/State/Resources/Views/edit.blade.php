@@ -45,7 +45,7 @@
     :action="route('states.update', $state)"
     method="PUT"
 >
-    @include('states._form')
+    @include('states::_form')
 
     <x-cn-form-actions>
         <x-cn.button type="submit">

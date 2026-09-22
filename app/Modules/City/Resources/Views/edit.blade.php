@@ -45,7 +45,7 @@
     :action="route('cities.update', $city)"
     method="PUT"
 >
-    @include('cities._form')
+    @include('cities::_form')
 
     <x-cn-form-actions>
         <x-cn.button type="submit">

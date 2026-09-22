@@ -47,13 +47,9 @@ final class State extends Model
      * @var array<string,string>
      */
     protected function casts(): array
-{
-    return [
-
-
-
-    ];
-}
+    {
+        return [];
+    }
 
 
 
@@ -78,7 +74,4 @@ final class State extends Model
     | Scopes
     |--------------------------------------------------------------------------
     */
-
-
-
 }

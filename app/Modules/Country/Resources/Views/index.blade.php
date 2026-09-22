@@ -38,6 +38,50 @@
                 <thead>
                     <tr>
 
+{{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     column.stub
+========================================================== --}}
+
+<th
+    @class([
+        '',
+        'text-start',
+    ])
+>
+    Name
+</th>
+
+{{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     column.stub
+========================================================== --}}
+
+<th
+    @class([
+        '',
+        'text-start',
+    ])
+>
+    Iso2
+</th>
+
+{{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     column.stub
+========================================================== --}}
+
+<th
+    @class([
+        '',
+        'text-start',
+    ])
+>
+    Iso3
+</th>
 
 
                         <th class="text-center">
@@ -53,7 +97,9 @@
 
                         <tr>
 
-
+<td>{{ $country->name }}</td>
+<td>{{ $country->iso2 }}</td>
+<td>{{ $country->iso3 }}</td>
 
                             <td class="text-center">
 
@@ -93,7 +139,7 @@
 
                         <tr>
 
-                            <td colspan="1">
+                            <td colspan="4">
 
                                 <x-cn.empty-state>
                                     No existen registros.

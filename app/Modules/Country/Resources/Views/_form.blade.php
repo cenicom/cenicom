@@ -2,4 +2,71 @@
 
     
 
+{{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     input.stub
+========================================================== --}}
+
+<div class="col-md-6">
+    <x-cn.input
+        name="name"
+        type="string"
+        label="Name"
+        placeholder="Enter Name"
+        :value="NULL"
+        :required="true"
+        :readonly="false"
+        :maxlength="null"
+        :step="null"
+    />
+</div>
+
+
+
+
+{{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     input.stub
+========================================================== --}}
+
+<div class="col-md-6">
+    <x-cn.input
+        name="iso2"
+        type="string"
+        label="Iso2"
+        placeholder="Enter Iso2"
+        :value="NULL"
+        :required="true"
+        :readonly="false"
+        :maxlength="2"
+        :step="null"
+    />
+</div>
+
+
+
+
+{{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     input.stub
+========================================================== --}}
+
+<div class="col-md-6">
+    <x-cn.input
+        name="iso3"
+        type="string"
+        label="Iso3"
+        placeholder="Enter Iso3"
+        :value="NULL"
+        :required="true"
+        :readonly="false"
+        :maxlength="3"
+        :step="null"
+    />
+</div>
+
+
 </x-cn.forms.group>

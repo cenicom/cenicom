@@ -39,7 +39,7 @@ final class StateController extends Controller
      */
     public function index(): View
     {
-        return view('states.index', [
+        return view('states::index', [
             'states' => $this->service->paginate(
                 perPage: self::PER_PAGE,
             ),
@@ -51,7 +51,7 @@ final class StateController extends Controller
      */
     public function create(): View
     {
-        return view('states.create');
+        return view('states::create');
     }
 
     /**
@@ -77,7 +77,7 @@ final class StateController extends Controller
         State $state
     ): View {
 
-        return view('states.show', [
+        return view('states::show', [
             'state' => $state,
         ]);
     }
@@ -89,7 +89,7 @@ final class StateController extends Controller
         State $state
     ): View {
 
-        return view('states.edit', [
+        return view('states::edit', [
             'state' => $state,
         ]);
     }

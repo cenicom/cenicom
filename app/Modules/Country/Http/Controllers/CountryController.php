@@ -39,7 +39,7 @@ final class CountryController extends Controller
      */
     public function index(): View
     {
-        return view('countries.index', [
+        return view('countries::index', [
             'countries' => $this->service->paginate(
                 perPage: self::PER_PAGE,
             ),
@@ -51,7 +51,7 @@ final class CountryController extends Controller
      */
     public function create(): View
     {
-        return view('countries.create');
+        return view('countries::create');
     }
 
     /**
@@ -77,7 +77,7 @@ final class CountryController extends Controller
         Country $country
     ): View {
 
-        return view('countries.show', [
+        return view('countries::show', [
             'country' => $country,
         ]);
     }
@@ -89,7 +89,7 @@ final class CountryController extends Controller
         Country $country
     ): View {
 
-        return view('countries.edit', [
+        return view('countries::edit', [
             'country' => $country,
         ]);
     }

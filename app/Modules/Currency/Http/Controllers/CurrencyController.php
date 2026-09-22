@@ -39,7 +39,7 @@ final class CurrencyController extends Controller
      */
     public function index(): View
     {
-        return view('currencies.index', [
+        return view('currencies::index', [
             'currencies' => $this->service->paginate(
                 perPage: self::PER_PAGE,
             ),
@@ -51,7 +51,7 @@ final class CurrencyController extends Controller
      */
     public function create(): View
     {
-        return view('currencies.create');
+        return view('currencies::create');
     }
 
     /**
@@ -77,7 +77,7 @@ final class CurrencyController extends Controller
         Currency $currency
     ): View {
 
-        return view('currencies.show', [
+        return view('currencies::show', [
             'currency' => $currency,
         ]);
     }
@@ -89,7 +89,7 @@ final class CurrencyController extends Controller
         Currency $currency
     ): View {
 
-        return view('currencies.edit', [
+        return view('currencies::edit', [
             'currency' => $currency,
         ]);
     }

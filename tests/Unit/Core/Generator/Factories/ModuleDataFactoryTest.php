@@ -578,6 +578,14 @@ final class ModuleDataFactoryTest extends TestCase
         self::assertTrue(
             $columns[0]->isForeignKey()
         );
+
+        self::assertFalse(
+            $columns[0]->isPrimaryKey()
+        );
+
+        self::assertTrue(
+            $columns[0]->shouldBeFillable()
+        );
     }
 
     public function test_builds_runtime_module_manifest_and_view_definition_locations(): void

@@ -38,6 +38,95 @@
                 <thead>
                     <tr>
 
+{{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     column.stub
+========================================================== --}}
+
+<th
+    @class([
+        '',
+        'text-start',
+    ])
+>
+    Name
+</th>
+
+{{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     column.stub
+========================================================== --}}
+
+<th
+    @class([
+        '',
+        'text-start',
+    ])
+>
+    Code
+</th>
+
+{{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     column.stub
+========================================================== --}}
+
+<th
+    @class([
+        '',
+        'text-start',
+    ])
+>
+    Precision
+</th>
+
+{{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     column.stub
+========================================================== --}}
+
+<th
+    @class([
+        '',
+        'text-start',
+    ])
+>
+    Symbol
+</th>
+
+{{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     column.stub
+========================================================== --}}
+
+<th
+    @class([
+        '',
+        'text-start',
+    ])
+>
+    Decimal Mark
+</th>
+
+{{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     column.stub
+========================================================== --}}
+
+<th
+    @class([
+        '',
+        'text-start',
+    ])
+>
+    Thousands Separator
+</th>
 
 
                         <th class="text-center">
@@ -53,7 +142,12 @@
 
                         <tr>
 
-
+<td>{{ $currency->name }}</td>
+<td>{{ $currency->code }}</td>
+<td>{{ $currency->precision }}</td>
+<td>{{ $currency->symbol }}</td>
+<td>{{ $currency->decimal_mark }}</td>
+<td>{{ $currency->thousands_separator }}</td>
 
                             <td class="text-center">
 
@@ -93,7 +187,7 @@
 
                         <tr>
 
-                            <td colspan="1">
+                            <td colspan="7">
 
                                 <x-cn.empty-state>
                                     No existen registros.

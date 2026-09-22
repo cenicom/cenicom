@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Country\Security;
+namespace App\Modules\Country\Permissions;
 
 use App\Core\Generator\DTO\PermissionDefinition;
 

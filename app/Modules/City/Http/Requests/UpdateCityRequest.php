@@ -37,7 +37,8 @@ final class UpdateCityRequest
     public function rules(): array
     {
     return [
-    
+                'name' => ['required', 'string'],
+            'state_id' => ['required', 'uuid', 'exists:,'],
     ];
     }
 

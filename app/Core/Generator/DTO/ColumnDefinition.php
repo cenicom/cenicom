@@ -605,14 +605,7 @@ final readonly class ColumnDefinition
      */
     public function isPrimaryKey(): bool
     {
-        return match ($this->type) {
-
-            FieldType::ID,
-            FieldType::UUID,
-            FieldType::ULID => true,
-
-            default => $this->name === 'id',
-        };
+        return $this->name === 'id';
     }
 
     /**

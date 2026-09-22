@@ -37,7 +37,8 @@ final class StoreStateRequest
     public function rules(): array
     {
     return [
-    
+                'name' => ['required', 'string'],
+            'country_id' => ['required', 'uuid', 'exists:countries,id'],
     ];
     }
 

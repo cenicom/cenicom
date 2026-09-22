@@ -101,6 +101,12 @@ final class MigrationFieldProcessor
                 $field->name()
             ),
 
+            FieldType::TINY_INTEGER =>
+            sprintf(
+                "\$table->tinyInteger('%s')",
+                $field->name()
+            ),
+
             FieldType::BIG_INTEGER =>
             sprintf(
                 "\$table->bigInteger('%s')",

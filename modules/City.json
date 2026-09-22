@@ -15,6 +15,10 @@
     "database": [],
     "fields": [
         {
+            "name": "name",
+            "type": "string"
+        },
+        {
             "name": "state_id",
             "type": "uuid",
             "constrained": "states"

@@ -38,7 +38,137 @@
 
                 <x-cn.forms.group columns="2">
 
-                    
+                    {{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     field.stub
+========================================================== --}}
+
+
+<div class="col-md-6">
+
+    <x-cn.forms.field>
+
+        <x-cn.forms.label>
+            Name
+        </x-cn.forms.label>
+
+        <x-cn.forms.display :value="$currency->name" />
+
+    </x-cn.forms.field>
+
+</div>
+
+
+{{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     field.stub
+========================================================== --}}
+
+
+<div class="col-md-6">
+
+    <x-cn.forms.field>
+
+        <x-cn.forms.label>
+            Code
+        </x-cn.forms.label>
+
+        <x-cn.forms.display :value="$currency->code" />
+
+    </x-cn.forms.field>
+
+</div>
+
+
+{{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     field.stub
+========================================================== --}}
+
+
+<div class="col-md-6">
+
+    <x-cn.forms.field>
+
+        <x-cn.forms.label>
+            Precision
+        </x-cn.forms.label>
+
+        <x-cn.forms.display :value="$currency->precision" />
+
+    </x-cn.forms.field>
+
+</div>
+
+
+{{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     field.stub
+========================================================== --}}
+
+
+<div class="col-md-6">
+
+    <x-cn.forms.field>
+
+        <x-cn.forms.label>
+            Symbol
+        </x-cn.forms.label>
+
+        <x-cn.forms.display :value="$currency->symbol" />
+
+    </x-cn.forms.field>
+
+</div>
+
+
+{{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     field.stub
+========================================================== --}}
+
+
+<div class="col-md-6">
+
+    <x-cn.forms.field>
+
+        <x-cn.forms.label>
+            Decimal Mark
+        </x-cn.forms.label>
+
+        <x-cn.forms.display :value="$currency->decimal_mark" />
+
+    </x-cn.forms.field>
+
+</div>
+
+
+{{-- ==========================================================
+     CENICOM ERP
+     CN Generator - Component Stub
+     field.stub
+========================================================== --}}
+
+
+<div class="col-md-6">
+
+    <x-cn.forms.field>
+
+        <x-cn.forms.label>
+            Thousands Separator
+        </x-cn.forms.label>
+
+        <x-cn.forms.display :value="$currency->thousands_separator" />
+
+    </x-cn.forms.field>
+
+</div>
+
 
                 </x-cn.forms.group>
 

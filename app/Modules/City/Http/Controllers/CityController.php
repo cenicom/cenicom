@@ -39,7 +39,7 @@ final class CityController extends Controller
      */
     public function index(): View
     {
-        return view('cities.index', [
+        return view('cities::index', [
             'cities' => $this->service->paginate(
                 perPage: self::PER_PAGE,
             ),
@@ -51,7 +51,7 @@ final class CityController extends Controller
      */
     public function create(): View
     {
-        return view('cities.create');
+        return view('cities::create');
     }
 
     /**
@@ -77,7 +77,7 @@ final class CityController extends Controller
         City $city
     ): View {
 
-        return view('cities.show', [
+        return view('cities::show', [
             'city' => $city,
         ]);
     }
@@ -89,7 +89,7 @@ final class CityController extends Controller
         City $city
     ): View {
 
-        return view('cities.edit', [
+        return view('cities::edit', [
             'city' => $city,
         ]);
     }

@@ -43,7 +43,7 @@
                 <x-cn.forms.form id="state-form" :action="route('states.store')" method="POST">
 
 
-                    @include('states._form')
+                    @include('states::_form')
 
                     {{-- Actions --}}
                     <x-cn-form-actions>

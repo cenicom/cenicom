@@ -45,7 +45,7 @@
     :action="route('currencies.update', $currency)"
     method="PUT"
 >
-    @include('currencies._form')
+    @include('currencies::_form')
 
     <x-cn-form-actions>
         <x-cn.button type="submit">

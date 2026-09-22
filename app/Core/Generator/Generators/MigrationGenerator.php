@@ -10,6 +10,7 @@ use App\Core\Generator\DTO\ModuleData;
 use App\Core\Generator\Presentation\Factory\PresentationFactory;
 use App\Core\Generator\Results\GeneratorResult;
 use App\Core\Generator\Support\FileWriter;
+use App\Core\Generator\Support\MigrationFileResolver;
 use App\Core\Generator\Support\StubManager;
 use App\Core\Generator\Validation\GeneratorValidator;
 
@@ -25,10 +26,13 @@ final class MigrationGenerator extends BaseGenerator
     private const STUB = 'migration.stub';
 
     public function __construct(
-        StubManager $stubManager, FileWriter $fileWriter,
-        PresentationFactory $presentationFactory, GeneratorValidator $validator,
-        private readonly MigrationBuilder $builder,)
-    {
+        StubManager $stubManager,
+        FileWriter $fileWriter,
+        PresentationFactory $presentationFactory,
+        GeneratorValidator $validator,
+        private readonly MigrationBuilder $builder,
+        private readonly MigrationFileResolver $migrationFileResolver,
+    ) {
         parent::__construct(
             $stubManager,
             $fileWriter,
@@ -48,17 +52,19 @@ final class MigrationGenerator extends BaseGenerator
     /**
      * {@inheritDoc}
      */
-    public function generate(ModuleData $module,): GeneratorResult
+    public function generate(ModuleData $module): GeneratorResult
     {
+        $existingMigration = $this->migrationFileResolver->resolve(
+            $module->migrationPath(),
+            $module->table(),
+        );
+
+        $path = $existingMigration ?? $module->migrationFile();
 
         return $this->generateResult(
             self::STUB,
-            $module->migrationFile(),
-            $this->builder->build($module)
+            $path,
+            $this->builder->build($module),
         );
-
-
     }
-
-
 }

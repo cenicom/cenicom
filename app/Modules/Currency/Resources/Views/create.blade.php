@@ -43,7 +43,7 @@
                 <x-cn.forms.form id="currency-form" :action="route('currencies.store')" method="POST">
 
 
-                    @include('currencies._form')
+                    @include('currencies::_form')
 
                     {{-- Actions --}}
                     <x-cn-form-actions>
