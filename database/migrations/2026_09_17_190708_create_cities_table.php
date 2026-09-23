@@ -16,6 +16,8 @@ return new class extends Migration
         Schema::create('cities', function (Blueprint $table) {
 
             $table->uuid('id')->primary();
+
+
             $table->foreignUuid('state_id')->constrained('states');
 
             $table->timestamps();

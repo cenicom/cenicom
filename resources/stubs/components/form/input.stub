@@ -7,7 +7,7 @@
 ========================================================== --}}
 
 <div class="[[ column_class ]]">
-    <x-cn.input
+    <[[ blade_component ]]
         name="[[ name ]]"
         type="[[ type ]]"
         label="[[ label ]]"

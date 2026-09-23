@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\City\Http\Requests;
+namespace App\Modules\CnGeneratorProbe\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -11,14 +11,14 @@ use Illuminate\Foundation\Http\FormRequest;
  * CENICOM ERP
  * ==========================================================
  *
- * Request para crear un city.
+ * Request para crear un cn_generator_probe.
  *
  * Gestiona la autorización y validación de la creación
  * de registros del módulo.
  *
- * @package App\Modules\City\Http\Requests
+ * @package App\Modules\CnGeneratorProbe\Http\Requests
  */
-final class StoreCityRequest
+final class StoreCnGeneratorProbeRequest
     extends FormRequest
 {
     /**
@@ -37,8 +37,7 @@ final class StoreCityRequest
     public function rules(): array
     {
     return [
-                'name' => ['required', 'string'],
-            'state_id' => ['required', 'uuid', 'exists:states,id'],
+    
     ];
     }
 

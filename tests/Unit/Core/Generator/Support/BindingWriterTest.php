@@ -12,20 +12,46 @@ final class BindingWriterTest extends TestCase
 {
     private string $configPath;
 
+    private bool $configOriginallyExisted = false;
+
+    private ?string $originalConfigContents = null;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->configPath = config_path('cn-bindings.php');
+        $this->configPath = config_path(
+            'cn-bindings.php'
+        );
 
-        if (file_exists($this->configPath)) {
-            unlink($this->configPath);
+        $this->configOriginallyExisted =
+            file_exists($this->configPath);
+
+        if ($this->configOriginallyExisted) {
+            $contents = file_get_contents(
+                $this->configPath
+            );
+
+            $this->originalConfigContents =
+                $contents === false ? null : $contents;
         }
+
+        file_put_contents(
+            $this->configPath,
+            "<?php\n\ndeclare(strict_types=1);\n\nreturn [];\n"
+        );
     }
 
     protected function tearDown(): void
     {
-        if (file_exists($this->configPath)) {
+        if ($this->configOriginallyExisted) {
+            if ($this->originalConfigContents !== null) {
+                file_put_contents(
+                    $this->configPath,
+                    $this->originalConfigContents
+                );
+            }
+        } elseif (file_exists($this->configPath)) {
             unlink($this->configPath);
         }
 
@@ -50,9 +76,7 @@ final class BindingWriterTest extends TestCase
 
         $this->assertSame(
             'App\\Core\\Repositories\\CurrencyRepository',
-            $bindings[
-                'App\\Core\\Contracts\\CurrencyRepositoryInterface'
-            ]
+            $bindings['App\\Core\\Contracts\\CurrencyRepositoryInterface']
         );
     }
 

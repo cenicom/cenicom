@@ -167,6 +167,11 @@ final class ViewGeneratorTest extends GeneratorTestCase
             $viewPath . DIRECTORY_SEPARATOR . '_form.blade.php'
         );
 
+        $this->assertStringContainsString(
+            '<x-cn.forms.input',
+            $form
+        );
+
         $export = file_get_contents(
             $viewPath . DIRECTORY_SEPARATOR . 'export.blade.php'
         );

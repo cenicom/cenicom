@@ -38,7 +38,7 @@ final class UpdateCityRequest
     {
     return [
                 'name' => ['required', 'string'],
-            'state_id' => ['required', 'uuid', 'exists:,'],
+            'state_id' => ['required', 'uuid', 'exists:states,id'],
     ];
     }
 

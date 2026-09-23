@@ -13,6 +13,10 @@ final class BindingGeneratorTest extends GeneratorTestCase
 {
     private string $configPath;
 
+    private bool $configOriginallyExisted = false;
+
+    private ?string $originalConfigContents = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -21,14 +25,34 @@ final class BindingGeneratorTest extends GeneratorTestCase
             'cn-bindings.php'
         );
 
-        if (file_exists($this->configPath)) {
-            unlink($this->configPath);
+        $this->configOriginallyExisted =
+            file_exists($this->configPath);
+
+        if ($this->configOriginallyExisted) {
+            $contents = file_get_contents(
+                $this->configPath
+            );
+
+            $this->originalConfigContents =
+                $contents === false ? null : $contents;
         }
+
+        file_put_contents(
+            $this->configPath,
+            "<?php\n\ndeclare(strict_types=1);\n\nreturn [];\n"
+        );
     }
 
     protected function tearDown(): void
     {
-        if (file_exists($this->configPath)) {
+        if ($this->configOriginallyExisted) {
+            if ($this->originalConfigContents !== null) {
+                file_put_contents(
+                    $this->configPath,
+                    $this->originalConfigContents
+                );
+            }
+        } elseif (file_exists($this->configPath)) {
             unlink($this->configPath);
         }
 
@@ -55,16 +79,12 @@ final class BindingGeneratorTest extends GeneratorTestCase
 
         $this->assertSame(
             'App\\Modules\\Currency\\Repositories\\CurrencyRepository',
-            $bindings[
-                'App\\Modules\\Currency\\Domain\\Contracts\\CurrencyRepositoryInterface'
-            ]
+            $bindings['App\\Modules\\Currency\\Domain\\Contracts\\CurrencyRepositoryInterface']
         );
 
         $this->assertSame(
             'App\\Modules\\Currency\\Domain\\Services\\CurrencyService',
-            $bindings[
-                'App\\Modules\\Currency\\Domain\\Contracts\\CurrencyServiceInterface'
-            ]
+            $bindings['App\\Modules\\Currency\\Domain\\Contracts\\CurrencyServiceInterface']
         );
     }
 

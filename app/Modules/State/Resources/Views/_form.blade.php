@@ -1,6 +1,6 @@
 <x-cn.forms.group columns="2">
 
-    
+
 
 {{-- ==========================================================
      CENICOM ERP
@@ -9,7 +9,7 @@
 ========================================================== --}}
 
 <div class="col-md-6">
-    <x-cn.input
+    <x-cn.forms.input
         name="name"
         type="string"
         label="Name"
@@ -32,7 +32,7 @@
 ========================================================== --}}
 
 <div class="col-md-6">
-    <x-cn.input
+    <x-cn.forms.input
         name="country_id"
         type="uuid"
         label="Country Id"

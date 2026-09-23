@@ -53,7 +53,7 @@ final readonly class ComponentMetadata
          * Nombre del componente Blade.
          *
          * Ejemplo:
-         * x-cn.input
+         * x-cn.forms.input
          */
         public string $bladeComponent,
 

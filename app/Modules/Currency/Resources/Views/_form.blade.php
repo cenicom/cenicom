@@ -1,6 +1,6 @@
 <x-cn.forms.group columns="2">
 
-    
+
 
 {{-- ==========================================================
      CENICOM ERP
@@ -9,7 +9,7 @@
 ========================================================== --}}
 
 <div class="col-md-6">
-    <x-cn.input
+    <x-cn.forms.input
         name="name"
         type="string"
         label="Name"
@@ -32,7 +32,7 @@
 ========================================================== --}}
 
 <div class="col-md-6">
-    <x-cn.input
+    <x-cn.forms.input
         name="code"
         type="string"
         label="Code"
@@ -55,7 +55,7 @@
 ========================================================== --}}
 
 <div class="col-md-6">
-    <x-cn.number
+    <x-cn.forms.number
         name="precision"
         label="Precision"
         :value="2"
@@ -75,7 +75,7 @@
 ========================================================== --}}
 
 <div class="col-md-6">
-    <x-cn.input
+    <x-cn.forms.input
         name="symbol"
         type="string"
         label="Symbol"
@@ -98,7 +98,7 @@
 ========================================================== --}}
 
 <div class="col-md-6">
-    <x-cn.input
+    <x-cn.forms.input
         name="decimal_mark"
         type="string"
         label="Decimal Mark"
@@ -121,7 +121,7 @@
 ========================================================== --}}
 
 <div class="col-md-6">
-    <x-cn.input
+    <x-cn.forms.input
         name="thousands_separator"
         type="string"
         label="Thousands Separator"

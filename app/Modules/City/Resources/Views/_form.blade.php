@@ -9,7 +9,7 @@
 ========================================================== --}}
 
 <div class="col-md-6">
-    <x-cn.input
+    <x-cn.forms.input
         name="name"
         type="string"
         label="Name"
@@ -32,7 +32,7 @@
 ========================================================== --}}
 
 <div class="col-md-6">
-    <x-cn.input
+    <x-cn.forms.input
         name="state_id"
         type="uuid"
         label="State Id"

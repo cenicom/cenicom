@@ -25,7 +25,7 @@ final class ComponentResolverTest extends TestCase
         ]);
 
         self::assertSame('input', $metadata->component);
-        self::assertSame('x-cn.input', $metadata->bladeComponent);
+        self::assertSame('x-cn.forms.input', $metadata->bladeComponent);
         self::assertSame(ComponentMetadata::COL_HALF, $metadata->columnClass);
         self::assertSame('bi-type', $metadata->icon);
     }
@@ -38,7 +38,7 @@ final class ComponentResolverTest extends TestCase
         ]);
 
         self::assertSame('number', $metadata->component);
-        self::assertSame('x-cn.number', $metadata->bladeComponent);
+        self::assertSame('x-cn.forms.number', $metadata->bladeComponent);
         self::assertSame(ComponentMetadata::COL_HALF, $metadata->columnClass);
         self::assertSame('bi-123', $metadata->icon);
     }
@@ -53,7 +53,7 @@ final class ComponentResolverTest extends TestCase
         ]);
 
         self::assertSame('number', $metadata->component);
-        self::assertSame('x-cn.number', $metadata->bladeComponent);
+        self::assertSame('x-cn.forms.number', $metadata->bladeComponent);
         self::assertSame('0.01', $metadata->attributes['step']);
         self::assertSame(10, $metadata->attributes['precision']);
     }
@@ -66,7 +66,7 @@ final class ComponentResolverTest extends TestCase
         ]);
 
         self::assertSame('checkbox', $metadata->component);
-        self::assertSame('x-cn.checkbox', $metadata->bladeComponent);
+        self::assertSame('x-cn.forms.checkbox', $metadata->bladeComponent);
         self::assertSame('bi-check-square', $metadata->icon);
     }
 
@@ -78,7 +78,7 @@ final class ComponentResolverTest extends TestCase
         ]);
 
         self::assertSame('textarea', $metadata->component);
-        self::assertSame('x-cn.textarea', $metadata->bladeComponent);
+        self::assertSame('x-cn.forms.textarea', $metadata->bladeComponent);
         self::assertSame(ComponentMetadata::COL_FULL, $metadata->columnClass);
         self::assertSame('bi-card-text', $metadata->icon);
     }
@@ -91,7 +91,7 @@ final class ComponentResolverTest extends TestCase
         ]);
 
         self::assertSame('textarea', $metadata->component);
-        self::assertSame('x-cn.textarea', $metadata->bladeComponent);
+        self::assertSame('x-cn.forms.textarea', $metadata->bladeComponent);
     }
 
     public function test_resolves_jsonb_as_textarea(): void
@@ -102,7 +102,7 @@ final class ComponentResolverTest extends TestCase
         ]);
 
         self::assertSame('textarea', $metadata->component);
-        self::assertSame('x-cn.textarea', $metadata->bladeComponent);
+        self::assertSame('x-cn.forms.textarea', $metadata->bladeComponent);
     }
 
     public function test_resolves_enum_as_select(): void
@@ -117,7 +117,7 @@ final class ComponentResolverTest extends TestCase
         ]);
 
         self::assertSame('select', $metadata->component);
-        self::assertSame('x-cn.select', $metadata->bladeComponent);
+        self::assertSame('x-cn.forms.select', $metadata->bladeComponent);
         self::assertSame(ComponentMetadata::COL_HALF, $metadata->columnClass);
         self::assertSame('bi-list', $metadata->icon);
     }
@@ -130,7 +130,7 @@ final class ComponentResolverTest extends TestCase
         ]);
 
         self::assertSame('date', $metadata->component);
-        self::assertSame('x-cn.date', $metadata->bladeComponent);
+        self::assertSame('x-cn.forms.date', $metadata->bladeComponent);
         self::assertSame('bi-calendar', $metadata->icon);
     }
 
@@ -142,7 +142,7 @@ final class ComponentResolverTest extends TestCase
         ]);
 
         self::assertSame('input', $metadata->component);
-        self::assertSame('x-cn.input', $metadata->bladeComponent);
+        self::assertSame('x-cn.forms.input', $metadata->bladeComponent);
     }
 
     public function test_resolves_datetime_as_datetime_component(): void
@@ -153,7 +153,7 @@ final class ComponentResolverTest extends TestCase
         ]);
 
         self::assertSame('datetime', $metadata->component);
-        self::assertSame('x-cn.datetime', $metadata->bladeComponent);
+        self::assertSame('x-cn.forms.datetime', $metadata->bladeComponent);
         self::assertSame('bi-calendar-event', $metadata->icon);
     }
 
@@ -165,7 +165,7 @@ final class ComponentResolverTest extends TestCase
         ]);
 
         self::assertSame('select', $metadata->component);
-        self::assertSame('x-cn.select', $metadata->bladeComponent);
+        self::assertSame('x-cn.forms.select', $metadata->bladeComponent);
     }
 
     public function test_resolves_foreign_id_as_select(): void
@@ -176,7 +176,7 @@ final class ComponentResolverTest extends TestCase
         ]);
 
         self::assertSame('select', $metadata->component);
-        self::assertSame('x-cn.select', $metadata->bladeComponent);
+        self::assertSame('x-cn.forms.select', $metadata->bladeComponent);
     }
 
     /*
@@ -194,7 +194,7 @@ final class ComponentResolverTest extends TestCase
         ]);
 
         self::assertSame('select', $metadata->component);
-        self::assertSame('x-cn.select', $metadata->bladeComponent);
+        self::assertSame('x-cn.forms.select', $metadata->bladeComponent);
         self::assertSame('bi-list', $metadata->icon);
     }
 
@@ -207,7 +207,7 @@ final class ComponentResolverTest extends TestCase
         ]);
 
         self::assertSame('textarea', $metadata->component);
-        self::assertSame('x-cn.textarea', $metadata->bladeComponent);
+        self::assertSame('x-cn.forms.textarea', $metadata->bladeComponent);
         self::assertSame(ComponentMetadata::COL_FULL, $metadata->columnClass);
     }
 
@@ -220,7 +220,7 @@ final class ComponentResolverTest extends TestCase
         ]);
 
         self::assertSame('checkbox', $metadata->component);
-        self::assertSame('x-cn.checkbox', $metadata->bladeComponent);
+        self::assertSame('x-cn.forms.checkbox', $metadata->bladeComponent);
         self::assertSame('bi-check-square', $metadata->icon);
     }
 

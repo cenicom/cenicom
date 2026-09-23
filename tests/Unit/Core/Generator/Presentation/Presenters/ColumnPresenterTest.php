@@ -83,7 +83,7 @@ final class ColumnPresenterTest extends TestCase
         ]);
 
         self::assertSame('input', $presentation->component->component);
-        self::assertSame('x-cn.input', $presentation->component->bladeComponent);
+        self::assertSame('x-cn.forms.input', $presentation->component->bladeComponent);
     }
 
     public function test_resolves_integer_component(): void
@@ -94,7 +94,7 @@ final class ColumnPresenterTest extends TestCase
         ]);
 
         self::assertSame('number', $presentation->component->component);
-        self::assertSame('x-cn.number', $presentation->component->bladeComponent);
+        self::assertSame('x-cn.forms.number', $presentation->component->bladeComponent);
     }
 
     public function test_resolves_text_component(): void
@@ -105,7 +105,7 @@ final class ColumnPresenterTest extends TestCase
         ]);
 
         self::assertSame('textarea', $presentation->component->component);
-        self::assertSame('x-cn.textarea', $presentation->component->bladeComponent);
+        self::assertSame('x-cn.forms.textarea', $presentation->component->bladeComponent);
     }
 
     public function test_resolves_boolean_component(): void
@@ -116,7 +116,7 @@ final class ColumnPresenterTest extends TestCase
         ]);
 
         self::assertSame('checkbox', $presentation->component->component);
-        self::assertSame('x-cn.checkbox', $presentation->component->bladeComponent);
+        self::assertSame('x-cn.forms.checkbox', $presentation->component->bladeComponent);
     }
 
     public function test_resolves_enum_component(): void
@@ -131,7 +131,7 @@ final class ColumnPresenterTest extends TestCase
         ]);
 
         self::assertSame('select', $presentation->component->component);
-        self::assertSame('x-cn.select', $presentation->component->bladeComponent);
+        self::assertSame('x-cn.forms.select', $presentation->component->bladeComponent);
     }
 
     public function test_resolves_date_component(): void
@@ -142,7 +142,7 @@ final class ColumnPresenterTest extends TestCase
         ]);
 
         self::assertSame('date', $presentation->component->component);
-        self::assertSame('x-cn.date', $presentation->component->bladeComponent);
+        self::assertSame('x-cn.forms.date', $presentation->component->bladeComponent);
     }
 
     public function test_resolves_time_component(): void
@@ -153,7 +153,7 @@ final class ColumnPresenterTest extends TestCase
         ]);
 
             self::assertSame('input', $presentation->component->component);
-            self::assertSame('x-cn.input', $presentation->component->bladeComponent);
+            self::assertSame('x-cn.forms.input', $presentation->component->bladeComponent);
     }
 
     public function test_resolves_datetime_component(): void
@@ -164,7 +164,7 @@ final class ColumnPresenterTest extends TestCase
         ]);
 
         self::assertSame('datetime', $presentation->component->component);
-        self::assertSame('x-cn.datetime', $presentation->component->bladeComponent);
+        self::assertSame('x-cn.forms.datetime', $presentation->component->bladeComponent);
     }
 
     /*
@@ -182,7 +182,7 @@ final class ColumnPresenterTest extends TestCase
         ]);
 
         self::assertSame('select', $presentation->component->component);
-        self::assertSame('x-cn.select', $presentation->component->bladeComponent);
+        self::assertSame('x-cn.forms.select', $presentation->component->bladeComponent);
     }
 
     public function test_explicit_textarea_overrides_string_default(): void
@@ -194,7 +194,7 @@ final class ColumnPresenterTest extends TestCase
         ]);
 
         self::assertSame('textarea', $presentation->component->component);
-        self::assertSame('x-cn.textarea', $presentation->component->bladeComponent);
+        self::assertSame('x-cn.forms.textarea', $presentation->component->bladeComponent);
     }
 
     /*

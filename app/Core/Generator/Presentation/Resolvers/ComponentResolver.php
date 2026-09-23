@@ -105,7 +105,7 @@ final readonly class ComponentResolver
      */
     private function blade(): string
     {
-        return 'x-cn.' . $this->component();
+        return 'x-cn.forms.' . $this->component();
     }
 
     /*
