@@ -16,35 +16,53 @@
     "fields": [
         {
             "name": "name",
-            "type": "string"
+            "type": "string",
+            "presentation": {
+                "label": "Nombre"
+            }
         },
         {
             "name": "code",
             "type": "string",
-            "length": 3
+            "length": 3,
+            "presentation": {
+                "label": "Código"
+            }
         },
         {
             "name": "precision",
             "type": "tinyInteger",
             "unsigned": true,
-            "default": 2
+            "default": 2,
+            "presentation": {
+                "label": "Precisión"
+            }
         },
         {
             "name": "symbol",
             "type": "string",
-            "length": 10
+            "length": 10,
+            "presentation": {
+                "label": "Símbolo"
+            }
         },
         {
             "name": "decimal_mark",
             "type": "string",
             "length": 1,
-            "default": "."
+            "default": ".",
+            "presentation": {
+                "label": "Separador decimal"
+            }
         },
         {
             "name": "thousands_separator",
             "type": "string",
             "length": 1,
-            "default": ","
+            "default": ",",
+            "presentation": {
+                "label": "Separador de miles"
+            }
         }
     ],
     "relations": [],

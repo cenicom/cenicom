@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-
 use Database\Factories\UserFactory;
+use Illuminate\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,10 +24,10 @@ use Illuminate\Notifications\Notifiable;
     'password',
     'remember_token',
 ])]
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmailContract
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, MustVerifyEmail, Notifiable;
 
     /**
      * Get the attributes that should be cast.
@@ -54,7 +55,7 @@ class User extends Authenticatable
         );
     }
 
-     /**
+    /**
      * Permisos asignados directamente al usuario.
      *
      * @return BelongsToMany<Permission, User>

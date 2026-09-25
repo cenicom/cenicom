@@ -17,19 +17,20 @@ use App\Core\Crud\CrudPermissionService;
 use App\Core\Crud\CrudRegistrar;
 use App\Core\Crud\Registry\CrudDefinitionRegistry;
 use App\Core\Crud\ResourceService;
+use App\Core\Security\Authorization\Contracts\PermissionResolverInterface;
 use App\Core\Security\Permissions\Contracts\PermissionRegistrarInterface;
 use App\Core\View\Contracts\ViewDefinitionRegistryInterface;
+use App\Core\View\Contracts\ViewPathResolverInterface;
 use App\Core\View\Contracts\ViewRegistrarInterface;
 use App\Core\View\Contracts\ViewRegistryInterface;
 use App\Core\View\Registrar\ViewRegistrar;
 use App\Core\View\Registry\ViewDefinitionRegistry;
+use App\Core\View\Resolver\ViewPathResolver;
 use App\Core\View\ViewRegistry;
-use App\Core\Security\Authorization\Contracts\PermissionResolverInterface;
-use App\View\Contracts\ViewAuthorizationInterface;
 use App\View\Composition\Contracts\CrudActionViewComposerInterface;
 use App\View\Composition\CrudActionViewComposer;
+use App\View\Contracts\ViewAuthorizationInterface;
 use App\View\ViewAuthorization;
-
 use Illuminate\Support\ServiceProvider;
 
 final class CoreBindingsServiceProvider extends ServiceProvider
@@ -89,7 +90,13 @@ final class CoreBindingsServiceProvider extends ServiceProvider
             fn($app) => new ViewRegistrar(
                 $app->make(ViewRegistryInterface::class),
                 $app->make('view')->getFinder(),
+                $app->make(ViewPathResolverInterface::class),
             ),
+        );
+
+        $this->app->singleton(
+            ViewPathResolverInterface::class,
+            ViewPathResolver::class,
         );
 
         $this->app->singleton(

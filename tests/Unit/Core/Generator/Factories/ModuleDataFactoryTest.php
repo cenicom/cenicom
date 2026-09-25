@@ -680,4 +680,53 @@ final class ModuleDataFactoryTest extends TestCase
             $module->showView()
         );
     }
+
+    public function test_transports_field_presentation_metadata_to_module_data(): void
+    {
+        $module = $this->factory->create([
+            'identity' => [
+                'name' => 'Country',
+                'singular' => 'country',
+                'plural' => 'countries',
+                'table' => 'countries',
+                'description' => 'Country module',
+            ],
+            'fields' => [
+                [
+                    'name' => 'name',
+                    'type' => 'string',
+                    'presentation' => [
+                        'label' => 'Nombre',
+                    ],
+                ],
+                [
+                    'name' => 'iso2',
+                    'type' => 'string',
+                ],
+            ],
+        ]);
+
+        self::assertNotNull(
+            $module->fieldPresentation('name')
+        );
+
+        self::assertSame(
+            'Nombre',
+            $module->fieldPresentation('name')?->label
+        );
+
+        self::assertNull(
+            $module->fieldPresentation('iso2')
+        );
+
+        self::assertSame(
+            'name',
+            $module->columns()[0]->name()
+        );
+
+        self::assertSame(
+            'iso2',
+            $module->columns()[1]->name()
+        );
+    }
 }

@@ -6,6 +6,7 @@ namespace Tests\Unit\Core\Generator\Presentation\Presenters;
 
 use App\Core\Generator\DTO\ColumnDefinition;
 use App\Core\Generator\Presentation\Presenters\ColumnPresenter;
+use App\Core\Generator\Presentation\DTO\FieldPresentationMetadata;
 use PHPUnit\Framework\TestCase;
 
 final class ColumnPresenterTest extends TestCase
@@ -152,8 +153,8 @@ final class ColumnPresenterTest extends TestCase
             'type' => 'time',
         ]);
 
-            self::assertSame('input', $presentation->component->component);
-            self::assertSame('x-cn.forms.input', $presentation->component->bladeComponent);
+        self::assertSame('input', $presentation->component->component);
+        self::assertSame('x-cn.forms.input', $presentation->component->bladeComponent);
     }
 
     public function test_resolves_datetime_component(): void
@@ -326,5 +327,20 @@ final class ColumnPresenterTest extends TestCase
         ]);
 
         self::assertNull($presentation->default);
+    }
+
+    public function test_uses_explicit_presentation_label(): void
+    {
+        $column = ColumnDefinition::fromArray([
+            'name' => 'country_id',
+            'type' => 'uuid',
+        ]);
+
+        $presentation = (new ColumnPresenter(
+            $column,
+            new FieldPresentationMetadata('País'),
+        ))->present();
+
+        self::assertSame('País', $presentation->label);
     }
 }

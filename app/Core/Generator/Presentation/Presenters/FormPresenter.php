@@ -71,8 +71,10 @@ final readonly class FormPresenter implements PresentationInterface
                 continue;
             }
 
-            $fields[] = (new ColumnPresenter($column))
-                ->present();
+            $fields[] = (new ColumnPresenter(
+                $column,
+                $this->module->fieldPresentation($column->name()),
+            ))->present();
         }
 
         return $fields;

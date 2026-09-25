@@ -62,10 +62,10 @@ final readonly class PresentationFactory
             if (! $column->shouldAppearInTable()) {
                 continue;
             }
-
             $columns[] = new TableColumnPresentation(
                 name: $column->name(),
-                label: $this->makeLabel(
+                label: $this->labelFor(
+                    $module,
                     $column->name(),
                 ),
             );
@@ -117,24 +117,30 @@ final readonly class PresentationFactory
             }
 
             $fields[] = new ShowFieldPresentation(
-
                 name: $column->name(),
-
-                label: $this->makeLabel(
+                label: $this->labelFor(
+                    $module,
                     $column->name(),
                 ),
-
-                binding: sprintf(
-                    '$%s->%s',
-                    $module->variable(),
-                    $column->name(),
-                ),
-
+                binding: sprintf('$%s->%s', $module->variable(), $column->name()),
             );
         }
 
         return new ShowPresentation(
             fields: $fields,
         );
+    }
+
+    private function labelFor(
+        ModuleData $module,
+        string $name,
+    ): string {
+        $presentation = $module->fieldPresentation($name);
+
+        if ($presentation !== null) {
+            return $presentation->label;
+        }
+
+        return ucwords(str_replace('_', ' ', $name));
     }
 }

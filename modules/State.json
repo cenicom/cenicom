@@ -16,12 +16,18 @@
     "fields": [
         {
             "name": "name",
-            "type": "string"
+            "type": "string",
+            "presentation": {
+                "label": "Nombre"
+            }
         },
         {
             "name": "country_id",
             "type": "uuid",
-            "constrained": "countries"
+            "constrained": "countries",
+            "presentation": {
+                "label": "País"
+            }
         }
     ],
     "relations": [

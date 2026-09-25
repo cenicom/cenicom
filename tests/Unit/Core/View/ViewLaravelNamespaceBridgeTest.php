@@ -10,6 +10,7 @@ use App\Core\View\Bootstrap\ViewBootstrapper;
 use App\Core\View\Loader\ViewDefinitionLoader;
 use App\Core\View\Registrar\ViewRegistrar;
 use App\Core\View\Registry\ViewDefinitionRegistry;
+use App\Core\View\Resolver\ViewPathResolver;
 use App\Core\View\ViewRegistry;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Tests\TestCase;
@@ -31,9 +32,14 @@ final class ViewLaravelNamespaceBridgeTest extends TestCase
 
         $views = $this->app->make(ViewFactory::class);
 
+        $resolver = new ViewPathResolver(
+            $this->app,
+        );
+
         $registrar = new ViewRegistrar(
             $registry,
-            $views,
+            $views->getFinder(),
+            $resolver,
         );
 
         $bootstrapper = new ViewBootstrapper(
@@ -57,7 +63,6 @@ final class ViewLaravelNamespaceBridgeTest extends TestCase
         );
 
         $modules->register($module);
-
 
         $loader->load();
 

@@ -20,7 +20,7 @@ final readonly class InputPresentation
 
         public readonly string $type,
 
-         public readonly string $placeholder,
+        public readonly string $placeholder,
 
         public ComponentMetadata $component,
 

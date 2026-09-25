@@ -8,6 +8,7 @@ use App\Core\Generator\DTO\ColumnDefinition;
 use App\Core\Generator\DTO\PermissionMatrix;
 use App\Core\Generator\DTO\SecurityDefinition;
 use App\Core\Navigation\DTO\NavigationManifestData;
+use App\Core\Generator\Presentation\DTO\FieldPresentationMetadata;
 use Illuminate\Support\Str;
 
 /**
@@ -192,6 +193,11 @@ readonly class ModuleData
     private array $columns;
 
     /**
+     * @var array<string,FieldPresentationMetadata>
+     */
+    private array $fieldPresentations;
+
+    /**
      * @var array<int,array<string,mixed>>
      */
     private array $relationships;
@@ -320,6 +326,7 @@ readonly class ModuleData
         PermissionMatrix $permissionMatrix,
         ?NavigationManifestData $navigation = null,
         array $relationships = [],
+        array $fieldPresentations = [],
 
     ) {
         $this->name = $name;
@@ -408,6 +415,7 @@ readonly class ModuleData
 
         $this->repositoryContractNamespace = $repositoryContractNamespace;
         $this->serviceContractNamespace = $serviceContractNamespace;
+        $this->fieldPresentations = $fieldPresentations;
     }
 
     public function navigation(): NavigationManifestData
@@ -797,6 +805,12 @@ readonly class ModuleData
     public function viewPrefix(): string
     {
         return $this->viewPrefix;
+    }
+
+    public function fieldPresentation(
+        string $fieldName
+    ): ?FieldPresentationMetadata {
+        return $this->fieldPresentations[$fieldName] ?? null;
     }
 
     /*

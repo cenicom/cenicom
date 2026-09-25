@@ -82,7 +82,7 @@ final class ViewModuleResolutionTest extends TestCase
 
         $registrar = new ViewRegistrar(
             $registry,
-            $views,
+            $finder,
         );
 
         $bootstrapper = new ViewBootstrapper(

@@ -7,14 +7,16 @@ namespace Tests\Unit\Core\View;
 use App\Core\Module\DTO\ModuleDefinition;
 use App\Core\Module\Registry\ModuleRegistry;
 use App\Core\View\Bootstrap\ViewBootstrapper;
+use App\Core\View\Contracts\ViewPathResolverInterface;
 use App\Core\View\Loader\ViewDefinitionLoader;
 use App\Core\View\Registrar\ViewRegistrar;
 use App\Core\View\Registry\ViewDefinitionRegistry;
 use App\Core\View\ViewRegistry;
 use Illuminate\Container\Container;
-use Tests\Fixtures\View\TestViewDefinition;
-use Illuminate\Contracts\View\Factory as ViewFactory;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\View\FileViewFinder;
 use PHPUnit\Framework\TestCase;
+use Tests\Fixtures\View\TestViewDefinition;
 
 final class ViewModuleIntegrationTest extends TestCase
 {
@@ -47,11 +49,32 @@ final class ViewModuleIntegrationTest extends TestCase
 
         $registry = new ViewRegistry();
 
-        $views = $this->createMock(ViewFactory::class);
+        $finder = new FileViewFinder(
+            new Filesystem(),
+            [],
+            ['blade.php', 'php'],
+        );
+
+        $resolver = $this->createMock(
+            ViewPathResolverInterface::class,
+        );
+
+        $expectedPath = realpath(
+            __DIR__ . '/../../../Fixtures/View'
+        );
+
+        self::assertNotFalse($expectedPath);
+
+        $resolver
+            ->expects($this->once())
+            ->method('resolve')
+            ->with($this->anything())
+            ->willReturn($expectedPath);
 
         $registrar = new ViewRegistrar(
             $registry,
-            $views,
+            $finder,
+            $resolver,
         );
 
         $bootstrapper = new ViewBootstrapper(
@@ -85,17 +108,10 @@ final class ViewModuleIntegrationTest extends TestCase
 
         $bootstrapper->boot();
 
-        $expectedPath = realpath(
-            __DIR__ . '/../../Fixtures/View/views'
-        );
-
-        $actualPath = realpath(
-            $registry->path('tests')
-        );
-
         self::assertSame(
-            $expectedPath,
-            $actualPath
+            dirname((new \ReflectionClass(TestViewDefinition::class))->getFileName())
+                . '/views',
+            $registry->path('tests'),
         );
     }
 
@@ -112,11 +128,24 @@ final class ViewModuleIntegrationTest extends TestCase
 
         $registry = new ViewRegistry();
 
-        $views = $this->createMock(ViewFactory::class);
+        $finder = new FileViewFinder(
+            new Filesystem(),
+            [],
+            ['blade.php', 'php'],
+        );
+
+        $resolver = $this->createMock(
+            ViewPathResolverInterface::class,
+        );
+
+        $resolver
+            ->expects($this->never())
+            ->method('resolve');
 
         $registrar = new ViewRegistrar(
             $registry,
-            $views,
+            $finder,
+            $resolver,
         );
 
         $bootstrapper = new ViewBootstrapper(
@@ -169,11 +198,31 @@ final class ViewModuleIntegrationTest extends TestCase
 
         $registry = new ViewRegistry();
 
-        $views = $this->createMock(ViewFactory::class);
+        $finder = new FileViewFinder(
+            new Filesystem(),
+            [],
+            ['blade.php', 'php'],
+        );
+
+        $resolver = $this->createMock(
+            ViewPathResolverInterface::class,
+        );
+
+        $expectedPath = realpath(
+            __DIR__ . '/../../../Fixtures/View'
+        );
+
+        self::assertNotFalse($expectedPath);
+
+        $resolver
+            ->expects($this->exactly(2))
+            ->method('resolve')
+            ->willReturn($expectedPath);
 
         $registrar = new ViewRegistrar(
             $registry,
-            $views,
+            $finder,
+            $resolver,
         );
 
         $bootstrapper = new ViewBootstrapper(
@@ -187,7 +236,7 @@ final class ViewModuleIntegrationTest extends TestCase
             ): void {
                 $views->register(
                     'second',
-                    __DIR__ . '/../../Fixtures/View/views',
+                    __DIR__ . '/../../Fixtures/View',
                 );
             }
         };
@@ -240,18 +289,11 @@ final class ViewModuleIntegrationTest extends TestCase
 
         $bootstrapper->boot();
 
-        $expectedPath = realpath(
-            __DIR__ . '/../../Fixtures/View/views'
-        );
+        $expectedSecondPath = __DIR__ . '/../../Fixtures/View';
 
         self::assertSame(
-            $expectedPath,
-            realpath($registry->path('tests')),
-        );
-
-        self::assertSame(
-            $expectedPath,
-            realpath($registry->path('second')),
+            $expectedSecondPath,
+            $registry->path('second'),
         );
 
         self::assertCount(

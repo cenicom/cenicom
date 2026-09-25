@@ -51,9 +51,9 @@ final readonly class CrudActionPresenter implements
     private static function variant(CrudAction $action): string
     {
         return match ($action->operation()->name()) {
-            CrudOperations::DELETE => 'danger',
             CrudOperations::CREATE => 'success',
-            CrudOperations::UPDATE => 'primary',
+            CrudOperations::UPDATE => 'warning',
+            CrudOperations::DELETE => 'danger',
             CrudOperations::VIEW => 'secondary',
             default => 'secondary',
         };

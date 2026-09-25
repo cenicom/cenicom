@@ -2,10 +2,6 @@
 
 namespace App\Providers;
 
-
-use App\Support\Registries\ModuleRegistry;
-use App\Support\Registries\NavigationRegistry;
-use App\Support\Registries\PermissionRegistry;
 use Illuminate\Support\ServiceProvider;
 use App\View\Components\Cn\Crud\Modal;
 use App\View\Components\Layouts\App;
@@ -19,18 +15,7 @@ class CNFrameworkServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(ModuleRegistry::class, function () {
-
-            return (new ModuleRegistry())->load();
-        });
-
-        $this->app->singleton(
-            NavigationRegistry::class
-        );
-
-        $this->app->singleton(
-            PermissionRegistry::class
-        );
+        //
     }
 
     /**

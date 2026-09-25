@@ -7,7 +7,7 @@
 ========================================================== --}}
 
 <div class="[[ column_class ]]">
-    <x-cn.checkbox
+    <[[ blade_component ]]
         name="[[ name ]]"
         label="[[ label ]]"
         :required="[[ required ]]"

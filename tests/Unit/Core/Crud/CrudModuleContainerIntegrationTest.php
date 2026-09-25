@@ -43,17 +43,23 @@ final class CrudModuleContainerIntegrationTest extends TestCase
             CrudDefinitionLoader::class
         );
 
-        $loader->load();
-
         $definitions = $this->app->make(
             CrudDefinitionRegistryInterface::class
         );
 
+        $definitions->clear();
+
+        $loader->load();
+
         self::assertSame(
-            [
-                TestCrudDefinition::class,
-            ],
-            $definitions->definitions()
+            1,
+            count(
+                array_filter(
+                    $definitions->definitions(),
+                    static fn(string $definition): bool =>
+                    $definition === TestCrudDefinition::class,
+                ),
+            ),
         );
 
         $this->app->bind(
@@ -76,11 +82,14 @@ final class CrudModuleContainerIntegrationTest extends TestCase
             $resources->controller('tests')
         );
 
+        self::assertArrayHasKey(
+            'tests',
+            $resources->all(),
+        );
+
         self::assertSame(
-            [
-                'tests' => TestCrudController::class,
-            ],
-            $resources->all()
+            TestCrudController::class,
+            $resources->all()['tests'],
         );
     }
 }

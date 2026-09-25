@@ -1,5 +1,4 @@
 .cn-button {
-
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -34,105 +33,149 @@
 }
 
 .cn-button:hover {
-
     transform: translateY(-1px);
-
 }
-
 
 .cn-button:active {
-
     transform: translateY(0);
-
 }
 
-
 .cn-button:focus-visible {
-
     outline: none;
-
     box-shadow: var(--cn-focus-ring);
-
 }
 
 .cn-button--sm {
-
     min-height: 2rem;
-
-    padding:
-        .45rem .75rem;
-
-    font-size:
-        .8125rem;
+    padding: .45rem .75rem;
+    font-size: .8125rem;
 }
 
 .cn-button--md {
-
-    min-height:
-        2.5rem;
-
+    min-height: 2.5rem;
 }
 
 .cn-button--lg {
-
-    min-height:
-        3rem;
-
-    padding:
-        .75rem 1.25rem;
-
-    font-size:
-        1rem;
-
+    min-height: 3rem;
+    padding: .75rem 1.25rem;
+    font-size: 1rem;
 }
 
 .cn-button--disabled,
 .cn-button:disabled {
-
     opacity: .55;
-
     cursor: not-allowed;
-
     transform: none;
-
 }
+
+/*
+|--------------------------------------------------------------------------
+| Primary
+|--------------------------------------------------------------------------
+*/
 
 .cn-button--primary {
-
-    background:
-        var(--cn-primary);
-
-    color:
-        var(--cn-on-primary);
-
-    border-color:
-        var(--cn-primary);
-
+    background: var(--cn-primary);
+    color: var(--cn-on-primary);
+    border-color: var(--cn-primary);
 }
-
 
 .cn-button--primary:hover {
-
-    background:
-        var(--cn-primary-hover);
-
-    border-color:
-        var(--cn-primary-hover);
-
+    background: var(--cn-primary-hover);
+    border-color: var(--cn-primary-hover);
 }
 
-.cn-button--primary{}
+/*
+|--------------------------------------------------------------------------
+| Secondary
+|--------------------------------------------------------------------------
+*/
 
-.cn-button--secondary{}
+.cn-button--secondary {
+    background: var(--cn-secondary);
+    color: var(--cn-on-secondary);
+    border-color: var(--cn-secondary);
+}
 
-.cn-button--success{}
+.cn-button--secondary:hover {
+    background: var(--cn-secondary-hover);
+    border-color: var(--cn-secondary-hover);
+}
 
-.cn-button--warning{}
+/*
+|--------------------------------------------------------------------------
+| Success
+|--------------------------------------------------------------------------
+*/
 
-.cn-button--danger{}
+.cn-button--success {
+    background: var(--cn-success);
+    color: var(--cn-on-success);
+    border-color: var(--cn-success);
+}
 
-.cn-button--info{}
+.cn-button--success:hover {
+    filter: brightness(.92);
+}
 
-.cn-button--ghost{}
+/*
+|--------------------------------------------------------------------------
+| Warning
+|--------------------------------------------------------------------------
+*/
 
-.cn-button--link{}
+.cn-button--warning {
+    background: var(--cn-warning);
+    color: var(--cn-on-warning);
+    border-color: var(--cn-warning);
+}
+
+.cn-button--warning:hover {
+    filter: brightness(.92);
+}
+
+/*
+|--------------------------------------------------------------------------
+| Danger
+|--------------------------------------------------------------------------
+*/
+
+.cn-button--danger {
+    background: var(--cn-danger);
+    color: var(--cn-on-danger);
+    border-color: var(--cn-danger);
+}
+
+.cn-button--danger:hover {
+    filter: brightness(.92);
+}
+
+/*
+|--------------------------------------------------------------------------
+| Info
+|--------------------------------------------------------------------------
+*/
+
+.cn-button--info {
+    background: var(--cn-info);
+    color: var(--cn-on-info);
+    border-color: var(--cn-info);
+}
+
+.cn-button--info:hover {
+    filter: brightness(.92);
+}
+
+/*
+|--------------------------------------------------------------------------
+| Ghost / Link
+|--------------------------------------------------------------------------
+|
+| Se mantienen como superficies API existentes.
+| No se amplía su contrato visual en esta corrección.
+|--------------------------------------------------------------------------
+*/
+
+.cn-button--ghost {}
+
+.cn-button--link {}

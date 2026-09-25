@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Core\Module\Lifecycle;
 
+use App\Core\Contracts\Module\ModuleBootstrapPipelineInterface;
 use App\Core\Contracts\Module\ModuleManifestFinderInterface;
-
 use App\Core\Contracts\Module\ModuleRegistryInterface;
 use App\Core\Module\Bootstrap\ModuleBootstrap;
 use App\Core\Module\Discovery\ModuleManifestFinder;
@@ -14,22 +14,37 @@ use Tests\TestCase;
 
 final class ModuleLifecycleTest extends TestCase
 {
-    public function test_enabled_module_completes_full_lifecycle(): void
+    protected function setUp(): void
     {
+        parent::setUp();
+
+        $this->app
+            ->make(ModuleRegistryInterface::class)
+            ->clear();
+
+        $this->app->forgetInstance(
+            ModuleBootstrapPipelineInterface::class
+        );
+
+        $this->app->forgetInstance(
+            ModuleBootstrap::class
+        );
+
         $this->app->bind(
             ModuleManifestFinderInterface::class,
             fn() => new ModuleManifestFinder(
                 base_path('tests/Fixtures/Modules')
             ),
         );
+    }
 
+    public function test_enabled_module_completes_full_lifecycle(): void
+    {
         $bootstrap = app(ModuleBootstrap::class);
 
         $registry = app(ModuleRegistryInterface::class);
 
-
         $bootstrap->bootstrap();
-
 
         $this->assertTrue(
             $registry->has('Blog')
@@ -42,13 +57,6 @@ final class ModuleLifecycleTest extends TestCase
 
     public function test_disabled_module_is_not_registered(): void
     {
-        $this->app->bind(
-            ModuleManifestFinderInterface::class,
-            fn() => new ModuleManifestFinder(
-                base_path('tests/Fixtures/Modules')
-            ),
-        );
-
         $bootstrap = app(ModuleBootstrap::class);
 
         $registry = app(ModuleRegistryInterface::class);
@@ -62,13 +70,6 @@ final class ModuleLifecycleTest extends TestCase
 
     public function test_full_lifecycle_is_idempotent(): void
     {
-        $this->app->bind(
-            ModuleManifestFinderInterface::class,
-            fn() => new ModuleManifestFinder(
-                base_path('tests/Fixtures/Modules')
-            ),
-        );
-
         $bootstrap = app(ModuleBootstrap::class);
 
         $registry = app(ModuleRegistryInterface::class);
@@ -106,6 +107,10 @@ final class ModuleLifecycleTest extends TestCase
         $this->app->instance(
             ModuleManifestFinderInterface::class,
             $finder
+        );
+
+        $this->app->forgetInstance(
+            ModuleBootstrapPipelineInterface::class
         );
 
         $this->app->forgetInstance(

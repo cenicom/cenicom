@@ -9,6 +9,7 @@ use App\Core\Generator\Presentation\Contracts\PresentationInterface;
 use App\Core\Generator\Presentation\DTO\ComponentMetadata;
 use App\Core\Generator\Presentation\DTO\InputPresentation;
 use App\Core\Generator\Presentation\Resolvers\ComponentResolver;
+use App\Core\Generator\Presentation\DTO\FieldPresentationMetadata;
 
 /**
  * ==========================================================
@@ -34,6 +35,7 @@ final readonly class ColumnPresenter implements PresentationInterface
      */
     public function __construct(
         private ColumnDefinition $column,
+        private ?FieldPresentationMetadata $presentation = null,
     ) {}
 
     /**
@@ -80,9 +82,11 @@ final readonly class ColumnPresenter implements PresentationInterface
      */
     private function buildLabel(): string
     {
-        return ucwords(
-            str_replace('_', ' ', $this->column->name())
-        );
+        if ($this->presentation !== null) {
+            return $this->presentation->label;
+        }
+
+        return ucwords(str_replace('_', ' ', $this->column->name()));
     }
 
     /**

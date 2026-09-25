@@ -16,19 +16,28 @@
     "fields": [
         {
             "name": "name",
-            "type": "string"
+            "type": "string",
+            "presentation": {
+                "label": "Nombre"
+            }
         },
         {
             "name": "iso2",
             "type": "string",
             "length": 2,
-            "unique": true
+            "unique": true,
+            "presentation": {
+                "label": "ISO 2"
+            }
         },
         {
             "name": "iso3",
             "type": "string",
             "length": 3,
-            "unique": true
+            "unique": true,
+            "presentation": {
+                "label": "ISO 3"
+            }
         }
     ],
     "relations": [

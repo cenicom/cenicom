@@ -12,6 +12,7 @@ use App\Core\Generator\Support\PathResolver;
 use App\Core\Navigation\DTO\NavigationGroupData;
 use App\Core\Navigation\DTO\NavigationItemData;
 use App\Core\Navigation\DTO\NavigationManifestData;
+use App\Core\Generator\Presentation\DTO\FieldPresentationMetadata;
 use Illuminate\Support\Str;
 
 /**
@@ -256,6 +257,8 @@ final class ModuleDataFactory
             columns: $this->buildColumns(
                 $fields
             ),
+
+            fieldPresentations: $this->buildFieldPresentations($fields),
 
             relationships: $relations,
 
@@ -859,5 +862,35 @@ final class ModuleDataFactory
             },
             $relations,
         );
+    }
+
+    /**
+     * @param array<int,array<string,mixed>> $fields
+     * @return array<string,FieldPresentationMetadata>
+     */
+    private function buildFieldPresentations(array $fields): array
+    {
+        $presentations = [];
+
+        foreach ($fields as $field) {
+            $name = $field['name'] ?? null;
+            $presentation = $field['presentation'] ?? null;
+
+            if (
+                ! is_string($name)
+                || ! is_array($presentation)
+                || ! isset($presentation['label'])
+                || ! is_string($presentation['label'])
+                || trim($presentation['label']) === ''
+            ) {
+                continue;
+            }
+
+            $presentations[$name] = new FieldPresentationMetadata(
+                label: $presentation['label'],
+            );
+        }
+
+        return $presentations;
     }
 }

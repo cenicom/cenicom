@@ -7,7 +7,7 @@
 ========================================================== --}}
 
 <div class="[[ column_class ]]">
-    <x-cn.number
+    <[[ blade_component ]]
         name="[[ name ]]"
         label="[[ label ]]"
         :value="[[ value ]]"

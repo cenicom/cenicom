@@ -100,4 +100,22 @@ final class StateCrudFeatureTest extends TestCase
             'id' => $state->getKey(),
         ]);
     }
+
+    public function test_state_creation_rejects_nonexistent_country(): void
+{
+    $user = User::factory()->create();
+
+    $response = $this
+        ->actingAs($user)
+        ->post(route('states.store'), [
+            'name' => 'Estado inválido',
+            'country_id' => '00000000-0000-0000-0000-000000000000',
+        ]);
+
+    $response->assertSessionHasErrors('country_id');
+
+    $this->assertDatabaseMissing('states', [
+        'name' => 'Estado inválido',
+    ]);
+}
 }

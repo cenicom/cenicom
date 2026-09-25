@@ -16,12 +16,18 @@
     "fields": [
         {
             "name": "name",
-            "type": "string"
+            "type": "string",
+            "presentation": {
+                "label": "Nombre"
+            }
         },
         {
             "name": "state_id",
             "type": "uuid",
-            "constrained": "states"
+            "constrained": "states",
+            "presentation": {
+                "label": "Estado"
+            }
         }
     ],
     "relations": [

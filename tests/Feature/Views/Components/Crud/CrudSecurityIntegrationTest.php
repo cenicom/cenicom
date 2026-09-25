@@ -98,7 +98,7 @@ BLADE,
         $view->assertSee('Editar');
 
         $view->assertSee(
-            'cn-button--primary',
+            'cn-button--warning',
             false,
         );
 

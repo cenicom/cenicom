@@ -1,16 +1,19 @@
 :root {
     /* Brand */
-    --cn-primary: #2563eb;
-    --cn-primary-hover: #1d4ed8;
+    --cn-primary: #1e3a8a;
+    --cn-primary-hover: #1e40af;
+    --cn-secondary: #2563eb;
+    --cn-secondary-hover: #1d4ed8;
     --cn-on-primary: #ffffff;
+    --cn-on-secondary: #ffffff;
 
     /* Surfaces */
     --cn-surface-muted: #f8fafc;
     --cn-surface-hover: #f1f5f9;
 
     /* Text */
-    --cn-text-primary: #111827;
-    --cn-text-secondary: #4b5563;
+    --cn-text-primary: #1f2937;
+    --cn-text-secondary: #6b7280;
     --cn-text-muted: #6b7280;
 
     /* Border */
@@ -18,9 +21,9 @@
 
     /* Status */
     --cn-success: #16a34a;
-    --cn-warning: #d97706;
+    --cn-warning: #f59e0b;
     --cn-danger: #dc2626;
-    --cn-info: #0284c7;
+    --cn-info: #0ea5e9;
     --cn-neutral: #64748b;
 
     --cn-on-success: #ffffff;

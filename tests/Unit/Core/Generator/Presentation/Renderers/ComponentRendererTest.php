@@ -25,7 +25,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: '',
             component: new ComponentMetadata(
                 component: 'datetime',
-                bladeComponent: 'x-cn.datetime',
+                bladeComponent: 'x-cn.forms.datetime',
                 cssClass: '',
                 columnClass: 'col-md-6',
                 binding: '$model->created_at',
@@ -40,7 +40,7 @@ final class ComponentRendererTest extends GeneratorTestCase
         $result = $renderer->render($input);
 
         self::assertStringContainsString(
-            'x-cn.datetime',
+            'x-cn.forms.datetime',
             $result,
         );
     }
@@ -58,7 +58,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: 'Name',
             component: new ComponentMetadata(
                 component: 'input',
-                bladeComponent: 'x-cn.input',
+                bladeComponent: 'x-cn.forms.input',
                 cssClass: '',
                 columnClass: 'col-md-6',
                 binding: '$model->name',
@@ -96,7 +96,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: 'Select status',
             component: new ComponentMetadata(
                 component: 'select',
-                bladeComponent: 'x-cn.select',
+                bladeComponent: 'x-cn.forms.select',
                 cssClass: '',
                 columnClass: 'col-md-6',
                 binding: '',
@@ -134,7 +134,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: '',
             component: new ComponentMetadata(
                 component: 'checkbox',
-                bladeComponent: 'x-cn.checkbox',
+                bladeComponent: 'x-cn.forms.checkbox',
                 cssClass: '',
                 columnClass: 'col-md-6',
                 binding: '',
@@ -167,7 +167,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: 'Enter Birth Date',
             component: new ComponentMetadata(
                 component: 'date',
-                bladeComponent: 'x-cn.date',
+                bladeComponent: 'x-cn.forms.date',
                 cssClass: '',
                 columnClass: 'col-md-6',
                 binding: '',
@@ -206,7 +206,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: 'Enter Start At',
             component: new ComponentMetadata(
                 component: 'datetime',
-                bladeComponent: 'x-cn.datetime',
+                bladeComponent: 'x-cn.forms.datetime',
                 cssClass: '',
                 columnClass: 'col-md-6',
                 binding: '',
@@ -244,7 +244,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: 'Enter Amount',
             component: new ComponentMetadata(
                 component: 'number',
-                bladeComponent: 'x-cn.number',
+                bladeComponent: 'x-cn.forms.number',
                 cssClass: '',
                 columnClass: 'col-md-6',
                 binding: '',
@@ -282,7 +282,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: 'Enter Email',
             component: new ComponentMetadata(
                 component: 'email',
-                bladeComponent: 'x-cn.email',
+                bladeComponent: 'x-cn.forms.email',
                 cssClass: '',
                 columnClass: 'col-md-6',
                 binding: '',
@@ -315,7 +315,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: 'Enter Email',
             component: new ComponentMetadata(
                 component: 'email',
-                bladeComponent: 'x-cn.email',
+                bladeComponent: 'x-cn.forms.email',
                 cssClass: '',
                 columnClass: 'col-md-6',
                 binding: '',
@@ -348,7 +348,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: 'Enter Password',
             component: new ComponentMetadata(
                 component: 'password',
-                bladeComponent: 'x-cn.password',
+                bladeComponent: 'x-cn.forms.password',
                 cssClass: '',
                 columnClass: 'col-md-6',
                 binding: '',
@@ -363,7 +363,7 @@ final class ComponentRendererTest extends GeneratorTestCase
         $result = $renderer->render($input);
 
         self::assertStringContainsString(
-            '<x-cn.password',
+            '<x-cn.forms.password',
             $result,
         );
 
@@ -386,7 +386,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: 'Enter Password',
             component: new ComponentMetadata(
                 component: 'password',
-                bladeComponent: 'x-cn.password',
+                bladeComponent: 'x-cn.forms.password',
                 cssClass: '',
                 columnClass: 'col-md-6',
                 binding: '',
@@ -420,7 +420,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: 'Enter Description',
             component: new ComponentMetadata(
                 component: 'textarea',
-                bladeComponent: 'x-cn.textarea',
+                bladeComponent: 'x-cn.forms.textarea',
                 cssClass: '',
                 columnClass: 'col-md-12',
                 binding: '',
@@ -435,7 +435,7 @@ final class ComponentRendererTest extends GeneratorTestCase
         $result = $renderer->render($input);
 
         self::assertStringContainsString(
-            '<x-cn.textarea',
+            '<x-cn.forms.textarea',
             $result,
         );
 
@@ -458,7 +458,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: 'Enter Description',
             component: new ComponentMetadata(
                 component: 'textarea',
-                bladeComponent: 'x-cn.textarea',
+                bladeComponent: 'x-cn.forms.textarea',
                 cssClass: '',
                 columnClass: 'col-md-12',
                 binding: '',
@@ -473,7 +473,7 @@ final class ComponentRendererTest extends GeneratorTestCase
         $result = $renderer->render($input);
 
         self::assertStringContainsString(
-            '<x-cn.textarea',
+            '<x-cn.forms.textarea',
             $result,
         );
 
@@ -496,7 +496,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: 'Enter Status',
             component: new ComponentMetadata(
                 component: 'input',
-                bladeComponent: 'x-cn.input',
+                bladeComponent: 'x-cn.forms.input',
                 cssClass: '',
                 columnClass: 'col-md-6',
                 binding: '',
@@ -530,7 +530,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: 'Enter Active',
             component: new ComponentMetadata(
                 component: 'input',
-                bladeComponent: 'x-cn.input',
+                bladeComponent: 'x-cn.forms.input',
                 cssClass: '',
                 columnClass: 'col-md-6',
                 binding: '',
@@ -564,7 +564,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: 'Enter Order',
             component: new ComponentMetadata(
                 component: 'number',
-                bladeComponent: 'x-cn.number',
+                bladeComponent: 'x-cn.forms.number',
                 cssClass: '',
                 columnClass: 'col-md-6',
                 binding: '',
@@ -598,7 +598,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: 'Enter Birth Date',
             component: new ComponentMetadata(
                 component: 'date',
-                bladeComponent: 'x-cn.date',
+                bladeComponent: 'x-cn.forms.date',
                 cssClass: '',
                 columnClass: 'col-md-6',
                 binding: '',
@@ -632,7 +632,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: 'Enter Start At',
             component: new ComponentMetadata(
                 component: 'datetime',
-                bladeComponent: 'x-cn.datetime',
+                bladeComponent: 'x-cn.forms.datetime',
                 cssClass: '',
                 columnClass: 'col-md-6',
                 binding: '',
@@ -666,7 +666,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: 'Enter Email',
             component: new ComponentMetadata(
                 component: 'email',
-                bladeComponent: 'x-cn.email',
+                bladeComponent: 'x-cn.forms.email',
                 cssClass: '',
                 columnClass: 'col-md-6',
                 binding: '',
@@ -700,7 +700,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: 'Enter Password',
             component: new ComponentMetadata(
                 component: 'password',
-                bladeComponent: 'x-cn.password',
+                bladeComponent: 'x-cn.forms.password',
                 cssClass: '',
                 columnClass: 'col-md-6',
                 binding: '',
@@ -734,7 +734,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: 'Enter Description',
             component: new ComponentMetadata(
                 component: 'textarea',
-                bladeComponent: 'x-cn.textarea',
+                bladeComponent: 'x-cn.forms.textarea',
                 cssClass: '',
                 columnClass: 'col-md-12',
                 binding: '',
@@ -768,7 +768,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: 'Enter Code',
             component: new ComponentMetadata(
                 component: 'input',
-                bladeComponent: 'x-cn.input',
+                bladeComponent: 'x-cn.forms.input',
                 cssClass: '',
                 columnClass: 'col-md-6',
                 binding: '',
@@ -804,7 +804,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: 'Enter Email',
             component: new ComponentMetadata(
                 component: 'email',
-                bladeComponent: 'x-cn.email',
+                bladeComponent: 'x-cn.forms.email',
                 cssClass: '',
                 columnClass: 'col-md-6',
                 binding: '',
@@ -840,7 +840,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: 'Enter Password',
             component: new ComponentMetadata(
                 component: 'password',
-                bladeComponent: 'x-cn.password',
+                bladeComponent: 'x-cn.forms.password',
                 cssClass: '',
                 columnClass: 'col-md-6',
                 binding: '',
@@ -876,7 +876,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: 'Enter Description',
             component: new ComponentMetadata(
                 component: 'textarea',
-                bladeComponent: 'x-cn.textarea',
+                bladeComponent: 'x-cn.forms.textarea',
                 cssClass: '',
                 columnClass: 'col-md-12',
                 binding: '',
@@ -912,7 +912,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: 'Enter Amount',
             component: new ComponentMetadata(
                 component: 'number',
-                bladeComponent: 'x-cn.number',
+                bladeComponent: 'x-cn.forms.number',
                 cssClass: '',
                 columnClass: 'col-md-6',
                 binding: '',
@@ -948,7 +948,7 @@ final class ComponentRendererTest extends GeneratorTestCase
             placeholder: 'Enter Status',
             component: new ComponentMetadata(
                 component: 'select',
-                bladeComponent: 'x-cn.select',
+                bladeComponent: 'x-cn.forms.select',
                 cssClass: '',
                 columnClass: 'col-md-6',
                 binding: '',

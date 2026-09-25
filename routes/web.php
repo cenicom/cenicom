@@ -3,9 +3,14 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-
     return view('home');
 });
+
+// ==========================================
+// CN Authentication
+// ==========================================
+
+require base_path('routes/auth.php');
 
 // ==========================================
 // CN Generator Modules

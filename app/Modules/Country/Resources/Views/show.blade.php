@@ -1,15 +1,15 @@
 <x-layout.app>
 
     <x-slot:title>
-        Ver country
-    </x-slot:title>
+        Ver país
+    </x-slot>
 
     <div class="cn-page">
 
         <x-cn.navigation.breadcrumb :items="[
             ['label' => 'Inicio', 'url' => '/', 'current' => false],
-            ['label' => 'countries', 'url' => null, 'current' => false],
-            ['label' => 'Detalle de country', 'url' => null, 'current' => true],
+            ['label' => 'Países', 'url' => null, 'current' => false],
+            ['label' => 'Detalle del país', 'url' => null, 'current' => true],
         ]" />
 
         <header class="cn-page-header">
@@ -19,7 +19,7 @@
                 <div>
 
                     <h1>
-                        Detalle de country
+                        Detalle del país
                     </h1>
 
                     <p>
@@ -39,70 +39,64 @@
                 <x-cn.forms.group columns="2">
 
                     {{-- ==========================================================
-     CENICOM ERP
-     CN Generator - Component Stub
-     field.stub
-========================================================== --}}
+                         CENICOM ERP
+                         CN Generator - Component Stub
+                         field.stub
+                    ========================================================== --}}
 
+                    <div class="col-md-6">
 
-<div class="col-md-6">
+                        <x-cn.forms.field>
 
-    <x-cn.forms.field>
+                            <x-cn.forms.label>
+                                Nombre
+                            </x-cn.forms.label>
 
-        <x-cn.forms.label>
-            Name
-        </x-cn.forms.label>
+                            <x-cn.forms.display :value="$country->name" />
 
-        <x-cn.forms.display :value="$country->name" />
+                        </x-cn.forms.field>
 
-    </x-cn.forms.field>
+                    </div>
 
-</div>
+                    {{-- ==========================================================
+                         CENICOM ERP
+                         CN Generator - Component Stub
+                         field.stub
+                    ========================================================== --}}
 
+                    <div class="col-md-6">
 
-{{-- ==========================================================
-     CENICOM ERP
-     CN Generator - Component Stub
-     field.stub
-========================================================== --}}
+                        <x-cn.forms.field>
 
+                            <x-cn.forms.label>
+                                Código ISO 2
+                            </x-cn.forms.label>
 
-<div class="col-md-6">
+                            <x-cn.forms.display :value="$country->iso2" />
 
-    <x-cn.forms.field>
+                        </x-cn.forms.field>
 
-        <x-cn.forms.label>
-            Iso2
-        </x-cn.forms.label>
+                    </div>
 
-        <x-cn.forms.display :value="$country->iso2" />
+                    {{-- ==========================================================
+                         CENICOM ERP
+                         CN Generator - Component Stub
+                         field.stub
+                    ========================================================== --}}
 
-    </x-cn.forms.field>
+                    <div class="col-md-6">
 
-</div>
+                        <x-cn.forms.field>
 
+                            <x-cn.forms.label>
+                                Código ISO 3
+                            </x-cn.forms.label>
 
-{{-- ==========================================================
-     CENICOM ERP
-     CN Generator - Component Stub
-     field.stub
-========================================================== --}}
+                            <x-cn.forms.display :value="$country->iso3" />
 
+                        </x-cn.forms.field>
 
-<div class="col-md-6">
-
-    <x-cn.forms.field>
-
-        <x-cn.forms.label>
-            Iso3
-        </x-cn.forms.label>
-
-        <x-cn.forms.display :value="$country->iso3" />
-
-    </x-cn.forms.field>
-
-</div>
-
+                    </div>
 
                 </x-cn.forms.group>
 

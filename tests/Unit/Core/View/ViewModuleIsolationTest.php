@@ -10,6 +10,8 @@ use App\Core\View\Bootstrap\ViewBootstrapper;
 use App\Core\View\Loader\ViewDefinitionLoader;
 use App\Core\View\Registrar\ViewRegistrar;
 use App\Core\View\Registry\ViewDefinitionRegistry;
+use App\Core\View\Contracts\ViewPathResolverInterface;
+//use App\Core\View\Contracts\ViewPathResolverInterface;
 use App\Core\View\ViewRegistry;
 use Illuminate\Container\Container;
 use Illuminate\Events\Dispatcher;
@@ -80,9 +82,28 @@ final class ViewModuleIsolationTest extends TestCase
             new Dispatcher(),
         );
 
+        $resolver = $this->createMock(
+            ViewPathResolverInterface::class,
+        );
+
+        $resolver
+            ->expects($this->exactly(2))
+            ->method('resolve')
+            ->willReturnOnConsecutiveCalls(
+                realpath(
+                    dirname(__DIR__, 3)
+                        . '/Fixtures/View/Isolation/Institution'
+                ),
+                realpath(
+                    dirname(__DIR__, 3)
+                        . '/Fixtures/View/Isolation/Inventory'
+                ),
+            );
+
         $registrar = new ViewRegistrar(
             $registry,
-            $views,
+            $finder,
+            $resolver,
         );
 
         $bootstrapper = new ViewBootstrapper(
@@ -138,6 +159,8 @@ final class ViewModuleIsolationTest extends TestCase
         $bootstrapper->boot();
 
         $hints = $finder->getHints();
+
+
 
         self::assertSame(
             realpath(
@@ -200,6 +223,14 @@ final class ViewModuleIsolationTest extends TestCase
             ['blade.php', 'php'],
         );
 
+        $resolver = $this->createMock(
+            ViewPathResolverInterface::class,
+        );
+
+        $resolver
+            ->expects($this->never())
+            ->method('resolve');
+
         $engines = new EngineResolver();
 
         $blade = new BladeCompiler(
@@ -220,7 +251,8 @@ final class ViewModuleIsolationTest extends TestCase
 
         $registrar = new ViewRegistrar(
             $registry,
-            $views,
+            $finder,
+            $resolver,
         );
 
         $bootstrapper = new ViewBootstrapper(
