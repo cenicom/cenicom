@@ -12,6 +12,7 @@ use App\Providers\RepositoryServiceProvider;
 use App\Providers\CoreBindingsServiceProvider;
 use App\Core\View\ViewServiceProvider;
 use App\Core\Crud\CrudServiceProvider;
+use App\Core\Activity\Providers\ActivityServiceProvider;
 
 return [
 
@@ -38,5 +39,7 @@ return [
     SecurityServiceProvider::class,
 
     AuditServiceProvider::class,
+
+    ActivityServiceProvider::class,
 
 ];

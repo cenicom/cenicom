@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace App\Modules\Institution\Actions;
 
+use App\Core\Audit\Contracts\AuditRecorderInterface;
+use App\Core\Audit\DTO\AuditActor;
+use App\Core\Audit\DTO\AuditEntry;
+use App\Core\Audit\DTO\AuditSubject;
+use App\Core\Security\Contracts\IdentityInterface;
 use App\Modules\Institution\Domain\Contracts\InstitutionCreatorInterface;
 use App\Modules\Institution\Domain\Contracts\InstitutionRepositoryInterface;
 use App\Modules\Institution\Domain\Contracts\InstitutionServiceInterface;
@@ -17,7 +22,10 @@ final readonly class InstitutionAction
         private InstitutionCreatorInterface $creator,
         private InstitutionRepositoryInterface $repository,
         private InstitutionServiceInterface $service,
-    ) {}
+        private AuditRecorderInterface $auditRecorder,
+        private IdentityInterface $identity,
+    ) {
+    }
 
     public function create(array $data): Institution
     {
@@ -41,7 +49,29 @@ final readonly class InstitutionAction
 
         $institution = $this->creator->create($createData);
 
-        return $this->repository->save($institution);
+        $persisted = $this->repository->save($institution);
+
+        $this->auditRecorder->record(
+            new AuditEntry(
+                actor: new AuditActor(
+                    id: $this->identity->id(),
+                    name: $this->identity->name(),
+                    authenticated: $this->identity->authenticated(),
+                ),
+                action: 'institution.created',
+                subject: new AuditSubject(
+                    type: 'institution',
+                    id: $persisted->id(),
+                ),
+                metadata: [
+                    'name' => $persisted->name(),
+                ],
+                result: 'success',
+                occurredAt: new \DateTimeImmutable(),
+            ),
+        );
+
+        return $persisted;
     }
 
     public function update(

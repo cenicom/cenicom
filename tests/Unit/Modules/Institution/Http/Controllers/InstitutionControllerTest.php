@@ -13,6 +13,8 @@ use App\Modules\Institution\Http\Controllers\InstitutionController;
 use App\Modules\Institution\Http\Requests\StoreInstitutionRequest;
 use App\Modules\Institution\Http\Requests\UpdateInstitutionRequest;
 use App\Modules\Institution\Models\Institution;
+use App\Core\Audit\Contracts\AuditRecorderInterface;
+use App\Core\Security\Contracts\IdentityInterface;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -331,10 +333,39 @@ final class InstitutionControllerTest extends TestCase
             InstitutionRepositoryInterface::class,
         );
 
+        $auditRecorder = Mockery::mock(
+            AuditRecorderInterface::class,
+        );
+
+        $auditRecorder
+            ->shouldReceive('record')
+            ->byDefault();
+
+        $identity = Mockery::mock(
+            IdentityInterface::class,
+        );
+
+        $identity
+            ->shouldReceive('id')
+            ->byDefault()
+            ->andReturn(1);
+
+        $identity
+            ->shouldReceive('name')
+            ->byDefault()
+            ->andReturn('Test User');
+
+        $identity
+            ->shouldReceive('authenticated')
+            ->byDefault()
+            ->andReturn(true);
+
         $action = new InstitutionAction(
             creator: $creator,
             repository: $repository,
             service: $service,
+            auditRecorder: $auditRecorder,
+            identity: $identity,
         );
 
         return new InstitutionController(

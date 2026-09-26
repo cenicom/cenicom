@@ -1,4 +1,4 @@
-<x-layouts.app>
+<x-layouts.app :title="__('Home')">
 
     <h1>
         CENICOM ERP

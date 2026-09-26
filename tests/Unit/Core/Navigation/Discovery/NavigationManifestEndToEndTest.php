@@ -46,10 +46,16 @@ final class NavigationManifestEndToEndTest extends TestCase
             $manifests
         );
 
+
         $normalizedDemoManifest = str_replace(
             '\\',
             '/',
             $demoManifest
+        );
+
+        $this->assertContains(
+            $normalizedDemoManifest,
+            $normalizedManifests,
         );
 
         $manifest = $loader->load(

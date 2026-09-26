@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Modules\Institution\Actions;
 
+use App\Core\Audit\Contracts\AuditRecorderInterface;
+use App\Core\Security\Contracts\IdentityInterface;
 use App\Modules\Institution\Actions\InstitutionAction;
 use App\Modules\Institution\Domain\Contracts\InstitutionCreatorInterface;
 use App\Modules\Institution\Domain\Contracts\InstitutionRepositoryInterface;
@@ -22,45 +24,27 @@ final class InstitutionActionTest extends TestCase
         $repository = Mockery::mock(InstitutionRepositoryInterface::class);
         $service = Mockery::mock(InstitutionServiceInterface::class);
 
-        $institution = new Institution(
-            id: '01JTESTINSTITUTION000000000001',
-            name: 'Institución Educativa Nacional Simón Bolívar',
-            code: 'CEN-000001',
-        );
+        $identity = Mockery::mock(IdentityInterface::class);
+        $auditRecorder = Mockery::mock(AuditRecorderInterface::class);
 
-        $creator
-            ->shouldReceive('create')
+        $identity
+            ->shouldReceive('id')
             ->once()
-            ->withArgs(function (InstitutionCreateData $data): bool {
-                return $data->name === 'Institución Educativa Nacional Simón Bolívar'
-                    && $data->officialRegistration === null;
-            })
-            ->andReturn($institution);
+            ->andReturn(1);
 
-        $repository
-            ->shouldReceive('save')
+        $identity
+            ->shouldReceive('name')
             ->once()
-            ->with($institution)
-            ->andReturn($institution);
+            ->andReturn('Test User');
 
-        $action = new InstitutionAction(
-            creator: $creator,
-            repository: $repository,
-            service: $service,
-        );
+        $identity
+            ->shouldReceive('authenticated')
+            ->once()
+            ->andReturn(true);
 
-        $result = $action->create([
-            'name' => 'Institución Educativa Nacional Simón Bolívar',
-        ]);
-
-        $this->assertSame($institution, $result);
-    }
-
-    public function test_creates_institution_with_official_registration(): void
-    {
-        $creator = Mockery::mock(InstitutionCreatorInterface::class);
-        $repository = Mockery::mock(InstitutionRepositoryInterface::class);
-        $service = Mockery::mock(InstitutionServiceInterface::class);
+        $auditRecorder
+            ->shouldReceive('record')
+            ->once();
 
         $institution = new Institution(
             id: '01JTESTINSTITUTION000000000002',
@@ -90,6 +74,85 @@ final class InstitutionActionTest extends TestCase
             creator: $creator,
             repository: $repository,
             service: $service,
+            auditRecorder: $auditRecorder,
+            identity: $identity,
+        );
+
+        $result = $action->create([
+            'name' => 'Escuela Batalla de Boyacá',
+            'officialRegistration' => [
+                'country' => 'CO',
+                'authority' => 'Education Authority',
+                'value' => '123456789',
+            ],
+        ]);
+
+        $this->assertSame($institution, $result);
+    }
+
+    public function test_creates_institution_with_official_registration(): void
+    {
+        $auditRecorder = Mockery::mock(
+            AuditRecorderInterface::class,
+        );
+
+        $identity = Mockery::mock(
+            IdentityInterface::class,
+        );
+
+        $creator = Mockery::mock(InstitutionCreatorInterface::class);
+        $repository = Mockery::mock(InstitutionRepositoryInterface::class);
+        $service = Mockery::mock(InstitutionServiceInterface::class);
+
+        $identity
+            ->shouldReceive('id')
+            ->once()
+            ->andReturn(1);
+
+        $identity
+            ->shouldReceive('name')
+            ->once()
+            ->andReturn('Test User');
+
+        $identity
+            ->shouldReceive('authenticated')
+            ->once()
+            ->andReturn(true);
+
+        $auditRecorder
+            ->shouldReceive('record')
+            ->once();
+
+        $institution = new Institution(
+            id: '01JTESTINSTITUTION000000000002',
+            name: 'Escuela Batalla de Boyacá',
+            code: 'CEN-000002',
+        );
+
+        $creator
+            ->shouldReceive('create')
+            ->once()
+            ->withArgs(function (InstitutionCreateData $data): bool {
+                return $data->name === 'Escuela Batalla de Boyacá'
+                    && $data->officialRegistration instanceof InstitutionOfficialRegistration
+                    && $data->officialRegistration->country === 'CO'
+                    && $data->officialRegistration->authority === 'Education Authority'
+                    && $data->officialRegistration->value === '123456789';
+            })
+            ->andReturn($institution);
+
+        $repository
+            ->shouldReceive('save')
+            ->once()
+            ->with($institution)
+            ->andReturn($institution);
+
+        $action = new InstitutionAction(
+            creator: $creator,
+            repository: $repository,
+            service: $service,
+            auditRecorder: $auditRecorder,
+            identity: $identity,
         );
 
         $result = $action->create([
@@ -106,6 +169,14 @@ final class InstitutionActionTest extends TestCase
 
     public function test_create_returns_institution_saved_by_repository(): void
     {
+        $auditRecorder = Mockery::mock(
+            AuditRecorderInterface::class,
+        );
+
+        $identity = Mockery::mock(
+            IdentityInterface::class,
+        );
+
         $creator = Mockery::mock(InstitutionCreatorInterface::class);
         $repository = Mockery::mock(InstitutionRepositoryInterface::class);
         $service = Mockery::mock(InstitutionServiceInterface::class);
@@ -127,6 +198,25 @@ final class InstitutionActionTest extends TestCase
             ->once()
             ->andReturn($createdInstitution);
 
+        $identity
+            ->shouldReceive('id')
+            ->once()
+            ->andReturn(1);
+
+        $identity
+            ->shouldReceive('name')
+            ->once()
+            ->andReturn('Test User');
+
+        $identity
+            ->shouldReceive('authenticated')
+            ->once()
+            ->andReturn(true);
+
+        $auditRecorder
+            ->shouldReceive('record')
+            ->once();
+
         $repository
             ->shouldReceive('save')
             ->once()
@@ -137,6 +227,8 @@ final class InstitutionActionTest extends TestCase
             creator: $creator,
             repository: $repository,
             service: $service,
+            auditRecorder: $auditRecorder,
+            identity: $identity,
         );
 
         $result = $action->create([
@@ -148,6 +240,14 @@ final class InstitutionActionTest extends TestCase
 
     public function test_updates_institution_through_service(): void
     {
+        $auditRecorder = Mockery::mock(
+            AuditRecorderInterface::class,
+        );
+
+        $identity = Mockery::mock(
+            IdentityInterface::class,
+        );
+
         $creator = Mockery::mock(InstitutionCreatorInterface::class);
         $repository = Mockery::mock(InstitutionRepositoryInterface::class);
         $service = Mockery::mock(InstitutionServiceInterface::class);
@@ -167,6 +267,8 @@ final class InstitutionActionTest extends TestCase
             creator: $creator,
             repository: $repository,
             service: $service,
+            auditRecorder: $auditRecorder,
+            identity: $identity,
         );
 
         $result = $action->update(
@@ -181,6 +283,14 @@ final class InstitutionActionTest extends TestCase
 
     public function test_updates_institution_with_official_registration(): void
     {
+        $auditRecorder = Mockery::mock(
+            AuditRecorderInterface::class,
+        );
+
+        $identity = Mockery::mock(
+            IdentityInterface::class,
+        );
+
         $creator = Mockery::mock(InstitutionCreatorInterface::class);
         $repository = Mockery::mock(InstitutionRepositoryInterface::class);
         $service = Mockery::mock(InstitutionServiceInterface::class);
@@ -203,6 +313,8 @@ final class InstitutionActionTest extends TestCase
             creator: $creator,
             repository: $repository,
             service: $service,
+            auditRecorder: $auditRecorder,
+            identity: $identity,
         );
 
         $result = $action->update(
@@ -225,6 +337,8 @@ final class InstitutionActionTest extends TestCase
         $creator = Mockery::mock(InstitutionCreatorInterface::class);
         $repository = Mockery::mock(InstitutionRepositoryInterface::class);
         $service = Mockery::mock(InstitutionServiceInterface::class);
+        $auditRecorder = Mockery::mock(AuditRecorderInterface::class);
+        $identity = Mockery::mock(IdentityInterface::class);
 
         $service
             ->shouldReceive('delete')
@@ -236,6 +350,8 @@ final class InstitutionActionTest extends TestCase
             creator: $creator,
             repository: $repository,
             service: $service,
+            auditRecorder: $auditRecorder,
+            identity: $identity,
         );
 
         $result = $action->delete(

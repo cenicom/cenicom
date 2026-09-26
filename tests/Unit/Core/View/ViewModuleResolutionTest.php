@@ -10,8 +10,10 @@ use App\Core\View\Bootstrap\ViewBootstrapper;
 use App\Core\View\Loader\ViewDefinitionLoader;
 use App\Core\View\Registrar\ViewRegistrar;
 use App\Core\View\Registry\ViewDefinitionRegistry;
+use App\Core\View\Resolver\ViewPathResolver;
 use App\Core\View\ViewRegistry;
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\View\Compilers\BladeCompiler;
@@ -21,7 +23,6 @@ use Illuminate\View\Factory;
 use Illuminate\View\FileViewFinder;
 use PHPUnit\Framework\TestCase;
 use Tests\Fixtures\View\InstitutionTestViewDefinition;
-use Tests\Fixtures\View\TestViewDefinition;
 
 final class ViewModuleResolutionTest extends TestCase
 {
@@ -80,9 +81,22 @@ final class ViewModuleResolutionTest extends TestCase
             new Dispatcher(),
         );
 
+        $application = $this->createMock(Application::class);
+
+        $application
+            ->method('basePath')
+            ->willReturnCallback(
+                fn(string $path): string => $path,
+            );
+
+        $pathResolver = new ViewPathResolver(
+            $application,
+        );
+
         $registrar = new ViewRegistrar(
             $registry,
             $finder,
+            $pathResolver,
         );
 
         $bootstrapper = new ViewBootstrapper(
@@ -108,8 +122,8 @@ final class ViewModuleResolutionTest extends TestCase
         $modules->register($module);
 
         Container::getInstance()->bind(
-            TestViewDefinition::class,
-            fn() => new TestViewDefinition(),
+            InstitutionTestViewDefinition::class,
+            fn() => new InstitutionTestViewDefinition(),
         );
 
         $loader->load();
@@ -132,16 +146,6 @@ final class ViewModuleResolutionTest extends TestCase
         self::assertSame(
             'institution-view-bridge-ok',
             trim($rendered),
-        );
-
-        viewDefinitions:
-        [
-            InstitutionTestViewDefinition::class,
-        ];
-
-        Container::getInstance()->bind(
-            InstitutionTestViewDefinition::class,
-            fn() => new InstitutionTestViewDefinition(),
         );
     }
 }
