@@ -5,24 +5,12 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Modules\Country\Models\Country;
-use App\Modules\State\Models\State;
+use App\Modules\Currency\Models\Currency;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
-/**
- * ==========================================================
- * CENICOM ERP
- * ==========================================================
- *
- * Seeder del módulo State.
- *
- * @package Database\Seeders
- */
-final class StateSeeder
-    extends Seeder
+final class CountryCurrencySeeder extends Seeder
 {
-    /**
-     * Ejecuta el seeder.
-     */
     public function run(): void
     {
         $colombia = Country::query()
@@ -33,23 +21,31 @@ final class StateSeeder
             ->where('iso2', 'EC')
             ->firstOrFail();
 
-        State::query()->updateOrCreate(
+        $cop = Currency::query()
+            ->where('code', 'COP')
+            ->firstOrFail();
+
+        $usd = Currency::query()
+            ->where('code', 'USD')
+            ->firstOrFail();
+
+        DB::table('country_currency')->updateOrInsert(
             [
                 'country_id' => $colombia->id,
-                'name' => 'Huila',
+                'currency_id' => $cop->id,
             ],
             [
-                'name' => 'Huila',
+                'is_primary' => true,
             ]
         );
 
-        State::query()->updateOrCreate(
+        DB::table('country_currency')->updateOrInsert(
             [
                 'country_id' => $ecuador->id,
-                'name' => 'Sucumbíos',
+                'currency_id' => $usd->id,
             ],
             [
-                'name' => 'Sucumbíos',
+                'is_primary' => true,
             ]
         );
     }

@@ -25,8 +25,20 @@ final class CountrySeeder
      */
     public function run(): void
     {
-        Country::factory()
-            ->count(10)
-            ->create();
+        Country::query()->updateOrCreate(
+            ['iso2' => 'CO'],
+            [
+                'name' => 'Colombia',
+                'iso3' => 'COL',
+            ]
+        );
+
+        Country::query()->updateOrCreate(
+            ['iso2' => 'EC'],
+            [
+                'name' => 'Ecuador',
+                'iso3' => 'ECU',
+            ]
+        );
     }
 }

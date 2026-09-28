@@ -18,15 +18,33 @@ use App\Modules\Currency\Models\Currency;
  * @package Database\Seeders
  */
 final class CurrencySeeder
-    extends Seeder
+extends Seeder
 {
     /**
      * Ejecuta el seeder.
      */
     public function run(): void
     {
-        Currency::factory()
-            ->count(10)
-            ->create();
+        Currency::query()->updateOrCreate(
+            ['code' => 'COP'],
+            [
+                'name' => 'Peso colombiano',
+                'precision' => 2,
+                'symbol' => '$',
+                'decimal_mark' => ',',
+                'thousands_separator' => '.',
+            ]
+        );
+
+        Currency::query()->updateOrCreate(
+            ['code' => 'USD'],
+            [
+                'name' => 'Dólar estadounidense',
+                'precision' => 2,
+                'symbol' => '$',
+                'decimal_mark' => '.',
+                'thousands_separator' => ',',
+            ]
+        );
     }
 }
