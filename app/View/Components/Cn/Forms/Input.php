@@ -15,7 +15,7 @@ use Illuminate\View\Component;
  * -----------------------------------------------------------------------------
  *
  * ID          : CN-FORMS-001
- * Componente  : x-cn.input
+ * Componente  : x-cn.forms.input
  * Categoría   : Forms
  * Versión     : 1.0.0
  * Estado      : Gold Standard
@@ -24,10 +24,10 @@ use Illuminate\View\Component;
  * Componente base para campos HTML input.
  *
  * Extensiones:
- * - x-cn.email
- * - x-cn.password
- * - x-cn.number
- * - x-cn.search
+ * - x-cn.forms.email
+ * - x-cn.forms.password
+ * - x-cn.forms.number
+ * - x-cn.forms.search
  *
  * @package App\View\Components\Cn\Forms
  */

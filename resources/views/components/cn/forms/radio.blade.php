@@ -1,6 +1,6 @@
 @php
     $selected = old($name, $checked ? $value : null);
-    $isInvalid = $errors->has($name);
+    $isInvalid = isset($errors) && $errors->has($name);
 
     $radioAttributes = $attributes->class([
         'cn-radio',

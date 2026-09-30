@@ -15,7 +15,7 @@ use Illuminate\View\Component;
  * -----------------------------------------------------------------------------
  *
  * ID          : CN-FORMS-009
- * Componente  : x-cn.radio
+ * Componente  : x-cn.forms.radio
  * Categoría   : Forms
  * Versión     : 1.0.0
  * Estado      : Gold Standard

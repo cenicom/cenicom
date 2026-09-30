@@ -15,7 +15,7 @@ use Illuminate\View\Component;
  * -----------------------------------------------------------------------------
  *
  * ID          : CN-FORMS-106
- * Componente  : x-cn.group
+ * Componente  : x-cn.forms.group
  * Categoría   : Forms
  * Versión     : 1.0.0
  * Estado      : Gold Standard

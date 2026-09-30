@@ -1,6 +1,6 @@
 @php
     $textareaValue = old($name, $value);
-    $isInvalid = $errors->has($name);
+    $isInvalid = isset($errors) && $errors->has($name);
 
     $textareaAttributes = $attributes->class([
         'cn-textarea',

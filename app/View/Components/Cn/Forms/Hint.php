@@ -15,7 +15,7 @@ use Illuminate\View\Component;
  * -----------------------------------------------------------------------------
  *
  * ID          : CN-FORMS-105
- * Componente  : x-cn.hint
+ * Componente  : x-cn.forms.hint
  * Categoría   : Forms
  * Versión     : 1.0.0
  * Estado      : Gold Standard

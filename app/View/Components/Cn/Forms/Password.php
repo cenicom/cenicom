@@ -14,7 +14,7 @@ use Illuminate\Contracts\View\View;
  * -----------------------------------------------------------------------------
  *
  * ID          : CN-FORMS-003
- * Componente  : x-cn.password
+ * Componente  : x-cn.forms.password
  * Categoría   : Forms
  * Versión     : 1.0.0
  * Estado      : Gold Standard
@@ -23,7 +23,7 @@ use Illuminate\Contracts\View\View;
  * Campo especializado para captura segura de contraseñas.
  *
  * Extiende:
- * - x-cn.input
+ * - x-cn.forms.input
  *
  * @package App\View\Components\Cn\Forms
  */
@@ -36,6 +36,8 @@ class Password extends Input
         mixed $value = null,
         ?string $placeholder = null,
         ?string $autocomplete = 'current-password',
+        ?int $minlength = null,
+        ?int $maxlength = null,
         bool $required = false,
         bool $readonly = false,
         bool $disabled = false,
@@ -48,6 +50,8 @@ class Password extends Input
             value: $value,
             placeholder: $placeholder,
             autocomplete: $autocomplete,
+            minlength: $minlength,
+            maxlength: $maxlength,
             inputmode: 'text',
             required: $required,
             readonly: $readonly,

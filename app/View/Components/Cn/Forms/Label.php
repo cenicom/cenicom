@@ -15,7 +15,7 @@ use Illuminate\View\Component;
  * -----------------------------------------------------------------------------
  *
  * ID          : CN-FORMS-102
- * Componente  : x-cn.label
+ * Componente  : x-cn.forms.label
  * Categoría   : Forms
  * Versión     : 1.0.0
  * Estado      : Gold Standard

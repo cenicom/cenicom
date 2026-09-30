@@ -14,7 +14,7 @@ use Illuminate\Contracts\View\View;
  * -----------------------------------------------------------------------------
  *
  * ID          : CN-FORMS-004
- * Componente  : x-cn.number
+ * Componente  : x-cn.forms.number
  * Categoría   : Forms
  * Versión     : 1.0.0
  * Estado      : Gold Standard
@@ -23,7 +23,7 @@ use Illuminate\Contracts\View\View;
  * Campo especializado para valores numéricos.
  *
  * Extiende:
- * - x-cn.input
+ * - x-cn.forms.input
  *
  * @package App\View\Components\Cn\Forms
  */

@@ -15,7 +15,7 @@ use Illuminate\View\Component;
  * -----------------------------------------------------------------------------
  *
  * ID          : CN-FORMS-007
- * Componente  : x-cn.textarea
+ * Componente  : x-cn.forms.textarea
  * Categoría   : Forms
  * Versión     : 1.0.0
  * Estado      : Gold Standard

@@ -15,7 +15,7 @@ use Illuminate\View\Component;
  * -----------------------------------------------------------------------------
  *
  * ID          : CN-FORMS-101
- * Componente  : x-cn.display
+ * Componente  : x-cn.forms.display
  * Categoría   : Forms
  * Versión     : 1.0.0
  * Estado      : Gold Standard

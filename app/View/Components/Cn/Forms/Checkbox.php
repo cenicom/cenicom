@@ -15,7 +15,7 @@ use Illuminate\View\Component;
  * -----------------------------------------------------------------------------
  *
  * ID          : CN-FORMS-008
- * Componente  : x-cn.checkbox
+ * Componente  : x-cn.forms.checkbox
  * Categoría   : Forms
  * Versión     : 1.0.0
  * Estado      : Gold Standard

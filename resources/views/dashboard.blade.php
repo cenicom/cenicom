@@ -1,7 +1,7 @@
 <x-layout.app>
-    <x-slot:title>
+    <x-slot name="title">
         Dashboard
-    </x-slot:title>
+    </x-slot>
 
     <div class="cn-page">
 
@@ -17,10 +17,7 @@
                             Inicio
                         </li>
 
-                        <li
-                            class="breadcrumb-item active"
-                            aria-current="page"
-                        >
+                        <li class="breadcrumb-item active" aria-current="page">
                             Dashboard
                         </li>
                     </ol>
@@ -28,21 +25,13 @@
             </div>
         </div>
 
-        <section
-            class="mt-4"
-            aria-labelledby="institution-summary-title"
-        >
-            <div class="card">
-                <div class="card-header">
-                    <h2
-                        id="institution-summary-title"
-                        class="h5 mb-0"
-                    >
-                        Instituciones
-                    </h2>
-                </div>
+        <section class="mt-4" aria-labelledby="institution-summary-title">
+            <x-cn.card>
 
-                <div class="card-body">
+                <x-cn.card.header id="institution-summary-title" title="Instituciones" icon="building" />
+
+                <x-cn.card.body>
+
                     <div class="fs-2 fw-semibold">
                         {{ $totalInstitutions }}
                     </div>
@@ -50,26 +39,18 @@
                     <div class="text-muted">
                         Total de instituciones registradas
                     </div>
-                </div>
-            </div>
+
+                </x-cn.card.body>
+
+            </x-cn.card>
         </section>
 
-        <section
-            class="mt-4"
-            aria-labelledby="recent-activities-title"
-        >
-            <div class="card">
+        <section class="mt-4" aria-labelledby="recent-activities-title">
+            <x-cn.card>
 
-                <div class="card-header">
-                    <h2
-                        id="recent-activities-title"
-                        class="h5 mb-0"
-                    >
-                        Actividades recientes
-                    </h2>
-                </div>
+                <x-cn.card.header id="recent-activities-title" title="Actividades recientes" icon="history" />
 
-                <div class="card-body">
+                <x-cn.card.body>
 
                     @forelse ($activities as $activity)
 
@@ -87,10 +68,8 @@
                                     </div>
                                 </div>
 
-                                <time
-                                    class="text-muted small text-nowrap"
-                                    datetime="{{ $activity->occurredAt->format('c') }}"
-                                >
+                                <time class="text-muted small text-nowrap"
+                                    datetime="{{ $activity->occurredAt->format('c') }}">
                                     {{ $activity->occurredAt->format('d/m/Y H:i') }}
                                 </time>
 
@@ -106,10 +85,11 @@
 
                     @endforelse
 
-                </div>
+                </x-cn.card.body>
 
-            </div>
+            </x-cn.card>
         </section>
 
     </div>
+
 </x-layout.app>

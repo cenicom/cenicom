@@ -15,7 +15,7 @@ use Illuminate\View\Component;
  * -----------------------------------------------------------------------------
  *
  * ID          : CN-FORMS-006
- * Componente  : x-cn.select
+ * Componente  : x-cn.forms.select
  * Categoría   : Forms
  * Versión     : 1.0.0
  * Estado      : Gold Standard

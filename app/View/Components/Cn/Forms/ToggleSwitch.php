@@ -14,7 +14,7 @@ use Illuminate\Contracts\View\View;
  * -----------------------------------------------------------------------------
  *
  * ID          : CN-FORMS-010
- * Componente  : x-cn.switch
+ * Componente  : x-cn.forms.toggleswitch
  * Categoría   : Forms
  * Versión     : 1.0.0
  * Estado      : Gold Standard
@@ -30,6 +30,6 @@ class ToggleSwitch extends Checkbox
 {
     public function render(): View|Closure|string
     {
-        return view('components.cn.forms.switch');
+        return view('components.cn.forms.toggleswitch');
     }
 }

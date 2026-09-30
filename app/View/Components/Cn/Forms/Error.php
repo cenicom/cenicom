@@ -15,7 +15,7 @@ use Illuminate\View\Component;
  * -----------------------------------------------------------------------------
  *
  * ID          : CN-FORMS-104
- * Componente  : x-cn.error
+ * Componente  : x-cn.forms.error
  * Categoría   : Forms
  * Versión     : 1.0.0
  * Estado      : Gold Standard

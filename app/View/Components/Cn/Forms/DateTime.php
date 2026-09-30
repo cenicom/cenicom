@@ -14,7 +14,7 @@ use Illuminate\Contracts\View\View;
  * -----------------------------------------------------------------------------
  *
  * ID          : CN-FORMS-006
- * Componente  : x-cn.datetime
+ * Componente  : x-cn.forms.datetime
  * Categoría   : Forms
  * Versión     : 1.0.0
  * Estado      : Gold Standard
@@ -23,7 +23,7 @@ use Illuminate\Contracts\View\View;
  * Campo especializado para captura de fecha y hora local.
  *
  * Extiende:
- * - x-cn.input
+ * - x-cn.forms.input
  *
  * @package App\View\Components\Cn\Forms
  */
