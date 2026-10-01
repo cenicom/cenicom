@@ -189,5 +189,36 @@ final class AppLayoutTest extends TestCase
         $view->assertSee('CENICOM ERP');
     }
 
+    public function test_renders_application_regions_in_contract_order(): void
+    {
+        $this->app->instance(
+            IdentityInterface::class,
+            $this->createIdentity()
+        );
 
+        $this->app->instance(
+            NavigationServiceInterface::class,
+            new class implements NavigationServiceInterface {
+                public function tree(
+                    IdentityInterface $identity
+                ): NavigationTreeData {
+                    return new NavigationTreeData();
+                }
+            }
+        );
+
+        $view = $this->blade(
+            '<x-layouts.app>
+            <h1>CENICOM ERP</h1>
+        </x-layouts.app>'
+        );
+
+        $view->assertSeeInOrder([
+            'cn-topbar',
+            'cn-shell',
+            'cn-sidebar',
+            'cn-main',
+            'CENICOM ERP',
+        ], false);
+    }
 }

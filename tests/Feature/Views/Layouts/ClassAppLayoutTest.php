@@ -22,12 +22,20 @@ final class ClassAppLayoutTest extends TestCase
             $identity
         );
 
+        $receivedIdentity = null;
+
         $this->app->instance(
             NavigationServiceInterface::class,
-            new class implements NavigationServiceInterface {
+            new class($receivedIdentity) implements NavigationServiceInterface {
+                public function __construct(
+                    private mixed &$receivedIdentity
+                ) {}
+
                 public function tree(
                     IdentityInterface $identity
                 ): NavigationTreeData {
+                    $this->receivedIdentity = $identity;
+
                     return new NavigationTreeData();
                 }
             }
@@ -46,6 +54,11 @@ final class ClassAppLayoutTest extends TestCase
         );
 
         // Assert
+
+         $this->assertSame(
+            $identity,
+            $receivedIdentity
+        );
 
         $view->assertSee('<!DOCTYPE html>', false);
         $view->assertSee('<html', false);
