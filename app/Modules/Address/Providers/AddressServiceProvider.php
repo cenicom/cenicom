@@ -6,6 +6,8 @@ namespace App\Modules\Address\Providers;
 
 use App\Modules\Address\Domain\Contracts\AddressRepositoryInterface;
 use App\Modules\Address\Domain\Contracts\AddressServiceInterface;
+use App\Modules\Address\Domain\Contracts\GeographicReferenceInterface;
+use App\Modules\Address\Infrastructure\Geographic\ImportedTablesGeographicReference;
 use App\Modules\Address\Repositories\AddressRepository;
 use App\Modules\Address\Services\AddressService;
 use Illuminate\Support\ServiceProvider;
@@ -22,6 +24,11 @@ final class AddressServiceProvider extends ServiceProvider
         $this->app->bind(
             AddressServiceInterface::class,
             AddressService::class,
+        );
+
+        $this->app->bind(
+            GeographicReferenceInterface::class,
+            ImportedTablesGeographicReference::class,
         );
     }
 }
