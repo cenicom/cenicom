@@ -22,6 +22,12 @@ final class StoreInstitutionRequest extends FormRequest
                 'max:255',
             ],
 
+            'shortCode' => [
+                'required',
+                'string',
+                'regex:/^[A-Z]{6,15}$/',
+            ],
+
             'officialRegistration' => [
                 'nullable',
                 'array',

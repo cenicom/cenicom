@@ -17,6 +17,7 @@ final class InstitutionCreatorTest extends TestCase
     {
         $expectedId = '01K2F8K4X7Q9M3N5P6R8T1W2YZ';
         $expectedCode = 'CEN-000001';
+        $expectedShortCode = 'IESBSC';
 
         $idGenerator = $this->createMock(
             InstitutionIdGeneratorInterface::class
@@ -43,6 +44,7 @@ final class InstitutionCreatorTest extends TestCase
 
         $data = new InstitutionCreateData(
             name: 'Institución Educativa Nacional Simón Bolívar',
+            shortCode: $expectedShortCode,
         );
 
         $institution = $creator->create($data);
@@ -58,6 +60,11 @@ final class InstitutionCreatorTest extends TestCase
         );
 
         $this->assertSame(
+            $expectedShortCode,
+            $institution->shortCode()
+        );
+
+        $this->assertSame(
             'Institución Educativa Nacional Simón Bolívar',
             $institution->name()
         );
@@ -68,11 +75,11 @@ final class InstitutionCreatorTest extends TestCase
         );
     }
 
-
     public function test_creates_institution_with_official_registration(): void
     {
         $expectedId = '01K2F8K4X7Q9M3N5P6R8T1W2YZ';
         $expectedCode = 'CEN-000002';
+        $expectedShortCode = 'IESBSC';
 
         $officialRegistration = new InstitutionOfficialRegistration(
             authority: 'Ministerio de Educación',
@@ -105,10 +112,16 @@ final class InstitutionCreatorTest extends TestCase
 
         $data = new InstitutionCreateData(
             name: 'Institución Educativa Nacional Simón Bolívar',
+            shortCode: $expectedShortCode,
             officialRegistration: $officialRegistration,
         );
 
         $institution = $creator->create($data);
+
+        $this->assertSame(
+            $expectedShortCode,
+            $institution->shortCode()
+        );
 
         $this->assertSame(
             $officialRegistration,

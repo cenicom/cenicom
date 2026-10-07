@@ -12,14 +12,10 @@ return new class extends Migration
     {
         Schema::create('campus_code_sequences', function (Blueprint $table): void {
             $table->char('institution_id', 26);
-            $table->string('campus_short_code', 20);
             $table->unsignedBigInteger('current_value')->default(0);
             $table->timestamps();
 
-            $table->primary([
-                'institution_id',
-                'campus_short_code',
-            ]);
+            $table->primary('institution_id');
 
             $table->foreign('institution_id')
                 ->references('id')

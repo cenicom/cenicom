@@ -47,6 +47,7 @@ final class Institution extends Model
     protected $fillable = [
         'id',
         'code',
+        'short_code',
         'name',
         'official_registration_country',
         'official_registration_authority',

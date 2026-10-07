@@ -44,7 +44,9 @@ final readonly class InstitutionAction
 
         $createData = new InstitutionCreateData(
             name: $data['name'],
+            shortCode: $data['shortCode'],
             officialRegistration: $officialRegistration,
+
         );
 
         $institution = $this->creator->create($createData);

@@ -110,6 +110,7 @@ final class InstitutionActivityAuditIntegrationTest extends TestCase
 
         $institution = $action->create([
             'name' => 'Institución D03 A8',
+            'shortCode' => 'IECENTRAL',
         ]);
 
         $audit = AuditLog::query()

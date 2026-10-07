@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Modules\Institution\Http\Controllers;
 
+use App\Core\Security\Contracts\IdentityInterface;
 use App\Http\Controllers\Controller;
 use App\Modules\Institution\Actions\InstitutionAction;
 use App\Modules\Institution\Domain\Contracts\InstitutionServiceInterface;
 use App\Modules\Institution\Http\Requests\StoreInstitutionRequest;
 use App\Modules\Institution\Http\Requests\UpdateInstitutionRequest;
 use App\Modules\Institution\Models\Institution;
+use App\View\Contracts\ViewAuthorizationInterface;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -20,20 +22,36 @@ final class InstitutionController extends Controller
     public function __construct(
         private readonly InstitutionServiceInterface $service,
         private readonly InstitutionAction $action,
+        private readonly ViewAuthorizationInterface $authorization,
+        private readonly IdentityInterface $identity,
     ) {}
 
     public function index(): View
     {
-        return view('institutions.index', [
+        return view('institutions::index', [
             'institutions' => $this->service->paginate(
                 perPage: self::PER_PAGE,
             ),
+            'permissions' => [
+                'create' => $this->authorization->can(
+                    $this->identity,
+                    'institutions.create',
+                ),
+                'update' => $this->authorization->can(
+                    $this->identity,
+                    'institutions.update',
+                ),
+                'delete' => $this->authorization->can(
+                    $this->identity,
+                    'institutions.delete',
+                ),
+            ],
         ]);
     }
 
     public function create(): View
     {
-        return view('institutions.create');
+        return view('institutions::create');
     }
 
     public function store(
@@ -51,18 +69,10 @@ final class InstitutionController extends Controller
             );
     }
 
-    public function show(
-        Institution $institution,
-    ): View {
-        return view('institutions.show', [
-            'institution' => $institution,
-        ]);
-    }
-
     public function edit(
         Institution $institution,
     ): View {
-        return view('institutions.edit', [
+        return view('institutions::edit', [
             'institution' => $institution,
         ]);
     }

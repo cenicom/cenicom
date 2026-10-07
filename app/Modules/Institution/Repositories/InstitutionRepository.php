@@ -10,7 +10,6 @@ use App\Modules\Institution\Domain\Entity\Institution as DomainInstitution;
 use App\Modules\Institution\Domain\ValueObjects\InstitutionOfficialRegistration;
 use App\Modules\Institution\Models\Institution as InstitutionModel;
 
-
 final class InstitutionRepository extends BaseRepository implements InstitutionRepositoryInterface
 {
     public function __construct(
@@ -41,6 +40,7 @@ final class InstitutionRepository extends BaseRepository implements InstitutionR
         return [
             'id' => $institution->id(),
             'code' => $institution->code(),
+            'short_code' => $institution->shortCode(),
             'name' => $institution->name(),
             'official_registration_country' => $registration?->country,
             'official_registration_authority' => $registration?->authority,
@@ -70,6 +70,7 @@ final class InstitutionRepository extends BaseRepository implements InstitutionR
             id: $model->getKey(),
             name: $model->name,
             code: $model->code,
+            shortCode: $model->short_code,
             officialRegistration: $registration,
             status: $model->status,
         );

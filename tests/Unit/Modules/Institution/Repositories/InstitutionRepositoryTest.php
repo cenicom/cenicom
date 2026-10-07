@@ -55,6 +55,7 @@ final class InstitutionRepositoryTest extends TestCase
             id: '01K3TEST000000000000000001',
             name: 'Institución CENICOM',
             code: 'CEN-001',
+            shortCode: 'IESBSC',
             officialRegistration: new InstitutionOfficialRegistration(
                 country: 'CO',
                 authority: 'Ministerio de Educación',
@@ -69,10 +70,16 @@ final class InstitutionRepositoryTest extends TestCase
             $saved->id()
         );
 
+        $this->assertSame(
+            'IESBSC',
+            $saved->shortCode()
+        );
+
         $this->assertDatabaseHas('institutions', [
             'id' => '01K3TEST000000000000000001',
             'name' => 'Institución CENICOM',
             'code' => 'CEN-001',
+            'short_code' => 'IESBSC',
             'official_registration_country' => 'CO',
             'official_registration_authority' => 'Ministerio de Educación',
             'official_registration_value' => 'REG-001',
@@ -89,6 +96,7 @@ final class InstitutionRepositoryTest extends TestCase
             id: '01K3TEST000000000000000002',
             name: 'Institución Prueba',
             code: 'CEN-002',
+            shortCode: 'IEPRUE',
             officialRegistration: new InstitutionOfficialRegistration(
                 country: 'CO',
                 authority: 'MEN',
@@ -97,6 +105,11 @@ final class InstitutionRepositoryTest extends TestCase
         );
 
         $saved = $repository->save($institution);
+
+        $this->assertSame(
+            'IEPRUE',
+            $saved->shortCode()
+        );
 
         $registration = $saved->officialRegistration();
 
@@ -115,9 +128,15 @@ final class InstitutionRepositoryTest extends TestCase
             id: '01K3TEST000000000000000003',
             name: 'Institución Sin Registro',
             code: 'CEN-003',
+            shortCode: 'ISRTEST',
         );
 
         $saved = $repository->save($institution);
+
+        $this->assertSame(
+            'ISRTEST',
+            $saved->shortCode()
+        );
 
         $this->assertNull(
             $saved->officialRegistration()
@@ -127,6 +146,7 @@ final class InstitutionRepositoryTest extends TestCase
             'id' => '01K3TEST000000000000000003',
             'name' => 'Institución Sin Registro',
             'code' => 'CEN-003',
+            'short_code' => 'ISRTEST',
             'official_registration_country' => null,
             'official_registration_authority' => null,
             'official_registration_value' => null,

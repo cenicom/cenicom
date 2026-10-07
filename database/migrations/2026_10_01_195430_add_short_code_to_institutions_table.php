@@ -11,7 +11,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('institutions', function (Blueprint $table): void {
-            $table->string('short_code', 20)
+            $table->string('short_code', 15)
                 ->unique()
                 ->after('code');
         });

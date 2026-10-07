@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Modules\Institution\Http\Controllers;
 
+use App\Core\Audit\Contracts\AuditRecorderInterface;
+use App\Core\Security\Contracts\IdentityInterface;
 use App\Modules\Institution\Actions\InstitutionAction;
 use App\Modules\Institution\Domain\Contracts\InstitutionCreatorInterface;
 use App\Modules\Institution\Domain\Contracts\InstitutionRepositoryInterface;
@@ -13,15 +15,14 @@ use App\Modules\Institution\Http\Controllers\InstitutionController;
 use App\Modules\Institution\Http\Requests\StoreInstitutionRequest;
 use App\Modules\Institution\Http\Requests\UpdateInstitutionRequest;
 use App\Modules\Institution\Models\Institution;
-use App\Core\Audit\Contracts\AuditRecorderInterface;
-use App\Core\Security\Contracts\IdentityInterface;
+use App\View\Contracts\ViewAuthorizationInterface;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
-use Illuminate\Routing\Redirector;
 use Mockery;
 use Tests\TestCase;
 
@@ -64,9 +65,14 @@ final class InstitutionControllerTest extends TestCase
             ->shouldReceive('make')
             ->once()
             ->with(
-                'institutions.index',
+                'institutions::index',
                 [
                     'institutions' => $paginator,
+                    'permissions' => [
+                        'create' => true,
+                        'update' => true,
+                        'delete' => true,
+                    ],
                 ],
                 [],
             )
@@ -96,7 +102,7 @@ final class InstitutionControllerTest extends TestCase
             ->shouldReceive('make')
             ->once()
             ->with(
-                'institutions.create',
+                'institutions::create',
                 [],
                 [],
             )
@@ -132,6 +138,7 @@ final class InstitutionControllerTest extends TestCase
             id: '01JTEST00000000000000000001',
             name: 'Colegio Central',
             code: 'CEN-000001',
+            shortCode: 'IESBSC',
         );
 
         $creator
@@ -159,6 +166,7 @@ final class InstitutionControllerTest extends TestCase
 
         $request = $this->validatedStoreRequest([
             'name' => 'Colegio Central',
+            'shortCode' => 'IESBSC',
         ]);
 
         $this->mockRedirect(
@@ -176,38 +184,6 @@ final class InstitutionControllerTest extends TestCase
         );
     }
 
-    public function test_show_returns_show_view_with_institution(): void
-    {
-        $institution = $this->institutionModel();
-
-        $view = $this->mockView();
-
-        $viewFactory = Mockery::mock(ViewFactory::class);
-
-        $viewFactory
-            ->shouldReceive('make')
-            ->once()
-            ->with(
-                'institutions.show',
-                [
-                    'institution' => $institution,
-                ],
-                [],
-            )
-            ->andReturn($view);
-
-        $this->app->instance(
-            ViewFactory::class,
-            $viewFactory,
-        );
-
-        $controller = $this->controller();
-
-        $result = $controller->show($institution);
-
-        $this->assertSame($view, $result);
-    }
-
     public function test_edit_returns_edit_view_with_institution(): void
     {
         $institution = $this->institutionModel();
@@ -220,7 +196,7 @@ final class InstitutionControllerTest extends TestCase
             ->shouldReceive('make')
             ->once()
             ->with(
-                'institutions.edit',
+                'institutions::edit',
                 [
                     'institution' => $institution,
                 ],
@@ -368,9 +344,20 @@ final class InstitutionControllerTest extends TestCase
             identity: $identity,
         );
 
+        $authorization = Mockery::mock(
+            ViewAuthorizationInterface::class,
+        );
+
+        $authorization
+            ->shouldReceive('can')
+            ->byDefault()
+            ->andReturn(true);
+
         return new InstitutionController(
             service: $service,
             action: $action,
+            authorization: $authorization,
+            identity: $identity,
         );
     }
 

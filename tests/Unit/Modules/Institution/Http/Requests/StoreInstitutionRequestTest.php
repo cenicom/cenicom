@@ -17,6 +17,7 @@ final class StoreInstitutionRequestTest extends TestCase
 
         $data = [
             'name' => 'Institución Educativa Nacional',
+            'shortCode' => 'IESBSC',
             'officialRegistration' => [
                 'country' => 'CO',
                 'authority' => 'Education Authority',
@@ -81,6 +82,7 @@ final class StoreInstitutionRequestTest extends TestCase
 
         $data = [
             'name' => 'Institución Educativa Nacional',
+            'shortCode' => 'IESBSC',
         ];
 
         $validator = Validator::make($data, $request->rules());
@@ -241,6 +243,7 @@ final class StoreInstitutionRequestTest extends TestCase
 
         $data = [
             'name' => 'Institución Educativa Nacional',
+            'shortCode' => 'IESBSC',
         ];
 
         $validator = Validator::make($data, $request->rules());

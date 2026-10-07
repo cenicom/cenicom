@@ -10,6 +10,8 @@ use App\Modules\Address\Domain\Contracts\GeographicReferenceInterface;
 use App\Modules\Address\Infrastructure\Geographic\ImportedTablesGeographicReference;
 use App\Modules\Address\Repositories\AddressRepository;
 use App\Modules\Address\Services\AddressService;
+use App\Modules\Address\Domain\Contracts\GeographicQueryInterface;
+use App\Modules\Address\Infrastructure\Geographic\ImportedTablesGeographicQuery;
 use Illuminate\Support\ServiceProvider;
 
 final class AddressServiceProvider extends ServiceProvider
@@ -29,6 +31,11 @@ final class AddressServiceProvider extends ServiceProvider
         $this->app->bind(
             GeographicReferenceInterface::class,
             ImportedTablesGeographicReference::class,
+
+        );
+        $this->app->bind(
+            GeographicQueryInterface::class,
+            ImportedTablesGeographicQuery::class,
         );
     }
 }

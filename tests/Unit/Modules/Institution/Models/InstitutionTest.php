@@ -65,6 +65,7 @@ final class InstitutionTest extends TestCase
             [
                 'id',
                 'code',
+                'short_code',
                 'name',
                 'official_registration_country',
                 'official_registration_authority',

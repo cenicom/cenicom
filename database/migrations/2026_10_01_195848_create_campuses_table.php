@@ -17,7 +17,7 @@ return new class extends Migration
 
             $table->string('code', 40)->unique();
 
-            $table->string('short_code', 20);
+            $table->string('short_code', 15);
 
             $table->string('name', 255);
 

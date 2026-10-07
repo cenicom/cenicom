@@ -42,6 +42,7 @@ final class InstitutionCreationPersistenceTest extends TestCase
         $institution = $creator->create(
             new InstitutionCreateData(
                 name: 'Institución CENICOM',
+                shortCode: 'IECENTRAL',
             )
         );
 

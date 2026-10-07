@@ -50,6 +50,7 @@ final class InstitutionActionTest extends TestCase
             id: '01JTESTINSTITUTION000000000002',
             name: 'Escuela Batalla de Boyacá',
             code: 'CEN-000002',
+            shortCode: 'IEBATALLA',
         );
 
         $creator
@@ -80,6 +81,7 @@ final class InstitutionActionTest extends TestCase
 
         $result = $action->create([
             'name' => 'Escuela Batalla de Boyacá',
+            'shortCode' => 'IEBATALLA',
             'officialRegistration' => [
                 'country' => 'CO',
                 'authority' => 'Education Authority',
@@ -127,6 +129,7 @@ final class InstitutionActionTest extends TestCase
             id: '01JTESTINSTITUTION000000000002',
             name: 'Escuela Batalla de Boyacá',
             code: 'CEN-000002',
+            shortCode: 'IEBATALLA',
         );
 
         $creator
@@ -157,6 +160,7 @@ final class InstitutionActionTest extends TestCase
 
         $result = $action->create([
             'name' => 'Escuela Batalla de Boyacá',
+            'shortCode' => 'IEBATALLA',
             'officialRegistration' => [
                 'country' => 'CO',
                 'authority' => 'Education Authority',
@@ -185,12 +189,14 @@ final class InstitutionActionTest extends TestCase
             id: '01JTESTINSTITUTION000000000003',
             name: 'Institución Creada',
             code: 'CEN-000003',
+            shortCode: 'IECREADA',
         );
 
         $savedInstitution = new Institution(
             id: '01JTESTINSTITUTION000000000003',
             name: 'Institución Creada',
             code: 'CEN-000003',
+            shortCode: 'IECREADA',
         );
 
         $creator
@@ -233,6 +239,7 @@ final class InstitutionActionTest extends TestCase
 
         $result = $action->create([
             'name' => 'Institución Creada',
+            'shortCode' => 'IECREADA',
         ]);
 
         $this->assertSame($savedInstitution, $result);
