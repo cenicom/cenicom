@@ -7,6 +7,7 @@ namespace Tests\Feature;
 use App\Core\Activity\Contracts\RecentActivityReaderInterface;
 use App\Core\Activity\DTO\ActivityReadModel;
 use App\Models\User;
+use App\Modules\Campus\Domain\Contracts\CampusServiceInterface;
 use App\Modules\Institution\Actions\InstitutionAction;
 use App\Modules\Institution\Domain\Contracts\InstitutionCodeGeneratorInterface;
 use App\Modules\Institution\Domain\Contracts\InstitutionIdGeneratorInterface;
@@ -48,9 +49,7 @@ final class DashboardFeatureTest extends TestCase
 
         $activity = new ActivityReadModel(
             eventType: 'institution.created',
-            occurredAt: new DateTimeImmutable(
-                '2026-09-25 10:30:00',
-            ),
+            occurredAt: new DateTimeImmutable('2026-09-25 10:30:00'),
             actorId: (string) $user->getAuthIdentifier(),
             actorName: 'Test User',
             actorAuthenticated: true,
@@ -62,20 +61,8 @@ final class DashboardFeatureTest extends TestCase
             result: 'success',
         );
 
-        $reader = Mockery::mock(
-            RecentActivityReaderInterface::class,
-        );
-
-        $reader
-            ->shouldReceive('recent')
-            ->once()
-            ->with(5)
-            ->andReturn([$activity]);
-
-        $this->app->instance(
-            RecentActivityReaderInterface::class,
-            $reader,
-        );
+        $this->mockRecentActivities([$activity]);
+        $this->mockDashboardCounts(institutions: 7, campuses: 4);
 
         $response = $this
             ->actingAs($user)
@@ -96,34 +83,8 @@ final class DashboardFeatureTest extends TestCase
             'email_verified_at' => now(),
         ]);
 
-        $reader = Mockery::mock(
-            RecentActivityReaderInterface::class,
-        );
-
-        $reader
-            ->shouldReceive('recent')
-            ->once()
-            ->with(5)
-            ->andReturn([]);
-
-        $this->app->instance(
-            RecentActivityReaderInterface::class,
-            $reader,
-        );
-
-        $institutions = Mockery::mock(
-            InstitutionServiceInterface::class,
-        );
-
-        $institutions
-            ->shouldReceive('count')
-            ->once()
-            ->andReturn(7);
-
-        $this->app->instance(
-            InstitutionServiceInterface::class,
-            $institutions,
-        );
+        $this->mockRecentActivities([]);
+        $this->mockDashboardCounts(institutions: 7, campuses: 4);
 
         $response = $this
             ->actingAs($user)
@@ -135,26 +96,36 @@ final class DashboardFeatureTest extends TestCase
             ->assertViewHas('totalInstitutions', 7);
     }
 
+    public function test_verified_user_can_view_total_campuses_on_dashboard(): void
+    {
+        $user = User::factory()->create([
+            'email_verified_at' => now(),
+        ]);
+
+        $this->mockRecentActivities([]);
+        $this->mockDashboardCounts(institutions: 7, campuses: 4);
+
+        $response = $this
+            ->actingAs($user)
+            ->get('/dashboard');
+
+        $response
+            ->assertOk()
+            ->assertViewIs('dashboard')
+            ->assertViewHas('totalCampuses', 4)
+            ->assertSee('Sedes')
+            ->assertSee('Total de sedes registradas')
+            ->assertSee('4');
+    }
+
     public function test_verified_user_can_view_real_total_institutions_on_dashboard(): void
     {
         $user = User::factory()->create([
             'email_verified_at' => now(),
         ]);
 
-        $reader = Mockery::mock(
-            RecentActivityReaderInterface::class,
-        );
-
-        $reader
-            ->shouldReceive('recent')
-            ->once()
-            ->with(5)
-            ->andReturn([]);
-
-        $this->app->instance(
-            RecentActivityReaderInterface::class,
-            $reader,
-        );
+        $this->mockRecentActivities([]);
+        $this->mockDashboardCounts(institutions: 2, campuses: 4);
 
         $this->mock(
             InstitutionIdGeneratorInterface::class,
@@ -187,10 +158,12 @@ final class DashboardFeatureTest extends TestCase
 
         $action->create([
             'name' => 'Institución Dashboard Real 001',
+            'shortCode' => 'DASHREAL',
         ]);
 
         $action->create([
             'name' => 'Institución Dashboard Real 002',
+            'shortCode' => 'DASHREALI',
         ]);
 
         $response = $this
@@ -201,5 +174,54 @@ final class DashboardFeatureTest extends TestCase
             ->assertOk()
             ->assertViewIs('dashboard')
             ->assertViewHas('totalInstitutions', 2);
+    }
+
+    private function mockRecentActivities(array $activities): void
+    {
+        $reader = Mockery::mock(RecentActivityReaderInterface::class);
+
+        $reader
+            ->shouldReceive('recent')
+            ->once()
+            ->with(5)
+            ->andReturn($activities);
+
+        $this->app->instance(
+            RecentActivityReaderInterface::class,
+            $reader,
+        );
+    }
+
+    private function mockDashboardCounts(
+        int $institutions,
+        int $campuses,
+    ): void {
+        $institutionService = Mockery::mock(
+            InstitutionServiceInterface::class,
+        );
+
+        $institutionService
+            ->shouldReceive('count')
+            ->once()
+            ->andReturn($institutions);
+
+        $this->app->instance(
+            InstitutionServiceInterface::class,
+            $institutionService,
+        );
+
+        $campusService = Mockery::mock(
+            CampusServiceInterface::class,
+        );
+
+        $campusService
+            ->shouldReceive('count')
+            ->once()
+            ->andReturn($campuses);
+
+        $this->app->instance(
+            CampusServiceInterface::class,
+            $campusService,
+        );
     }
 }

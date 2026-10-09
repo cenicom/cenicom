@@ -56,6 +56,7 @@ final class DashboardActivityIntegrationTest extends TestCase
 
         $institution = $action->create([
             'name' => 'Institución Dashboard D03',
+            'shortCode' => 'DASHDAB',
         ]);
 
         $response = $this->get('/dashboard');
@@ -75,12 +76,12 @@ final class DashboardActivityIntegrationTest extends TestCase
         $matchingActivities = array_values(
             array_filter(
                 $activities,
-                static fn (ActivityReadModel $activity): bool =>
-                    $activity->eventType === 'institution.created'
+                static fn(ActivityReadModel $activity): bool =>
+                $activity->eventType === 'institution.created'
                     && $activity->subjectType === 'institution'
                     && $activity->subjectId === $institution->id()
                     && ($activity->data['name'] ?? null)
-                        === 'Institución Dashboard D03',
+                    === 'Institución Dashboard D03',
             ),
         );
 
@@ -88,5 +89,12 @@ final class DashboardActivityIntegrationTest extends TestCase
 
         $response->assertSee('Actividades recientes');
         $response->assertSee('institution.created');
+
+        $response->assertSee('Institución Dashboard D03');
+        $response->assertSee('Por: D03 Dashboard');
+        $response->assertSee('Resultado: success');
+        $response->assertSee(
+            $matchingActivities[0]->occurredAt->format('d/m/Y H:i')
+        );
     }
 }
