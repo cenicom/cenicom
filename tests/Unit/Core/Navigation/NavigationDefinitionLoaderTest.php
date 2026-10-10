@@ -139,4 +139,58 @@ final class NavigationDefinitionLoaderTest extends TestCase
 
         $this->assertSame([], $registry->definitions());
     }
+
+
+    public function test_load_does_not_register_the_same_definition_twice(): void
+    {
+        // Arrange
+
+        $registry = new NavigationDefinitionRegistry();
+        $modules = new ModuleRegistry();
+
+        $definition = InstitutionNavigation::class;
+
+        $modules->register(
+            new ModuleDefinition(
+                name: 'Institution',
+                namespace: 'App\\Modules\\Institution',
+                basePath: '/tmp/institution',
+                manifestPath: '/tmp/institution/module.php',
+                providers: [],
+                permissionDefinitions: [],
+                navigationDefinitions: [$definition],
+                crudDefinitions: [],
+                viewDefinitions: [],
+                enabled: true,
+            )
+        );
+
+        $modules->register(
+            new ModuleDefinition(
+                name: 'InstitutionCopy',
+                namespace: 'App\\Modules\\Institution',
+                basePath: '/tmp/institution-copy',
+                manifestPath: '/tmp/institution-copy/module.php',
+                providers: [],
+                permissionDefinitions: [],
+                navigationDefinitions: [$definition],
+                crudDefinitions: [],
+                viewDefinitions: [],
+                enabled: true,
+            )
+        );
+
+        $loader = new NavigationDefinitionLoader($registry, $modules);
+
+        // Act
+
+        $loader->load();
+
+        // Assert
+
+        $this->assertSame(
+            [$definition],
+            $registry->definitions()
+        );
+    }
 }

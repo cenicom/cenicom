@@ -11,17 +11,17 @@ final class NavigationDefinitionRegistry
      */
     private array $definitions = [];
 
-
     /**
-     * Agrega una definición de navegación.
+     * Agrega una definición de navegación sin duplicarla.
      */
-    public function add(
-        string $definition
-    ): void {
+    public function add(string $definition): void
+    {
+        if (in_array($definition, $this->definitions, true)) {
+            return;
+        }
 
         $this->definitions[] = $definition;
     }
-
 
     /**
      * Obtiene las definiciones registradas.
@@ -32,7 +32,6 @@ final class NavigationDefinitionRegistry
     {
         return $this->definitions;
     }
-
 
     /**
      * Limpia las definiciones.

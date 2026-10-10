@@ -32,32 +32,24 @@ final class NavigationDefinitionRegistryTest extends TestCase
     }
 
 
-    public function test_returns_registered_definitions(): void
+
+    public function test_returns_unique_registered_definitions(): void
     {
         // Arrange
 
         $registry = new NavigationDefinitionRegistry();
 
-        $first = \App\Modules\Institution\Navigation\InstitutionNavigation::class;
-
-        $second = \App\Modules\Institution\Navigation\InstitutionNavigation::class;
-
+        $definition = \App\Modules\Institution\Navigation\InstitutionNavigation::class;
 
         // Act
 
-        $registry->add($first);
-        $registry->add($second);
-
+        $registry->add($definition);
+        $registry->add($definition);
 
         // Assert
 
-        $this->assertCount(
-            2,
-            $registry->definitions()
-        );
-
-        $this->assertContains(
-            $first,
+        $this->assertSame(
+            [$definition],
             $registry->definitions()
         );
     }
