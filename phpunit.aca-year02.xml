@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="tests/Support/AcademicYear02TestBootstrap.php"
+         colors="true"
+>
+    <testsuites>
+        <testsuite name="ACA-YEAR-02">
+            <file>tests/Unit/Support/AcademicYear02DatabaseGuardTest.php</file>
+            <directory>tests/Feature/Modules/Academic</directory>
+        </testsuite>
+    </testsuites>
+
+    <php>
+        <env name="APP_ENV" value="testing" force="true"/>
+        <env name="DB_CONNECTION" value="mysql" force="true"/>
+        <env name="DB_HOST" value="127.0.0.1" force="true"/>
+        <env name="DB_PORT" value="3308" force="true"/>
+        <env name="DB_DATABASE" value="cenicom_aca_year02_isolated_test" force="true"/>
+        <env name="DB_USERNAME" value="aca_year02_test" force="true"/>
+        <env name="DB_URL" value="" force="true"/>
+    </php>
+</phpunit>

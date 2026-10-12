@@ -9,13 +9,14 @@ use App\Modules\Campus\Domain\Contracts\CampusCodeSequenceInterface;
 use App\Modules\Campus\Domain\Contracts\CampusCreatorInterface;
 use App\Modules\Campus\Domain\Contracts\CampusIdGeneratorInterface;
 use App\Modules\Campus\Domain\Contracts\CampusRepositoryInterface;
+use App\Modules\Campus\Domain\Contracts\CampusServiceInterface;
+use App\Modules\Campus\Domain\Services\CampusCreationUseCase;
 use App\Modules\Campus\Domain\Services\CampusCreator;
+use App\Modules\Campus\Domain\Services\CampusService;
 use App\Modules\Campus\Infrastructure\Identity\CampusCodeGenerator;
 use App\Modules\Campus\Infrastructure\Identity\CampusCodeSequence;
 use App\Modules\Campus\Infrastructure\Identity\CampusIdGenerator;
 use App\Modules\Campus\Repositories\CampusRepository;
-use App\Modules\Campus\Domain\Contracts\CampusServiceInterface;
-use App\Modules\Campus\Domain\Services\CampusService;
 use Illuminate\Support\ServiceProvider;
 
 final class CampusServiceProvider extends ServiceProvider
@@ -50,6 +51,10 @@ final class CampusServiceProvider extends ServiceProvider
         $this->app->bind(
             CampusServiceInterface::class,
             CampusService::class,
+        );
+
+        $this->app->bind(
+            CampusCreationUseCase::class,
         );
     }
 }

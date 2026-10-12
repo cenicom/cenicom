@@ -29,7 +29,7 @@ final class StoreInstitutionRequest extends FormRequest
             ],
 
             'officialRegistration' => [
-                'nullable',
+                'required',
                 'array',
             ],
 

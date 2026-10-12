@@ -11,5 +11,13 @@ return [
         \App\Modules\Campus\Providers\CampusServiceProvider::class,
     ],
 
+    'permission_definitions' => [
+        \App\Modules\Campus\Security\CampusPermissionDefinition::class,
+    ],
+
+    'view_definitions' => [
+        \App\Modules\Campus\View\CampusView::class,
+    ],
+
     'enabled' => true,
 ];

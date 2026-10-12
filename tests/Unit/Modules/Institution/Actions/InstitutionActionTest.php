@@ -367,4 +367,43 @@ final class InstitutionActionTest extends TestCase
 
         $this->assertTrue($result);
     }
+
+    public function test_update_does_not_forward_institution_short_code(): void
+    {
+        $auditRecorder = Mockery::mock(AuditRecorderInterface::class);
+        $identity = Mockery::mock(IdentityInterface::class);
+        $creator = Mockery::mock(InstitutionCreatorInterface::class);
+        $repository = Mockery::mock(InstitutionRepositoryInterface::class);
+        $service = Mockery::mock(InstitutionServiceInterface::class);
+
+        $service
+            ->shouldReceive('update')
+            ->once()
+            ->with(
+                '01JTESTINSTITUTION000000000004',
+                [
+                    'name' => 'Institución Actualizada',
+                ],
+            )
+            ->andReturnTrue();
+
+        $action = new InstitutionAction(
+            creator: $creator,
+            repository: $repository,
+            service: $service,
+            auditRecorder: $auditRecorder,
+            identity: $identity,
+        );
+
+        $result = $action->update(
+            '01JTESTINSTITUTION000000000004',
+            [
+                'name' => 'Institución Actualizada',
+                'shortCode' => 'NUEVOCOD',
+                'short_code' => 'NUEVOCOD',
+            ],
+        );
+
+        $this->assertTrue($result);
+    }
 }

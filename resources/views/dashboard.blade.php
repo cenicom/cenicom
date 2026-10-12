@@ -64,6 +64,7 @@
                             Total de sedes registradas
                         </div>
                     </x-cn.card.body>
+                    <a href="{{ route('campuses.index') }}" class="stretched-link">Ver Sedes</a>
                 </x-cn.card>
             </section>
 

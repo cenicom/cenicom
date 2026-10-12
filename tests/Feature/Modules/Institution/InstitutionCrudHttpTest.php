@@ -105,6 +105,11 @@ final class InstitutionCrudHttpTest extends TestCase
             ->post(route('institutions.store'), [
                 'name' => 'Institución Educativa Simón Bolívar',
                 'shortCode' => 'IESBSC',
+                'officialRegistration' => [
+                    'country' => 'CO',
+                    'authority' => 'Ministerio de Educación',
+                    'value' => 'REG-001',
+                ],
             ]);
 
         $response

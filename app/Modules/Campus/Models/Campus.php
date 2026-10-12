@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\Campus\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Modules\Institution\Models\Institution;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 final class Campus extends Model
 {
@@ -27,4 +29,12 @@ final class Campus extends Model
         'address_id',
         'status',
     ];
+
+    public function institution(): BelongsTo
+    {
+        return $this->belongsTo(
+            Institution::class,
+            'institution_id',
+        );
+    }
 }

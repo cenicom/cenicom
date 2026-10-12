@@ -76,25 +76,37 @@ final readonly class InstitutionAction
         return $persisted;
     }
 
-    public function update(
-        int|string $id,
-        array $data
-    ): bool {
-        if (
-            isset($data['officialRegistration'])
-            && is_array($data['officialRegistration'])
-        ) {
-            $registration = $data['officialRegistration'];
+    public function update(int|string $id, array $data): bool
+{
+    if (
+        isset($data['officialRegistration'])
+        && is_array($data['officialRegistration'])
+    ) {
+        $registration = $data['officialRegistration'];
 
-            $data['official_registration_country'] = $registration['country'];
-            $data['official_registration_authority'] = $registration['authority'];
-            $data['official_registration_value'] = $registration['value'];
+        $data['official_registration_country'] = $registration['country'];
+        $data['official_registration_authority'] = $registration['authority'];
+        $data['official_registration_value'] = $registration['value'];
 
-            unset($data['officialRegistration']);
-        }
-
-        return $this->service->update($id, $data);
+        unset($data['officialRegistration']);
     }
+
+    // Solo se actualizan los atributos autorizados.
+    // El código de la institución es inmutable.
+    $allowedKeys = [
+        'name',
+        'official_registration_country',
+        'official_registration_authority',
+        'official_registration_value',
+    ];
+
+    $data = array_intersect_key(
+        $data,
+        array_flip($allowedKeys),
+    );
+
+    return $this->service->update($id, $data);
+}
 
     public function delete(
         int|string $id
