@@ -94,18 +94,27 @@ final class InstitutionController extends Controller
             );
     }
 
-    public function destroy(
-        Institution $institution,
-    ): RedirectResponse {
-        $this->action->delete(
+
+    public function destroy(Institution $institution): RedirectResponse
+    {
+        $deleted = $this->action->delete(
             $institution->getKey(),
         );
+
+        if (! $deleted) {
+            return redirect()
+                ->route('institutions.index')
+                ->with(
+                    'error',
+                    'No se puede eliminar esta institución porque tiene registros relacionados. Elimine o reasigne primero las dependencias permitidas.',
+                );
+        }
 
         return redirect()
             ->route('institutions.index')
             ->with(
                 'success',
-                'Institution eliminado correctamente.',
+                'Institución eliminada correctamente.',
             );
     }
 }

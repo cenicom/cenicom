@@ -17,6 +17,10 @@
 
 <body>
 
+    {{-- messages error delete --}}
+    <div id="cn-flash-messages" data-cn-flash-error="{{ session('error', '') }}" hidden></div>
+
+
     <div class="cn-app">
 
         <x-layouts.topbar />
@@ -30,7 +34,7 @@
             </main>
 
         </div>
-
+        <x-layouts.footer />
     </div>
 </body>
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Campus\Models;
 
+use App\Modules\Address\Models\Address;
 use App\Modules\Institution\Models\Institution;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
@@ -35,6 +36,14 @@ final class Campus extends Model
         return $this->belongsTo(
             Institution::class,
             'institution_id',
+        );
+    }
+
+    public function address(): BelongsTo
+    {
+        return $this->belongsTo(
+            Address::class,
+            'address_id',
         );
     }
 }

@@ -5,11 +5,7 @@
 @endphp
 
 @if ($paginator->hasPages())
-
     <div {{ $paginationAttributes }}>
-
-        {{ $paginator->links() }}
-
+        {{ $paginator->links('pagination::bootstrap-5') }}
     </div>
-
 @endif

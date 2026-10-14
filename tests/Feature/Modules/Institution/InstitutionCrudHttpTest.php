@@ -6,6 +6,8 @@ namespace Tests\Feature\Modules\Institution;
 
 use App\Models\Permission;
 use App\Models\User;
+//use App\Modules\Address\Domain\Contracts\AddressServiceInterface;
+//use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -314,4 +316,54 @@ final class InstitutionCrudHttpTest extends TestCase
             'id' => $institution->getKey(),
         ]);
     }
+
+
+    public function test_destroy_blocks_institution_with_campus_code_sequence_dependency(): void
+    {
+        $permission = Permission::query()->create([
+            'name' => 'institutions.delete',
+        ]);
+
+        $user = User::factory()->create();
+        $user->permissions()->attach($permission);
+
+        $institution = \App\Modules\Institution\Models\Institution::query()->create([
+            'id' => (string) Str::ulid(),
+            'code' => 'CEN-IESB',
+            'short_code' => 'IESBSC',
+            'name' => 'Institución Educativa Simón Bolívar',
+            'status' => 'draft',
+        ]);
+
+        $now = now();
+
+        \Illuminate\Support\Facades\DB::table('campus_code_sequences')->insert([
+            'institution_id' => $institution->getKey(),
+            'current_value' => 0,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+
+        $this->assertDatabaseHas('campus_code_sequences', [
+            'institution_id' => $institution->getKey(),
+        ]);
+
+        $response = $this
+            ->actingAs($user)
+            ->delete(route('institutions.destroy', $institution));
+
+        $response
+            ->assertRedirect(route('institutions.index'))
+            ->assertSessionHas('error');
+
+        $this->assertDatabaseHas('institutions', [
+            'id' => $institution->getKey(),
+        ]);
+
+        $this->assertDatabaseHas('campus_code_sequences', [
+            'institution_id' => $institution->getKey(),
+        ]);
+    }
+
+
 }

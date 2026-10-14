@@ -18,7 +18,7 @@
             @endif
         </x-slot:actions>
 
-        <x-cn.table responsive :striped="false" :hover="true">
+        <x-cn.table data-cn-datatable responsive :striped="false" :hover="true">
             <x-slot:head>
                 <x-cn.table.head>Código</x-cn.table.head>
                 <x-cn.table.head>Código corto</x-cn.table.head>
@@ -40,7 +40,10 @@
                             @endif
 
                             @if ($permissions['delete'])
-                                <form method="POST" action="{{ route('institutions.destroy', $institution) }}" class="d-inline">
+                                <form method="POST" action="{{ route('institutions.destroy', $institution) }}"
+                                    class="d-inline" data-cn-confirm="delete"
+                                    data-cn-confirm-title="¿Eliminar esta institución?"
+                                    data-cn-confirm-text="Esta acción eliminará la institución seleccionada.">
                                     @csrf
                                     @method('DELETE')
 
@@ -59,10 +62,8 @@
             </tbody>
         </x-cn.table>
 
-        @if ($institutions->hasPages())
-            <div class="mt-4">
-                {{ $institutions->links() }}
-            </div>
-        @endif
+        <x-slot:footer>
+            <x-cn.crud.pagination :paginator="$institutions" />
+        </x-slot:footer>
     </x-cn.crud>
 </x-layout.app>

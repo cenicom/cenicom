@@ -39,42 +39,42 @@
 }
 
 /* Copiar */
-.cn-page .dt-buttons .buttons-copy {
+.cn-crud .dt-buttons .buttons-copy {
     background: var(--cn-primary);
     border-color: var(--cn-primary);
     color: var(--cn-on-primary);
 }
 
 /* Excel */
-.cn-page .dt-buttons .buttons-excel {
+.cn-crud .dt-buttons .buttons-excel {
     background: var(--cn-success);
     border-color: var(--cn-success);
     color: var(--cn-on-success);
 }
 
 /* CSV */
-.cn-page .dt-buttons .buttons-csv {
+.cn-crud .dt-buttons .buttons-csv {
     background: var(--cn-info);
     border-color: var(--cn-info);
     color: var(--cn-on-info);
 }
 
 /* PDF */
-.cn-page .dt-buttons .buttons-pdf {
+.cn-crud .dt-buttons .buttons-pdf {
     background: var(--cn-danger);
     border-color: var(--cn-danger);
     color: var(--cn-on-danger);
 }
 
 /* Imprimir */
-.cn-page .dt-buttons .buttons-print {
+.cn-crud .dt-buttons .buttons-print {
     background: var(--cn-neutral);
     border-color: var(--cn-neutral);
     color: var(--cn-on-neutral);
 }
 
 /* Hover */
-.cn-page .dt-buttons .buttons-copy:hover {
+.cn-crud .dt-buttons .buttons-copy:hover {
     background: var(--cn-primary-hover);
     border-color: var(--cn-primary-hover);
     color: var(--cn-on-primary);
@@ -87,7 +87,7 @@
     filter: brightness(.92);
 }
 
-.cn-page .dt-buttons .btn:hover {
+.cn-crud .dt-buttons .btn:hover {
     transform: translateY(-1px);
 }
 
@@ -104,14 +104,14 @@
     font-size: var(--cn-font-sm);
 }
 
-.cn-page .dt-search {
+.cn-crud .dt-search {
     margin-bottom: .5rem;
 }
 
-.cn-page .dt-search input {
+.cn-crud .dt-search input {
     min-width: 220px;
 }
 
-.cn-page .dt-container {
+.cn-crud .dt-container {
     width: 100%;
 }

@@ -1,7 +1,5 @@
 @props([])
 
-<thead {{ $attributes }}>
-
+<th {{ $attributes }}>
     {{ $slot }}
-
-</thead>
+</th>

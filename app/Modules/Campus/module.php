@@ -15,6 +15,10 @@ return [
         \App\Modules\Campus\Security\CampusPermissionDefinition::class,
     ],
 
+    'navigation_definitions' => [
+        \App\Modules\Campus\Navigation\CampusNavigation::class,
+    ],
+
     'view_definitions' => [
         \App\Modules\Campus\View\CampusView::class,
     ],

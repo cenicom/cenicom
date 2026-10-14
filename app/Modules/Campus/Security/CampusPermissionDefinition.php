@@ -24,5 +24,17 @@ final readonly class CampusPermissionDefinition
             description: 'Permite crear sedes educativas.',
             module: 'campus',
         );
+
+        $permissions->register(
+            name: 'campuses.update',
+            description: 'Permite actualizar sedes educativas.',
+            module: 'campus',
+        );
+
+        $permissions->register(
+            name: 'campuses.delete',
+            description: 'Permite eliminar sedes educativas.',
+            module: 'campus',
+        );
     }
 }

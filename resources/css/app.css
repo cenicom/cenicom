@@ -1,8 +1,14 @@
-/* Bootstrap */
+/* Bootstrap 5 */
+@import 'bootstrap/dist/css/bootstrap.css';
 
+/* Font Awesome */
+@import '@fortawesome/fontawesome-free/css/all.css';
+
+/* CN UI Framework */
 @import './cn/cn.css';
 
-/* css datatables*/
+/* DataTables para Bootstrap 5 */
 @import 'datatables.net-bs5/css/dataTables.bootstrap5.css';
 @import 'datatables.net-buttons-bs5/css/buttons.bootstrap5.css';
 @import 'datatables.net-responsive-bs5/css/responsive.bootstrap5.css';
+
