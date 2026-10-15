@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Modules\Campus\Infrastructure\Persistence;
 
-//use App\Core\Contracts\RepositoryInterface;
 use App\Modules\Address\Domain\Contracts\AddressServiceInterface;
 use App\Modules\Campus\Domain\Contracts\CampusRepositoryInterface;
 use App\Modules\Campus\Domain\DTO\CampusCreateData;
@@ -41,7 +40,7 @@ final class CampusCreationRollbackTest extends TestCase
         );
     }
 
-    public function test_rolls_back_campus_and_sequence_when_persistence_fails_after_save(): void
+    public function test_rolls_back_campus_and_sequence_and_retry_uses_next_available_code(): void
     {
         $institutionCreator = app(InstitutionCreatorInterface::class);
         $institutionRepository = app(InstitutionRepositoryInterface::class);
@@ -55,6 +54,15 @@ final class CampusCreationRollbackTest extends TestCase
 
         $institutionRepository->save($institution);
 
+        $otherInstitution = $institutionCreator->create(
+            new InstitutionCreateData(
+                name: 'Institución para prueba de aislamiento',
+                shortCode: $this->uniqueInstitutionShortCode(),
+            )
+        );
+
+        $institutionRepository->save($otherInstitution);
+
         $address = app(AddressServiceInterface::class)->create([
             'country_id' => 1,
             'state_id' => 1,
@@ -64,10 +72,18 @@ final class CampusCreationRollbackTest extends TestCase
         ]);
 
         DB::table('campus_code_sequences')->insert([
-            'institution_id' => $institution->id(),
-            'current_value' => 5,
-            'created_at' => now(),
-            'updated_at' => now(),
+            [
+                'institution_id' => $institution->id(),
+                'current_value' => 5,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'institution_id' => $otherInstitution->id(),
+                'current_value' => 12,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
 
         $realRepository = app(CampusRepositoryInterface::class);
@@ -85,32 +101,93 @@ final class CampusCreationRollbackTest extends TestCase
             ministryCode: null,
         );
 
-        $exceptionCaught = false;
-
         try {
             app(CampusCreationUseCase::class)->execute($data);
+
+            $this->fail(
+                'El caso de uso debía propagar el fallo controlado posterior a la persistencia.',
+            );
         } catch (CampusCreationRollbackException) {
-            $exceptionCaught = true;
+            // Fallo esperado: la transacción debe revertirse.
+        } finally {
+            // El siguiente intento debe usar el repositorio real.
+            app()->instance(
+                CampusRepositoryInterface::class,
+                $realRepository,
+            );
         }
 
         $this->assertTrue(
-            $exceptionCaught,
-            'El caso de uso debe propagar la excepción provocada después de persistir.',
-        );
-
-        $this->assertTrue(
             $decorator->persistedBeforeFailure,
-            'El decorador debe confirmar que la sede existía antes de lanzar la excepción.',
+            'La sede debe haber existido antes de provocar el fallo.',
         );
 
-        $this->assertDatabaseMissing('campuses', [
-            'id' => $decorator->persistedCampusId,
-        ], 'mysql');
+        $this->assertNotNull(
+            $decorator->persistedCampusId,
+            'El decorador debe conservar el ID de la sede que llegó a persistirse.',
+        );
 
-        $this->assertDatabaseHas('campus_code_sequences', [
-            'institution_id' => $institution->id(),
-            'current_value' => 5,
-        ], 'mysql');
+        $this->assertDatabaseMissing(
+            'campuses',
+            ['id' => $decorator->persistedCampusId],
+            'mysql',
+        );
+
+        $this->assertDatabaseHas(
+            'campus_code_sequences',
+            [
+                'institution_id' => $institution->id(),
+                'current_value' => 5,
+            ],
+            'mysql',
+        );
+
+        $this->assertDatabaseHas(
+            'campus_code_sequences',
+            [
+                'institution_id' => $otherInstitution->id(),
+                'current_value' => 12,
+            ],
+            'mysql',
+        );
+
+        // Reintento: debe consumir el 006, no el 007.
+        $campus = app(CampusCreationUseCase::class)->execute($data);
+
+        $expectedCode = sprintf(
+            'CEN-%s-ROLLBACK-006',
+            $institution->shortCode(),
+        );
+
+        $this->assertSame($expectedCode, $campus->code());
+
+        $this->assertDatabaseHas(
+            'campuses',
+            [
+                'id' => $campus->id(),
+                'institution_id' => $institution->id(),
+                'code' => $expectedCode,
+            ],
+            'mysql',
+        );
+
+        $this->assertDatabaseHas(
+            'campus_code_sequences',
+            [
+                'institution_id' => $institution->id(),
+                'current_value' => 6,
+            ],
+            'mysql',
+        );
+
+        $this->assertDatabaseHas(
+            'campus_code_sequences',
+            [
+                'institution_id' => $otherInstitution->id(),
+                'current_value' => 12,
+            ],
+            'mysql',
+        );
     }
 
     private function uniqueInstitutionShortCode(): string
@@ -132,8 +209,8 @@ final class CampusCreationRollbackTest extends TestCase
 }
 
 /**
- * Decorador exclusivo de la prueba: delega las operaciones reales
- * y provoca un fallo inmediatamente después de guardar la sede.
+ * Decorador exclusivo de la prueba: delega la persistencia real
+ * y provoca un fallo después de guardar la sede.
  */
 final class CampusRepositorySaveThenFail implements CampusRepositoryInterface
 {
@@ -157,12 +234,12 @@ final class CampusRepositorySaveThenFail implements CampusRepositoryInterface
 
         if (! $this->persistedBeforeFailure) {
             throw new RuntimeException(
-                'La sede no estaba presente después de delegar la persistencia.'
+                'La sede no estaba presente después de delegar la persistencia.',
             );
         }
 
         throw new CampusCreationRollbackException(
-            'Fallo controlado después de persistir la sede.'
+            'Fallo controlado después de persistir la sede.',
         );
     }
 
@@ -178,14 +255,14 @@ final class CampusRepositorySaveThenFail implements CampusRepositoryInterface
 
     public function findById(
         int|string $id,
-        array $columns = ['*']
+        array $columns = ['*'],
     ): ?Model {
         return $this->repository->findById($id, $columns);
     }
 
     public function findOrFail(
         int|string $id,
-        array $columns = ['*']
+        array $columns = ['*'],
     ): Model {
         return $this->repository->findOrFail($id, $columns);
     }
@@ -197,7 +274,7 @@ final class CampusRepositorySaveThenFail implements CampusRepositoryInterface
 
     public function update(
         int|string $id,
-        array $attributes
+        array $attributes,
     ): bool {
         return $this->repository->update($id, $attributes);
     }

@@ -12,6 +12,8 @@ final readonly class CampusCodeSequence implements CampusCodeSequenceInterface
 {
     private const TABLE = 'campus_code_sequences';
 
+    private const MAXIMUM_VALUE = 999;
+
     public function next(string $institutionId): int
     {
         if (trim($institutionId) === '') {
@@ -31,6 +33,24 @@ final readonly class CampusCodeSequence implements CampusCodeSequenceInterface
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
+        }
+
+        $currentValue = DB::table(self::TABLE)
+            ->where('institution_id', $institutionId)
+            ->value('current_value');
+
+        if (! is_int($currentValue) && ! is_numeric($currentValue)) {
+            throw new RuntimeException(
+                'Campus code sequence returned an invalid value.'
+            );
+        }
+
+        $currentValue = (int) $currentValue;
+
+        if ($currentValue >= self::MAXIMUM_VALUE) {
+            throw new RuntimeException(
+                'Campus code sequence has reached the maximum value of 999.'
+            );
         }
 
         $updated = DB::table(self::TABLE)
@@ -55,9 +75,9 @@ final readonly class CampusCodeSequence implements CampusCodeSequenceInterface
 
         $value = (int) $value;
 
-        if ($value <= 0) {
+        if ($value <= 0 || $value > self::MAXIMUM_VALUE) {
             throw new RuntimeException(
-                'Campus code sequence must be greater than zero.'
+                'Campus code sequence must be between 1 and 999.'
             );
         }
 

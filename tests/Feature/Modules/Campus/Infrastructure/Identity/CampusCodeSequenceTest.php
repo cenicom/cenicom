@@ -126,6 +126,61 @@ final class CampusCodeSequenceTest extends TestCase
         $this->assertSame(2, (int) $storedValue);
     }
 
+    public function test_sequence_can_reach_maximum_value_of_999(): void
+    {
+        $institutionId = '01JTESTINSTITUTION000000009';
+
+        $this->createInstitution($institutionId);
+
+        DB::table('campus_code_sequences')->insert([
+            'institution_id' => $institutionId,
+            'current_value' => 998,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $sequence = new CampusCodeSequence();
+
+        $this->assertSame(999, $sequence->next($institutionId));
+
+        $this->assertDatabaseHas('campus_code_sequences', [
+            'institution_id' => $institutionId,
+            'current_value' => 999,
+        ]);
+    }
+
+    public function test_sequence_cannot_exceed_999_or_increment_counter(): void
+    {
+        $institutionId = '01JTESTINSTITUTION000000010';
+
+        $this->createInstitution($institutionId);
+
+        DB::table('campus_code_sequences')->insert([
+            'institution_id' => $institutionId,
+            'current_value' => 999,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $sequence = new CampusCodeSequence();
+
+        try {
+            $sequence->next($institutionId);
+            $this->fail(
+                'La secuencia debe rechazar una asignación posterior a 999.'
+            );
+        } catch (\RuntimeException $exception) {
+            $this->assertSame(
+                999,
+                (int) DB::table('campus_code_sequences')
+                    ->where('institution_id', $institutionId)
+                    ->value('current_value'),
+                'El contador debe permanecer en 999 tras el rechazo.'
+            );
+        }
+    }
+
+
     private function createInstitution(string $institutionId): void
     {
         DB::table('institutions')->insert([

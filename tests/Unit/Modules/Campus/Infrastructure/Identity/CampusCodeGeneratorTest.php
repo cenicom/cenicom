@@ -22,23 +22,39 @@ final class CampusCodeGeneratorTest extends TestCase
 
         $this->assertSame(
             'CEN-IESBSC-SBBXYZ-001',
-            $code
+            $code,
         );
     }
 
-    public function test_sequence_can_exceed_three_digits(): void
+    public function test_accepts_maximum_sequence_of_999(): void
     {
         $generator = new CampusCodeGenerator();
 
         $code = $generator->generate(
             'IESBSC',
             'SBBXYZ',
-            1000,
+            999,
         );
 
         $this->assertSame(
-            'CEN-IESBSC-SBBXYZ-1000',
-            $code
+            'CEN-IESBSC-SBBXYZ-999',
+            $code,
+        );
+    }
+
+    public function test_rejects_sequence_of_1000(): void
+    {
+        $generator = new CampusCodeGenerator();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(
+            'Campus code sequence must be between 1 and 999.'
+        );
+
+        $generator->generate(
+            'IESBSC',
+            'SBBXYZ',
+            1000,
         );
     }
 
@@ -68,7 +84,7 @@ final class CampusCodeGeneratorTest extends TestCase
         );
     }
 
-    public function test_rejects_non_positive_sequence(): void
+    public function test_rejects_zero_sequence(): void
     {
         $generator = new CampusCodeGenerator();
 
@@ -78,6 +94,19 @@ final class CampusCodeGeneratorTest extends TestCase
             'IESBSC',
             'SBBXYZ',
             0,
+        );
+    }
+
+    public function test_rejects_negative_sequence(): void
+    {
+        $generator = new CampusCodeGenerator();
+
+        $this->expectException(InvalidArgumentException::class);
+
+        $generator->generate(
+            'IESBSC',
+            'SBBXYZ',
+            -1,
         );
     }
 }

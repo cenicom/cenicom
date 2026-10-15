@@ -26,9 +26,9 @@ final readonly class CampusCodeGenerator implements CampusCodeGeneratorInterface
             );
         }
 
-        if ($sequence <= 0) {
+        if ($sequence < 1 || $sequence > 999) {
             throw new InvalidArgumentException(
-                'Campus code sequence must be greater than zero.'
+                'Campus code sequence must be between 1 and 999.'
             );
         }
 
