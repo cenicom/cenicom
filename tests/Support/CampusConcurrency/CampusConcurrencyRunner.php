@@ -474,6 +474,7 @@ try {
         'initialization_scenario' => null,
         'normal_scenarios' => [],
         'boundary_scenario' => null,
+        'exhausted_scenario' => null,
     ];
 
     $report['initialization_scenario'] = runScenario(
@@ -491,6 +492,11 @@ try {
     $report['boundary_scenario'] = runScenario(
         998,
         'boundary',
+    );
+
+    $report['exhausted_scenario'] = runScenario(
+        999,
+        'exhausted',
     );
 
     echo json_encode(

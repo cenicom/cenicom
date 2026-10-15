@@ -35,6 +35,7 @@ final class CampusCodeSequenceConcurrencyTest extends TestCase
         );
 
         sort($sequences, SORT_NUMERIC);
+        $this->assertSame([1, 2], $sequences);
 
         $this->assertSame(
             2,
@@ -124,6 +125,42 @@ final class CampusCodeSequenceConcurrencyTest extends TestCase
             'Campus code sequence has reached the maximum value of 999.',
             $exhaustion[0]['message'],
         );
+
+        $exhaustedScenario = $report['exhausted_scenario'];
+
+        $this->assertSame('exhausted', $exhaustedScenario['scenario']);
+        $this->assertSame(999, $exhaustedScenario['initial_value']);
+        $this->assertSame(0, $exhaustedScenario['persisted_count']);
+        $this->assertSame(0, $exhaustedScenario['unique_codes']);
+        $this->assertSame(999, $exhaustedScenario['final_counter']);
+        $this->assertSame(12, $exhaustedScenario['independent_counter']);
+        $this->assertSame([], $this->returnedSequenceValues($exhaustedScenario));
+
+        $this->assertCount(2, $exhaustedScenario['results']);
+
+        foreach ($exhaustedScenario['results'] as $result) {
+            $this->assertSame('error', $result['status']);
+            $this->assertSame(1, $result['exit_code']);
+            $this->assertSame(RuntimeException::class, $result['exception']);
+            $this->assertSame(
+                'Campus code sequence has reached the maximum value of 999.',
+                $result['message'],
+            );
+        }
+
+        $exhaustedTrace = array_values(array_filter(
+            $exhaustedScenario['sequence_trace'],
+            static fn(array $entry): bool => $entry['status'] === 'exception',
+        ));
+
+        $this->assertCount(2, $exhaustedTrace);
+
+        foreach ($exhaustedTrace as $entry) {
+            $this->assertSame(
+                'Campus code sequence has reached the maximum value of 999.',
+                $entry['message'],
+            );
+        }
     }
 
     /**
@@ -193,6 +230,7 @@ final class CampusCodeSequenceConcurrencyTest extends TestCase
         $this->assertIsArray($report['initialization_scenario']);
         $this->assertCount(3, $report['normal_scenarios']);
         $this->assertIsArray($report['boundary_scenario']);
+        $this->assertIsArray($report['exhausted_scenario']);
 
         return $report;
     }
