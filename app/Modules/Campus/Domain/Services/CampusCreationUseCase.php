@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\DB;
 
 final readonly class CampusCreationUseCase
 {
+    private const TRANSACTION_ATTEMPTS = 3;
+
     public function __construct(
         private CampusCreatorInterface $creator,
         private CampusRepositoryInterface $repository,
@@ -19,10 +21,13 @@ final readonly class CampusCreationUseCase
 
     public function execute(CampusCreateData $data): Campus
     {
-        return DB::transaction(function () use ($data): Campus {
-            $campus = $this->creator->create($data);
+        return DB::transaction(
+            function () use ($data): Campus {
+                $campus = $this->creator->create($data);
 
-            return $this->repository->save($campus);
-        });
+                return $this->repository->save($campus);
+            },
+            self::TRANSACTION_ATTEMPTS,
+        );
     }
 }

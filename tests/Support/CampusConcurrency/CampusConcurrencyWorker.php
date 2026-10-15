@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
+use App\Modules\Campus\Domain\Contracts\CampusCodeSequenceInterface;
 use App\Modules\Campus\Domain\DTO\CampusCreateData;
 use App\Modules\Campus\Domain\Services\CampusCreationUseCase;
-use App\Modules\Campus\Domain\Contracts\CampusCodeSequenceInterface;
 use App\Modules\Campus\Infrastructure\Identity\CampusCodeSequence;
-use Tests\Support\CampusConcurrency\RecordingCampusCodeSequence;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Support\Facades\DB;
+use Tests\Support\CampusConcurrency\RecordingCampusCodeSequence;
 
 require dirname(__DIR__, 3) . '/vendor/autoload.php';
 
@@ -45,8 +45,10 @@ $result = [
     'campus_id' => null,
     'exception' => null,
     'message' => null,
-    'first_read_barrier_reached' => false,
+    'initialization_read_barrier_reached' => false,
 ];
+
+$initializationReadBarrierReached = false;
 
 try {
     if (DB::connection('mysql')->getDatabaseName() !== 'cenicom') {
@@ -57,9 +59,6 @@ try {
 
     $readyPath = $config['ready_path'];
     $startPath = $config['start_path'];
-    $resultPath = $config['result_path'];
-    $barrierDirectory = $config['read_barrier_dir'];
-    $worker = (int) $config['worker'];
 
     file_put_contents($readyPath, 'ready', LOCK_EX);
 
@@ -75,62 +74,70 @@ try {
         usleep(10000);
     }
 
-    /*
-     * Instrumentación de prueba: sincroniza después de que cada
-     * trabajador haya recibido su primera lectura de current_value.
-     */
-    $firstSequenceRead = false;
+    $readBarrierDirectory =
+        $config['initialization_read_barrier_dir'] ?? null;
 
-    DB::listen(
-        function (QueryExecuted $query) use (
-            &$firstSequenceRead,
-            $barrierDirectory,
-            $worker,
-        ): void {
-            if ($firstSequenceRead) {
-                return;
-            }
+    if (
+        is_string($readBarrierDirectory)
+        && $readBarrierDirectory !== ''
+    ) {
+        $workerId = (int) $config['worker'];
 
-            $sql = strtolower($query->sql);
+        DB::listen(
+            function (QueryExecuted $query) use (
+                &$initializationReadBarrierReached,
+                $readBarrierDirectory,
+                $workerId,
+            ): void {
+                if ($initializationReadBarrierReached) {
+                    return;
+                }
 
-            if (
-                ! str_contains($sql, 'campus_code_sequences')
-                || ! preg_match(
-                    '/select\s+[`"]?current_value[`"]?\s+from/i',
-                    $query->sql,
-                )
-            ) {
-                return;
-            }
+                $sql = strtolower($query->sql);
 
-            $firstSequenceRead = true;
+                if (
+                    ! str_contains($sql, 'campus_code_sequences')
+                    || ! preg_match(
+                        '/^\s*select\s+exists\s*\(/i',
+                        $query->sql,
+                    )
+                ) {
+                    return;
+                }
 
-            $marker = $barrierDirectory
-                . DIRECTORY_SEPARATOR
-                . 'read-' . $worker;
+                $initializationReadBarrierReached = true;
 
-            file_put_contents($marker, 'read', LOCK_EX);
+                $marker = $readBarrierDirectory
+                    . DIRECTORY_SEPARATOR
+                    . 'read-' . $workerId;
 
-            $otherWorker = $worker === 1 ? 2 : 1;
-
-            $otherMarker = $barrierDirectory
-                . DIRECTORY_SEPARATOR
-                . 'read-' . $otherWorker;
-
-            $deadline = microtime(true) + 30;
-
-            while (! is_file($otherMarker)) {
-                if (microtime(true) >= $deadline) {
+                if (file_put_contents($marker, 'read', LOCK_EX) === false) {
                     throw new RuntimeException(
-                        'Tiempo agotado esperando la primera lectura '
-                            . 'del otro trabajador.',
+                        'No fue posible registrar la lectura de inicialización.',
                     );
                 }
 
-                usleep(10000);
-            }
-        },
-    );
+                $otherWorker = $workerId === 1 ? 2 : 1;
+
+                $otherMarker = $readBarrierDirectory
+                    . DIRECTORY_SEPARATOR
+                    . 'read-' . $otherWorker;
+
+                $deadline = microtime(true) + 30;
+
+                while (! is_file($otherMarker)) {
+                    if (microtime(true) >= $deadline) {
+                        throw new RuntimeException(
+                            'Tiempo agotado esperando que ambos trabajadores '
+                            . 'observen la secuencia inexistente.',
+                        );
+                    }
+
+                    usleep(10000);
+                }
+            },
+        );
+    }
 
     require_once __DIR__ . '/RecordingCampusCodeSequence.php';
 
@@ -157,13 +164,13 @@ try {
     $result['status'] = 'success';
     $result['code'] = $campus->code();
     $result['campus_id'] = $campus->id();
-    $result['first_read_barrier_reached'] = $firstSequenceRead;
 } catch (Throwable $exception) {
     $result['exception'] = $exception::class;
     $result['message'] = $exception->getMessage();
-    $result['first_read_barrier_reached'] = $firstSequenceRead
-        ?? false;
 } finally {
+    $result['initialization_read_barrier_reached'] =
+        $initializationReadBarrierReached;
+
     file_put_contents(
         $config['result_path'],
         json_encode(

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Campus\Infrastructure\Identity;
 
 use App\Modules\Campus\Domain\Contracts\CampusCodeSequenceInterface;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
@@ -22,65 +23,89 @@ final readonly class CampusCodeSequence implements CampusCodeSequenceInterface
             );
         }
 
+        return DB::transaction(function () use ($institutionId): int {
+            $this->initializeIfMissing($institutionId);
+
+            $sequence = DB::table(self::TABLE)
+                ->where('institution_id', $institutionId)
+                ->lockForUpdate()
+                ->first(['current_value']);
+
+            if ($sequence === null) {
+                throw new RuntimeException(
+                    'Campus code sequence could not be initialized.'
+                );
+            }
+
+            $currentValue = $sequence->current_value;
+
+            if (
+                ! is_int($currentValue)
+                && ! is_numeric($currentValue)
+            ) {
+                throw new RuntimeException(
+                    'Campus code sequence returned an invalid value.'
+                );
+            }
+
+            $currentValue = (int) $currentValue;
+
+            if ($currentValue >= self::MAXIMUM_VALUE) {
+                throw new RuntimeException(
+                    'Campus code sequence has reached the maximum value of 999.'
+                );
+            }
+
+            $nextValue = $currentValue + 1;
+
+            $updated = DB::table(self::TABLE)
+                ->where('institution_id', $institutionId)
+                ->where('current_value', $currentValue)
+                ->update([
+                    'current_value' => $nextValue,
+                    'updated_at' => now(),
+                ]);
+
+            if ($updated !== 1) {
+                throw new RuntimeException(
+                    'Campus code sequence could not be incremented.'
+                );
+            }
+
+            return $nextValue;
+        });
+    }
+
+    private function initializeIfMissing(string $institutionId): void
+    {
         $exists = DB::table(self::TABLE)
             ->where('institution_id', $institutionId)
             ->exists();
 
-        if (! $exists) {
+        if ($exists) {
+            return;
+        }
+
+        try {
             DB::table(self::TABLE)->insert([
                 'institution_id' => $institutionId,
                 'current_value' => 0,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
+        } catch (QueryException $exception) {
+            if (! $this->isDuplicateKeyException($exception)) {
+                throw $exception;
+            }
+
+            // Otro proceso pudo inicializar la misma secuencia.
+            // La lectura bloqueante posterior verificará la fila.
         }
+    }
 
-        $currentValue = DB::table(self::TABLE)
-            ->where('institution_id', $institutionId)
-            ->value('current_value');
-
-        if (! is_int($currentValue) && ! is_numeric($currentValue)) {
-            throw new RuntimeException(
-                'Campus code sequence returned an invalid value.'
-            );
-        }
-
-        $currentValue = (int) $currentValue;
-
-        if ($currentValue >= self::MAXIMUM_VALUE) {
-            throw new RuntimeException(
-                'Campus code sequence has reached the maximum value of 999.'
-            );
-        }
-
-        $updated = DB::table(self::TABLE)
-            ->where('institution_id', $institutionId)
-            ->increment('current_value');
-
-        if ($updated !== 1) {
-            throw new RuntimeException(
-                'Campus code sequence could not be incremented.'
-            );
-        }
-
-        $value = DB::table(self::TABLE)
-            ->where('institution_id', $institutionId)
-            ->value('current_value');
-
-        if (! is_int($value) && ! is_numeric($value)) {
-            throw new RuntimeException(
-                'Campus code sequence returned an invalid value.'
-            );
-        }
-
-        $value = (int) $value;
-
-        if ($value <= 0 || $value > self::MAXIMUM_VALUE) {
-            throw new RuntimeException(
-                'Campus code sequence must be between 1 and 999.'
-            );
-        }
-
-        return $value;
+    private function isDuplicateKeyException(
+        QueryException $exception,
+    ): bool {
+        return (int) ($exception->errorInfo[1] ?? 0) === 1062;
     }
 }

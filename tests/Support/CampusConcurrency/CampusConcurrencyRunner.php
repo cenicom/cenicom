@@ -161,7 +161,7 @@ function removeDirectory(string $directory): void
  *
  * @return array<string, mixed>
  */
-function runScenario(int $initialValue, string $label): array
+function runScenario(?int $initialValue, string $label): array
 {
     $institution = null;
     $sentinelInstitution = null;
@@ -183,14 +183,16 @@ function runScenario(int $initialValue, string $label): array
         $institutionCode = $institution->shortCode();
         $sentinelId = $sentinelInstitution->id();
 
-        DB::connection('mysql')
-            ->table('campus_code_sequences')
-            ->insert([
-                'institution_id' => $institutionId,
-                'current_value' => $initialValue,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+        if ($initialValue !== null) {
+            DB::connection('mysql')
+                ->table('campus_code_sequences')
+                ->insert([
+                    'institution_id' => $institutionId,
+                    'current_value' => $initialValue,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+        }
 
         DB::connection('mysql')
             ->table('campus_code_sequences')
@@ -203,12 +205,19 @@ function runScenario(int $initialValue, string $label): array
 
         $startPath = $directory . DIRECTORY_SEPARATOR . 'start';
 
-        // CAMBIAR: barrera posterior a la primera lectura del contador
-        $readBarrierDirectory = $directory
-            . DIRECTORY_SEPARATOR
-            . 'read-barrier';
+        $readBarrierDirectory = null;
 
-        mkdir($readBarrierDirectory, 0700, true);
+        if ($label === 'initialization') {
+            $readBarrierDirectory = $directory
+                . DIRECTORY_SEPARATOR
+                . 'read-barrier';
+
+            if (! mkdir($readBarrierDirectory, 0700, true)) {
+                throw new RuntimeException(
+                    'No fue posible crear la barrera de inicialización.',
+                );
+            }
+        }
 
         $workerPath = __DIR__
             . DIRECTORY_SEPARATOR
@@ -242,10 +251,10 @@ function runScenario(int $initialValue, string $label): array
                 'ready_path' => $readyPath,
                 'start_path' => $startPath,
                 'result_path' => $resultPath,
-                'read_barrier_dir' => $readBarrierDirectory,
                 'sequence_trace_path' => $workerDirectory
                     . DIRECTORY_SEPARATOR
                     . 'sequence-trace.jsonl',
+                'initialization_read_barrier_dir' => $readBarrierDirectory,
             ];
 
             file_put_contents(
@@ -388,6 +397,10 @@ function runScenario(int $initialValue, string $label): array
             'final_counter' => (int) $counter,
             'independent_counter' => (int) $sentinelCounter,
             'sequence_trace' => $sequenceTrace,
+            'initialization_barrier_reached_workers' => count(array_filter(
+                $results,
+                static fn(array $result): bool => ($result['initialization_read_barrier_reached'] ?? false) === true,
+            )),
         ];
     } finally {
         // No dejar procesos activos si falla la barrera o una lectura.
@@ -455,11 +468,18 @@ try {
         );
     }
 
+
     $report = [
         'database' => DB::connection('mysql')->getDatabaseName(),
+        'initialization_scenario' => null,
         'normal_scenarios' => [],
         'boundary_scenario' => null,
     ];
+
+    $report['initialization_scenario'] = runScenario(
+        null,
+        'initialization',
+    );
 
     for ($round = 1; $round <= $rounds; $round++) {
         $report['normal_scenarios'][] = runScenario(
