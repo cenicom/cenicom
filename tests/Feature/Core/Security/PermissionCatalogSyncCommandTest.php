@@ -17,7 +17,7 @@ final class PermissionCatalogSyncCommandTest extends TestCase
         $this->artisan('cenicom:permissions-sync')
             ->assertSuccessful();
 
-        $this->assertDatabaseCount('permissions', 9);
+        $this->assertDatabaseCount('permissions', 11);
 
         $this->assertDatabaseHas('permissions', [
             'name' => 'institutions.view',
@@ -46,10 +46,10 @@ final class PermissionCatalogSyncCommandTest extends TestCase
         $this->artisan('cenicom:permissions-sync')
             ->assertSuccessful();
 
-        $this->assertDatabaseCount('permissions', 9);
+        $this->assertDatabaseCount('permissions', 11);
 
         $this->assertSame(
-            9,
+            11,
             Permission::query()->distinct('name')->count('name')
         );
     }
@@ -71,7 +71,7 @@ final class PermissionCatalogSyncCommandTest extends TestCase
             'module' => 'institution',
         ]);
 
-        $this->assertDatabaseCount('permissions', 9);
+        $this->assertDatabaseCount('permissions', 11);
     }
 
     public function test_synchronization_does_not_delete_existing_permissions(): void
@@ -91,6 +91,6 @@ final class PermissionCatalogSyncCommandTest extends TestCase
             'module' => 'legacy',
         ]);
 
-        $this->assertDatabaseCount('permissions', 10);
+        $this->assertDatabaseCount('permissions', 12);
     }
 }

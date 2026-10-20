@@ -107,7 +107,7 @@ final class SecurityServiceProviderTest extends TestCase
         );
 
         $this->assertCount(
-            7,
+            11,
             $registry->all()
         );
     }

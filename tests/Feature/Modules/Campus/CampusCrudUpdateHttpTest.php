@@ -172,6 +172,57 @@ final class CampusCrudUpdateHttpTest extends TestCase
         ], 'mysql');
     }
 
+
+    public function test_update_succeeds_when_submitted_values_are_unchanged(): void
+    {
+        $campus = $this->createCampusForUpdate();
+        $user = User::factory()->create();
+
+        $this->grantPermission($user, 'campuses.update');
+
+        $address = $campus->address()->firstOrFail();
+
+        $payload = [
+            'name' => $campus->name,
+            'ministryCode' => $campus->ministry_code,
+            'address' => [
+                'country_id' => $address->country_id,
+                'state_id' => $address->state_id,
+                'city_id' => $address->city_id,
+                'address' => $address->address,
+                'neighborhood' => $address->neighborhood,
+            ],
+        ];
+
+        $this->actingAs($user)
+            ->put(route('campuses.update', $campus), $payload)
+            ->assertRedirect(route('campuses.show', $campus))
+            ->assertSessionHas(
+                'success',
+                'Sede actualizada correctamente.',
+            );
+
+        $this->assertDatabaseHas('campuses', [
+            'id' => $campus->getKey(),
+            'institution_id' => $campus->institution_id,
+            'code' => $campus->code,
+            'short_code' => $campus->short_code,
+            'name' => $campus->name,
+            'ministry_code' => $campus->ministry_code,
+            'status' => $campus->status,
+            'address_id' => $address->getKey(),
+        ], 'mysql');
+
+        $this->assertDatabaseHas('addresses', [
+            'id' => $address->getKey(),
+            'country_id' => $address->country_id,
+            'state_id' => $address->state_id,
+            'city_id' => $address->city_id,
+            'address' => $address->address,
+            'neighborhood' => $address->neighborhood,
+        ], 'mysql');
+    }
+
     public function test_update_rejects_incoherent_geography_and_rolls_back_changes(): void
     {
         $campus = $this->createCampusForUpdate();

@@ -125,6 +125,49 @@ final class InstitutionCrudHttpTest extends TestCase
         ]);
     }
 
+    public function test_store_rejects_duplicate_short_code(): void
+    {
+        $permission = Permission::query()->create([
+            'name' => 'institutions.create',
+        ]);
+
+        $user = User::factory()->create();
+        $user->permissions()->attach($permission);
+
+        $institution = \App\Modules\Institution\Models\Institution::query()->create([
+            'id' => (string) Str::ulid(),
+            'code' => 'CEN-IESB',
+            'short_code' => 'IESBSC',
+            'name' => 'Institución existente',
+            'status' => 'draft',
+        ]);
+
+        $initialCount = \App\Modules\Institution\Models\Institution::query()->count();
+
+        $response = $this
+            ->actingAs($user)
+            ->from(route('institutions.create'))
+            ->post(route('institutions.store'), [
+                'name' => 'Otra institución',
+                'shortCode' => 'IESBSC',
+            ]);
+
+        $response
+            ->assertRedirect(route('institutions.create'))
+            ->assertSessionHasErrors(['shortCode']);
+
+        $this->assertSame(
+            $initialCount,
+            \App\Modules\Institution\Models\Institution::query()->count(),
+        );
+
+        $this->assertDatabaseHas('institutions', [
+            'id' => $institution->getKey(),
+            'name' => 'Institución existente',
+            'short_code' => 'IESBSC',
+        ]);
+    }
+
     public function test_edit_denies_authenticated_user_without_update_permission(): void
     {
         $user = User::factory()->create();
@@ -259,6 +302,99 @@ final class InstitutionCrudHttpTest extends TestCase
         ]);
     }
 
+
+    public function test_update_preserves_official_registration_when_registration_is_omitted(): void
+    {
+        $permission = Permission::query()->create([
+            'name' => 'institutions.update',
+        ]);
+
+        $user = User::factory()->create();
+
+        $user->permissions()->attach($permission);
+
+        $institution = \App\Modules\Institution\Models\Institution::query()->create([
+            'id' => (string) Str::ulid(),
+            'code' => 'CEN-IESB',
+            'short_code' => 'IESBSC',
+            'name' => 'Institución Educativa Simón Bolívar',
+            'official_registration_country' => 'CO',
+            'official_registration_authority' => 'Ministerio de Educación',
+            'official_registration_value' => 'REG-000010',
+            'status' => 'draft',
+        ]);
+
+        $response = $this
+            ->actingAs($user)
+            ->put(
+                route('institutions.update', $institution),
+                [
+                    'name' => 'Institución Educativa Simón Bolívar Actualizada',
+                ],
+            );
+
+
+        $response
+            ->assertRedirect(route('institutions.index'))
+            ->assertSessionHas('success');
+
+        self::assertSame(302, $response->status());
+
+        $this->assertDatabaseHas('institutions', [
+            'id' => $institution->getKey(),
+            'name' => 'Institución Educativa Simón Bolívar Actualizada',
+            'official_registration_country' => 'CO',
+            'official_registration_authority' => 'Ministerio de Educación',
+            'official_registration_value' => 'REG-000010',
+            'short_code' => 'IESBSC',
+            'status' => 'draft',
+        ]);
+    }
+
+    public function test_update_allows_empty_official_registration_when_form_submits_blank_fields(): void
+    {
+        $permission = Permission::query()->create([
+            'name' => 'institutions.update',
+        ]);
+
+        $user = User::factory()->create();
+        $user->permissions()->attach($permission);
+
+        $institution = \App\Modules\Institution\Models\Institution::query()->create([
+            'id' => (string) Str::ulid(),
+            'code' => 'CEN-IESB',
+            'short_code' => 'IESBSC',
+            'name' => 'Institución Educativa Simón Bolívar',
+            'status' => 'draft',
+        ]);
+
+        $response = $this
+            ->actingAs($user)
+            ->put(route('institutions.update', $institution), [
+                'name' => 'Institución Educativa Simón Bolívar Actualizada',
+                'officialRegistration' => [
+                    'country' => '',
+                    'authority' => '',
+                    'value' => '',
+                ],
+            ]);
+
+        $response
+            ->assertRedirect(route('institutions.index'))
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseHas('institutions', [
+            'id' => $institution->getKey(),
+            'name' => 'Institución Educativa Simón Bolívar Actualizada',
+            'official_registration_country' => null,
+            'official_registration_authority' => null,
+            'official_registration_value' => null,
+            'short_code' => 'IESBSC',
+            'status' => 'draft',
+        ]);
+    }
+
+
     public function test_destroy_denies_authenticated_user_without_delete_permission(): void
     {
         $user = User::factory()->create();
@@ -364,6 +500,4 @@ final class InstitutionCrudHttpTest extends TestCase
             'institution_id' => $institution->getKey(),
         ]);
     }
-
-
 }

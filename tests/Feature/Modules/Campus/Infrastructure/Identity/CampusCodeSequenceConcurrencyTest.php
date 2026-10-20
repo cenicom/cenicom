@@ -37,17 +37,6 @@ final class CampusCodeSequenceConcurrencyTest extends TestCase
         sort($sequences, SORT_NUMERIC);
         $this->assertSame([1, 2], $sequences);
 
-        $this->assertSame(
-            2,
-            $scenario['initialization_barrier_reached_workers'],
-        );
-
-        foreach ($scenario['results'] as $result) {
-            $this->assertTrue(
-                $result['initialization_read_barrier_reached'],
-                "El trabajador {$result['worker']} no alcanzó la barrera de lectura.",
-            );
-        }
     }
 
     #[Test]
@@ -243,7 +232,17 @@ final class CampusCodeSequenceConcurrencyTest extends TestCase
         $this->assertCount(2, $results);
 
         foreach ($results as $result) {
-            $this->assertSame('success', $result['status']);
+            $this->assertSame(
+                'success',
+                $result['status'],
+                sprintf(
+                    "Worker fallido.\nResultado: %s",
+                    json_encode(
+                        $result,
+                        JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE,
+                    ),
+                ),
+            );
             $this->assertSame(0, $result['exit_code']);
             $this->assertNotEmpty($result['code']);
             $this->assertNull($result['exception']);

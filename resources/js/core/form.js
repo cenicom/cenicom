@@ -19,7 +19,7 @@ export function initFormConfirmations() {
 
         const confirmationType = form.dataset.cnConfirm;
 
-        if (!['delete', 'logout'].includes(confirmationType)) {
+        if (!['create', 'delete', 'logout'].includes(confirmationType)) {
             return;
         }
 
@@ -31,6 +31,7 @@ export function initFormConfirmations() {
         event.preventDefault();
 
         const isLogout = confirmationType === 'logout';
+        const isCreate = confirmationType === 'create';
         const submitter =
             event.submitter instanceof HTMLElement
                 ? event.submitter
@@ -39,15 +40,25 @@ export function initFormConfirmations() {
         Swal.fire({
             title:
                 form.dataset.cnConfirmTitle ||
-                (isLogout ? '¿Cerrar sesión?' : '¿Confirmar eliminación?'),
+                (isLogout
+                    ? '¿Cerrar sesión?'
+                    : isCreate
+                      ? '¿Guardar esta institución?'
+                      : '¿Confirmar eliminación?'),
             text:
                 form.dataset.cnConfirmText ||
                 (isLogout
                     ? '¿Deseas salir de CENICOM?'
-                    : 'Esta acción no se puede deshacer.'),
-            icon: isLogout ? 'question' : 'warning',
+                    : isCreate
+                      ? '¿Confirmas que deseas crear la institución con los datos ingresados?'
+                      : 'Esta acción no se puede deshacer.'),
+            icon: isLogout || isCreate ? 'question' : 'warning',
             showCancelButton: true,
-            confirmButtonText: isLogout ? 'Sí, cerrar sesión' : 'Sí, eliminar',
+            confirmButtonText: isLogout
+                ? 'Sí, cerrar sesión'
+                : isCreate
+                  ? 'Sí, guardar'
+                  : 'Sí, eliminar',
             cancelButtonText: 'Cancelar',
             reverseButtons: true,
             focusCancel: true,
@@ -76,14 +87,27 @@ export function initFlashMessages() {
 
     const error = container.dataset.cnFlashError?.trim();
 
-    if (!error) {
+    if (error) {
+        Swal.fire({
+            title: 'No se puede eliminar',
+            text: error,
+            icon: 'error',
+            confirmButtonText: 'Entendido',
+        });
+
+        return;
+    }
+
+    const success = container.dataset.cnFlashSuccess?.trim();
+
+    if (!success) {
         return;
     }
 
     Swal.fire({
-        title: 'No se puede eliminar',
-        text: error,
-        icon: 'error',
+        title: 'Operación exitosa',
+        text: success,
+        icon: 'success',
         confirmButtonText: 'Entendido',
     });
 }

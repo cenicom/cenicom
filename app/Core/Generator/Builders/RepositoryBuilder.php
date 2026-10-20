@@ -31,29 +31,17 @@ final class RepositoryBuilder
     public function build(ModuleData $module): array
     {
         return [
-            'namespace'
-                => $module->repositoryNamespace(),
-
-            'imports'
-                => $this->buildImports($module),
-
-            'repository'
-                => $module->repositoryClass(),
-
-            'repositoryInterface'
-                => $module->repositoryInterface(),
-
-            'qualifiedRepositoryInterface'
-                => $module->qualifiedRepositoryInterface(),
-
-            'qualifiedModel'
-                => $module->qualifiedModel(),
-
-            'model'
-                => $module->modelClass(),
-
-            'variable'
-                => $module->variable(),
+            'namespace' => $module->repositoryNamespace(),
+            'imports' => $this->buildImports($module),
+            'repository' => $module->repositoryClass(),
+            'repositoryInterface' => $module->repositoryInterface(),
+            'qualifiedRepositoryInterface' => $module->qualifiedRepositoryInterface(),
+            'qualifiedModel' => $module->qualifiedModel(),
+            'model' => $module->modelClass(),
+            'variable' => $module->variable(),
+            'baseRepositoryClass' => $module->softDeletes()
+                ? 'SoftDeletableBaseRepository'
+                : 'BaseRepository',
         ];
     }
 
@@ -62,13 +50,15 @@ final class RepositoryBuilder
      */
     private function buildImports(ModuleData $module): string
     {
-        return implode(
-            PHP_EOL,
-            [
-                'use ' . $module->qualifiedModel() . ';',
-                'use ' . $module->qualifiedRepositoryInterface() . ';',
-                'use App\Core\Repositories\BaseRepository;',
-            ]
-        );
+        $imports = [
+            'use ' . $module->qualifiedModel() . ';',
+            'use ' . $module->qualifiedRepositoryInterface() . ';',
+        ];
+
+        $imports[] = $module->softDeletes()
+            ? 'use App\Core\Repositories\SoftDeletableBaseRepository;'
+            : 'use App\Core\Repositories\BaseRepository;';
+
+        return implode(PHP_EOL, $imports);
     }
 }

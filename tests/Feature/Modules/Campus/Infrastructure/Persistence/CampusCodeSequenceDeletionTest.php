@@ -62,7 +62,18 @@ final class CampusCodeSequenceDeletionTest extends TestCase
             )
         );
 
-        app(InstitutionRepositoryInterface::class)->save($institution);
+        $institutionRepository = app(InstitutionRepositoryInterface::class);
+
+        $institutionRepository->save($institution);
+
+        $this->assertNotNull(
+            $institutionRepository->transitionStatus(
+                $institution->id(),
+                'draft',
+                'active',
+            ),
+            'La institución de prueba debe activarse antes de crear la sede.',
+        );
 
         $address = app(AddressServiceInterface::class)->create([
             'country_id' => 1,

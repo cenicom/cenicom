@@ -164,10 +164,28 @@ final class InstitutionControllerTest extends TestCase
             repository: $repository,
         );
 
-        $request = $this->validatedStoreRequest([
-            'name' => 'Colegio Central',
-            'shortCode' => 'IESBSC',
-        ]);
+        $request = StoreInstitutionRequest::create(
+            '/institutions',
+            'POST',
+            [
+                'name' => 'Colegio Central',
+                'shortCode' => 'IESBSC',
+            ],
+        );
+
+        $validator = Mockery::mock(
+            \Illuminate\Contracts\Validation\Validator::class,
+        );
+
+        $validator
+            ->shouldReceive('validated')
+            ->once()
+            ->andReturn([
+                'name' => 'Colegio Central',
+                'shortCode' => 'IESBSC',
+            ]);
+
+        $request->setValidator($validator);
 
         $this->mockRedirect(
             'Institution creado correctamente.',
@@ -281,7 +299,7 @@ final class InstitutionControllerTest extends TestCase
         );
 
         $this->mockRedirect(
-            'Institution eliminado correctamente.',
+            'Institución eliminada correctamente.',
         );
 
         $response = $controller->destroy($institution);

@@ -51,21 +51,6 @@ interface RepositoryInterface
     ): bool;
 
     /**
-     * Elimina un registro por su llave primaria.
-     */
-    public function delete(int|string $id): bool;
-
-    /**
-     * Restaura un registro por su llave primaria.
-     */
-    public function restore(int|string $id): bool;
-
-    /**
-     * Elimina definitivamente un registro.
-     */
-    public function forceDelete(int|string $id): bool;
-
-    /**
      * Verifica si existe un registro por su llave primaria.
      */
     public function exists(int|string $id): bool;

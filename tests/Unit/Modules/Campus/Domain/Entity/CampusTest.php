@@ -209,4 +209,125 @@ final class CampusTest extends TestCase
             addressId: '',
         );
     }
+
+    public function test_rejects_unknown_status(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        new Campus(
+            id: '01JTESTCAMPUS',
+            institutionId: '01JTESTINSTITUTION',
+            code: 'CEN-IESBSC-CENTRAL-001',
+            shortCode: 'CENTRAL',
+            name: 'Campus Central',
+            addressId: '01JTESTADDRESS',
+            status: 'suspended',
+        );
+    }
+
+    public function test_active_campus_can_be_activated_without_changing_status(): void
+    {
+        $campus = new Campus(
+            id: '01JTESTCAMPUS',
+            institutionId: '01JTESTINSTITUTION',
+            code: 'CEN-IESBSC-CENTRAL-001',
+            shortCode: 'CENTRAL',
+            name: 'Campus Central',
+            addressId: '01JTESTADDRESS',
+            status: 'active',
+        );
+
+        $campus->activate();
+
+        $this->assertSame('active', $campus->status());
+    }
+
+    public function test_failed_deactivation_preserves_draft_status(): void
+    {
+        $campus = new Campus(
+            id: '01JTESTCAMPUS',
+            institutionId: '01JTESTINSTITUTION',
+            code: 'CEN-IESBSC-CENTRAL-001',
+            shortCode: 'CENTRAL',
+            name: 'Campus Central',
+            addressId: '01JTESTADDRESS',
+        );
+
+        try {
+            $campus->deactivate();
+            $this->fail('Expected an invalid transition to be rejected.');
+        } catch (InvalidArgumentException) {
+            $this->assertSame('draft', $campus->status());
+        }
+    }
+
+    public function test_rejects_whitespace_only_id(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        new Campus(
+            id: '   ',
+            institutionId: '01JTESTINSTITUTION',
+            code: 'CEN-IESBSC-CENTRAL-001',
+            shortCode: 'CENTRAL',
+            name: 'Campus Central',
+            addressId: '01JTESTADDRESS',
+        );
+    }
+
+    public function test_rejects_whitespace_only_institution_id(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        new Campus(
+            id: '01JTESTCAMPUS',
+            institutionId: '   ',
+            code: 'CEN-IESBSC-CENTRAL-001',
+            shortCode: 'CENTRAL',
+            name: 'Campus Central',
+            addressId: '01JTESTADDRESS',
+        );
+    }
+
+    public function test_rejects_whitespace_only_code(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        new Campus(
+            id: '01JTESTCAMPUS',
+            institutionId: '01JTESTINSTITUTION',
+            code: '   ',
+            shortCode: 'CENTRAL',
+            name: 'Campus Central',
+            addressId: '01JTESTADDRESS',
+        );
+    }
+
+    public function test_rejects_whitespace_only_name(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        new Campus(
+            id: '01JTESTCAMPUS',
+            institutionId: '01JTESTINSTITUTION',
+            code: 'CEN-IESBSC-CENTRAL-001',
+            shortCode: 'CENTRAL',
+            name: '   ',
+            addressId: '01JTESTADDRESS',
+        );
+    }
+
+    public function test_rejects_whitespace_only_address_id(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        new Campus(
+            id: '01JTESTCAMPUS',
+            institutionId: '01JTESTINSTITUTION',
+            code: 'CEN-IESBSC-CENTRAL-001',
+            shortCode: 'CENTRAL',
+            name: 'Campus Central',
+            addressId: '   ',
+        );
+    }
 }

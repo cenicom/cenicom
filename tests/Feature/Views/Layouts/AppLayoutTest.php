@@ -79,7 +79,7 @@ final class AppLayoutTest extends TestCase
         // Assert
 
         $view->assertSee('cn-sidebar', false);
-        $view->assertSee('<nav>', false);
+        $view->assertSee('<nav aria-label="Navegación principal">', false);
         $view->assertSee('Contenido');
     }
 

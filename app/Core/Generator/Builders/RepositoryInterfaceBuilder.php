@@ -23,6 +23,10 @@ final class RepositoryInterfaceBuilder
             'model' => $module->modelClass(),
 
             'variable' => $module->variable(),
+
+            'parentContract' => $module->softDeletes()
+                ? '\App\Core\Contracts\SoftDeletableRepositoryInterface'
+                : '\App\Core\Contracts\RepositoryInterface',
         ];
     }
 }

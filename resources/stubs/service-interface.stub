@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace [[ namespace ]];
 
-use App\Core\Contracts\ServiceInterface;
-
 /**
  * ==========================================================
  * CENICOM ERP
@@ -17,6 +15,6 @@ use App\Core\Contracts\ServiceInterface;
  *
  * @package [[ namespace ]]
  */
-interface [[ serviceInterface ]] extends ServiceInterface
+interface [[ serviceInterface ]] extends [[ parentContract ]]
 {
 }

@@ -17,8 +17,14 @@
 
 <body>
 
-    {{-- messages error delete --}}
-    <div id="cn-flash-messages" data-cn-flash-error="{{ session('error', '') }}" hidden></div>
+
+    {{-- Mensajes flash para errores y operaciones exitosas --}}
+    <div
+        id="cn-flash-messages"
+        data-cn-flash-error="{{ session('error', '') }}"
+        data-cn-flash-success="{{ session('success', '') }}"
+        hidden
+    ></div>
 
 
     <div class="cn-app">

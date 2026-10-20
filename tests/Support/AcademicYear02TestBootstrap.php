@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 $projectRoot = dirname(__DIR__, 2);
 
+require_once $projectRoot
+    . '/tests/Support/AcademicYear02BootstrapGuard.php';
+
 $expectedEnvironment = [
     'APP_ENV' => 'testing',
     'DB_CONNECTION' => 'mysql',
@@ -35,25 +38,29 @@ if ($password === false || $password === '') {
         'DB_PASSWORD: debe estar definida localmente y no vacía.';
 }
 
-/*
- * No aceptar rutas alternativas para la configuración en caché.
- * Laravel podría cargar valores que contradigan las variables verificadas.
- */
-$configCacheOverride = getenv('APP_CONFIG_CACHE');
+$cacheErrors =
+    \Tests\Support\AcademicYear02BootstrapGuard::
+        findConfigurationCacheOverrides(
+            [],
+            [
+                $projectRoot . '/.env',
+                $projectRoot . '/.env.testing',
+            ],
+        );
 
-if ($configCacheOverride !== false && $configCacheOverride !== '') {
+$errors = array_merge($errors, $cacheErrors);
+
+if (is_file($projectRoot . '/bootstrap/cache/config.php')) {
     $errors[] =
-        'APP_CONFIG_CACHE: no se permiten rutas personalizadas en ACA-YEAR-02.';
-} elseif (is_file($projectRoot . '/bootstrap/cache/config.php')) {
-    $errors[] =
-        'Configuración en caché detectada; ACA-YEAR-02 no puede continuar.';
+        'Configuración en caché predeterminada detectada; '
+        . 'ACA-YEAR-02 no puede continuar.';
 }
 
 if ($errors !== []) {
     fwrite(
         STDERR,
         "ACA-YEAR-02: configuración de aislamiento rechazada.\n"
-        . implode("\n", $errors)
+        . implode("\n", array_unique($errors))
         . "\n",
     );
 

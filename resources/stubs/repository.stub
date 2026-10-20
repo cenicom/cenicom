@@ -19,7 +19,7 @@ namespace [[ namespace ]];
  * @package [[ namespace ]]
  */
 class [[ repository ]]
-    extends BaseRepository
+    extends [[ baseRepositoryClass ]]
     implements [[ repositoryInterface ]]
 {
     /**

@@ -18,7 +18,7 @@ abstract class AcademicYear02TestCase extends TestCase
 
         $app = require $projectRoot . '/bootstrap/app.php';
 
-        $app->beforeBootstrapping(
+        $app->afterBootstrapping(
             RegisterProviders::class,
             function (Application $app): void {
                 $config = $app->make('config');

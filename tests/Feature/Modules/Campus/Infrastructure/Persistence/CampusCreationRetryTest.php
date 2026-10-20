@@ -45,7 +45,18 @@ final class CampusCreationRetryTest extends TestCase
             )
         );
 
-        app(InstitutionRepositoryInterface::class)->save($institution);
+        $institutionRepository = app(InstitutionRepositoryInterface::class);
+
+        $institutionRepository->save($institution);
+
+        $this->assertNotNull(
+            $institutionRepository->transitionStatus(
+                $institution->id(),
+                'draft',
+                'active',
+            ),
+            'La institución de prueba debe activarse antes de crear la sede.',
+        );
 
         $address = app(AddressServiceInterface::class)->create([
             'country_id' => 1,
@@ -167,8 +178,8 @@ final class CampusCreationRetryTest extends TestCase
             }
         } while (
             DB::table('institutions')
-                ->where('short_code', $shortCode)
-                ->exists()
+            ->where('short_code', $shortCode)
+            ->exists()
         );
 
         return $shortCode;

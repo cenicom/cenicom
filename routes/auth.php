@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Core\Http\Controllers\AuthenticationController;
+use App\Core\Http\Controllers\PasswordRecoveryController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,6 +16,30 @@ Route::middleware('guest')->group(function (): void {
 
     Route::post('/login', [AuthenticationController::class, 'login'])
         ->name('login.authenticate');
+
+    Route::get('/forgot-password', [
+        PasswordRecoveryController::class,
+        'showRequestForm',
+    ])->name('password.request');
+
+    Route::post('/forgot-password', [
+        PasswordRecoveryController::class,
+        'sendResetLink',
+    ])
+        ->middleware('throttle:6,1')
+        ->name('password.email');
+
+    Route::get('/reset-password/{token}', [
+        PasswordRecoveryController::class,
+        'showResetForm',
+    ])->name('password.reset');
+
+    Route::post('/reset-password', [
+        PasswordRecoveryController::class,
+        'reset',
+    ])
+        ->middleware('throttle:6,1')
+        ->name('password.update');
 });
 
 Route::post('/logout', [AuthenticationController::class, 'logout'])
@@ -30,7 +55,9 @@ Route::middleware('auth')->group(function (): void {
         return view('auth.verify-email');
     })->name('verification.notice');
 
-    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request): RedirectResponse {
+    Route::get('/email/verify/{id}/{hash}', function (
+        EmailVerificationRequest $request,
+    ): RedirectResponse {
         $request->fulfill();
 
         return redirect('/');
@@ -38,7 +65,9 @@ Route::middleware('auth')->group(function (): void {
         ->middleware(['signed', 'throttle:6,1'])
         ->name('verification.verify');
 
-    Route::post('/email/verification-notification', function (Request $request): RedirectResponse {
+    Route::post('/email/verification-notification', function (
+        Request $request,
+    ): RedirectResponse {
         if ($request->user()->hasVerifiedEmail()) {
             return redirect('/');
         }

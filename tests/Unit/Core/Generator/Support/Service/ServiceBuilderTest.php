@@ -78,8 +78,46 @@ final class ServiceBuilderTest extends TestCase
         );
 
         $this->assertStringContainsString(
-            'use App\\Core\\Services\\BaseService;',
+            'use App\\Core\\Services\\SoftDeletableBaseService;',
             $imports
+        );
+    }
+
+    public function test_build_uses_base_service_when_soft_deletes_is_disabled(): void
+    {
+        $builder = new ServiceBuilder();
+
+        $module = (new ModuleDataFactory())->create([
+            'identity' => [
+                'name' => 'Currency',
+                'singular' => 'currency',
+                'plural' => 'currencies',
+                'table' => 'currencies',
+                'description' => 'Currency module',
+            ],
+            'generation' => [
+                'routePrefix' => 'currencies',
+                'routeName' => 'currencies',
+                'viewPrefix' => 'currencies',
+                'softDeletes' => false,
+            ],
+        ]);
+
+        $variables = $builder->build($module);
+
+        $this->assertSame(
+            'BaseService',
+            $variables['baseServiceClass']
+        );
+
+        $this->assertStringContainsString(
+            'use App\\Core\\Services\\BaseService;',
+            $variables['imports']
+        );
+
+        $this->assertStringNotContainsString(
+            'use App\\Core\\Services\\SoftDeletableBaseService;',
+            $variables['imports']
         );
     }
 

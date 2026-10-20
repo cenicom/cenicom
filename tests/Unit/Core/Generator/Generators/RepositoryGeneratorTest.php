@@ -97,7 +97,7 @@ final class RepositoryGeneratorTest extends GeneratorTestCase
         );
 
         $this->assertStringContainsString(
-            'extends BaseRepository',
+            'extends SoftDeletableBaseRepository',
             $content
         );
 
@@ -113,6 +113,54 @@ final class RepositoryGeneratorTest extends GeneratorTestCase
 
         $this->assertStringContainsString(
             'parent::__construct($model)',
+            $content
+        );
+    }
+
+    public function test_generates_base_repository_when_soft_deletes_is_disabled(): void
+    {
+        $generator = $this->createGenerator();
+
+        $module = $this->createModuleData([
+            'identity' => [
+                'name' => 'Currency',
+                'singular' => 'currency',
+                'plural' => 'currencies',
+                'table' => 'currencies',
+                'description' => 'Currency module',
+            ],
+            'generation' => [
+                'routePrefix' => 'currencies',
+                'routeName' => 'currencies',
+                'viewPrefix' => 'currencies',
+                'softDeletes' => false,
+            ],
+        ]);
+
+        $result = $generator->generate($module);
+
+        $this->assertTrue($result->isSuccessful());
+
+        $file = $module->repositoryPath();
+
+        $this->assertFileExists($file);
+
+        $content = file_get_contents($file);
+
+        $this->assertNotFalse($content);
+
+        $this->assertStringContainsString(
+            'use App\\Core\\Repositories\\BaseRepository;',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            'extends BaseRepository',
+            $content
+        );
+
+        $this->assertStringNotContainsString(
+            'SoftDeletableBaseRepository',
             $content
         );
     }

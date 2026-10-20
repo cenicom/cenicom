@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Modules\Address\Domain\Contracts\AddressServiceInterface;
-//use App\Modules\Campus\Domain\Contracts\CampusRepositoryInterface;
 use App\Modules\Institution\Domain\Contracts\InstitutionCreatorInterface;
 use App\Modules\Institution\Domain\Contracts\InstitutionRepositoryInterface;
 use App\Modules\Institution\Domain\DTO\InstitutionCreateData;
@@ -81,6 +80,7 @@ function uniqueInstitutionShortCode(): string
     return $code;
 }
 
+
 function createInstitution(string $label): object
 {
     $institution = app(InstitutionCreatorInterface::class)->create(
@@ -90,9 +90,25 @@ function createInstitution(string $label): object
         ),
     );
 
-    return app(InstitutionRepositoryInterface::class)
-        ->save($institution);
+    $repository = app(InstitutionRepositoryInterface::class);
+
+    $persisted = $repository->save($institution);
+
+    $activated = $repository->transitionStatus(
+        $persisted->id(),
+        'draft',
+        'active',
+    );
+
+    if ($activated === null) {
+        throw new RuntimeException(
+            "No fue posible activar la institución de prueba: {$label}.",
+        );
+    }
+
+    return $activated;
 }
+
 
 function createAddress(string $label): string
 {
@@ -129,7 +145,17 @@ function waitForFiles(array $paths, int $timeout): void
     } while (microtime(true) < $deadline);
 
     throw new RuntimeException(
-        'Tiempo agotado esperando que los dos trabajadores estén listos.',
+        'Tiempo agotado esperando que los dos trabajadores estén listos. '
+            . 'Archivos esperados: '
+            . json_encode($paths, JSON_UNESCAPED_SLASHES)
+            . '. Archivos existentes: '
+            . json_encode(
+                array_values(array_filter(
+                    $paths,
+                    static fn(string $path): bool => is_file($path),
+                )),
+                JSON_UNESCAPED_SLASHES,
+            ),
     );
 }
 
@@ -205,20 +231,6 @@ function runScenario(?int $initialValue, string $label): array
 
         $startPath = $directory . DIRECTORY_SEPARATOR . 'start';
 
-        $readBarrierDirectory = null;
-
-        if ($label === 'initialization') {
-            $readBarrierDirectory = $directory
-                . DIRECTORY_SEPARATOR
-                . 'read-barrier';
-
-            if (! mkdir($readBarrierDirectory, 0700, true)) {
-                throw new RuntimeException(
-                    'No fue posible crear la barrera de inicialización.',
-                );
-            }
-        }
-
         $workerPath = __DIR__
             . DIRECTORY_SEPARATOR
             . 'CampusConcurrencyWorker.php';
@@ -254,7 +266,7 @@ function runScenario(?int $initialValue, string $label): array
                 'sequence_trace_path' => $workerDirectory
                     . DIRECTORY_SEPARATOR
                     . 'sequence-trace.jsonl',
-                'initialization_read_barrier_dir' => $readBarrierDirectory,
+
             ];
 
             file_put_contents(

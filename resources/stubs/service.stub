@@ -19,7 +19,7 @@ namespace [[ namespace ]];
  * @package [[ namespace ]]
  */
 class [[ service ]]
-    extends BaseService
+    extends [[ baseServiceClass ]]
     implements [[ serviceInterface ]]
 {
     /**

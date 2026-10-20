@@ -7,7 +7,6 @@ use App\Modules\Campus\Domain\DTO\CampusCreateData;
 use App\Modules\Campus\Domain\Services\CampusCreationUseCase;
 use App\Modules\Campus\Infrastructure\Identity\CampusCodeSequence;
 use Illuminate\Contracts\Console\Kernel;
-use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Support\Facades\DB;
 use Tests\Support\CampusConcurrency\RecordingCampusCodeSequence;
 
@@ -45,10 +44,7 @@ $result = [
     'campus_id' => null,
     'exception' => null,
     'message' => null,
-    'initialization_read_barrier_reached' => false,
 ];
-
-$initializationReadBarrierReached = false;
 
 try {
     if (DB::connection('mysql')->getDatabaseName() !== 'cenicom') {
@@ -60,7 +56,11 @@ try {
     $readyPath = $config['ready_path'];
     $startPath = $config['start_path'];
 
-    file_put_contents($readyPath, 'ready', LOCK_EX);
+    if (file_put_contents($readyPath, 'ready', LOCK_EX) === false) {
+        throw new RuntimeException(
+            'No fue posible registrar que el trabajador está listo.',
+        );
+    }
 
     $deadline = microtime(true) + 30;
 
@@ -72,71 +72,6 @@ try {
         }
 
         usleep(10000);
-    }
-
-    $readBarrierDirectory =
-        $config['initialization_read_barrier_dir'] ?? null;
-
-    if (
-        is_string($readBarrierDirectory)
-        && $readBarrierDirectory !== ''
-    ) {
-        $workerId = (int) $config['worker'];
-
-        DB::listen(
-            function (QueryExecuted $query) use (
-                &$initializationReadBarrierReached,
-                $readBarrierDirectory,
-                $workerId,
-            ): void {
-                if ($initializationReadBarrierReached) {
-                    return;
-                }
-
-                $sql = strtolower($query->sql);
-
-                if (
-                    ! str_contains($sql, 'campus_code_sequences')
-                    || ! preg_match(
-                        '/^\s*select\s+exists\s*\(/i',
-                        $query->sql,
-                    )
-                ) {
-                    return;
-                }
-
-                $initializationReadBarrierReached = true;
-
-                $marker = $readBarrierDirectory
-                    . DIRECTORY_SEPARATOR
-                    . 'read-' . $workerId;
-
-                if (file_put_contents($marker, 'read', LOCK_EX) === false) {
-                    throw new RuntimeException(
-                        'No fue posible registrar la lectura de inicialización.',
-                    );
-                }
-
-                $otherWorker = $workerId === 1 ? 2 : 1;
-
-                $otherMarker = $readBarrierDirectory
-                    . DIRECTORY_SEPARATOR
-                    . 'read-' . $otherWorker;
-
-                $deadline = microtime(true) + 30;
-
-                while (! is_file($otherMarker)) {
-                    if (microtime(true) >= $deadline) {
-                        throw new RuntimeException(
-                            'Tiempo agotado esperando que ambos trabajadores '
-                            . 'observen la secuencia inexistente.',
-                        );
-                    }
-
-                    usleep(10000);
-                }
-            },
-        );
     }
 
     require_once __DIR__ . '/RecordingCampusCodeSequence.php';
@@ -168,9 +103,6 @@ try {
     $result['exception'] = $exception::class;
     $result['message'] = $exception->getMessage();
 } finally {
-    $result['initialization_read_barrier_reached'] =
-        $initializationReadBarrierReached;
-
     file_put_contents(
         $config['result_path'],
         json_encode(

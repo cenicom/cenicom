@@ -32,31 +32,18 @@ final class ServiceBuilder
     {
         return [
             'namespace' => $module->serviceNamespace(),
-
             'service' => $module->serviceClass(),
-
             'serviceInterface' => $module->serviceInterface(),
-
-            'qualifiedServiceInterface'
-                => $module->qualifiedServiceInterface(),
-
-            'qualifiedRepositoryInterface'
-                => $module->qualifiedRepositoryInterface(),
-
-            'qualifiedModel'
-                => $module->qualifiedModel(),
-
-            'repositoryInterface'
-                => $module->repositoryInterface(),
-
-            'model'
-                => $module->modelClass(),
-
-            'variable'
-                => $module->variable(),
-
-            'imports'
-                => $this->buildImports($module),
+            'qualifiedServiceInterface' => $module->qualifiedServiceInterface(),
+            'qualifiedRepositoryInterface' => $module->qualifiedRepositoryInterface(),
+            'qualifiedModel' => $module->qualifiedModel(),
+            'repositoryInterface' => $module->repositoryInterface(),
+            'model' => $module->modelClass(),
+            'variable' => $module->variable(),
+            'imports' => $this->buildImports($module),
+            'baseServiceClass' => $module->softDeletes()
+                ? 'SoftDeletableBaseService'
+                : 'BaseService',
         ];
     }
 
@@ -65,13 +52,15 @@ final class ServiceBuilder
      */
     private function buildImports(ModuleData $module): string
     {
-        return implode(
-            PHP_EOL,
-            [
-                'use ' . $module->qualifiedRepositoryInterface() . ';',
-                'use ' . $module->qualifiedServiceInterface() . ';',
-                'use App\Core\Services\BaseService;',
-            ]
-        );
+        $imports = [
+            'use ' . $module->qualifiedRepositoryInterface() . ';',
+            'use ' . $module->qualifiedServiceInterface() . ';',
+        ];
+
+        $imports[] = $module->softDeletes()
+            ? 'use App\Core\Services\SoftDeletableBaseService;'
+            : 'use App\Core\Services\BaseService;';
+
+        return implode(PHP_EOL, $imports);
     }
 }

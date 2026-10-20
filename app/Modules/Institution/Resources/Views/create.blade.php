@@ -14,7 +14,9 @@
         ],
     ]" />
     <x-cn.crud title="Crear institución" subtitle="Registro de una nueva institución educativa" icon="bi bi-building">
-        <form method="POST" action="{{ route('institutions.store') }}">
+        <form method="POST" action="{{ route('institutions.store') }}" data-cn-confirm="create"
+            data-cn-confirm-title="¿Guardar esta institución?"
+            data-cn-confirm-text="¿Confirmas que deseas crear la institución con los datos ingresados?">
             @csrf
 
             <x-cn.forms.group columns="2">

@@ -108,28 +108,6 @@ abstract class BaseRepository implements RepositoryInterface
     }
 
     /**
-     * Restaura un registro eliminado.
-     */
-    public function restore(int|string $id): bool
-    {
-        return (bool) $this->query()
-            ->onlyTrashed()
-            ->findOrFail($id)
-            ->restore();
-    }
-
-    /**
-     * Elimina definitivamente un registro.
-     */
-    public function forceDelete(int|string $id): bool
-    {
-        return (bool) $this->query()
-            ->onlyTrashed()
-            ->findOrFail($id)
-            ->forceDelete();
-    }
-
-    /**
      * Verifica si existe un registro.
      */
     public function exists(int|string $id): bool

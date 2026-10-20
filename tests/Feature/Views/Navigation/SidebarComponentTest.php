@@ -29,7 +29,7 @@ final class SidebarComponentTest extends TestCase
         // Assert
 
         $view->assertSee('cn-sidebar', false);
-        $view->assertSee('<nav>', false);
+        $view->assertSee('<nav aria-label="Navegación principal">', false);
     }
 
     public function test_renders_navigation_nodes(): void

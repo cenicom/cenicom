@@ -1,0 +1,51 @@
+diff --git a/tests/Unit/Modules/Institution/Http/Requests/StoreInstitutionRequestTest.php b/tests/Unit/Modules/Institution/Http/Requests/StoreInstitutionRequestTest.php
+--- a/tests/Unit/Modules/Institution/Http/Requests/StoreInstitutionRequestTest.php
++++ b/tests/Unit/Modules/Institution/Http/Requests/StoreInstitutionRequestTest.php
+@@ -1,12 +1,16 @@
+ <?php
+ 
+ declare(strict_types=1);
+ 
+ namespace Tests\Unit\Modules\Institution\Http\Requests;
+ 
+ use App\Modules\Institution\Http\Requests\StoreInstitutionRequest;
++use Illuminate\Foundation\Testing\RefreshDatabase;
+ use Illuminate\Support\Facades\Validator;
+ use Tests\TestCase;
+ 
+ final class StoreInstitutionRequestTest extends TestCase
+ {
++    use RefreshDatabase;
++
+     public function test_accepts_valid_institution_data(): void
+     {
+         $request = new StoreInstitutionRequest();
+@@ -81,7 +85,7 @@ final class StoreInstitutionRequestTest extends TestCase
+         self::assertArrayHasKey('name', $validator->errors()->toArray());
+     }
+ 
+-    public function test_official_registration_is_optional(): void
++    public function test_official_registration_is_required(): void
+     {
+         $request = new StoreInstitutionRequest();
+ 
+@@ -93,7 +97,8 @@ final class StoreInstitutionRequestTest extends TestCase
+ 
+         $validator = Validator::make($data, $request->rules());
+ 
+-        self::assertFalse($validator->fails());
++        self::assertTrue($validator->fails());
++        self::assertArrayHasKey('officialRegistration', $validator->errors()->toArray());
+     }
+@@ -243,6 +248,11 @@ final class StoreInstitutionRequestTest extends TestCase
+         $data = [
+             'name' => 'Institución Educativa Nacional',
+             'shortCode' => 'IESBSC',
++            'officialRegistration' => [
++                'country' => 'CO',
++                'authority' => 'Education Authority',
++                'value' => 'REG-001',
++            ],
+         ];
+ 
+         $validator = Validator::make($data, $request->rules());

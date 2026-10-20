@@ -101,8 +101,46 @@ final class RepositoryBuilderTest extends TestCase
         );
 
         $this->assertStringContainsString(
-            'use App\\Core\\Repositories\\BaseRepository;',
+            'use App\\Core\\Repositories\\SoftDeletableBaseRepository;',
             $imports
+        );
+    }
+
+    public function test_build_uses_base_repository_when_soft_deletes_is_disabled(): void
+    {
+        $builder = new RepositoryBuilder();
+
+        $module = (new ModuleDataFactory())->create([
+            'identity' => [
+                'name' => 'Currency',
+                'singular' => 'currency',
+                'plural' => 'currencies',
+                'table' => 'currencies',
+                'description' => 'Currency module',
+            ],
+            'generation' => [
+                'routePrefix' => 'currencies',
+                'routeName' => 'currencies',
+                'viewPrefix' => 'currencies',
+                'softDeletes' => false,
+            ],
+        ]);
+
+        $variables = $builder->build($module);
+
+        $this->assertSame(
+            'BaseRepository',
+            $variables['baseRepositoryClass']
+        );
+
+        $this->assertStringContainsString(
+            'use App\\Core\\Repositories\\BaseRepository;',
+            $variables['imports']
+        );
+
+        $this->assertStringNotContainsString(
+            'use App\\Core\\Repositories\\SoftDeletableBaseRepository;',
+            $variables['imports']
         );
     }
 

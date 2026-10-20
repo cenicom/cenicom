@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace [[ namespace ]];
 
-use App\Core\Contracts\RepositoryInterface;
 
 /**
  * ==========================================================
@@ -17,6 +16,6 @@ use App\Core\Contracts\RepositoryInterface;
  *
  * @package [[ namespace ]]
  */
-interface [[ repositoryInterface ]] extends RepositoryInterface
+interface [[ repositoryInterface ]] extends [[ parentContract ]]
 {
 }

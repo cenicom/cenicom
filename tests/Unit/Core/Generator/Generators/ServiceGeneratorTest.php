@@ -100,7 +100,7 @@ final class ServiceGeneratorTest extends GeneratorTestCase
         );
 
         $this->assertStringContainsString(
-            'extends BaseService',
+            'extends SoftDeletableBaseService',
             $content
         );
 
@@ -235,6 +235,54 @@ final class ServiceGeneratorTest extends GeneratorTestCase
         $this->assertSame(
             0,
             $second->skippedCount()
+        );
+    }
+
+    public function test_generates_base_service_when_soft_deletes_is_disabled(): void
+    {
+        $generator = $this->createGenerator();
+
+        $module = $this->createModuleData([
+            'identity' => [
+                'name' => 'Currency',
+                'singular' => 'currency',
+                'plural' => 'currencies',
+                'table' => 'currencies',
+                'description' => 'Currency module',
+            ],
+            'generation' => [
+                'routePrefix' => 'currencies',
+                'routeName' => 'currencies',
+                'viewPrefix' => 'currencies',
+                'softDeletes' => false,
+            ],
+        ]);
+
+        $result = $generator->generate($module);
+
+        $this->assertTrue($result->isSuccessful());
+
+        $file = $module->servicePath();
+
+        $this->assertFileExists($file);
+
+        $content = file_get_contents($file);
+
+        $this->assertNotFalse($content);
+
+        $this->assertStringContainsString(
+            'use App\\Core\\Services\\BaseService;',
+            $content
+        );
+
+        $this->assertStringContainsString(
+            'extends BaseService',
+            $content
+        );
+
+        $this->assertStringNotContainsString(
+            'SoftDeletableBaseService',
+            $content
         );
     }
 

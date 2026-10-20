@@ -54,6 +54,15 @@ final class CampusCreationRollbackTest extends TestCase
 
         $institutionRepository->save($institution);
 
+        $this->assertNotNull(
+            $institutionRepository->transitionStatus(
+                $institution->id(),
+                'draft',
+                'active',
+            ),
+            'La institución de prueba debe activarse antes de crear la sede.',
+        );
+
         $otherInstitution = $institutionCreator->create(
             new InstitutionCreateData(
                 name: 'Institución para prueba de aislamiento',
@@ -200,8 +209,8 @@ final class CampusCreationRollbackTest extends TestCase
             }
         } while (
             DB::table('institutions')
-                ->where('short_code', $shortCode)
-                ->exists()
+            ->where('short_code', $shortCode)
+            ->exists()
         );
 
         return $shortCode;
@@ -214,6 +223,22 @@ final class CampusCreationRollbackTest extends TestCase
  */
 final class CampusRepositorySaveThenFail implements CampusRepositoryInterface
 {
+    public function lockForUpdate(string $id): ?Campus
+    {
+        return $this->repository->lockForUpdate($id);
+    }
+
+    public function transitionStatus(
+        string $id,
+        string $expectedStatus,
+        string $targetStatus,
+    ): ?Campus {
+        return $this->repository->transitionStatus(
+            $id,
+            $expectedStatus,
+            $targetStatus,
+        );
+    }
     public bool $persistedBeforeFailure = false;
 
     public ?string $persistedCampusId = null;
@@ -284,16 +309,6 @@ final class CampusRepositorySaveThenFail implements CampusRepositoryInterface
         return $this->repository->delete($id);
     }
 
-    public function restore(int|string $id): bool
-    {
-        return $this->repository->restore($id);
-    }
-
-    public function forceDelete(int|string $id): bool
-    {
-        return $this->repository->forceDelete($id);
-    }
-
     public function exists(int|string $id): bool
     {
         return $this->repository->exists($id);
@@ -305,6 +320,4 @@ final class CampusRepositorySaveThenFail implements CampusRepositoryInterface
     }
 }
 
-final class CampusCreationRollbackException extends RuntimeException
-{
-}
+final class CampusCreationRollbackException extends RuntimeException {}

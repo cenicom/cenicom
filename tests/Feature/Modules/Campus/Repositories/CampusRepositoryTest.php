@@ -145,4 +145,87 @@ final class CampusRepositoryTest extends TestCase
             'mysql',
         );
     }
+
+
+    public function transition_status_changes_state_only_when_expected_status_matches(): void
+    {
+        $repository = $this->repository();
+        $campus = $this->persistCampus();
+
+        $transitioned = $repository->transitionStatus(
+            $campus->id(),
+            'active',
+            'inactive',
+        );
+
+        $this->assertNotNull($transitioned);
+        $this->assertSame('active', $transitioned->status());
+
+        // La transición active → inactive es válida,
+        // pero el estado esperado no coincide con el estado persistido.
+        $this->assertNull($repository->transitionStatus(
+            $campus->id(),
+            'active',
+            'inactive',
+        ));
+
+        $this->assertDatabaseHas('campuses', [
+            'id' => $campus->id(),
+            'status' => 'active',
+        ]);
+    }
+
+
+    public function transition_status_rejects_invalid_target_without_modifying_persisted_status(): void
+    {
+        $repository = $this->repository();
+        $campus = $this->persistCampus();
+
+        try {
+            $repository->transitionStatus(
+                $campus->id(),
+                'draft',
+                'suspended',
+            );
+
+            $this->fail('Se esperaba InvalidArgumentException.');
+        } catch (\InvalidArgumentException $exception) {
+            $this->assertSame(
+                'Transición de estado de sede no permitida: draft → suspended.',
+                $exception->getMessage(),
+            );
+        }
+
+        $this->assertDatabaseHas('campuses', [
+            'id' => $campus->id(),
+            'status' => 'draft',
+        ]);
+    }
+
+
+    public function transition_status_rejects_forbidden_transition_without_modifying_persisted_status(): void
+    {
+        $repository = $this->repository();
+        $campus = $this->persistCampus();
+
+        try {
+            $repository->transitionStatus(
+                $campus->id(),
+                'draft',
+                'inactive',
+            );
+
+            $this->fail('Se esperaba InvalidArgumentException.');
+        } catch (\InvalidArgumentException $exception) {
+            $this->assertSame(
+                'Transición de estado de sede no permitida: draft → inactive.',
+                $exception->getMessage(),
+            );
+        }
+
+        $this->assertDatabaseHas('campuses', [
+            'id' => $campus->id(),
+            'status' => 'draft',
+        ]);
+    }
 }

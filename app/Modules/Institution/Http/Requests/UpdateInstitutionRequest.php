@@ -28,21 +28,24 @@ final class UpdateInstitutionRequest extends FormRequest
             ],
 
             'officialRegistration.country' => [
-                'required_with:officialRegistration',
+                'nullable',
                 'string',
                 'max:2',
+                'required_with:officialRegistration.authority,officialRegistration.value',
             ],
 
             'officialRegistration.authority' => [
-                'required_with:officialRegistration',
+                'nullable',
                 'string',
                 'max:150',
+                'required_with:officialRegistration.country,officialRegistration.value',
             ],
 
             'officialRegistration.value' => [
-                'required_with:officialRegistration',
+                'nullable',
                 'string',
                 'max:100',
+                'required_with:officialRegistration.country,officialRegistration.authority',
             ],
         ];
     }

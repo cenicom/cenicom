@@ -228,4 +228,103 @@ final class InstitutionTest extends TestCase
             shortCode: 'ABCDEF@',
         );
     }
+
+    public function test_rejects_unknown_status(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        new Institution(
+            id: '01K2F8K4X7Q9M3N5P6R8T1W2YZ',
+            name: 'Institución Educativa Nacional Simón Bolívar',
+            code: 'CEN-000001',
+            shortCode: 'IESBSC',
+            status: 'suspended',
+        );
+    }
+
+    public function test_draft_institution_can_be_activated_without_mutating_original(): void
+    {
+        $institution = new Institution(
+            id: '01K2F8K4X7Q9M3N5P6R8T1W2YZ',
+            name: 'Institución Educativa Nacional Simón Bolívar',
+            code: 'CEN-000001',
+            shortCode: 'IESBSC',
+        );
+
+        $activated = $institution->activate();
+
+        $this->assertSame('draft', $institution->status());
+        $this->assertSame('active', $activated->status());
+        $this->assertNotSame($institution, $activated);
+        $this->assertSame($institution->id(), $activated->id());
+        $this->assertSame($institution->name(), $activated->name());
+        $this->assertSame($institution->code(), $activated->code());
+        $this->assertSame($institution->shortCode(), $activated->shortCode());
+        $this->assertSame(
+            $institution->officialRegistration(),
+            $activated->officialRegistration()
+        );
+    }
+
+    public function test_inactive_institution_can_be_activated_again(): void
+    {
+        $institution = new Institution(
+            id: '01K2F8K4X7Q9M3N5P6R8T1W2YZ',
+            name: 'Institución Educativa Nacional Simón Bolívar',
+            code: 'CEN-000001',
+            shortCode: 'IESBSC',
+            status: 'inactive',
+        );
+
+        $this->assertSame('active', $institution->activate()->status());
+        $this->assertSame('inactive', $institution->status());
+    }
+
+    public function test_active_institution_can_be_deactivated(): void
+    {
+        $institution = new Institution(
+            id: '01K2F8K4X7Q9M3N5P6R8T1W2YZ',
+            name: 'Institución Educativa Nacional Simón Bolívar',
+            code: 'CEN-000001',
+            shortCode: 'IESBSC',
+            status: 'active',
+        );
+
+        $inactive = $institution->deactivate();
+
+        $this->assertSame('inactive', $inactive->status());
+        $this->assertSame('active', $institution->status());
+    }
+
+    public function test_draft_institution_cannot_be_deactivated(): void
+    {
+        $institution = new Institution(
+            id: '01K2F8K4X7Q9M3N5P6R8T1W2YZ',
+            name: 'Institución Educativa Nacional Simón Bolívar',
+            code: 'CEN-000001',
+            shortCode: 'IESBSC',
+        );
+
+        try {
+            $institution->deactivate();
+            $this->fail('Expected an invalid transition to be rejected.');
+        } catch (InvalidArgumentException) {
+            $this->assertSame('draft', $institution->status());
+        }
+    }
+
+    public function test_active_institution_cannot_be_activated_again(): void
+    {
+        $institution = new Institution(
+            id: '01K2F8K4X7Q9M3N5P6R8T1W2YZ',
+            name: 'Institución Educativa Nacional Simón Bolívar',
+            code: 'CEN-000001',
+            shortCode: 'IESBSC',
+            status: 'active',
+        );
+
+        $this->expectException(InvalidArgumentException::class);
+
+        $institution->activate();
+    }
 }

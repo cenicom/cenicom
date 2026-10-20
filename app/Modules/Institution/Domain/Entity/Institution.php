@@ -9,6 +9,8 @@ use InvalidArgumentException;
 
 final readonly class Institution
 {
+    private const VALID_STATUSES = ['draft', 'active', 'inactive'];
+
     public function __construct(
         private string $id,
         private string $name,
@@ -46,6 +48,12 @@ final readonly class Institution
                 'Institution short code must contain only uppercase letters A-Z and be between 6 and 15 characters.'
             );
         }
+
+        if (!in_array($this->status, self::VALID_STATUSES, true)) {
+            throw new InvalidArgumentException(
+                'Institution status must be draft, active, or inactive.'
+            );
+        }
     }
 
     public function id(): string
@@ -76,5 +84,39 @@ final readonly class Institution
     public function status(): string
     {
         return $this->status;
+    }
+
+    public function activate(): self
+    {
+        if (!in_array($this->status, ['draft', 'inactive'], true)) {
+            throw new InvalidArgumentException(
+                'Institution cannot be activated from its current status.'
+            );
+        }
+
+        return $this->withStatus('active');
+    }
+
+    public function deactivate(): self
+    {
+        if ($this->status !== 'active') {
+            throw new InvalidArgumentException(
+                'Only an active institution can be deactivated.'
+            );
+        }
+
+        return $this->withStatus('inactive');
+    }
+
+    private function withStatus(string $status): self
+    {
+        return new self(
+            id: $this->id,
+            name: $this->name,
+            code: $this->code,
+            shortCode: $this->shortCode,
+            officialRegistration: $this->officialRegistration,
+            status: $status,
+        );
     }
 }

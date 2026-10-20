@@ -25,6 +25,7 @@ final class StoreInstitutionRequest extends FormRequest
             'shortCode' => [
                 'required',
                 'string',
+                'unique:institutions,short_code',
                 'regex:/^[A-Z]{6,15}$/',
             ],
 

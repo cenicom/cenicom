@@ -14,6 +14,13 @@
                             </p>
                         </div>
 
+                        @if (session('status') === 'password-reset')
+                            <div class="alert alert-success" role="status">
+                                Su contraseña se restableció correctamente.
+                                Ya puede iniciar sesión.
+                            </div>
+                        @endif
+
                         @if ($errors->any())
                             <div class="alert alert-danger" role="alert">
                                 <ul class="mb-0">
@@ -44,7 +51,7 @@
                                 />
                             </div>
 
-                            <div class="mb-4">
+                            <div class="mb-2">
                                 <x-cn.forms.password
                                     name="password"
                                     id="password"
@@ -53,6 +60,12 @@
                                     :required="true"
                                     autofocus="false"
                                 />
+                            </div>
+
+                            <div class="text-end mb-4">
+                                <a href="{{ route('password.request') }}">
+                                    ¿Olvidó su contraseña?
+                                </a>
                             </div>
 
                             <button

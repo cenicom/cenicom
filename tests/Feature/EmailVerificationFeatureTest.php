@@ -6,6 +6,8 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class EmailVerificationFeatureTest extends TestCase
@@ -72,6 +74,8 @@ class EmailVerificationFeatureTest extends TestCase
 
     public function test_unverified_user_can_request_verification_notification(): void
     {
+        Notification::fake();
+
         $user = User::factory()->unverified()->create();
 
         $response = $this
@@ -79,10 +83,15 @@ class EmailVerificationFeatureTest extends TestCase
             ->post(route('verification.send'));
 
         $response->assertRedirect();
+        $response->assertSessionHas('status', 'verification-link-sent');
+
+        Notification::assertSentTo($user, VerifyEmail::class);
     }
 
     public function test_verified_user_cannot_request_unnecessary_verification_notification(): void
     {
+        Notification::fake();
+
         $user = User::factory()->create();
 
         $response = $this
@@ -90,8 +99,8 @@ class EmailVerificationFeatureTest extends TestCase
             ->post(route('verification.send'));
 
         $response->assertRedirect('/');
+        Notification::assertNothingSent();
     }
-
     public function test_valid_verification_link_verifies_email(): void
     {
         $user = User::factory()->unverified()->create();

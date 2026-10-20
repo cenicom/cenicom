@@ -50,6 +50,10 @@ final class ServiceInterfaceGenerator extends BaseGenerator
 
                 'variable'
                 => $module->variable(),
+
+                'parentContract' => $module->softDeletes()
+                    ? '\App\Core\Contracts\SoftDeletableServiceInterface'
+                    : '\App\Core\Contracts\ServiceInterface',
             ]
         );
     }

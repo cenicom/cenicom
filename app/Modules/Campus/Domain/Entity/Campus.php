@@ -8,6 +8,8 @@ use InvalidArgumentException;
 
 final class Campus
 {
+    private const VALID_STATUSES = ['draft', 'active', 'inactive'];
+
     public function __construct(
         private readonly string $id,
         private readonly string $institutionId,
@@ -18,19 +20,19 @@ final class Campus
         private readonly ?string $ministryCode = null,
         private string $status = 'draft',
     ) {
-        if ($id === '') {
+        if (trim($id) === '') {
             throw new InvalidArgumentException(
                 'Campus id cannot be empty.'
             );
         }
 
-        if ($institutionId === '') {
+        if (trim($institutionId) === '') {
             throw new InvalidArgumentException(
                 'Campus institution id cannot be empty.'
             );
         }
 
-        if ($code === '') {
+        if (trim($code) === '') {
             throw new InvalidArgumentException(
                 'Campus code cannot be empty.'
             );
@@ -42,19 +44,19 @@ final class Campus
             );
         }
 
-        if ($name === '') {
+        if (trim($name) === '') {
             throw new InvalidArgumentException(
                 'Campus name cannot be empty.'
             );
         }
 
-        if ($addressId === '') {
+        if (trim($addressId) === '') {
             throw new InvalidArgumentException(
                 'Campus address id cannot be empty.'
             );
         }
 
-        if (!in_array($status, ['draft', 'active', 'inactive'], true)) {
+        if (!in_array($this->status, self::VALID_STATUSES, true)) {
             throw new InvalidArgumentException(
                 'Campus status must be draft, active, or inactive.'
             );
@@ -103,19 +105,17 @@ final class Campus
 
     public function activate(): void
     {
-        if ($this->status === 'draft' || $this->status === 'inactive') {
-            $this->status = 'active';
-
-            return;
-        }
-
         if ($this->status === 'active') {
             return;
         }
 
-        throw new InvalidArgumentException(
-            'Campus cannot be activated from its current status.'
-        );
+        if (!in_array($this->status, ['draft', 'inactive'], true)) {
+            throw new InvalidArgumentException(
+                'Campus cannot be activated from its current status.'
+            );
+        }
+
+        $this->status = 'active';
     }
 
     public function deactivate(): void
