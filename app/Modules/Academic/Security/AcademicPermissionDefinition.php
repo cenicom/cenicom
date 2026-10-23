@@ -12,6 +12,12 @@ final readonly class AcademicPermissionDefinition implements PermissionDefinitio
     public function register(PermissionRegistrarInterface $permissions): void
     {
         $permissions->register(
+            'academic_year.create',
+            'Crear un año lectivo en borrador con una versión oficial compatible.',
+            'academic',
+        );
+
+        $permissions->register(
             'academic_year.activate',
             'Activar un año lectivo en borrador.',
             'academic',

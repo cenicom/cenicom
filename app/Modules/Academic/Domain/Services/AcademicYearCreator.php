@@ -19,12 +19,14 @@ use DateTimeImmutable;
 
 final readonly class AcademicYearCreator
 {
+    private const PERMISSION = 'academic_year.create';
     private const TRANSACTION_ATTEMPTS = 3;
 
     public function __construct(
         private InstitutionRepositoryInterface $institutions,
         private AcademicYearRepository $years,
         private OfficialCalendarCompatibilityValidator $compatibility,
+        private AcademicYearLifecycleAuthorizer $authorizer,
         private AuditRecorderInterface $auditRecorder,
         private IdentityInterface $identity,
     ) {
@@ -36,6 +38,9 @@ final readonly class AcademicYearCreator
      */
     public function execute(AcademicYearCreateData $data): string
     {
+        // Authorization must precede the transaction and every persistent write.
+        $this->authorizer->assertCan(self::PERMISSION);
+
         return DB::transaction(function () use ($data): string {
             // The institution row is the serialization point for concurrent creates.
             $institution = $this->institutions->lockForUpdate($data->institutionId);

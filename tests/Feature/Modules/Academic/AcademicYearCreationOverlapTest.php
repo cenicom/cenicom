@@ -46,6 +46,17 @@ final class AcademicYearCreationOverlapTest extends AcademicYear02TestCase
         $identity->shouldReceive('name')->andReturn('ACA-YEAR-02 test actor');
         $identity->shouldReceive('authenticated')->andReturn(true);
         $this->app->instance(IdentityInterface::class, $identity);
+
+        $authorization = Mockery::mock(
+            \App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface::class,
+        );
+        $authorization->shouldReceive('can')
+            ->with($identity, 'academic_year.create')
+            ->andReturn(true);
+        $this->app->instance(
+            \App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface::class,
+            $authorization,
+        );
     }
 
     protected function tearDown(): void

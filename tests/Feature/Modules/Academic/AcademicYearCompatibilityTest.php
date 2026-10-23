@@ -40,6 +40,17 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
         $identity->shouldReceive('authenticated')->andReturn(true);
         $this->app->instance(IdentityInterface::class, $identity);
 
+        $authorization = Mockery::mock(
+            \App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface::class,
+        );
+        $authorization->shouldReceive('can')
+            ->with($identity, 'academic_year.create')
+            ->andReturn(true);
+        $this->app->instance(
+            \App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface::class,
+            $authorization,
+        );
+
         $this->seedFixture();
     }
 
@@ -54,6 +65,54 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
         } finally {
             parent::tearDown();
         }
+    }
+
+    public function test_create_permission_is_registered_by_academic_definition(): void
+    {
+        $registry = app(
+            \App\Core\Security\Permissions\Contracts\PermissionRegistryInterface::class,
+        );
+
+        $this->assertNotNull($registry->permission('academic_year.create'));
+    }
+
+    public function test_creation_requires_create_permission_before_writing_year_or_audit(): void
+    {
+        $identity = app(IdentityInterface::class);
+        $authorization = Mockery::mock(
+            \App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface::class,
+        );
+        $authorization->shouldReceive('can')
+            ->with($identity, 'academic_year.create')
+            ->once()
+            ->andReturn(false);
+
+        $this->app->instance(
+            \App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface::class,
+            $authorization,
+        );
+
+        try {
+            $this->createYear('A');
+            $this->fail('La creación debía rechazarse sin el permiso academic_year.create.');
+        } catch (\Illuminate\Auth\Access\AuthorizationException) {
+            // Expected: the year and success audit must remain absent.
+        }
+
+        $this->assertSame(
+            0,
+            DB::table('academic_years')
+                ->where('institution_id', $this->institutionId)
+                ->count(),
+        );
+
+        $this->assertSame(
+            0,
+            DB::table('audit_entries')
+                ->where('subject_type', 'academic_year')
+                ->where('action', 'academic_year.created')
+                ->count(),
+        );
     }
 
     public function test_accepts_exact_compatibility_and_persists_institution_calendar(): void
