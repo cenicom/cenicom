@@ -178,6 +178,97 @@ final class AcademicYearLifecycleTest extends AcademicYear02TestCase
             'event_id' => $eventId,
         ], 'mysql');
     }
+    public function test_close_and_milestone_permissions_are_registered(): void
+    {
+        $registry = app(
+            \App\Core\Security\Permissions\Contracts\PermissionRegistryInterface::class,
+        );
+
+        $closePermission = $registry->permission('academic_year.close');
+        $milestonePermission = $registry->permission('academic_year.complete_milestone');
+
+        $this->assertNotNull($closePermission);
+        $this->assertSame('academic_year.close', $closePermission->key());
+
+        $this->assertNotNull($milestonePermission);
+        $this->assertSame(
+            'academic_year.complete_milestone',
+            $milestonePermission->key(),
+        );
+    }
+
+    public function test_closing_year_requires_close_permission(): void
+    {
+        [$institutionId, $versionId] = $this->createInstitutionAndVersion(
+            '2026-01-10',
+            '2026-12-15',
+        );
+        $yearId = $this->createYear(
+            $institutionId,
+            $versionId,
+            '2026-CLOSE-NOPERM',
+            'active',
+        );
+
+        $this->grantedPermissions = [];
+
+        try {
+            app(AcademicYearCloser::class)->execute($yearId);
+            $this->fail('Debía rechazarse el cierre sin permiso.');
+        } catch (AuthorizationException) {
+            $this->assertDatabaseHas('academic_years', [
+                'id' => $yearId,
+                'status' => 'active',
+            ], 'mysql');
+        }
+
+        $this->assertSame(
+            0,
+            DB::table('audit_entries')
+                ->where('subject_type', 'academic_year')
+                ->where('subject_id', $yearId)
+                ->where('action', 'academic_year.closed')
+                ->count(),
+        );
+    }
+
+    public function test_milestone_completion_requires_permission(): void
+    {
+        [$institutionId, $versionId] = $this->createInstitutionAndVersion(
+            '2026-01-10',
+            '2026-12-15',
+        );
+        $yearId = $this->createYear(
+            $institutionId,
+            $versionId,
+            '2026-MIL-NOPERM',
+        );
+        $eventId = $this->createEvent(
+            $versionId,
+            'MILESTONE-NOPERM',
+            true,
+            false,
+        );
+
+        $this->grantedPermissions = [];
+
+        try {
+            app(CompleteAcademicYearEvent::class)->execute($yearId, $eventId);
+            $this->fail('Debía rechazarse el cumplimiento del hito sin permiso.');
+        } catch (AuthorizationException) {
+            $this->assertDatabaseMissing('academic_year_event_completions', [
+                'academic_year_id' => $yearId,
+                'event_id' => $eventId,
+            ], 'mysql');
+        }
+
+        $this->assertSame(
+            0,
+            DB::table('audit_entries')
+                ->where('action', 'academic_year.milestone_completed')
+                ->count(),
+        );
+    }
     public function test_activation_requires_permission_and_authenticated_identity(): void
     {
         [$institutionId, $versionId] = $this->createInstitutionAndVersion('2026-01-10', '2026-12-15');
