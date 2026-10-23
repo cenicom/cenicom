@@ -69,34 +69,54 @@ final class AcademicYearLifecycleRepository
     }
 
     /**
-     * @return list<stdClass> Rows for prerequisite events that have not been completed
-     *                        for this institution's academic-year assignment.
+     * @return list<stdClass>
      */
     public function incompletePrerequisites(
         string $academicYearId,
         string $publicationVersionId,
         string $prerequisiteColumn,
     ): array {
-        if (! in_array($prerequisiteColumn, ['activation_prerequisite', 'closure_prerequisite'], true)) {
-            throw new \InvalidArgumentException('Columna de prerrequisito no permitida.');
+        if (! in_array(
+            $prerequisiteColumn,
+            ['activation_prerequisite', 'closure_prerequisite'],
+            true,
+        )) {
+            throw new \InvalidArgumentException(
+                'Columna de prerrequisito no permitida.',
+            );
         }
 
         return DB::table('academic_calendar_events as event')
-            ->leftJoin('academic_year_event_completions as completion', function ($join) use ($academicYearId): void {
-                $join->on('completion.event_id', '=', 'event.id')
-                    ->where('completion.academic_year_id', '=', $academicYearId);
-            })
+            ->leftJoin(
+                'academic_year_event_completions as completion',
+                function ($join) use ($academicYearId): void {
+                    $join->on('completion.event_id', '=', 'event.id')
+                        ->where(
+                            'completion.academic_year_id',
+                            '=',
+                            $academicYearId,
+                        );
+                },
+            )
             ->where('event.publication_version_id', $publicationVersionId)
             ->where("event.{$prerequisiteColumn}", true)
             ->whereNull('completion.id')
             ->orderBy('event.start_date')
             ->orderBy('event.code')
-            ->get(['event.id', 'event.code', 'event.title', 'event.start_date', 'event.end_date'])
+            ->get([
+                'event.id',
+                'event.code',
+                'event.title',
+                'event.start_date',
+                'event.end_date',
+            ])
             ->all();
     }
 
-    public function findEventInVersion(string $eventId, string $publicationVersionId): ?stdClass
-    {
+    public function findEventInVersion(
+        string $eventId,
+        string $publicationVersionId,
+    ): ?stdClass {
         return DB::table('academic_calendar_events')
             ->where('id', $eventId)
             ->where('publication_version_id', $publicationVersionId)
@@ -110,8 +130,10 @@ final class AcademicYearLifecycleRepository
             ]);
     }
 
-    public function completionExists(string $academicYearId, string $eventId): bool
-    {
+    public function completionExists(
+        string $academicYearId,
+        string $eventId,
+    ): bool {
         return DB::table('academic_year_event_completions')
             ->where('academic_year_id', $academicYearId)
             ->where('event_id', $eventId)
@@ -120,6 +142,7 @@ final class AcademicYearLifecycleRepository
 
     public function recordCompletion(
         string $id,
+        string $publicationVersionId,
         string $academicYearId,
         string $eventId,
         string $completedBy,
@@ -129,6 +152,7 @@ final class AcademicYearLifecycleRepository
 
         DB::table('academic_year_event_completions')->insert([
             'id' => $id,
+            'publication_version_id' => $publicationVersionId,
             'academic_year_id' => $academicYearId,
             'event_id' => $eventId,
             'completed_by' => $completedBy,

@@ -75,6 +75,7 @@ final readonly class CompleteAcademicYearEvent
             $at = now();
             $this->years->recordCompletion(
                 id: $completionId,
+                publicationVersionId: (string) $year->publication_version_id,
                 academicYearId: (string) $year->id,
                 eventId: (string) $event->id,
                 completedBy: $actorId,
