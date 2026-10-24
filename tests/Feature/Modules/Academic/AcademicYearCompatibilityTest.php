@@ -46,6 +46,9 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
         $authorization->shouldReceive('can')
             ->with($identity, 'academic_year.create')
             ->andReturn(true);
+        $authorization->shouldReceive('can')
+            ->with($identity, 'institution_academic_profile.configure')
+            ->andReturn(true);
         $this->app->instance(
             \App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface::class,
             $authorization,
@@ -115,6 +118,213 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
         );
     }
 
+    public function test_institution_academic_profile_permission_is_registered(): void
+    {
+        $registry = app(
+            \App\Core\Security\Permissions\Contracts\PermissionRegistryInterface::class,
+        );
+
+        $permission = $registry->permission('institution_academic_profile.configure');
+
+        $this->assertNotNull($permission);
+        $this->assertSame('institution_academic_profile.configure', $permission->key());
+    }
+
+    public function test_configures_academic_profile_and_records_audit(): void
+    {
+        DB::table('institution_academic_profiles')
+            ->where('institution_id', $this->institutionId)
+            ->delete();
+
+        $profile = new \App\Modules\Academic\Domain\ValueObjects\InstitutionAcademicProfile(
+            countryCode: 'CO',
+            authorityCode: $this->authorityCode,
+            jurisdictionCode: 'NATIONAL',
+            regimeCode: 'GENERAL',
+            regionCode: 'HUILA',
+            calendarCode: 'A',
+        );
+
+        app(\App\Modules\Academic\Domain\Services\ConfigureInstitutionAcademicProfile::class)
+            ->execute($this->institutionId, $profile);
+
+        $this->assertDatabaseHas('institution_academic_profiles', [
+            'institution_id' => $this->institutionId,
+            'country_code' => 'CO',
+            'authority_code' => $this->authorityCode,
+            'jurisdiction_code' => 'NATIONAL',
+            'regime_code' => 'GENERAL',
+            'region_code' => 'HUILA',
+            'calendar_code' => 'A',
+        ], 'mysql');
+
+        $this->assertDatabaseHas('audit_entries', [
+            'subject_type' => 'institution_academic_profile',
+            'subject_id' => $this->institutionId,
+            'action' => 'institution_academic_profile.configured',
+            'result' => 'success',
+        ], 'mysql');
+    }
+
+    public function test_profile_configuration_requires_permission(): void
+    {
+        $identity = app(IdentityInterface::class);
+        $authorization = Mockery::mock(
+            \App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface::class,
+        );
+
+        $authorization->shouldReceive('can')
+            ->with($identity, 'institution_academic_profile.configure')
+            ->once()
+            ->andReturn(false);
+
+        $this->app->instance(
+            \App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface::class,
+            $authorization,
+        );
+
+        $before = DB::table('institution_academic_profiles')
+            ->where('institution_id', $this->institutionId)
+            ->first();
+
+        try {
+            app(\App\Modules\Academic\Domain\Services\ConfigureInstitutionAcademicProfile::class)
+                ->execute(
+                    $this->institutionId,
+                    new \App\Modules\Academic\Domain\ValueObjects\InstitutionAcademicProfile(
+                        countryCode: 'CO',
+                        authorityCode: $this->authorityCode,
+                        jurisdictionCode: 'OTHER',
+                        regimeCode: 'GENERAL',
+                        regionCode: 'OTHER',
+                        calendarCode: 'B',
+                    ),
+                );
+            $this->fail('Se debía rechazar la configuración sin permiso.');
+        } catch (\Illuminate\Auth\Access\AuthorizationException) {
+            // Expected.
+        }
+
+        $after = DB::table('institution_academic_profiles')
+            ->where('institution_id', $this->institutionId)
+            ->first();
+
+        $this->assertNotNull($before);
+        $this->assertNotNull($after);
+        $this->assertSame($before->calendar_code, $after->calendar_code);
+        $this->assertSame($before->region_code, $after->region_code);
+
+        $this->assertSame(
+            0,
+            DB::table('audit_entries')
+                ->where('subject_type', 'institution_academic_profile')
+                ->where('subject_id', $this->institutionId)
+                ->count(),
+        );
+    }
+
+    public function test_calendar_switch_is_rejected_when_active_year_exists(): void
+    {
+        $yearId = $this->createYear('A');
+
+        DB::table('academic_years')
+            ->where('id', $yearId)
+            ->update([
+                'status' => 'active',
+                'activated_at' => now(),
+            ]);
+
+        try {
+            app(\App\Modules\Academic\Domain\Services\ConfigureInstitutionAcademicProfile::class)
+                ->execute(
+                    $this->institutionId,
+                    new \App\Modules\Academic\Domain\ValueObjects\InstitutionAcademicProfile(
+                        countryCode: 'CO',
+                        authorityCode: $this->authorityCode,
+                        jurisdictionCode: 'OTHER',
+                        regimeCode: 'GENERAL',
+                        regionCode: 'HUILA',
+                        calendarCode: 'B',
+                    ),
+                );
+            $this->fail('El cambio A/B debía rechazarse con un año activo.');
+        } catch (DomainException $exception) {
+            $this->assertStringContainsString(
+                'años lectivos activos o cerrados',
+                $exception->getMessage(),
+            );
+        }
+
+        $this->assertDatabaseHas('institution_academic_profiles', [
+            'institution_id' => $this->institutionId,
+            'calendar_code' => 'A',
+            'region_code' => 'NATIONAL',
+        ], 'mysql');
+
+        $this->assertSame(
+            0,
+            DB::table('audit_entries')
+                ->where('subject_type', 'institution_academic_profile')
+                ->where('subject_id', $this->institutionId)
+                ->where('action', 'institution_academic_profile.updated')
+                ->count(),
+        );
+    }
+    public function test_calendar_switch_is_rejected_when_closed_year_exists(): void
+    {
+        $yearId = $this->createYear('A');
+        $closedAt = now();
+
+        DB::table('academic_years')
+            ->where('id', $yearId)
+            ->update([
+                'status' => 'closed',
+                'activated_at' => $closedAt,
+                'closed_at' => $closedAt,
+            ]);
+
+        try {
+            app(\App\Modules\Academic\Domain\Services\ConfigureInstitutionAcademicProfile::class)
+                ->execute(
+                    $this->institutionId,
+                    new \App\Modules\Academic\Domain\ValueObjects\InstitutionAcademicProfile(
+                        countryCode: 'CO',
+                        authorityCode: $this->authorityCode,
+                        jurisdictionCode: 'OTHER',
+                        regimeCode: 'GENERAL',
+                        regionCode: 'NATIONAL',
+                        calendarCode: 'B',
+                    ),
+                );
+
+            $this->fail('El cambio A/B debía rechazarse con un año lectivo cerrado.');
+        } catch (DomainException $exception) {
+            $this->assertStringContainsString(
+                'años lectivos activos o cerrados',
+                $exception->getMessage(),
+            );
+        }
+
+        $this->assertDatabaseHas('academic_years', [
+            'id' => $yearId,
+            'status' => 'closed',
+        ], 'mysql');
+
+        $this->assertDatabaseHas('institution_academic_profiles', [
+            'institution_id' => $this->institutionId,
+            'calendar_code' => 'A',
+            'region_code' => 'NATIONAL',
+        ], 'mysql');
+
+        $this->assertSame(
+            0,
+            DB::table('audit_entries')
+                ->where('subject_type', 'institution_academic_profile')
+                ->where('subject_id', $this->institutionId)
+                ->where('action', 'institution_academic_profile.updated')
+                ->count(),
+        );
+    }
     public function test_accepts_exact_compatibility_and_persists_institution_calendar(): void
     {
         $id = $this->createYear('A');

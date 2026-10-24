@@ -18,6 +18,12 @@ final readonly class AcademicPermissionDefinition implements PermissionDefinitio
         );
 
         $permissions->register(
+            'institution_academic_profile.configure',
+            'Configurar las dimensiones académicas y el calendario A/B de una institución.',
+            'academic',
+        );
+
+        $permissions->register(
             'academic_year.activate',
             'Activar un año lectivo en borrador.',
             'academic',
