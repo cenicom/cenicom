@@ -24,6 +24,12 @@ final readonly class AcademicPermissionDefinition implements PermissionDefinitio
         );
 
         $permissions->register(
+            'official_calendar_version.validate',
+            'Validar una versión en borrador de un calendario oficial.',
+            'academic',
+        );
+
+        $permissions->register(
             'academic_year.activate',
             'Activar un año lectivo en borrador.',
             'academic',

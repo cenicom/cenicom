@@ -49,6 +49,9 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
         $authorization->shouldReceive('can')
             ->with($identity, 'institution_academic_profile.configure')
             ->andReturn(true);
+        $authorization->shouldReceive('can')
+            ->with($identity, 'official_calendar_version.validate')
+            ->andReturn(true);
         $this->app->instance(
             \App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface::class,
             $authorization,
@@ -325,6 +328,140 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
                 ->count(),
         );
     }
+    public function test_official_calendar_version_validation_permission_is_registered(): void
+    {
+        $registry = app(
+            \App\Core\Security\Permissions\Contracts\PermissionRegistryInterface::class,
+        );
+
+        $permission = $registry->permission('official_calendar_version.validate');
+
+        $this->assertNotNull($permission);
+        $this->assertSame('official_calendar_version.validate', $permission->key());
+    }
+
+    public function test_validates_draft_official_calendar_version_and_records_audit(): void
+    {
+        $versionId = $this->insertDraftOfficialCalendarVersion();
+
+        app(
+            \App\Modules\Academic\Domain\Services\ValidateOfficialCalendarPublicationVersion::class,
+        )->execute($versionId);
+
+        $version = DB::table('official_calendar_publication_versions')
+            ->where('id', $versionId)
+            ->first();
+
+        $this->assertNotNull($version);
+        $this->assertSame('validated', $version->verification_status);
+        $this->assertNotNull($version->validated_at);
+        $this->assertNull($version->withdrawn_at);
+
+        $this->assertDatabaseHas('audit_entries', [
+            'subject_type' => 'official_calendar_publication_version',
+            'subject_id' => $versionId,
+            'action' => 'official_calendar_version.validated',
+            'result' => 'success',
+        ], 'mysql');
+
+        $audit = DB::table('audit_entries')
+            ->where('subject_type', 'official_calendar_publication_version')
+            ->where('subject_id', $versionId)
+            ->where('action', 'official_calendar_version.validated')
+            ->first();
+
+        $this->assertNotNull($audit);
+
+        $metadata = json_decode(
+            (string) $audit->metadata,
+            true,
+            512,
+            JSON_THROW_ON_ERROR,
+        );
+
+        $this->assertSame('draft', $metadata['status_before']);
+        $this->assertSame('validated', $metadata['status_after']);
+        $this->assertSame('2026-01-10', $metadata['calendar_start_date']);
+        $this->assertSame('2026-12-15', $metadata['calendar_end_date']);
+    }
+
+    public function test_version_validation_requires_permission(): void
+    {
+        $versionId = $this->insertDraftOfficialCalendarVersion();
+        $identity = app(IdentityInterface::class);
+
+        $authorization = Mockery::mock(
+            \App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface::class,
+        );
+
+        $authorization->shouldReceive('can')
+            ->with($identity, 'official_calendar_version.validate')
+            ->once()
+            ->andReturn(false);
+
+        $this->app->instance(
+            \App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface::class,
+            $authorization,
+        );
+
+        try {
+            app(
+                \App\Modules\Academic\Domain\Services\ValidateOfficialCalendarPublicationVersion::class,
+            )->execute($versionId);
+
+            $this->fail('La validación debía rechazarse sin permiso.');
+        } catch (\Illuminate\Auth\Access\AuthorizationException) {
+            // Expected: no state transition or success audit.
+        }
+
+        $this->assertDatabaseHas('official_calendar_publication_versions', [
+            'id' => $versionId,
+            'verification_status' => 'draft',
+            'validated_at' => null,
+        ], 'mysql');
+
+        $this->assertSame(
+            0,
+            DB::table('audit_entries')
+                ->where('subject_type', 'official_calendar_publication_version')
+                ->where('subject_id', $versionId)
+                ->where('action', 'official_calendar_version.validated')
+                ->count(),
+        );
+    }
+
+    public function test_version_validation_rejects_missing_official_dates(): void
+    {
+        $versionId = $this->insertDraftOfficialCalendarVersion(withDates: false);
+
+        try {
+            app(
+                \App\Modules\Academic\Domain\Services\ValidateOfficialCalendarPublicationVersion::class,
+            )->execute($versionId);
+
+            $this->fail('No se debía validar una versión sin fechas oficiales.');
+        } catch (DomainException $exception) {
+            $this->assertStringContainsString(
+                'fechas oficiales de inicio y fin válidas',
+                $exception->getMessage(),
+            );
+        }
+
+        $this->assertDatabaseHas('official_calendar_publication_versions', [
+            'id' => $versionId,
+            'verification_status' => 'draft',
+            'validated_at' => null,
+        ], 'mysql');
+
+        $this->assertSame(
+            0,
+            DB::table('audit_entries')
+                ->where('subject_type', 'official_calendar_publication_version')
+                ->where('subject_id', $versionId)
+                ->where('action', 'official_calendar_version.validated')
+                ->count(),
+        );
+    }
     public function test_accepts_exact_compatibility_and_persists_institution_calendar(): void
     {
         $id = $this->createYear('A');
@@ -472,6 +609,42 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
         ));
     }
 
+    private function insertDraftOfficialCalendarVersion(bool $withDates = true): string
+    {
+        $id = (string) Str::ulid();
+        $now = now();
+
+        $latestNumber = DB::table('official_calendar_publication_versions')
+            ->where('publication_id', $this->publicationId)
+            ->max('version_number');
+
+        $authorityName = DB::table('academic_regulatory_authorities')
+            ->where('id', $this->authorityId)
+            ->value('official_name');
+
+        DB::table('official_calendar_publication_versions')->insert([
+            'id' => $id,
+            'publication_id' => $this->publicationId,
+            'version_number' => ((int) $latestNumber) + 1,
+            'supersedes_version_id' => $this->versionId,
+            'official_version_label' => 'Prueba de validación',
+            'authority_name_snapshot' => (string) $authorityName,
+            'title' => 'Versión de prueba para validar un calendario oficial',
+            'promulgated_on' => null,
+            'calendar_start_date' => $withDates ? '2026-01-10' : null,
+            'calendar_end_date' => $withDates ? '2026-12-15' : null,
+            'source_url' => null,
+            'source_reference' => null,
+            'document_sha256' => null,
+            'verification_status' => 'draft',
+            'validated_at' => null,
+            'withdrawn_at' => null,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+
+        return $id;
+    }
     private function seedFixture(): void
     {
         $now = now();
