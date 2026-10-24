@@ -64,6 +64,19 @@ final readonly class ValidateOfficialCalendarPublicationVersion
                 );
             }
 
+            $sourceReference = trim((string) $version->source_reference);
+            $sourceUrl = trim((string) $version->source_url);
+            $documentSha256 = trim((string) $version->document_sha256);
+
+            if (
+                $sourceReference === ''
+                || ($sourceUrl === '' && $documentSha256 === '')
+            ) {
+                throw new DomainException(
+                    'La versión debe tener una referencia documental y una URL oficial o una huella SHA-256 antes de validarse.',
+                );
+            }
+
             $at = now();
 
             if (! $this->versions->transitionDraftToValidated($versionId, $at)) {

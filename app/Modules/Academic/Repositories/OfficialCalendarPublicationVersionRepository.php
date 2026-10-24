@@ -29,6 +29,17 @@ final class OfficialCalendarPublicationVersionRepository
             ->whereNotNull('calendar_start_date')
             ->whereNotNull('calendar_end_date')
             ->whereColumn('calendar_start_date', '<=', 'calendar_end_date')
+            ->whereNotNull('source_reference')
+            ->whereRaw("TRIM(source_reference) <> ''")
+            ->where(function ($query): void {
+                $query->where(function ($query): void {
+                    $query->whereNotNull('source_url')
+                        ->whereRaw("TRIM(source_url) <> ''");
+                })->orWhere(function ($query): void {
+                    $query->whereNotNull('document_sha256')
+                        ->whereRaw("TRIM(document_sha256) <> ''");
+                });
+            })
             ->update([
                 'verification_status' => 'validated',
                 'validated_at' => $validatedAt,

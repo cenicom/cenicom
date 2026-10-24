@@ -462,6 +462,76 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
                 ->count(),
         );
     }
+    public function test_version_validation_rejects_missing_source_reference(): void
+    {
+        $versionId = $this->insertDraftOfficialCalendarVersion(
+            withSourceReference: false,
+        );
+
+        try {
+            app(
+                \App\Modules\Academic\Domain\Services\ValidateOfficialCalendarPublicationVersion::class,
+            )->execute($versionId);
+
+            $this->fail('La validación debía exigir una referencia documental.');
+        } catch (DomainException $exception) {
+            $this->assertStringContainsString(
+                'referencia documental',
+                $exception->getMessage(),
+            );
+        }
+
+        $this->assertDatabaseHas('official_calendar_publication_versions', [
+            'id' => $versionId,
+            'verification_status' => 'draft',
+            'validated_at' => null,
+        ], 'mysql');
+
+        $this->assertSame(
+            0,
+            DB::table('audit_entries')
+                ->where('subject_type', 'official_calendar_publication_version')
+                ->where('subject_id', $versionId)
+                ->where('action', 'official_calendar_version.validated')
+                ->count(),
+        );
+    }
+
+    public function test_version_validation_rejects_missing_source_url_and_document_hash(): void
+    {
+        $versionId = $this->insertDraftOfficialCalendarVersion(
+            withSourceLocator: false,
+        );
+
+        try {
+            app(
+                \App\Modules\Academic\Domain\Services\ValidateOfficialCalendarPublicationVersion::class,
+            )->execute($versionId);
+
+            $this->fail('La validación debía exigir URL oficial o huella SHA-256.');
+        } catch (DomainException $exception) {
+            $this->assertStringContainsString(
+                'URL oficial o una huella SHA-256',
+                $exception->getMessage(),
+            );
+        }
+
+        $this->assertDatabaseHas('official_calendar_publication_versions', [
+            'id' => $versionId,
+            'verification_status' => 'draft',
+            'validated_at' => null,
+        ], 'mysql');
+
+        $this->assertSame(
+            0,
+            DB::table('audit_entries')
+                ->where('subject_type', 'official_calendar_publication_version')
+                ->where('subject_id', $versionId)
+                ->where('action', 'official_calendar_version.validated')
+                ->count(),
+        );
+    }
+
     public function test_accepts_exact_compatibility_and_persists_institution_calendar(): void
     {
         $id = $this->createYear('A');
@@ -609,7 +679,11 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
         ));
     }
 
-    private function insertDraftOfficialCalendarVersion(bool $withDates = true): string
+    private function insertDraftOfficialCalendarVersion(
+        bool $withDates = true,
+        bool $withSourceReference = true,
+        bool $withSourceLocator = true,
+    ): string
     {
         $id = (string) Str::ulid();
         $now = now();
@@ -633,8 +707,12 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
             'promulgated_on' => null,
             'calendar_start_date' => $withDates ? '2026-01-10' : null,
             'calendar_end_date' => $withDates ? '2026-12-15' : null,
-            'source_url' => null,
-            'source_reference' => null,
+            'source_url' => $withSourceLocator
+                ? 'https://example.invalid/aca-year02-publication'
+                : null,
+            'source_reference' => $withSourceReference
+                ? 'Referencia documental oficial de prueba'
+                : null,
             'document_sha256' => null,
             'verification_status' => 'draft',
             'validated_at' => null,
