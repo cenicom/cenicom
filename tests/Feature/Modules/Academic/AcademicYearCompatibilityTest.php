@@ -52,6 +52,9 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
         $authorization->shouldReceive('can')
             ->with($identity, 'official_calendar_version.validate')
             ->andReturn(true);
+        $authorization->shouldReceive('can')
+            ->with($identity, 'official_calendar_publication.confirm_identity')
+            ->andReturn(true);
         $this->app->instance(
             \App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface::class,
             $authorization,
@@ -328,6 +331,207 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
                 ->count(),
         );
     }
+    public function test_publication_identity_confirmation_permission_is_registered(): void
+    {
+        $registry = app(
+            \App\Core\Security\Permissions\Contracts\PermissionRegistryInterface::class,
+        );
+
+        $permission = $registry->permission(
+            'official_calendar_publication.confirm_identity',
+        );
+
+        $this->assertNotNull($permission);
+        $this->assertSame(
+            'official_calendar_publication.confirm_identity',
+            $permission->key(),
+        );
+    }
+
+    public function test_confirms_publication_identity_and_records_audit(): void
+    {
+        $publicationId = $this->insertUnresolvedPublication();
+
+        app(
+            \App\Modules\Academic\Domain\Services\ConfirmOfficialCalendarPublicationIdentity::class,
+        )->execute($publicationId);
+
+        $publication = DB::table('official_calendar_publications')
+            ->where('id', $publicationId)
+            ->first();
+
+        $this->assertSame('confirmed', $publication->identity_status);
+        $this->assertMatchesRegularExpression(
+            '/^[a-f0-9]{64}$/D',
+            (string) $publication->identity_fingerprint,
+        );
+
+        $this->assertDatabaseHas('audit_entries', [
+            'subject_type' => 'official_calendar_publication',
+            'subject_id' => $publicationId,
+            'action' => 'official_calendar_publication.identity_confirmed',
+            'result' => 'success',
+        ], 'mysql');
+
+        $audit = DB::table('audit_entries')
+            ->where('subject_type', 'official_calendar_publication')
+            ->where('subject_id', $publicationId)
+            ->where('action', 'official_calendar_publication.identity_confirmed')
+            ->first();
+
+        $metadata = json_decode(
+            (string) $audit->metadata,
+            true,
+            512,
+            JSON_THROW_ON_ERROR,
+        );
+
+        $this->assertSame('unresolved', $metadata['identity_status_before']);
+        $this->assertSame('confirmed', $metadata['identity_status_after']);
+        $this->assertSame(
+            $publication->identity_fingerprint,
+            $metadata['identity_fingerprint'],
+        );
+    }
+
+    public function test_publication_identity_confirmation_requires_permission(): void
+    {
+        $publicationId = $this->insertUnresolvedPublication();
+        $identity = app(IdentityInterface::class);
+
+        $authorization = Mockery::mock(
+            \App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface::class,
+        );
+
+        $authorization->shouldReceive('can')
+            ->with($identity, 'official_calendar_publication.confirm_identity')
+            ->once()
+            ->andReturn(false);
+
+        $this->app->instance(
+            \App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface::class,
+            $authorization,
+        );
+
+        try {
+            app(
+                \App\Modules\Academic\Domain\Services\ConfirmOfficialCalendarPublicationIdentity::class,
+            )->execute($publicationId);
+
+            $this->fail('La confirmación debía rechazarse sin permiso.');
+        } catch (\Illuminate\Auth\Access\AuthorizationException) {
+            // Expected: no identity update or success audit.
+        }
+
+        $this->assertDatabaseHas('official_calendar_publications', [
+            'id' => $publicationId,
+            'identity_status' => 'unresolved',
+            'identity_fingerprint' => null,
+        ], 'mysql');
+
+        $this->assertSame(
+            0,
+            DB::table('audit_entries')
+                ->where('subject_type', 'official_calendar_publication')
+                ->where('subject_id', $publicationId)
+                ->where('action', 'official_calendar_publication.identity_confirmed')
+                ->count(),
+        );
+    }
+
+    public function test_rejects_duplicate_canonical_publication_identity(): void
+    {
+        $firstId = $this->insertUnresolvedPublication();
+        $secondId = $this->insertUnresolvedPublication();
+
+        $service = app(
+            \App\Modules\Academic\Domain\Services\ConfirmOfficialCalendarPublicationIdentity::class,
+        );
+
+        $service->execute($firstId);
+
+        try {
+            $service->execute($secondId);
+            $this->fail('No se debía confirmar una identidad documental duplicada.');
+        } catch (DomainException $exception) {
+            $this->assertStringContainsString(
+                'misma identidad canónica',
+                $exception->getMessage(),
+            );
+        }
+
+        $this->assertDatabaseHas('official_calendar_publications', [
+            'id' => $secondId,
+            'identity_status' => 'unresolved',
+            'identity_fingerprint' => null,
+        ], 'mysql');
+
+        $this->assertSame(
+            0,
+            DB::table('audit_entries')
+                ->where('subject_type', 'official_calendar_publication')
+                ->where('subject_id', $secondId)
+                ->where('action', 'official_calendar_publication.identity_confirmed')
+                ->count(),
+        );
+    }
+
+    public function test_rejects_reconfirmation_of_already_confirmed_identity(): void
+    {
+        $publicationId = $this->insertUnresolvedPublication();
+
+        $service = app(
+            \App\Modules\Academic\Domain\Services\ConfirmOfficialCalendarPublicationIdentity::class,
+        );
+
+        $service->execute($publicationId);
+
+        try {
+            $service->execute($publicationId);
+            $this->fail('Una publicación confirmada no se debe confirmar de nuevo.');
+        } catch (DomainException $exception) {
+            $this->assertStringContainsString(
+                'identidad unresolved',
+                $exception->getMessage(),
+            );
+        }
+
+        $this->assertSame(
+            1,
+            DB::table('audit_entries')
+                ->where('subject_type', 'official_calendar_publication')
+                ->where('subject_id', $publicationId)
+                ->where('action', 'official_calendar_publication.identity_confirmed')
+                ->count(),
+        );
+    }
+
+    public function test_rejects_publication_without_calendar_a_or_b(): void
+    {
+        $publicationId = $this->insertUnresolvedPublication(
+            calendarCode: null,
+        );
+
+        try {
+            app(
+                \App\Modules\Academic\Domain\Services\ConfirmOfficialCalendarPublicationIdentity::class,
+            )->execute($publicationId);
+
+            $this->fail('No se debía confirmar una identidad sin calendario A/B.');
+        } catch (DomainException $exception) {
+            $this->assertStringContainsString(
+                'calendario A o B',
+                $exception->getMessage(),
+            );
+        }
+
+        $this->assertDatabaseHas('official_calendar_publications', [
+            'id' => $publicationId,
+            'identity_status' => 'unresolved',
+            'identity_fingerprint' => null,
+        ], 'mysql');
+    }
+
     public function test_official_calendar_version_validation_permission_is_registered(): void
     {
         $registry = app(
@@ -677,6 +881,33 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
             cycleCode: '2026',
             calendarCode: $calendarCode,
         ));
+    }
+
+    private function insertUnresolvedPublication(
+        string $documentNumber = 'ACA-YEAR02-IDENTITY-TEST',
+        ?string $calendarCode = 'A',
+    ): string {
+        $id = (string) Str::ulid();
+        $now = now();
+
+        DB::table('official_calendar_publications')->insert([
+            'id' => $id,
+            'authority_id' => $this->authorityId,
+            'document_type' => 'resolution',
+            'document_number' => $documentNumber,
+            'document_year' => 2026,
+            'reference_period' => '2026',
+            'jurisdiction_code' => 'NATIONAL',
+            'regime_code' => 'REGULAR',
+            'region_code' => 'NATIONAL',
+            'calendar_code' => $calendarCode,
+            'identity_status' => 'unresolved',
+            'identity_fingerprint' => null,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+
+        return $id;
     }
 
     private function insertDraftOfficialCalendarVersion(
