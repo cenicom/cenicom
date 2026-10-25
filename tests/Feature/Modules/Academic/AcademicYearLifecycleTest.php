@@ -693,6 +693,218 @@ final class AcademicYearLifecycleTest extends AcademicYear02TestCase
         return [$institutionId, $versionId];
     }
 
+    public function test_reopen_permission_is_registered(): void
+    {
+        $registry = app(
+            \App\Core\Security\Permissions\Contracts\PermissionRegistryInterface::class,
+        );
+
+        $permission = $registry->permission('academic_year.reopen');
+
+        $this->assertNotNull($permission);
+        $this->assertSame('academic_year.reopen', $permission->key());
+    }
+
+    public function test_reopens_closed_year_and_records_audit(): void
+    {
+        Carbon::setTestNow('2026-12-18 10:00:00');
+
+        [$institutionId, $versionId] = $this->createInstitutionAndVersion(
+            '2026-01-10',
+            '2026-12-15',
+        );
+
+        $yearId = $this->createYear(
+            $institutionId,
+            $versionId,
+            '2026-REOPEN-OK',
+            'closed',
+        );
+
+        $before = DB::table('academic_years')
+            ->where('id', $yearId)
+            ->first();
+
+        $this->assertNotNull($before);
+        $this->assertNotNull($before->activated_at);
+        $this->assertNotNull($before->closed_at);
+
+        $activatedAtBefore = (string) $before->activated_at;
+        $closedAtBefore = (string) $before->closed_at;
+
+        $this->grantedPermissions = ['academic_year.reopen'];
+
+        app(\App\Modules\Academic\Domain\Services\ReopenAcademicYear::class)
+            ->execute($yearId);
+
+        $after = DB::table('academic_years')
+            ->where('id', $yearId)
+            ->first();
+
+        $this->assertNotNull($after);
+        $this->assertSame('active', $after->status);
+        $this->assertSame($activatedAtBefore, (string) $after->activated_at);
+        $this->assertNull($after->closed_at);
+
+        $audit = DB::table('audit_entries')
+            ->where('subject_type', 'academic_year')
+            ->where('subject_id', $yearId)
+            ->where('action', 'academic_year.reopened')
+            ->where('result', 'success')
+            ->first();
+
+        $this->assertNotNull($audit);
+
+        $metadata = json_decode(
+            (string) $audit->metadata,
+            true,
+            512,
+            JSON_THROW_ON_ERROR,
+        );
+
+        $this->assertSame('closed', $metadata['status_before']);
+        $this->assertSame('active', $metadata['status_after']);
+        $this->assertSame($activatedAtBefore, $metadata['activated_at_preserved']);
+        $this->assertSame($closedAtBefore, $metadata['closed_at_before']);
+        $this->assertNull($metadata['closed_at_after']);
+
+        $this->assertSame(
+            1,
+            DB::table('audit_entries')
+                ->where('subject_id', $yearId)
+                ->where('action', 'academic_year.reopened')
+                ->count(),
+        );
+    }
+
+    public function test_reopening_requires_reopen_permission(): void
+    {
+        [$institutionId, $versionId] = $this->createInstitutionAndVersion(
+            '2026-01-10',
+            '2026-12-15',
+        );
+
+        $yearId = $this->createYear(
+            $institutionId,
+            $versionId,
+            '2026-REOPEN-NOPERM',
+            'closed',
+        );
+
+        $before = DB::table('academic_years')
+            ->where('id', $yearId)
+            ->value('closed_at');
+
+        $this->grantedPermissions = [];
+
+        try {
+            app(\App\Modules\Academic\Domain\Services\ReopenAcademicYear::class)
+                ->execute($yearId);
+
+            $this->fail('Debía rechazarse la reapertura sin permiso.');
+        } catch (AuthorizationException) {
+            $this->assertDatabaseHas('academic_years', [
+                'id' => $yearId,
+                'status' => 'closed',
+            ], 'mysql');
+        }
+
+        $this->assertSame(
+            $before,
+            DB::table('academic_years')
+                ->where('id', $yearId)
+                ->value('closed_at'),
+        );
+
+        $this->assertSame(
+            0,
+            DB::table('audit_entries')
+                ->where('subject_id', $yearId)
+                ->where('action', 'academic_year.reopened')
+                ->count(),
+        );
+    }
+
+    public function test_reopening_rejects_year_that_is_not_closed(): void
+    {
+        [$institutionId, $versionId] = $this->createInstitutionAndVersion(
+            '2026-01-10',
+            '2026-12-15',
+        );
+
+        $yearId = $this->createYear(
+            $institutionId,
+            $versionId,
+            '2026-REOPEN-ACTIVE',
+            'active',
+        );
+
+        $this->grantedPermissions = ['academic_year.reopen'];
+
+        $this->assertDomainException(
+            fn () => app(
+                \App\Modules\Academic\Domain\Services\ReopenAcademicYear::class,
+            )->execute($yearId),
+            'estado closed',
+        );
+
+        $this->assertDatabaseHas('academic_years', [
+            'id' => $yearId,
+            'status' => 'active',
+            'closed_at' => null,
+        ], 'mysql');
+
+        $this->assertSame(
+            0,
+            DB::table('audit_entries')
+                ->where('subject_id', $yearId)
+                ->where('action', 'academic_year.reopened')
+                ->count(),
+        );
+    }
+
+    public function test_audit_failure_rolls_back_reopening(): void
+    {
+        [$institutionId, $versionId] = $this->createInstitutionAndVersion(
+            '2026-01-10',
+            '2026-12-15',
+        );
+
+        $yearId = $this->createYear(
+            $institutionId,
+            $versionId,
+            '2026-REOPEN-ROLLBACK',
+            'closed',
+        );
+
+        $closedAtBefore = DB::table('academic_years')
+            ->where('id', $yearId)
+            ->value('closed_at');
+
+        $recorder = Mockery::mock(AuditRecorderInterface::class);
+        $recorder->shouldReceive('record')
+            ->once()
+            ->andThrow(new RuntimeException('reopen audit failure'));
+
+        $this->app->instance(AuditRecorderInterface::class, $recorder);
+        $this->grantedPermissions = ['academic_year.reopen'];
+
+        try {
+            app(\App\Modules\Academic\Domain\Services\ReopenAcademicYear::class)
+                ->execute($yearId);
+
+            $this->fail('El fallo de auditoría debía revertir la reapertura.');
+        } catch (RuntimeException $exception) {
+            $this->assertSame('reopen audit failure', $exception->getMessage());
+        }
+
+        $this->assertDatabaseHas('academic_years', [
+            'id' => $yearId,
+            'status' => 'closed',
+            'closed_at' => $closedAtBefore,
+        ], 'mysql');
+    }
+
     private function createYear(
         string $institutionId,
         string $versionId,

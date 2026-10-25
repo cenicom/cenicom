@@ -182,4 +182,20 @@ final class AcademicYearLifecycleRepository
             ->where('id', $academicYearId)
             ->update($values);
     }
+
+    public function transitionClosedToActive(
+        string $academicYearId,
+        mixed $reopenedAt,
+    ): bool {
+        return DB::table('academic_years')
+            ->where('id', $academicYearId)
+            ->where('status', 'closed')
+            ->whereNotNull('activated_at')
+            ->whereNotNull('closed_at')
+            ->update([
+                'status' => 'active',
+                'closed_at' => null,
+                'updated_at' => $reopenedAt,
+            ]) === 1;
+    }
 }

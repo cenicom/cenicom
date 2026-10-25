@@ -53,8 +53,8 @@ final readonly class AcademicPermissionDefinition implements PermissionDefinitio
             'academic',
         );
 
-
         $permissions->register(
+
             'academic_year.activate',
             'Activar un año lectivo en borrador.',
             'academic',
@@ -75,6 +75,12 @@ final readonly class AcademicPermissionDefinition implements PermissionDefinitio
         $permissions->register(
             'academic_year.cancel',
             'Cancelar un año lectivo en borrador con justificación obligatoria y auditoría.',
+            'academic',
+        );
+
+        $permissions->register(
+            'academic_year.reopen',
+            'Reabrir excepcionalmente un año lectivo cerrado, con auditoría.',
             'academic',
         );
     }
