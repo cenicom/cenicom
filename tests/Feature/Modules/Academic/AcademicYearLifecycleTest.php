@@ -294,6 +294,64 @@ final class AcademicYearLifecycleTest extends AcademicYear02TestCase
         }
     }
 
+    public function test_withdrawn_official_version_does_not_prevent_closing_existing_active_year(): void
+    {
+        Carbon::setTestNow('2026-12-17 11:30:00');
+
+        [$institutionId, $versionId] = $this->createInstitutionAndVersion(
+            '2026-01-10',
+            '2026-12-15',
+        );
+
+        $yearId = $this->createYear(
+            $institutionId,
+            $versionId,
+            '2026-WITHDRAW-CLOSE',
+            'active',
+        );
+
+        $eventId = $this->createEvent(
+            $versionId,
+            'FINAL_REPORTS',
+            false,
+            true,
+        );
+
+        app(CompleteAcademicYearEvent::class)->execute($yearId, $eventId);
+
+        app(
+            \App\Modules\Academic\Domain\Services\WithdrawOfficialCalendarPublicationVersion::class,
+        )->execute($versionId);
+
+        $this->assertDatabaseHas('official_calendar_publication_versions', [
+            'id' => $versionId,
+            'verification_status' => 'withdrawn',
+            'calendar_start_date' => '2026-01-10',
+            'calendar_end_date' => '2026-12-15',
+        ], 'mysql');
+
+        $this->assertNotNull(
+            DB::table('official_calendar_publication_versions')
+                ->where('id', $versionId)
+                ->value('withdrawn_at'),
+        );
+
+        app(AcademicYearCloser::class)->execute($yearId);
+
+        $this->assertDatabaseHas('academic_years', [
+            'id' => $yearId,
+            'status' => 'closed',
+            'closed_at' => '2026-12-17 11:30:00',
+        ], 'mysql');
+
+        $this->assertDatabaseHas('audit_entries', [
+            'subject_type' => 'academic_year',
+            'subject_id' => $yearId,
+            'action' => 'academic_year.closed',
+            'result' => 'success',
+        ], 'mysql');
+    }
+
     public function test_closes_active_year_only_after_official_end_and_complete_close_prerequisites(): void
     {
         Carbon::setTestNow('2026-12-17 11:30:00');
