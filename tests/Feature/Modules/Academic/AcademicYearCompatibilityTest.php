@@ -53,6 +53,9 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
             ->with($identity, 'official_calendar_version.validate')
             ->andReturn(true);
         $authorization->shouldReceive('can')
+            ->with($identity, 'official_calendar_version.publish')
+            ->andReturn(true);
+        $authorization->shouldReceive('can')
             ->with($identity, 'official_calendar_publication.confirm_identity')
             ->andReturn(true);
         $this->app->instance(
@@ -530,6 +533,148 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
             'identity_status' => 'unresolved',
             'identity_fingerprint' => null,
         ], 'mysql');
+    }
+
+    public function test_official_calendar_version_publish_permission_is_registered(): void
+    {
+        $registry = app(
+            \App\Core\Security\Permissions\Contracts\PermissionRegistryInterface::class,
+        );
+
+        $permission = $registry->permission('official_calendar_version.publish');
+
+        $this->assertNotNull($permission);
+        $this->assertSame('official_calendar_version.publish', $permission->key());
+    }
+
+    public function test_publishes_validated_official_calendar_version_and_records_audit(): void
+    {
+        $versionId = $this->insertDraftOfficialCalendarVersion();
+
+        app(
+            \App\Modules\Academic\Domain\Services\ValidateOfficialCalendarPublicationVersion::class,
+        )->execute($versionId);
+
+        app(
+            \App\Modules\Academic\Domain\Services\PublishOfficialCalendarPublicationVersion::class,
+        )->execute($versionId);
+
+        $version = DB::table('official_calendar_publication_versions')
+            ->where('id', $versionId)
+            ->first();
+
+        $this->assertSame('available', $version->verification_status);
+        $this->assertNotNull($version->validated_at);
+        $this->assertNull($version->withdrawn_at);
+
+        $this->assertDatabaseHas('audit_entries', [
+            'subject_type' => 'official_calendar_publication_version',
+            'subject_id' => $versionId,
+            'action' => 'official_calendar_version.published',
+            'result' => 'success',
+        ], 'mysql');
+
+        $audit = DB::table('audit_entries')
+            ->where('subject_type', 'official_calendar_publication_version')
+            ->where('subject_id', $versionId)
+            ->where('action', 'official_calendar_version.published')
+            ->first();
+
+        $this->assertNotNull($audit);
+
+        $metadata = json_decode(
+            (string) $audit->metadata,
+            true,
+            512,
+            JSON_THROW_ON_ERROR,
+        );
+
+        $this->assertSame('validated', $metadata['status_before']);
+        $this->assertSame('available', $metadata['status_after']);
+        $this->assertSame('confirmed', $metadata['publication_identity_status']);
+        $this->assertSame('A', $metadata['publication_calendar_code']);
+        $this->assertSame('url', $metadata['source_locator_type']);
+    }
+
+    public function test_publication_version_publish_requires_permission(): void
+    {
+        $versionId = $this->insertDraftOfficialCalendarVersion();
+
+        app(
+            \App\Modules\Academic\Domain\Services\ValidateOfficialCalendarPublicationVersion::class,
+        )->execute($versionId);
+
+        $identity = app(IdentityInterface::class);
+        $authorization = Mockery::mock(
+            \App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface::class,
+        );
+
+        $authorization->shouldReceive('can')
+            ->with($identity, 'official_calendar_version.publish')
+            ->once()
+            ->andReturn(false);
+
+        $this->app->instance(
+            \App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface::class,
+            $authorization,
+        );
+
+        try {
+            app(
+                \App\Modules\Academic\Domain\Services\PublishOfficialCalendarPublicationVersion::class,
+            )->execute($versionId);
+
+            $this->fail('La publicación debía rechazarse sin permiso.');
+        } catch (\Illuminate\Auth\Access\AuthorizationException) {
+            // Expected: the version remains validated and no publish audit is written.
+        }
+
+        $this->assertDatabaseHas('official_calendar_publication_versions', [
+            'id' => $versionId,
+            'verification_status' => 'validated',
+        ], 'mysql');
+
+        $this->assertSame(
+            0,
+            DB::table('audit_entries')
+                ->where('subject_type', 'official_calendar_publication_version')
+                ->where('subject_id', $versionId)
+                ->where('action', 'official_calendar_version.published')
+                ->count(),
+        );
+    }
+
+    public function test_rejects_publishing_official_calendar_version_that_is_still_draft(): void
+    {
+        $versionId = $this->insertDraftOfficialCalendarVersion();
+
+        try {
+            app(
+                \App\Modules\Academic\Domain\Services\PublishOfficialCalendarPublicationVersion::class,
+            )->execute($versionId);
+
+            $this->fail('No se debía publicar una versión que todavía está en draft.');
+        } catch (DomainException $exception) {
+            $this->assertStringContainsString(
+                'estado validated',
+                $exception->getMessage(),
+            );
+        }
+
+        $this->assertDatabaseHas('official_calendar_publication_versions', [
+            'id' => $versionId,
+            'verification_status' => 'draft',
+            'validated_at' => null,
+        ], 'mysql');
+
+        $this->assertSame(
+            0,
+            DB::table('audit_entries')
+                ->where('subject_type', 'official_calendar_publication_version')
+                ->where('subject_id', $versionId)
+                ->where('action', 'official_calendar_version.published')
+                ->count(),
+        );
     }
 
     public function test_official_calendar_version_validation_permission_is_registered(): void
