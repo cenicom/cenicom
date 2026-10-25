@@ -589,6 +589,45 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
         $this->assertSame('2026-12-15', $metadata['calendar_end_date']);
     }
 
+    public function test_version_validation_rejects_unresolved_publication_identity(): void
+    {
+        $publicationId = $this->insertUnresolvedPublication();
+        $versionId = $this->insertDraftOfficialCalendarVersion(
+            publicationId: $publicationId,
+        );
+
+        try {
+            app(
+                \App\Modules\Academic\Domain\Services\ValidateOfficialCalendarPublicationVersion::class,
+            )->execute($versionId);
+
+            $this->fail(
+                'No se debía validar una versión cuya publicación tiene identidad unresolved.',
+            );
+        } catch (DomainException $exception) {
+            $this->assertStringContainsString(
+                'identidad confirmada y calendario A/B resuelto',
+                $exception->getMessage(),
+            );
+        }
+
+        $this->assertDatabaseHas('official_calendar_publication_versions', [
+            'id' => $versionId,
+            'verification_status' => 'draft',
+            'validated_at' => null,
+        ], 'mysql');
+
+        $this->assertSame(
+            0,
+            DB::table('audit_entries')
+                ->where('subject_type', 'official_calendar_publication_version')
+                ->where('subject_id', $versionId)
+                ->where('action', 'official_calendar_version.validated')
+                ->count(),
+            'El rechazo no debe generar auditoría de validación exitosa.',
+        );
+    }
+
     public function test_version_validation_requires_permission(): void
     {
         $versionId = $this->insertDraftOfficialCalendarVersion();
@@ -914,13 +953,15 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
         bool $withDates = true,
         bool $withSourceReference = true,
         bool $withSourceLocator = true,
+        ?string $publicationId = null,
     ): string
     {
         $id = (string) Str::ulid();
         $now = now();
+        $targetPublicationId = $publicationId ?? $this->publicationId;
 
         $latestNumber = DB::table('official_calendar_publication_versions')
-            ->where('publication_id', $this->publicationId)
+            ->where('publication_id', $targetPublicationId)
             ->max('version_number');
 
         $authorityName = DB::table('academic_regulatory_authorities')
@@ -929,9 +970,11 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
 
         DB::table('official_calendar_publication_versions')->insert([
             'id' => $id,
-            'publication_id' => $this->publicationId,
+            'publication_id' => $targetPublicationId,
             'version_number' => ((int) $latestNumber) + 1,
-            'supersedes_version_id' => $this->versionId,
+            'supersedes_version_id' => $targetPublicationId === $this->publicationId
+                ? $this->versionId
+                : null,
             'official_version_label' => 'Prueba de validación',
             'authority_name_snapshot' => (string) $authorityName,
             'title' => 'Versión de prueba para validar un calendario oficial',

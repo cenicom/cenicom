@@ -17,6 +17,16 @@ final class OfficialCalendarPublicationVersionRepository
             ->first();
     }
 
+    public function findPublicationForUpdate(
+        string $publicationId,
+    ): ?stdClass {
+        return DB::table('official_calendar_publications')
+            ->select('id', 'identity_status', 'calendar_code')
+            ->where('id', $publicationId)
+            ->lockForUpdate()
+            ->first();
+    }
+
     public function transitionDraftToValidated(
         string $versionId,
         mixed $validatedAt,
@@ -39,6 +49,16 @@ final class OfficialCalendarPublicationVersionRepository
                     $query->whereNotNull('document_sha256')
                         ->whereRaw("TRIM(document_sha256) <> ''");
                 });
+            })
+            ->whereExists(static function ($query): void {
+                $query->selectRaw('1')
+                    ->from('official_calendar_publications as publication')
+                    ->whereColumn(
+                        'publication.id',
+                        'official_calendar_publication_versions.publication_id',
+                    )
+                    ->where('publication.identity_status', 'confirmed')
+                    ->whereIn('publication.calendar_code', ['A', 'B']);
             })
             ->update([
                 'verification_status' => 'validated',

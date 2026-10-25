@@ -49,6 +49,20 @@ final readonly class ValidateOfficialCalendarPublicationVersion
                 );
             }
 
+            $publication = $this->versions->findPublicationForUpdate(
+                (string) $version->publication_id,
+            );
+
+            if (
+                $publication === null
+                || $publication->identity_status !== 'confirmed'
+                || ! in_array($publication->calendar_code, ['A', 'B'], true)
+            ) {
+                throw new DomainException(
+                    'La publicación oficial debe tener identidad confirmada y calendario A/B resuelto antes de validar la versión.',
+                );
+            }
+
             $startDate = $version->calendar_start_date;
             $endDate = $version->calendar_end_date;
 
@@ -98,6 +112,8 @@ final readonly class ValidateOfficialCalendarPublicationVersion
                 ),
                 metadata: [
                     'publication_id' => (string) $version->publication_id,
+                    'publication_identity_status' => 'confirmed',
+                    'publication_calendar_code' => (string) $publication->calendar_code,
                     'version_number' => (int) $version->version_number,
                     'status_before' => 'draft',
                     'status_after' => 'validated',
