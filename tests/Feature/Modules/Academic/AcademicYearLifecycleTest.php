@@ -34,6 +34,7 @@ final class AcademicYearLifecycleTest extends AcademicYear02TestCase
         'academic_year.activate',
         'academic_year.close',
         'academic_year.complete_milestone',
+        'official_calendar_version.withdraw',
     ];
 
     protected function setUp(): void
@@ -399,6 +400,58 @@ final class AcademicYearLifecycleTest extends AcademicYear02TestCase
             ->count());
     }
 
+
+    public function test_activation_rejects_year_after_its_official_version_is_withdrawn(): void
+    {
+        Carbon::setTestNow('2026-01-20 10:00:00');
+
+        [$institutionId, $versionId] = $this->createInstitutionAndVersion(
+            '2026-01-10',
+            '2026-12-15',
+        );
+
+        $yearId = $this->createYear(
+            $institutionId,
+            $versionId,
+            '2026-W',
+        );
+
+        app(
+            \App\Modules\Academic\Domain\Services\WithdrawOfficialCalendarPublicationVersion::class,
+        )->execute($versionId);
+
+        $this->assertDatabaseHas('official_calendar_publication_versions', [
+            'id' => $versionId,
+            'verification_status' => 'withdrawn',
+        ], 'mysql');
+
+        $this->assertNotNull(
+            DB::table('official_calendar_publication_versions')
+                ->where('id', $versionId)
+                ->value('withdrawn_at'),
+        );
+
+        $this->assertDomainException(
+            fn () => app(AcademicYearActivator::class)->execute($yearId),
+            'debe seguir disponible',
+        );
+
+        $this->assertDatabaseHas('academic_years', [
+            'id' => $yearId,
+            'status' => 'draft',
+            'activated_at' => null,
+        ], 'mysql');
+
+        $this->assertSame(
+            0,
+            DB::table('audit_entries')
+                ->where('subject_type', 'academic_year')
+                ->where('subject_id', $yearId)
+                ->where('action', 'academic_year.activated')
+                ->count(),
+            'El rechazo de activación no debe registrar una auditoría de éxito.',
+        );
+    }
 
     public function test_activation_rejects_version_that_is_no_longer_available(): void
     {
