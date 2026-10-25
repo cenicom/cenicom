@@ -59,12 +59,16 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
             ->with($identity, 'official_calendar_version.withdraw')
             ->andReturn(true);
         $authorization->shouldReceive('can')
+            ->with($identity, 'official_calendar_version.correct')
+            ->andReturn(true);
+        $authorization->shouldReceive('can')
             ->with($identity, 'official_calendar_publication.confirm_identity')
             ->andReturn(true);
         $this->app->instance(
             \App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface::class,
             $authorization,
         );
+
 
         $this->seedFixture();
     }
@@ -140,6 +144,200 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
 
         $this->assertNotNull($permission);
         $this->assertSame('institution_academic_profile.configure', $permission->key());
+    }
+
+
+    public function test_official_calendar_version_correction_permission_is_registered(): void
+    {
+        $registry = app(
+            \App\Core\Security\Permissions\Contracts\PermissionRegistryInterface::class,
+        );
+
+        $permission = $registry->permission('official_calendar_version.correct');
+
+        $this->assertNotNull($permission);
+        $this->assertSame(
+            'official_calendar_version.correct',
+            $permission->key(),
+        );
+    }
+
+    public function test_corrects_available_version_with_immutable_successor_and_audit(): void
+    {
+        $versionId = $this->insertDraftOfficialCalendarVersion();
+
+        app(
+            \App\Modules\Academic\Domain\Services\ValidateOfficialCalendarPublicationVersion::class,
+        )->execute($versionId);
+
+        app(
+            \App\Modules\Academic\Domain\Services\PublishOfficialCalendarPublicationVersion::class,
+        )->execute($versionId);
+
+        $previous = DB::table('official_calendar_publication_versions')
+            ->where('id', $versionId)
+            ->first();
+
+        $this->assertNotNull($previous);
+        $this->assertSame('available', $previous->verification_status);
+
+        $oldValues = [
+            'official_version_label' => $previous->official_version_label,
+            'authority_name_snapshot' => $previous->authority_name_snapshot,
+            'title' => $previous->title,
+            'promulgated_on' => $previous->promulgated_on,
+            'calendar_start_date' => $previous->calendar_start_date,
+            'calendar_end_date' => $previous->calendar_end_date,
+            'source_url' => $previous->source_url,
+            'source_reference' => $previous->source_reference,
+            'document_sha256' => $previous->document_sha256,
+        ];
+
+        $data = new \App\Modules\Academic\Domain\DTO\OfficialCalendarPublicationVersionCorrectionData(
+            authorityNameSnapshot: (string) $previous->authority_name_snapshot,
+            title: 'Calendario académico oficial corregido',
+            officialVersionLabel: 'Corrección de prueba',
+            promulgatedOn: '2026-01-12',
+            calendarStartDate: '2026-01-12',
+            calendarEndDate: '2026-12-20',
+            sourceUrl: 'https://example.invalid/aca-year02-correction',
+            sourceReference: 'ACA-YEAR02-CORRECTION-001',
+            documentSha256: str_repeat('b', 64),
+        );
+
+        $newVersionId = app(
+            \App\Modules\Academic\Domain\Services\CorrectOfficialCalendarPublicationVersion::class,
+        )->execute($versionId, $data);
+
+        $this->assertNotSame($versionId, $newVersionId);
+
+        $previousAfter = DB::table('official_calendar_publication_versions')
+            ->where('id', $versionId)
+            ->first();
+
+        $this->assertNotNull($previousAfter);
+
+        $this->assertSame($oldValues, [
+            'official_version_label' => $previousAfter->official_version_label,
+            'authority_name_snapshot' => $previousAfter->authority_name_snapshot,
+            'title' => $previousAfter->title,
+            'promulgated_on' => $previousAfter->promulgated_on,
+            'calendar_start_date' => $previousAfter->calendar_start_date,
+            'calendar_end_date' => $previousAfter->calendar_end_date,
+            'source_url' => $previousAfter->source_url,
+            'source_reference' => $previousAfter->source_reference,
+            'document_sha256' => $previousAfter->document_sha256,
+        ]);
+
+        $this->assertSame('available', $previousAfter->verification_status);
+
+        $newValues = $data->toContentArray();
+
+        $this->assertDatabaseHas('official_calendar_publication_versions', [
+            'id' => $newVersionId,
+            'publication_id' => $previous->publication_id,
+            'version_number' => (int) $previous->version_number + 1,
+            'supersedes_version_id' => $versionId,
+            'title' => 'Calendario académico oficial corregido',
+            'verification_status' => 'draft',
+            'validated_at' => null,
+            'withdrawn_at' => null,
+        ], 'mysql');
+
+        $audit = DB::table('audit_entries')
+            ->where('subject_type', 'official_calendar_publication_version')
+            ->where('subject_id', $newVersionId)
+            ->where('action', 'official_calendar_version.corrected')
+            ->where('result', 'success')
+            ->first();
+
+        $this->assertNotNull($audit);
+
+        $metadata = json_decode(
+            (string) $audit->metadata,
+            true,
+            512,
+            JSON_THROW_ON_ERROR,
+        );
+
+        $this->assertSame($versionId, $metadata['previous_version_id']);
+        $this->assertSame($newVersionId, $metadata['new_version_id']);
+        $this->assertSame(
+            (int) $previous->version_number,
+            $metadata['previous_version_number'],
+        );
+        $this->assertSame(
+            (int) $previous->version_number + 1,
+            $metadata['new_version_number'],
+        );
+        $this->assertSame('available', $metadata['status_before']);
+        $this->assertSame('draft', $metadata['status_after']);
+        $this->assertSame($oldValues, $metadata['old_values']);
+        $this->assertSame($newValues, $metadata['new_values']);
+    }
+
+    public function test_correction_rejects_draft_without_creating_version_or_success_audit(): void
+    {
+        $versionId = $this->insertDraftOfficialCalendarVersion();
+
+        $version = DB::table('official_calendar_publication_versions')
+            ->where('id', $versionId)
+            ->first();
+
+        $this->assertNotNull($version);
+
+        $versionsBefore = DB::table('official_calendar_publication_versions')
+            ->where('publication_id', $version->publication_id)
+            ->count();
+
+        $auditsBefore = DB::table('audit_entries')
+            ->where('action', 'official_calendar_version.corrected')
+            ->count();
+
+        $data = new \App\Modules\Academic\Domain\DTO\OfficialCalendarPublicationVersionCorrectionData(
+            authorityNameSnapshot: (string) $version->authority_name_snapshot,
+            title: 'No debe crearse esta corrección',
+            officialVersionLabel: 'Corrección rechazada',
+            promulgatedOn: '2026-01-12',
+            calendarStartDate: '2026-01-12',
+            calendarEndDate: '2026-12-20',
+            sourceUrl: 'https://example.invalid/aca-year02-rejected',
+            sourceReference: 'ACA-YEAR02-CORRECTION-REJECTED',
+            documentSha256: str_repeat('c', 64),
+        );
+
+        try {
+            app(
+                \App\Modules\Academic\Domain\Services\CorrectOfficialCalendarPublicationVersion::class,
+            )->execute($versionId, $data);
+
+            $this->fail('No debe permitirse corregir una versión en draft.');
+        } catch (\DomainException $exception) {
+            $this->assertStringContainsString(
+                'previamente validada',
+                $exception->getMessage(),
+            );
+        }
+
+        $this->assertSame(
+            $versionsBefore,
+            DB::table('official_calendar_publication_versions')
+                ->where('publication_id', $version->publication_id)
+                ->count(),
+        );
+
+        $this->assertSame(
+            $auditsBefore,
+            DB::table('audit_entries')
+                ->where('action', 'official_calendar_version.corrected')
+                ->count(),
+        );
+
+        $this->assertDatabaseHas('official_calendar_publication_versions', [
+            'id' => $versionId,
+            'verification_status' => 'draft',
+            'validated_at' => null,
+        ], 'mysql');
     }
 
     public function test_configures_academic_profile_and_records_audit(): void
@@ -760,17 +958,19 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
         $this->assertSame('withdrawn', $after->verification_status);
         $this->assertNotNull($after->withdrawn_at);
 
-        foreach ([
-            'publication_id',
-            'version_number',
-            'calendar_start_date',
-            'calendar_end_date',
-            'source_url',
-            'source_reference',
-            'document_sha256',
-            'validated_at',
-            'created_at',
-        ] as $field) {
+        foreach (
+            [
+                'publication_id',
+                'version_number',
+                'calendar_start_date',
+                'calendar_end_date',
+                'source_url',
+                'source_reference',
+                'document_sha256',
+                'validated_at',
+                'created_at',
+            ] as $field
+        ) {
             $this->assertSame(
                 $before->{$field},
                 $after->{$field},
@@ -1519,8 +1719,7 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
         bool $withSourceReference = true,
         bool $withSourceLocator = true,
         ?string $publicationId = null,
-    ): string
-    {
+    ): string {
         $id = (string) Str::ulid();
         $now = now();
         $targetPublicationId = $publicationId ?? $this->publicationId;
