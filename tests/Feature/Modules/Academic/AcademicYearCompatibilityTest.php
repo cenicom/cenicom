@@ -701,6 +701,48 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
         $this->assertSame('official_calendar_version.withdraw', $permission->key());
     }
 
+    public function test_creation_rejects_official_calendar_version_after_withdrawal(): void
+    {
+        app(
+            \App\Modules\Academic\Domain\Services\WithdrawOfficialCalendarPublicationVersion::class,
+        )->execute($this->versionId);
+
+        $version = DB::table('official_calendar_publication_versions')
+            ->where('id', $this->versionId)
+            ->first();
+
+        $this->assertNotNull($version);
+        $this->assertSame('withdrawn', $version->verification_status);
+        $this->assertNotNull($version->withdrawn_at);
+
+        try {
+            $this->createYear('A');
+
+            $this->fail(
+                'La creación debía rechazarse después de retirar la versión oficial.',
+            );
+        } catch (DomainException) {
+            // Expected: una versión retirada no puede respaldar un año nuevo.
+        }
+
+        $this->assertSame(
+            0,
+            DB::table('academic_years')
+                ->where('institution_id', $this->institutionId)
+                ->count(),
+            'El rechazo no debe dejar creado un año académico.',
+        );
+
+        $this->assertSame(
+            0,
+            DB::table('audit_entries')
+                ->where('subject_type', 'academic_year')
+                ->where('action', 'academic_year.created')
+                ->count(),
+            'El rechazo no debe registrar una auditoría de creación exitosa.',
+        );
+    }
+
     public function test_withdraws_available_official_calendar_version_and_records_audit(): void
     {
         $before = DB::table('official_calendar_publication_versions')
