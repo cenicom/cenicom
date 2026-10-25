@@ -352,6 +352,58 @@ final class AcademicYearLifecycleTest extends AcademicYear02TestCase
         ], 'mysql');
     }
 
+    public function test_active_year_can_complete_required_milestone_after_official_version_withdrawal(): void
+    {
+        Carbon::setTestNow('2026-12-17 11:30:00');
+
+        [$institutionId, $versionId] = $this->createInstitutionAndVersion(
+            '2026-01-10',
+            '2026-12-15',
+        );
+
+        $yearId = $this->createYear(
+            $institutionId,
+            $versionId,
+            '2026-WD-MILESTONE',
+            'active',
+        );
+
+        $eventId = $this->createEvent(
+            $versionId,
+            'FINAL_REPORTS',
+            false,
+            true,
+        );
+
+        app(
+            \App\Modules\Academic\Domain\Services\WithdrawOfficialCalendarPublicationVersion::class,
+        )->execute($versionId);
+
+        $this->assertDatabaseHas('official_calendar_publication_versions', [
+            'id' => $versionId,
+            'verification_status' => 'withdrawn',
+        ], 'mysql');
+
+        $completionId = app(CompleteAcademicYearEvent::class)->execute(
+            $yearId,
+            $eventId,
+        );
+
+        $this->assertDatabaseHas('academic_year_event_completions', [
+            'id' => $completionId,
+            'publication_version_id' => $versionId,
+            'academic_year_id' => $yearId,
+            'event_id' => $eventId,
+        ], 'mysql');
+
+        $this->assertDatabaseHas('audit_entries', [
+            'subject_type' => 'academic_year_event_completion',
+            'subject_id' => $completionId,
+            'action' => 'academic_year.milestone_completed',
+            'result' => 'success',
+        ], 'mysql');
+    }
+
     public function test_closes_active_year_only_after_official_end_and_complete_close_prerequisites(): void
     {
         Carbon::setTestNow('2026-12-17 11:30:00');
