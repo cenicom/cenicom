@@ -56,6 +56,9 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
             ->with($identity, 'official_calendar_version.publish')
             ->andReturn(true);
         $authorization->shouldReceive('can')
+            ->with($identity, 'official_calendar_version.withdraw')
+            ->andReturn(true);
+        $authorization->shouldReceive('can')
             ->with($identity, 'official_calendar_publication.confirm_identity')
             ->andReturn(true);
         $this->app->instance(
@@ -683,6 +686,230 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
                 ->where('action', 'official_calendar_version.published')
                 ->count(),
             'El intento repetido no debe registrar una segunda publicación exitosa.',
+        );
+    }
+
+    public function test_official_calendar_version_withdraw_permission_is_registered(): void
+    {
+        $registry = app(
+            \App\Core\Security\Permissions\Contracts\PermissionRegistryInterface::class,
+        );
+
+        $permission = $registry->permission('official_calendar_version.withdraw');
+
+        $this->assertNotNull($permission);
+        $this->assertSame('official_calendar_version.withdraw', $permission->key());
+    }
+
+    public function test_withdraws_available_official_calendar_version_and_records_audit(): void
+    {
+        $before = DB::table('official_calendar_publication_versions')
+            ->where('id', $this->versionId)
+            ->first();
+
+        app(
+            \App\Modules\Academic\Domain\Services\WithdrawOfficialCalendarPublicationVersion::class,
+        )->execute($this->versionId);
+
+        $after = DB::table('official_calendar_publication_versions')
+            ->where('id', $this->versionId)
+            ->first();
+
+        $this->assertSame('withdrawn', $after->verification_status);
+        $this->assertNotNull($after->withdrawn_at);
+
+        foreach ([
+            'publication_id',
+            'version_number',
+            'calendar_start_date',
+            'calendar_end_date',
+            'source_url',
+            'source_reference',
+            'document_sha256',
+            'validated_at',
+            'created_at',
+        ] as $field) {
+            $this->assertSame(
+                $before->{$field},
+                $after->{$field},
+                "El retiro no debe modificar el contenido histórico: {$field}.",
+            );
+        }
+
+        $this->assertDatabaseHas('audit_entries', [
+            'subject_type' => 'official_calendar_publication_version',
+            'subject_id' => $this->versionId,
+            'action' => 'official_calendar_version.withdrawn',
+            'result' => 'success',
+        ], 'mysql');
+
+        $audit = DB::table('audit_entries')
+            ->where('subject_type', 'official_calendar_publication_version')
+            ->where('subject_id', $this->versionId)
+            ->where('action', 'official_calendar_version.withdrawn')
+            ->first();
+
+        $metadata = json_decode(
+            (string) $audit->metadata,
+            true,
+            512,
+            JSON_THROW_ON_ERROR,
+        );
+
+        $this->assertSame('available', $metadata['status_before']);
+        $this->assertSame('withdrawn', $metadata['status_after']);
+    }
+
+    public function test_withdraws_validated_official_calendar_version(): void
+    {
+        $versionId = $this->insertDraftOfficialCalendarVersion();
+
+        app(
+            \App\Modules\Academic\Domain\Services\ValidateOfficialCalendarPublicationVersion::class,
+        )->execute($versionId);
+
+        app(
+            \App\Modules\Academic\Domain\Services\WithdrawOfficialCalendarPublicationVersion::class,
+        )->execute($versionId);
+
+        $this->assertDatabaseHas('official_calendar_publication_versions', [
+            'id' => $versionId,
+            'verification_status' => 'withdrawn',
+        ], 'mysql');
+
+        $audit = DB::table('audit_entries')
+            ->where('subject_type', 'official_calendar_publication_version')
+            ->where('subject_id', $versionId)
+            ->where('action', 'official_calendar_version.withdrawn')
+            ->first();
+
+        $this->assertNotNull($audit);
+
+        $metadata = json_decode(
+            (string) $audit->metadata,
+            true,
+            512,
+            JSON_THROW_ON_ERROR,
+        );
+
+        $this->assertSame('validated', $metadata['status_before']);
+        $this->assertSame('withdrawn', $metadata['status_after']);
+    }
+
+    public function test_official_calendar_version_withdrawal_requires_permission(): void
+    {
+        $identity = app(IdentityInterface::class);
+
+        $authorization = Mockery::mock(
+            \App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface::class,
+        );
+
+        $authorization->shouldReceive('can')
+            ->with($identity, 'official_calendar_version.withdraw')
+            ->once()
+            ->andReturn(false);
+
+        $this->app->instance(
+            \App\Core\Security\Authorization\Contracts\AuthorizationServiceInterface::class,
+            $authorization,
+        );
+
+        try {
+            app(
+                \App\Modules\Academic\Domain\Services\WithdrawOfficialCalendarPublicationVersion::class,
+            )->execute($this->versionId);
+
+            $this->fail('El retiro debía rechazarse sin permiso.');
+        } catch (\Illuminate\Auth\Access\AuthorizationException) {
+            // Expected: the version remains available and no withdrawal audit is written.
+        }
+
+        $this->assertDatabaseHas('official_calendar_publication_versions', [
+            'id' => $this->versionId,
+            'verification_status' => 'available',
+            'withdrawn_at' => null,
+        ], 'mysql');
+
+        $this->assertSame(
+            0,
+            DB::table('audit_entries')
+                ->where('subject_type', 'official_calendar_publication_version')
+                ->where('subject_id', $this->versionId)
+                ->where('action', 'official_calendar_version.withdrawn')
+                ->count(),
+        );
+    }
+
+    public function test_rejects_withdrawing_draft_official_calendar_version(): void
+    {
+        $versionId = $this->insertDraftOfficialCalendarVersion();
+
+        try {
+            app(
+                \App\Modules\Academic\Domain\Services\WithdrawOfficialCalendarPublicationVersion::class,
+            )->execute($versionId);
+
+            $this->fail('No se debía retirar una versión que todavía está en draft.');
+        } catch (DomainException $exception) {
+            $this->assertStringContainsString(
+                'estado validated o available',
+                $exception->getMessage(),
+            );
+        }
+
+        $this->assertDatabaseHas('official_calendar_publication_versions', [
+            'id' => $versionId,
+            'verification_status' => 'draft',
+            'withdrawn_at' => null,
+        ], 'mysql');
+
+        $this->assertSame(
+            0,
+            DB::table('audit_entries')
+                ->where('subject_type', 'official_calendar_publication_version')
+                ->where('subject_id', $versionId)
+                ->where('action', 'official_calendar_version.withdrawn')
+                ->count(),
+        );
+    }
+
+    public function test_rejects_rewithdrawing_a_withdrawn_official_calendar_version(): void
+    {
+        $service = app(
+            \App\Modules\Academic\Domain\Services\WithdrawOfficialCalendarPublicationVersion::class,
+        );
+
+        $service->execute($this->versionId);
+
+        $withdrawnAt = DB::table('official_calendar_publication_versions')
+            ->where('id', $this->versionId)
+            ->value('withdrawn_at');
+
+        try {
+            $service->execute($this->versionId);
+
+            $this->fail('No se debía retirar dos veces la misma versión.');
+        } catch (DomainException $exception) {
+            $this->assertStringContainsString(
+                'estado validated o available',
+                $exception->getMessage(),
+            );
+        }
+
+        $this->assertDatabaseHas('official_calendar_publication_versions', [
+            'id' => $this->versionId,
+            'verification_status' => 'withdrawn',
+            'withdrawn_at' => $withdrawnAt,
+        ], 'mysql');
+
+        $this->assertSame(
+            1,
+            DB::table('audit_entries')
+                ->where('subject_type', 'official_calendar_publication_version')
+                ->where('subject_id', $this->versionId)
+                ->where('action', 'official_calendar_version.withdrawn')
+                ->count(),
+            'El intento repetido no debe generar una segunda auditoría de retiro.',
         );
     }
 

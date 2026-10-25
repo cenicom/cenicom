@@ -112,4 +112,20 @@ final class OfficialCalendarPublicationVersionRepository
                 'updated_at' => $publishedAt,
             ]) === 1;
     }
+
+    public function transitionToWithdrawn(
+        string $versionId,
+        mixed $withdrawnAt,
+    ): bool {
+        return DB::table('official_calendar_publication_versions')
+            ->where('id', $versionId)
+            ->whereIn('verification_status', ['validated', 'available'])
+            ->whereNotNull('validated_at')
+            ->whereNull('withdrawn_at')
+            ->update([
+                'verification_status' => 'withdrawn',
+                'withdrawn_at' => $withdrawnAt,
+                'updated_at' => $withdrawnAt,
+            ]) === 1;
+    }
 }

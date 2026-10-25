@@ -36,6 +36,12 @@ final readonly class AcademicPermissionDefinition implements PermissionDefinitio
         );
 
         $permissions->register(
+            'official_calendar_version.withdraw',
+            'Retirar una versión validada o disponible de un calendario oficial.',
+            'academic',
+        );
+
+        $permissions->register(
             'official_calendar_version.publish',
             'Publicar una versión validada de un calendario oficial.',
             'academic',
