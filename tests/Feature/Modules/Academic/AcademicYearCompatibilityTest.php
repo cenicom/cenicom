@@ -535,6 +535,157 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
         ], 'mysql');
     }
 
+    public function test_rejects_publishing_validated_version_without_source_evidence(): void
+    {
+        $versionId = $this->insertDraftOfficialCalendarVersion(
+            withSourceLocator: false,
+        );
+
+        // Simula un registro heredado validated que no pasó por el servicio actual.
+        $at = now();
+        $affected = DB::table('official_calendar_publication_versions')
+            ->where('id', $versionId)
+            ->where('verification_status', 'draft')
+            ->update([
+                'verification_status' => 'validated',
+                'validated_at' => $at,
+                'updated_at' => $at,
+            ]);
+
+        $this->assertSame(1, $affected);
+
+        try {
+            app(
+                \App\Modules\Academic\Domain\Services\PublishOfficialCalendarPublicationVersion::class,
+            )->execute($versionId);
+
+            $this->fail(
+                'No se debía publicar una versión sin URL oficial ni huella SHA-256.',
+            );
+        } catch (DomainException $exception) {
+            $this->assertStringContainsString(
+                'URL oficial o huella SHA-256',
+                $exception->getMessage(),
+            );
+        }
+
+        $this->assertDatabaseHas('official_calendar_publication_versions', [
+            'id' => $versionId,
+            'verification_status' => 'validated',
+        ], 'mysql');
+
+        $this->assertSame(
+            0,
+            DB::table('audit_entries')
+                ->where('subject_type', 'official_calendar_publication_version')
+                ->where('subject_id', $versionId)
+                ->where('action', 'official_calendar_version.published')
+                ->count(),
+        );
+    }
+
+    public function test_rejects_publishing_validated_version_with_unresolved_identity(): void
+    {
+        $publicationId = $this->insertUnresolvedPublication(
+            documentNumber: 'ACA-YEAR02-UNRESOLVED-PUBLISH',
+        );
+
+        $versionId = $this->insertDraftOfficialCalendarVersion(
+            publicationId: $publicationId,
+        );
+
+        // Simula un registro heredado que quedó validated antes de resolver su identidad.
+        $at = now();
+        $affected = DB::table('official_calendar_publication_versions')
+            ->where('id', $versionId)
+            ->where('verification_status', 'draft')
+            ->update([
+                'verification_status' => 'validated',
+                'validated_at' => $at,
+                'updated_at' => $at,
+            ]);
+
+        $this->assertSame(1, $affected);
+
+        try {
+            app(
+                \App\Modules\Academic\Domain\Services\PublishOfficialCalendarPublicationVersion::class,
+            )->execute($versionId);
+
+            $this->fail(
+                'No se debía publicar una versión con identidad unresolved.',
+            );
+        } catch (DomainException $exception) {
+            $this->assertStringContainsString(
+                'identidad confirmada y calendario A/B resuelto',
+                $exception->getMessage(),
+            );
+        }
+
+        $this->assertDatabaseHas('official_calendar_publication_versions', [
+            'id' => $versionId,
+            'verification_status' => 'validated',
+        ], 'mysql');
+
+        $this->assertDatabaseHas('official_calendar_publications', [
+            'id' => $publicationId,
+            'identity_status' => 'unresolved',
+            'identity_fingerprint' => null,
+        ], 'mysql');
+
+        $this->assertSame(
+            0,
+            DB::table('audit_entries')
+                ->where('subject_type', 'official_calendar_publication_version')
+                ->where('subject_id', $versionId)
+                ->where('action', 'official_calendar_version.published')
+                ->count(),
+        );
+    }
+
+    public function test_rejects_republishing_an_available_official_calendar_version(): void
+    {
+        $versionId = $this->insertDraftOfficialCalendarVersion();
+
+        app(
+            \App\Modules\Academic\Domain\Services\ValidateOfficialCalendarPublicationVersion::class,
+        )->execute($versionId);
+
+        $publisher = app(
+            \App\Modules\Academic\Domain\Services\PublishOfficialCalendarPublicationVersion::class,
+        );
+
+        $publisher->execute($versionId);
+
+        try {
+            $publisher->execute($versionId);
+
+            $this->fail(
+                'Una versión available no se debe volver a publicar.',
+            );
+        } catch (DomainException $exception) {
+            $this->assertStringContainsString(
+                'estado validated',
+                $exception->getMessage(),
+            );
+        }
+
+        $this->assertDatabaseHas('official_calendar_publication_versions', [
+            'id' => $versionId,
+            'verification_status' => 'available',
+        ], 'mysql');
+
+        $this->assertSame(
+            1,
+            DB::table('audit_entries')
+                ->where('subject_type', 'official_calendar_publication_version')
+                ->where('subject_id', $versionId)
+                ->where('action', 'official_calendar_version.published')
+                ->count(),
+            'El intento repetido no debe registrar una segunda publicación exitosa.',
+        );
+    }
+
     public function test_official_calendar_version_publish_permission_is_registered(): void
     {
         $registry = app(
