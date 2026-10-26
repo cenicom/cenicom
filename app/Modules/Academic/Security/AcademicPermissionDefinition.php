@@ -95,5 +95,17 @@ final readonly class AcademicPermissionDefinition implements PermissionDefinitio
             'Reabrir excepcionalmente un año lectivo cerrado, con auditoría.',
             'academic',
         );
+
+        $permissions->register(
+            'academic_calendar_event.create',
+            'Crear eventos en una versión oficial del calendario que esté en borrador.',
+            'academic',
+        );
+
+        $permissions->register(
+            'academic_calendar_event.update',
+            'Modificar eventos en una versión oficial del calendario que esté en borrador.',
+            'academic',
+        );
     }
 }
