@@ -535,6 +535,102 @@ final class AcademicYearCompatibilityTest extends AcademicYear02TestCase
                 ->count(),
         );
     }
+
+    public function test_calendar_switch_is_allowed_when_only_draft_year_exists_and_records_update_audit(): void
+    {
+        $yearId = $this->createYear('A');
+
+        $this->assertDatabaseHas('academic_years', [
+            'id' => $yearId,
+            'status' => 'draft',
+        ], 'mysql');
+
+        $this->assertCalendarSwitchAllowedForStatus($yearId, 'draft');
+    }
+
+    public function test_calendar_switch_is_allowed_when_only_cancelled_year_exists_and_records_update_audit(): void
+    {
+        $yearId = $this->createYear('A');
+        $cancelledAt = now();
+
+        DB::table('academic_years')
+            ->where('id', $yearId)
+            ->update([
+                'status' => 'cancelled',
+                'activated_at' => null,
+                'closed_at' => null,
+                'cancelled_at' => $cancelledAt,
+                'cancellation_reason' => 'Cancelación de prueba ACA-F09.',
+            ]);
+
+        $this->assertDatabaseHas('academic_years', [
+            'id' => $yearId,
+            'status' => 'cancelled',
+        ], 'mysql');
+
+        $this->assertCalendarSwitchAllowedForStatus($yearId, 'cancelled');
+    }
+
+    /**
+     * Comprueba el cambio A → B, la conservación del año existente
+     * y la auditoría con los valores anteriores y nuevos.
+     */
+    private function assertCalendarSwitchAllowedForStatus(
+        string $yearId,
+        string $expectedStatus,
+    ): void {
+        app(
+            \App\Modules\Academic\Domain\Services\ConfigureInstitutionAcademicProfile::class,
+        )->execute(
+            $this->institutionId,
+            new \App\Modules\Academic\Domain\ValueObjects\InstitutionAcademicProfile(
+                countryCode: 'CO',
+                authorityCode: $this->authorityCode,
+                jurisdictionCode: 'OTHER',
+                regimeCode: 'GENERAL',
+                regionCode: 'HUILA',
+                calendarCode: 'B',
+            ),
+        );
+
+        $this->assertDatabaseHas('academic_years', [
+            'id' => $yearId,
+            'status' => $expectedStatus,
+        ], 'mysql');
+
+        $this->assertDatabaseHas('institution_academic_profiles', [
+            'institution_id' => $this->institutionId,
+            'calendar_code' => 'B',
+            'jurisdiction_code' => 'OTHER',
+            'region_code' => 'HUILA',
+        ], 'mysql');
+
+        $audit = DB::table('audit_entries')
+            ->where('subject_type', 'institution_academic_profile')
+            ->where('subject_id', $this->institutionId)
+            ->where('action', 'institution_academic_profile.updated')
+            ->where('result', 'success')
+            ->first();
+
+        $this->assertNotNull($audit);
+
+        $metadata = json_decode(
+            (string) $audit->metadata,
+            true,
+            512,
+            JSON_THROW_ON_ERROR,
+        );
+
+        $this->assertSame(
+            'A',
+            $metadata['profile_before']['calendar_code'] ?? null,
+        );
+        $this->assertSame(
+            'B',
+            $metadata['profile_after']['calendar_code'] ?? null,
+        );
+    }
+
     public function test_publication_identity_confirmation_permission_is_registered(): void
     {
         $registry = app(
