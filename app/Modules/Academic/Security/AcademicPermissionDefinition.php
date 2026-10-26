@@ -79,6 +79,18 @@ final readonly class AcademicPermissionDefinition implements PermissionDefinitio
         );
 
         $permissions->register(
+            'academic_period.create',
+            'Crear períodos en una versión oficial del calendario que esté en borrador.',
+            'academic',
+        );
+
+        $permissions->register(
+            'academic_period.update',
+            'Modificar períodos en una versión oficial del calendario que esté en borrador.',
+            'academic',
+        );
+
+        $permissions->register(
             'academic_year.reopen',
             'Reabrir excepcionalmente un año lectivo cerrado, con auditoría.',
             'academic',
