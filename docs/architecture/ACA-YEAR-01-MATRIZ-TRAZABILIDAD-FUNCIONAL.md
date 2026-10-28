@@ -1,6 +1,6 @@
 # CENICOM — ACA-YEAR-01: matriz de trazabilidad funcional
 
-**Fecha de actualización:** 2026-10-26
+**Fecha de actualización:** 2026-10-27
 **Estado:** operaciones de ciclo de vida, corrección de versión oficial, períodos y eventos implementadas en el dominio y verificadas en la base aislada. La matriz mantiene explícitas las brechas que aún no tienen evidencia suficiente.
 **Entorno autorizado para pruebas:** `cenicom_aca_year02_isolated_test` (`127.0.0.1:3308`), mediante `phpunit.aca-year02.xml`.
 **Límite:** no ejecutar migraciones ni pruebas que modifiquen datos contra la base real `cenicom`.
@@ -33,7 +33,19 @@ Pruebas focalizadas informadas:
 - `AcademicCalendarEventManagementTest`: 8 pruebas, 38 aserciones.
 - `AcademicYearCompatibilityTest`: 50 pruebas, 247 aserciones; incluye rechazo del cambio A/B con años `active`/`closed`, aceptación con `draft`/`cancelled`, autorización y auditoría de los cambios permitidos.
 
-Estos resultados acreditan la suite informada en el entorno aislado; no son evidencia de ejecución contra la base real ni de un flujo HTTP/UI.
+El resultado de la suite completa acredita la ejecución informada en el entorno aislado; por sí solo no acredita un flujo HTTP/UI ni ejecución contra la base real.
+
+### Evidencia HTTP reciente: ACA-HTTP-02
+
+Resultado comunicado el 2026-10-27: **`OK (1 test, 4 assertions)`; código de salida 0**.
+
+La prueba negativa de autorización verificó:
+
+- La solicitud HTTP sin permiso fue rechazada con `403 Forbidden`.
+- No se creó el año lectivo solicitado.
+- No se encontró una auditoría exitosa `academic_year.created` atribuida al actor de prueba.
+
+Esta evidencia cierra el caso negativo de autorización de ACA-HTTP-02. No modifica ni requiere volver a ejecutar la prueba positiva o la prueba de concurrencia ACA-F07.
 
 ## 2. Matriz funcional actualizada
 
@@ -48,11 +60,12 @@ Estos resultados acreditan la suite informada en el entorno aislado; no son evid
 | ACA-F07 | Una versión puede contener una cantidad variable de períodos; cada período debe estar dentro de la ventana oficial; no hay solapamiento inclusivo; los espacios vacíos se permiten. Los eventos existentes no pueden quedar fuera tras actualizar un período. | `CreateAcademicPeriod`, `UpdateAcademicPeriod`, `AcademicPeriodDataValidator`, repositorio, restricciones/triggers temporales y commit `b0e0d75`; pruebas focalizadas 5/26 y suite total 146/663. | No se ha mostrado una prueba concurrente de dos períodos insertados simultáneamente para la misma versión. | **Implementado y probado; concurrencia no acreditada** |
 | ACA-F08 | Eventos dentro de la ventana oficial; si están ligados a un período deben quedar dentro de él y en la misma versión; los intervalos de exámenes requieren período. Obligatoriedad oficial y prerrequisitos de activación/cierre son distintos. | `CreateAcademicCalendarEvent`, `UpdateAcademicCalendarEvent`, `AcademicCalendarEventDataValidator`, repositorio, restricciones/triggers temporales y commit `52032d3`; pruebas focalizadas 8/38 y suite total 146/663. | No se ha mostrado una prueba concurrente de códigos de evento duplicados insertados simultáneamente ni un flujo HTTP/UI. | **Implementado y probado en el entorno aislado; concurrencia e interfaz no acreditadas** |
 | ACA-F09 | El cambio institucional A↔B solo se permite si no existen años dependientes `active` o `closed`; los casos permitidos deben seguir permiso y auditoría. | `ConfigureInstitutionAcademicProfile` aplica el guard; `hasActiveOrClosedAcademicYear` consulta los estados `active` y `closed`. `AcademicYearCompatibilityTest` prueba el rechazo de ambos estados, la aceptación de `draft`/`cancelled`, el permiso y la auditoría antes/después. | La integración HTTP/UI no queda acreditada por estas pruebas de dominio y permanece como frente separado. | **Cerrado en dominio y probado en entorno aislado** |
+| ACA-HTTP-02 | Una solicitud HTTP para crear un año lectivo sin permiso debe rechazarse antes de persistir y sin auditoría exitosa de creación. | Prueba negativa en entorno aislado: respuesta `403 Forbidden`; no se creó el año lectivo solicitado ni se encontró auditoría exitosa `academic_year.created` atribuida al actor de prueba. Resultado: `OK (1 test, 4 assertions)`, código 0. | Esta evidencia acredita el rechazo por falta de autorización; no demuestra por sí sola cobertura de todos los flujos HTTP/UI. | **Caso negativo de autorización cerrado y probado** |
 
 ## 3. Brechas restantes y siguiente orden de trabajo
 
 1. **Concurrencia ACA-F01/F07/F08:** no declarar la concurrencia cerrada a partir de bloqueos o índices por sí solos. Añadir pruebas concurrentes solo si forman parte del alcance inmediato acordado.
-2. **Integración HTTP/UI:** el inventario de servicios de dominio no acredita por sí mismo controladores, rutas, formularios o navegación. Tratarlo como frente separado y confirmar primero si ya existe antes de desarrollarlo.
+2. **Integración HTTP/UI:** ACA-HTTP-02 acredita el rechazo por falta de permiso al crear un año lectivo: `403`, sin persistencia ni auditoría exitosa de creación. Esta prueba no acredita por sí sola todos los flujos HTTP/UI; mantener las brechas restantes explícitas.
 3. **Auditoría ante fallo:** la atomicidad está probada para ciertos cambios de ciclo de vida; no inferir que todas las operaciones tienen una prueba de fallo del audit recorder.
 
 No reabrir los contratos D01–D20 ni P01–P14. No crear migraciones para estos puntos sin demostrar una brecha física. No ejecutar pruebas o migraciones contra `cenicom`.
