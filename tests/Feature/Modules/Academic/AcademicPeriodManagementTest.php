@@ -155,6 +155,82 @@ final class AcademicPeriodManagementTest extends AcademicYear02TestCase
         $this->assertSame('2026-01-11', $metadata['new_values']['start_date']);
     }
 
+    public function test_rejects_period_update_that_would_leave_existing_event_outside(): void
+    {
+        $periodId = app(CreateAcademicPeriod::class)->execute(
+            $this->publicationVersionId,
+            $this->periodData(
+                'T1',
+                'Primer trimestre',
+                1,
+                '2026-01-10',
+                '2026-03-31',
+                '81.00',
+                'DAYS',
+            ),
+        );
+
+        $eventId = (string) Str::ulid();
+        $now = now();
+
+        DB::table('academic_calendar_events')->insert([
+            'id' => $eventId,
+            'publication_version_id' => $this->publicationVersionId,
+            'academic_period_id' => $periodId,
+            'code' => 'EVENT-' . substr($eventId, -8),
+            'event_type' => 'OTHER',
+            'title' => 'Evento asociado al período',
+            'audience' => 'ALL',
+            'start_date' => '2026-01-15',
+            'end_date' => '2026-01-16',
+            'is_officially_required' => false,
+            'activation_prerequisite' => false,
+            'closure_prerequisite' => false,
+            'source_reference' => 'ACA-F07-EVENT-' . substr($eventId, -8),
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
+
+        try {
+            app(UpdateAcademicPeriod::class)->execute(
+                $periodId,
+                $this->periodData(
+                    'T1',
+                    'Primer trimestre',
+                    1,
+                    '2026-01-20',
+                    '2026-03-31',
+                    '72.00',
+                    'DAYS',
+                ),
+            );
+
+            $this->fail(
+                'No debe permitirse actualizar un período dejando un evento asociado fuera de sus fechas.',
+            );
+        } catch (DomainException $exception) {
+            $this->assertStringContainsString(
+                'eventos asociados fuera de sus fechas',
+                $exception->getMessage(),
+            );
+        }
+
+        $this->assertDatabaseHas('academic_periods', [
+            'id' => $periodId,
+            'start_date' => '2026-01-10',
+            'end_date' => '2026-03-31',
+        ], 'mysql');
+
+        $this->assertSame(
+            0,
+            DB::table('audit_entries')
+                ->where('subject_type', 'academic_period')
+                ->where('subject_id', $periodId)
+                ->where('action', 'academic_period.updated')
+                ->where('result', 'success')
+                ->count(),
+        );
+    }
     public function test_rejects_inclusive_overlap_without_creating_second_period_or_audit(): void
     {
         app(CreateAcademicPeriod::class)->execute(

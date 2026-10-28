@@ -1,0 +1,10 @@
+PHPUnit 12.5.30 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.3.31
+Configuration: C:\xampp1\htdocs\cenicom\phpunit.aca-year02.xml
+
+.                                                                   1 / 1 (100%)
+
+Time: 00:06.454, Memory: 44.00 MB
+
+[30;42mOK (1 test, 7 assertions)[0m
